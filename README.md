@@ -76,7 +76,7 @@ roles' contracts decide what each does. Type `/<name>` in Claude Code or
 | Command                               | Convenes                                  | For                                                  |
 | ------------------------------------- | ----------------------------------------- | ---------------------------------------------------- |
 | [`spec`](commands/spec.md)            | analyst, spec-author                      | a raw ask taken to a written agreement               |
-| [`design`](commands/design.md)        | architect, critic                         | a design, critiqued before anything is built on it   |
+| [`design`](commands/design.md)        | architect, domain, test-writer, critic    | a design, critiqued before anything is built on it   |
 | [`test`](commands/test.md)            | test-writer, tester                       | failing tests from claims, then a run report         |
 | [`review`](commands/review.md)        | spec-reviewer, adversary                  | a diff judged against its claims                     |
 | [`bug`](commands/bug.md)              | bug-finder, test-writer, bug-fixer        | a failure reproduced, pinned, fixed and learned from |

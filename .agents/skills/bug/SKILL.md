@@ -14,7 +14,8 @@ Read each role's contract before acting as it, and keep the boundaries it declar
 Use these skills: `test-from-scenarios` (`.agents/skills/test-from-scenarios/SKILL.md`), `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`).
 
 The bug finder reproduces the failure with steps anyone can run, classifies it,
-and traces the cause back from the symptom. The test writer turns the
+and traces the cause back from the symptom. Given several reports, it ranks
+them and drops any it cannot attribute, with the reason. The test writer turns the
 reproduction into a test that fails for that cause. The bug fixer makes it pass
 and writes the lesson.
 
