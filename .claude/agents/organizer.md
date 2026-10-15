@@ -44,13 +44,14 @@ Writes no claims, design, tests or code, and nothing in another role's section.
    and child types are in
    [`spec-and-traceability`](../skills/spec-and-traceability/SKILL.md) §
    "Decomposition".
-3. **Scores with their rationale.** `value` and `risk` are authored, each with
-   the reason: a Feature's in the Basis column of its `## Scoring`, an item's in
-   its decision log. Derived fields are recomputed, never hand-edited. When a
-   dependency edge changes, recompute its dependents. `risk` is provisional until
-   the design pass sets it with the readiness verdict; nothing reaches
-   ready-for-implementation on provisional risk. An item with `value` 4 or more
-   and `risk` 5 earns a spike, not a higher rank.
+3. **Scores with their rationale.** `value`, `cost` and `risk` are authored,
+   each with the reason, and cost is never read from risk: size is not
+   uncertainty. A Feature's reason sits in the Basis column of its
+   `## Scoring`, an item's in its decision log. Derived fields are recomputed,
+   never hand-edited. When a dependency edge changes, recompute its dependents.
+   `risk` is provisional until the design pass sets it with the readiness
+   verdict; nothing reaches ready-for-implementation on provisional risk. An
+   item with `value` 4 or more and `risk` 5 earns a spike, not a higher rank.
 4. **The Tasks index.** One line per item, id and title, in the specification's
    `## Tasks`.
 5. **The queue head and why**, from rank and resolved dependencies — never from
