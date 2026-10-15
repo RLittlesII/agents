@@ -37,10 +37,16 @@ its paths and commands are in [README.md](README.md).
 model, effort and tools a host uses are in [`hosts/`](hosts/). The name each role
 signs its prose with is in [`agents/PERSONAS.md`](agents/PERSONAS.md).
 
+## Commands
+
+[`commands/`](commands/) holds prompts that convene roles; the README lists
+them. A command names roles and skills in frontmatter only.
+
 ## Specifications
 
 - [Projection](scripts/.spec/README.md) — `0001-F1`, the projector.
 - [Role contract](agents/.spec/README.md) — `0001-F2`, what a role file declares.
+- [Commands](commands/.spec/README.md) — `0001-F3`, prompts that convene roles.
 - [Decisions](.spec/adr/) — repository-wide ADRs.
 
 ## Specification-driven development
@@ -55,7 +61,7 @@ signs its prose with is in [`agents/PERSONAS.md`](agents/PERSONAS.md).
 
 Never hand-edit `.claude/`, `.codex/`, `.agents/`, or the blocks between the
 generated markers in `skills/sdd-conventions/SKILL.md` and `agents/PERSONAS.md`.
-Edit the source under `agents/`, `skills/` or `hosts/` and run
+Edit the source under `agents/`, `skills/`, `commands/` or `hosts/` and run
 `dotnet fsi scripts/project.fsx`. CI runs the same command with `--check` and
 fails on drift.
 

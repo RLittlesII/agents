@@ -6,11 +6,11 @@ type: overview
 
 # agents
 
-Twenty-four role contracts and seven method skills for specification-driven
-development, written once, host-free, and projected into the files each AI host
-reads. The repository carries no product technology and no tool-specific
-knowledge: a consuming repository adds a companion skill that names its own
-paths, commands and stack.
+Twenty-four role contracts, seven method skills and eight commands for
+specification-driven development, written once, host-free, and projected into
+the files each AI host reads. The repository carries no product technology and
+no tool-specific knowledge: a consuming repository adds a companion skill that
+names its own paths, commands and stack.
 
 ## The method
 
@@ -67,6 +67,23 @@ the prose it writes with a persona; the roster is in
 | [`coding-conventions`](skills/coding-conventions/SKILL.md)         | orient, keep the design direct, say it once                       |
 | [`next`](skills/next/SKILL.md)                                     | Feature comparisons, completion paths, and next actionable work   |
 
+## Commands
+
+A command convenes roles in an order and names the skills they work with; the
+roles' contracts decide what each does. Type `/<name>` in Claude Code or
+`$<name>` in Codex.
+
+| Command                               | Convenes                                  | For                                                  |
+| ------------------------------------- | ----------------------------------------- | ---------------------------------------------------- |
+| [`spec`](commands/spec.md)            | analyst, spec-author                      | a raw ask taken to a written agreement               |
+| [`design`](commands/design.md)        | architect, critic                         | a design, critiqued before anything is built on it   |
+| [`test`](commands/test.md)            | test-writer, tester                       | failing tests from claims, then a run report         |
+| [`review`](commands/review.md)        | spec-reviewer, adversary                  | a diff judged against its claims                     |
+| [`bug`](commands/bug.md)              | bug-finder, test-writer, bug-fixer        | a failure reproduced, pinned, fixed and learned from |
+| [`groom`](commands/groom.md)          | organizer                                 | the queue re-scored and ranked                       |
+| [`document`](commands/document.md)    | document-writer                           | documents repaired against the repository            |
+| [`cleanup`](commands/cleanup.md)      | organizer, document-writer, architect     | a tidying pass, delivered as one change              |
+
 ## Consuming
 
 Outputs are committed, so a consumer pulls a finished file by path at a tagged
@@ -77,7 +94,9 @@ skillfile add github agent rlittlesii/agents .claude/agents/architect.md v0.1.0 
 skillfile add github skill rlittlesii/agents skills/sdd-conventions/SKILL.md v0.1.0
 ```
 
-Pull a Codex agent from `.codex/agents/<role>.toml` the same way. Then write
+Pull a Codex agent from `.codex/agents/<role>.toml` the same way, and a command
+from `.claude/commands/<name>.md` or `.agents/skills/<name>/SKILL.md`; a command
+names its roles and skills at those same paths, so pull them with it. Then write
 your repository's companion skill, `<project>-conventions`, covering the areas
 listed in [`sdd-conventions` § Your companion](skills/sdd-conventions/SKILL.md#your-companion).
 The role files name no path or command of yours; the companion does.
@@ -86,10 +105,10 @@ The role files name no path or command of yours; the companion does.
 
 | Kind       | Paths                                                                  | Rule                                        |
 | ---------- | ---------------------------------------------------------------------- | ------------------------------------------- |
-| Source     | `agents/*.md`, `skills/*/SKILL.md`, `hosts/*.yaml`, `scripts/*.fsx`     | edit here, in a pull request                |
-| Generated  | `.claude/agents/`, `.claude/skills/`, `.codex/agents/`, `.agents/skills/`, the ownership table in `sdd-conventions`, the roster in `agents/PERSONAS.md` | never hand-edit; run the projector |
+| Source     | `agents/*.md`, `skills/*/SKILL.md`, `commands/*.md`, `hosts/*.yaml`, `scripts/*.fsx` | edit here, in a pull request                |
+| Generated  | `.claude/agents/`, `.claude/skills/`, `.claude/commands/`, `.codex/agents/`, `.agents/skills/`, the ownership table in `sdd-conventions`, the roster in `agents/PERSONAS.md` | never hand-edit; run the projector |
 | Tool-owned | `.specht/`                                                              | written by `dotnet specht init`             |
-| Records    | `.spec/adr/`, `scripts/.spec/`, `agents/.spec/`                         | the method applied to this repository       |
+| Records    | `.spec/adr/`, `scripts/.spec/`, `agents/.spec/`, `commands/.spec/`    | the method applied to this repository       |
 
 ## Maintaining
 
@@ -109,5 +128,7 @@ dotnet fsi scripts/project.tests.fsx     # claim-named tests
 To add a role: write `agents/<name>.md` with the keys the
 [role contract](agents/.spec/README.md) requires, add it to each host overlay
 under `hosts/`, and run the projector. To change a role's model or effort on
-one host, edit that host's overlay only. The decisions behind this shape are
+one host, edit that host's overlay only. To add a command: write `commands/<name>.md`
+with the keys the [commands specification](commands/.spec/README.md) requires
+and run the projector. The decisions behind this shape are
 in [`.spec/adr/`](.spec/adr/).
