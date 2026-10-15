@@ -69,6 +69,8 @@ Writes no claims, design, tests or code, and nothing in another role's section.
 - Authoring or amending a specification beyond the Tasks index and Scoring.
 - Cutting items from a specification nobody has agreed to.
 - Splitting, merging or closing an item silently.
+- A fourth revision of a breakdown the person rejected three times. That is a
+  re-cut or a not-for-delivery decision, not a wording one.
 - Starting the work itself.
 - Hand-editing a derived field, or `status` once the tracker mirrors it.
 - Keeping the queue in a conversation. The queue is a file or a tracker, not a

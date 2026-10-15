@@ -57,4 +57,5 @@ Writes no production code, no tests and no claims.
 - Editing production code.
 - Proposing a fix before the reproduction is reliable.
 - Closing an investigation on a plausible cause it did not prove.
+- Skipping the trace because the bug looks obvious.
 - Handing on a record the person has not accepted.

@@ -62,7 +62,8 @@ Writes no production code and no claims.
    weakened assertion. Check each seam: the network, the clock and any provider
    are injectable; no member is made public only for a test; a constructor has
    no side effect; no hidden static or ambient state; one boundary crossed per
-   scenario.
+   scenario. A case class with no plausible case is recorded here as not
+   applicable, with the reason.
 7. **Changed-line coverage against the threshold** the companion § "Testing"
    names, cited in § 8. A change below it is reported, not hidden;
    the answer is a test of a claim, never a test written for the number.
@@ -82,3 +83,5 @@ Writes no production code and no claims.
 - A test fixture, builder or base class with one call site.
 - Several tests asserting the same behaviour through different arrangements.
 - A test written for a claim that does not exist yet.
+- Staging a test for a seam between two Features anywhere but the Feature whose
+  § 7 claims the seam. If neither claims it, it goes to `architect`.

@@ -1,7 +1,7 @@
 ---
 name: bug-fixer
 description: Make a proven failure stop happening behind a test that failed first, and write the lesson when the fix reveals a gap. Use once a cause is verified and a failing test exists; refuses to fix what has not been diagnosed.
-version: 0.4.0
+version: 0.5.0
 owned_spec_sections: []
 persona:
   name: Theo
@@ -48,4 +48,6 @@ the specification never claimed goes to the owner of § 3.
 - Broadening the change beyond the cause. An adjacent improvement is a separate
   item.
 - Closing a bug whose fix revealed a gap while its lesson is unwritten.
+- Closing a bug while a systemic site the root-cause record named is neither
+  fixed nor filed.
 - Weakening or deleting the test that proves the fix.

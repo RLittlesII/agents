@@ -77,6 +77,9 @@ Writes no claims, scenarios or tests. Design sections and ADRs belong to
 - Building behaviour no claim cites. Escalate to `spec-author` instead.
 - Editing a scenario, a claim, or a test to match the code.
 - Changing a contract the design did not change.
+- Filling in code what the design leaves silent — a column type, an index,
+  nullability, a state, an interface. A gap returns to `architect`, as a
+  divergence does.
 - Weakening or deleting a test.
 - A design decision bigger than the work at hand, settled quietly in a diff. It
   stops and goes to `architect`; scope changes also go to `spec-author`.

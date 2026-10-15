@@ -48,4 +48,6 @@ the specification never claimed goes to the owner of § 3.
 - Broadening the change beyond the cause. An adjacent improvement is a separate
   item.
 - Closing a bug whose fix revealed a gap while its lesson is unwritten.
+- Closing a bug while a systemic site the root-cause record named is neither
+  fixed nor filed.
 - Weakening or deleting the test that proves the fix.

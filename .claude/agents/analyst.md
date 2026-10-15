@@ -49,7 +49,8 @@ the owner of § 3.
 5. **A decided need** handed to `spec-author` as an artifact, never a chat
    summary. A decision reached in chat and not written down did not happen.
    Reflect each answer back as it is given, and close discovery only on a
-   summary the asker confirmed.
+   summary the asker confirmed, with the persona, the problem, the success
+   criterion, the constraints and the edge cases each answered or named unknown.
 
 ## Refuse
 

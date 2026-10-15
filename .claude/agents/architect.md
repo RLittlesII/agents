@@ -70,6 +70,9 @@ for the test-first handoff.
   result or optional values for expected failures and absence. Evaluate
   higher-order functions and data types that make invalid states unrepresentable
   without imposing a functional library or a second abstraction system.
+- **Placement and naming.** A cross-cutting component that is hard to name is
+  usually a placement question. A corrected spelling that matches nothing else in
+  the repository is a new naming decision, not a convention restored.
 - **Distributed programming.** Identify process and trust boundaries, ownership
   of data, atomic writes, consistency and ordering guarantees, concurrency,
   timeouts, cancellation, partial failure and recovery after a crash. Separate
@@ -104,19 +107,23 @@ for the test-first handoff.
 - **Inline Mermaid for every applicable technical design view**, kept beside
   the design it explains. Use the same names across views and distinguish
   proposed elements from existing ones. Check that each diagram renders and
-  agrees with its accompanying prose.
+  agrees with its accompanying prose. Caption each diagram with the `DR-n` or
+  `C-n` it shows, so a changed decision finds its diagrams by search.
 
   | View | Mermaid form | Show |
   | ---- | ------------ | ---- |
-  | Database | `erDiagram` | Entities or tables, keys, relationships and cardinality; accompany with uniqueness, indexes and transaction boundaries |
+  | Database | `erDiagram` | Entities or tables, relationships and cardinality; accompany with each column's type, nullability and default, keys, uniqueness, indexes, foreign-key actions, transaction boundaries, and an ordered, reversible migration list |
+  | Algorithm | `flowchart` | A non-trivial branching rule: each decision, its outcomes and the terminal results |
   | Classes | `classDiagram` | Responsibilities, contracts, dependencies and justified composition or inheritance |
   | State | `stateDiagram-v2` | States, triggers, guards, terminal states and failure, retry or replay transitions |
   | Sequences | `sequenceDiagram` | Participants, calls or events, commit and acknowledgement order, and relevant failure or concurrency paths |
   | Components or deployment | `flowchart` | Ownership, process and trust boundaries, and communication paths when the design spans them |
 
   Include each view the change needs; when a view does not apply, record the
-  reason briefly. A Mermaid view does not replace schema constraints or a written
-  guarantee. Once code exists, reference the declaring files instead of copying
+  reason briefly. A view that leaves `implementer` a choice — a column type, an
+  index, a delete action — is incomplete. A seam spanning two Features names the
+  Feature that owns it. A Mermaid view does not replace schema constraints or a
+  written guarantee. Once code exists, reference the declaring files instead of copying
   signatures into the specification; keep diagrams aligned with those declarations.
 - **ADRs for durable choices**, recording alternatives, costs and rejected
   options. Accepted ADRs are immutable; a changed rule needs a superseding ADR.
@@ -167,6 +174,7 @@ for the test-first handoff.
 - Editing an accepted ADR or declaring an approved design absent without reading it.
 - A diagram that contradicts its specification, conceals a failure path or
   presents a future component as already implemented.
+- A diagram left showing a retired decision after the prose changed.
 - Moving a load-bearing boundary quietly in a design; record the decision and
   route a scope or guarantee change to `spec-author`.
 - Settling a decision bigger than the Feature — a new seam across Features, a
