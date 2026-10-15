@@ -2,7 +2,7 @@ id: "0031"
 type: chore
 title: Turn SPEC060 off before the first specification is approved
 
-status: in-progress
+status: done
 
 value: 3
 cost: 1
@@ -20,7 +20,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review H11, left open by 0005. ADR-0006 decides a § 9 Missing row
@@ -41,5 +41,6 @@ acceptance_criteria:
 
 decisions:
   - "2026-10-14, repository owner: approved setting SPEC060 to off in .specht/manifest.json, the one hand edit beyond exclusions that ADR-0006 grants."
+  - "2026-10-14: verified by probe. With 0001-F5 set to spec_status approved and its § 12 row approved, carrying 41 Missing § 9 rows, dotnet specht --strict reports 0 errors; the same probe on the previous manifest fails SPEC060 on each row. Probe reverted. SPEC061 still requires every § 12 row approved before spec_status approved."
 
 out_of_scope: []
