@@ -108,6 +108,7 @@ The role files name no path or command of yours; the companion does.
 | Source     | `agents/*.md`, `skills/*/SKILL.md`, `commands/*.md`, `hosts/*.yaml`, `scripts/*.fsx` | edit here, in a pull request                |
 | Generated  | `.claude/agents/`, `.claude/skills/`, `.claude/commands/`, `.codex/agents/`, `.agents/skills/`, the ownership table and review-pass registry in `sdd-conventions`, the roster in `agents/PERSONAS.md` | never hand-edit; run the projector |
 | Tool-owned | `.specht/`                                                              | written by `dotnet specht init`             |
+| Work items | `.issue/`, `<area>/.issue/`                                          | one `<id>-<slug>.yml` per item; schema in `.spec/templates/item.yml` |
 | Records    | `epics/`, `.spec/adr/`, `scripts/.spec/`, `agents/.spec/`, `commands/.spec/`, `skills/.spec/` | the method applied to this repository       |
 
 ## Maintaining
@@ -132,3 +133,12 @@ one host, edit that host's overlay only. To add a command: write `commands/<name
 with the keys the [commands specification](commands/.spec/README.md) requires
 and run the projector. The decisions behind this shape are
 in [`.spec/adr/`](.spec/adr/).
+
+Work is tracked in local `.issue/` items, not GitHub issues. An item that
+delivers a Feature sits in that Feature's `<area>/.issue/`; any other sits in
+the root `.issue/`. Ids share one number space with `epics/`, and
+`.issue/.sequence` holds the last id claimed: take the next and write it back in
+the same commit. The fields, the status vocabulary and the rank definition are in
+[`.spec/templates/item.yml`](.spec/templates/item.yml). Set `status: in-progress`
+before the branch; the pull request that delivers an item sets `done` and
+`closed:`.

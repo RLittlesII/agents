@@ -81,6 +81,7 @@ fails on drift.
 | Package feeds                 | [nuget.config](nuget.config)                                   |
 | Specification sections and ids | [.specht/manifest.json](.specht/manifest.json)                |
 | Specification blanks          | [.specht/templates/](.specht/templates/)                       |
+| Work items                    | [.spec/templates/item.yml](.spec/templates/item.yml)       |
 | Projector design              | [Projection specification § 7](scripts/.spec/README.md#7-technical-design) |
 | Continuous integration        | [.github/workflows/ci.yml](.github/workflows/ci.yml)           |
 
@@ -88,5 +89,5 @@ fails on drift.
 
 ```yaml
 sdlc:
-  github_mode: true
+  github_mode: false
 ```

@@ -1,0 +1,144 @@
+# WHICH .issue/ DIRECTORY:
+#   - <home>/.issue/<id>-<slug>.yml, beside the specification this item was
+#     cut from — a sibling of that Feature's .spec/, where <home> is the
+#     directory holding both (commands/.issue/ for 0001-F3). Every
+#     `type: feature` item, any task, test or bug delivering its claims, and
+#     any refactor of that Feature's files alone.
+#   - .issue/<id>-<slug>.yml at the repository root, for an item that belongs
+#     to no Feature: a bug, spike, chore or refactor with `spec: null`. Same
+#     blast-radius split .spec/adr/ uses.
+# Ids are REPOSITORY-WIDE either way, and share one number space with the
+# epics under epics/, so a bare id in `depends_on` or `parent` resolves from
+# anywhere; find an item with **/.issue/<id>-*.yml.
+#
+# This file is the schema for a work item — the local stand-in for a GitHub
+# issue, adopted from specht's tracker. It owns DELIVERY STATE; a Feature's
+# .spec/README.md owns CONTENT. Neither duplicates the other. specht does not
+# read .issue/ and does not ship this file, so it lives here and not in
+# .specht/templates/, which is tool-owned (ADR-0004).
+#
+# A FEATURE ITEM IS CUT FROM AN EXISTING SPEC, never the reverse: the spec is
+# the agreement, this file is a slice of delivering it. So a `type: feature`
+# item REQUIRES `spec:` and the `claims:` it delivers. A bug, spike or chore
+# starts here instead — its trigger is an observation, not an agreement — and
+# leaves `spec:` null until one is written.
+#
+# A REFACTOR changes structure, never behaviour, so it delivers no claim:
+# `claims: []`, and `spec:` names the Feature whose files it restructures, or
+# null when it spans several. Its acceptance criteria cite the constraints it
+# preserves, in the form deliver-change § Exemptions fixes. A change that
+# needs a scenario amended is not a refactor.
+#
+# The whole file is YAML, with the prose fields as block scalars. .issue/.sequence
+# at the repository root holds the last id claimed: take the next number and
+# write it back in the same commit. Claim the id AFTER rebasing: it is taken
+# the moment someone else merges it - and an open pull request holds ids too,
+# so take the number above the highest any of them claims.
+#
+# .issue/.goal beside it, when present, holds the PRODUCT GOAL: one item id per
+# line, the items that are the product's finish line. Every open item on their
+# dependency path is priority `high` - see the derivation below.
+
+id: "0003" # string, so leading zeros survive. Never reused.
+type: feature # epic | feature | task | test | bug | spike | chore | refactor
+title: Convene the implement step as a command
+
+# ready-for-architecture -> ready-for-implementation -> in-progress ->
+# in-review -> done, with needs-decomposition before an epic or feature is
+# split, ready once dependencies are resolved, and blocked at any point work
+# bounces back.
+#
+# in-progress is the ONLY signal an item is taken: never pick up an item that
+# already carries it, and set it before the worktree, the branch, or the first
+# edit.
+status: ready
+
+# `value` and `risk` are AUTHORED. NOTHING DERIVED IS STORED: an item carries no
+# `priority`, `rank` or `blocks` field. Rank and priority are computed on every
+# read of the queue, from `value`, `risk`, `depends_on`, `parent` and `status`
+# alone, so neither goes stale and neither is ever set by hand. What an item
+# gates - the open items whose `depends_on` names it - is derived the same way,
+# not kept here.
+#
+# Rank orders work by what gets the product, then a Feature, to done soonest:
+# value per remaining work. `risk` stands in for effort; there is no size field.
+#
+#   cost    of an open item = its `risk`. Open is any status but done.
+#   closure of a Feature    = its open children, plus every open item they
+#                             wait on, through any number of `depends_on`
+#                             edges, in ANY Feature. A `depends_on` naming an
+#                             open Feature counts that Feature's open children.
+#   score   of a Feature    = value × 100 ÷ the summed cost of its closure,
+#                             rounded.
+#   rank    of an item      = the best score of any Feature whose closure
+#                             holds it. So a blocker carries the rank of what
+#                             it gates, and a Feature's rank climbs as its
+#                             closure shrinks.
+#
+#   priority = high   when the item is in the closure of the product goal,
+#                     the ids in .issue/.goal
+#              medium when it is in some Feature's closure
+#              low    when no Feature needs it. Its rank is its own value × 100
+#                     ÷ the cost of itself and what it waits on.
+#
+# The queue orders by priority, then rank, then how many open items wait on
+# the item, then id. The definition lives here only.
+value: 4 # 1-5. AUTHORED. Optional on a child: omit to inherit the parent's
+risk: 3 # 1-5. AUTHORED and REQUIRED, never inherited. The cost rank divides by
+
+parent: "0001" # id of the epic or feature this hangs under
+children: [] # ids carved out of this item, so its own scope shrank
+
+# HARD prerequisites, by id: this cannot be built or verified until those
+# land. Not "touches similar files" — that is no relation at all. Say why in
+# the summary.
+depends_on: []
+spikes: [] # ids of investigations this waits on
+
+# REQUIRED for type: feature — the spec this item was cut from. null for a
+# bug, spike or chore, which may produce a spec delta later. A refactor names
+# the spec whose files it restructures, or null.
+spec: commands/.spec/README.md # <home>/.spec/README.md
+
+# The § 3 claims this item delivers — ids ONLY, never the claim text, or the
+# two records disagree. They already exist: the spec was written first.
+claims:
+  - B-001
+  - B-002
+
+created: "2026-10-14"
+updated: "2026-10-14" # bump on every edit
+closed: null # the date it went done. A closed item STAYS: permanent history.
+
+# User-story shaped for a feature. For a task, test or bug, plain prose is
+# fine — do not force a story onto a chore. Name any depends_on reason here.
+summary: |
+  As a <persona> I want <capability> so that <outcome>.
+
+# CITE claim ids; do not restate them. § 3 of the spec is the one place a
+# claim's text lives, and a paraphrase with the SHALL stripped off is the form
+# that drifts from it. The shape is the id plus a FEW WORDS to locate the
+# claim — not a sentence.
+#
+# Every id in `claims:` above appears here, and the last row is the gate:
+# § 9 carries a row naming a test for each of them. A criterion that reads as
+# satisfied is not coverage.
+#
+# A bug or chore with `spec: null` states its criteria in prose here, and cites
+# claim ids once a spec delta adds them. A refactor cites the constraint ids it
+# preserves — "Constraints preserved: <epic>-F<n> C-<n>" — and no claim id.
+acceptance_criteria:
+  - "B-001 — <a few words>"
+  - "B-002 — <a few words>"
+  - "§ 9 carries a row naming a test for each id above."
+
+# Appended as the work proceeds: each decision, who made it, the date, and the
+# rejected option where there was one. A decision recorded only in chat is not
+# recorded. A decision that changes behaviour also belongs in the
+# specification — a § 3 claim is the § 3 owner's to write.
+decisions: []
+
+# What this item will not do, so the next reader does not assume it did.
+# CITE and ROUTE: name the thing, cite the spec's § 5 row that excludes it, and
+# say which sibling item or Feature owns it where one does.
+out_of_scope: []
