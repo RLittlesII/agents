@@ -6,7 +6,7 @@ type: epic
 status: in-progress
 priority: med
 milestone: null
-children: ["0001-F1", "0001-F2", "0001-F3", "0001-F4"]
+children: ["0001-F1", "0001-F2", "0001-F3", "0001-F4", "0001-F5"]
 created: "2026-10-14"
 updated: "2026-10-14"
 github_issue: null
@@ -44,12 +44,13 @@ The epic is delivered when all three hold:
 
 ## Features
 
-| Feature | Name           | Specification                                         |
-| ------- | -------------- | ----------------------------------------------------- |
-| F1      | Projection     | [`scripts/.spec/README.md`](../../scripts/.spec/README.md)   |
-| F2      | Role contract  | [`agents/.spec/README.md`](../../agents/.spec/README.md)     |
-| F3      | Commands       | [`commands/.spec/README.md`](../../commands/.spec/README.md) |
-| F4      | Skill boundary | [`skills/.spec/README.md`](../../skills/.spec/README.md)     |
+| Feature | Name           | Specification                                                      |
+| ------- | -------------- | ------------------------------------------------------------------ |
+| F1      | Projection     | [`scripts/.spec/README.md`](../../scripts/.spec/README.md)         |
+| F2      | Role contract  | [`agents/.spec/README.md`](../../agents/.spec/README.md)           |
+| F3      | Commands       | [`commands/.spec/README.md`](../../commands/.spec/README.md)       |
+| F4      | Skill boundary | [`skills/.spec/README.md`](../../skills/.spec/README.md)           |
+| F5      | Next work      | [`skills/next/.spec/README.md`](../../skills/next/.spec/README.md) |
 
 ## Placement
 

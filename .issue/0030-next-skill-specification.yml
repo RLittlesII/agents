@@ -2,7 +2,7 @@ id: "0030"
 type: chore
 title: Write the next skill's specification as Feature 0001-F5
 
-status: ready
+status: done
 
 value: 3
 risk: 3
@@ -13,13 +13,13 @@ children: []
 depends_on: []
 spikes: []
 
-spec: null
+spec: skills/next/.spec/README.md
 
 claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Carved from 0004. skills/next shipped with no specification. Hooked's
