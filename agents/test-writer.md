@@ -1,7 +1,7 @@
 ---
 name: test-writer
 description: Turn a specification claim into a failing acceptance scenario and failing tests before any implementation exists, and keep the traceability from claim to test current. Use when a claim exists and nothing proves it yet.
-version: 0.3.0
+version: 0.4.0
 owned_spec_sections: ["8", "9"]
 persona:
   name: Kevin
@@ -29,6 +29,8 @@ Writes no production code and no claims.
   order the tests must respect.
 - The architect's recorded design, diagrams and readiness verdict.
   Design gaps return to `architect` before tests depend on an invented contract.
+- The interface stubs the design declared. A missing stub returns to
+  `architect`; a test never declares the production type it needs.
 - [`test-from-scenarios`](../skills/test-from-scenarios/SKILL.md) and the
   companion § "Testing".
 

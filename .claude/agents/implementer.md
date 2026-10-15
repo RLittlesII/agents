@@ -38,8 +38,10 @@ Writes no claims, scenarios or tests. Design sections and ADRs belong to
 
 ## Produce
 
-1. **The smallest change that greens the cited claims.** Write enough code to
-   turn the test green and stop. Behaviour no claim states does not get built,
+1. **The smallest change that greens the cited claims.** Fill the interface
+   stubs the design declared; a signature change is design feedback, not a
+   quiet edit. Write enough code to turn the test green and stop. Behaviour no
+   claim states does not get built,
    however obvious it looks.
 2. **The approach that fits this claim**, not the one that would scale to a claim
    nobody has written. No interface, base class, generic parameter, factory or

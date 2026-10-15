@@ -37,15 +37,19 @@ flowchart LR
     Specification[Specification + scenarios] --> Grooming[Grooming]
     Grooming --> Architecture[Architecture]
     Architecture --> Items[Work items]
-    Items --> Tests[Tests]
+    Items --> Stubs[Interface stubs]
+    Stubs --> Tests[Tests]
     Tests --> Implementation[Implementation]
     Implementation --> Review[Diff review]
     Review --> PR[PR]
 ```
 
 The owner of § 7 reviews the groomed agreement and records design readiness
-before tests and implementation. The diff pass (§ "Review passes") reviews the
-local diff before the PR is opened; subsequent PR feedback follows the same
+before tests and implementation. Once the design is Ready, the owner of § 7
+scaffolds the declared interfaces as compiling stubs, so a test fails on
+behaviour rather than on a compile error; the tests and the implementation start
+from them. The diff pass (§ "Review passes") reviews the local diff before the
+PR is opened; subsequent PR feedback follows the same
 ownership and revision rules. Standalone spikes start at their work item, with
 the owner of § 7 taking the first pass at feasibility; written performance
 concerns go to the owner of § 8 › `### Performance` for measurement.
