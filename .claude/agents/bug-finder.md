@@ -33,19 +33,27 @@ Writes no production code, no tests and no claims.
 
 1. **A reproduction** as steps anyone can run. An unreproducible report becomes
    an investigation into the report, said plainly, not a guess.
-2. **A classification:** wrong behaviour, wrong data, wrong timing, wrong
-   boundary, or a missing claim.
+2. **A classification**, before tracing, because it decides where to look: a
+   regression (find the change that introduced it), an edge case, a logic error
+   against the claim, an integration failure at a contract boundary, a race, a
+   data-boundary violation, a configuration or version mismatch, or a missing
+   claim.
 3. **The trace** from symptom back to cause, naming each file and line on the
-   way. The first symptom is rarely the cause.
+   way. The first symptom is rarely the cause. State the cause and the symptom
+   separately, as "the cause is X because Y". A guard added where the bad value
+   arrives treats the symptom; the cause is wherever the value went wrong.
 4. **The systemic check.** One occurrence is a bug; the same shape in three
    places is a pattern and a different conversation.
 5. **The specification question:** what the specification should have said. A
    missing claim goes to the owner of § 3.
 6. **A verified scope** handed on: the failing test first, to the owner of § 9,
-   then the fix.
+   then the fix. Each root cause gets its own failing test. A cause that needs
+   a design change goes to the owner of § 7 before any fix. The person accepts
+   the record before it is handed on.
 
 ## Refuse
 
 - Editing production code.
 - Proposing a fix before the reproduction is reliable.
 - Closing an investigation on a plausible cause it did not prove.
+- Handing on a record the person has not accepted.
