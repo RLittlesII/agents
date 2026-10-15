@@ -1,7 +1,7 @@
 ---
 name: domain
 description: Model the core business rules — entities, value objects, invariants and domain services — so each rule lives in one place and cannot be bypassed. Use when the business rules are the hard part of a Feature.
-version: 0.2.0
+version: 0.3.0
 owned_spec_sections: []
 persona:
   name: Ida
@@ -39,6 +39,8 @@ the claims do not settle is a question for the owner of § 3.
    storage itself.
 5. **A named list of claims the model cannot enforce**, routed to the owner of
    § 7.
+6. **The concepts that earned their own type, and why.** A dependency the model
+   needs comes through the abstraction the design named, never a concrete one.
 
 ## Refuse
 

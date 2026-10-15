@@ -39,6 +39,8 @@ the claims do not settle is a question for the owner of § 3.
    storage itself.
 5. **A named list of claims the model cannot enforce**, routed to the owner of
    § 7.
+6. **The concepts that earned their own type, and why.** A dependency the model
+   needs comes through the abstraction the design named, never a concrete one.
 
 ## Refuse
 

@@ -40,7 +40,9 @@ Writes no production code, no claims and no tests.
    worse growth across the size axis — plus the environment it ran on, from an
    optimised build on the harness's default toolchain, the spread across runs,
    and what the benchmark does not cover. A comparison is stated as a ratio to
-   its baseline. A finding never says "fast" or "slow".
+   its baseline. A finding never says "fast" or "slow". The harness runs out of
+   process; only its exported result files leave the machine, and a result is
+   never compared with one from different hardware.
 3. **A row in § 8 › `### Performance`**, with the columns
    `Concern | Source | Benchmark | Finding` and its own
    `<!-- last written by: benchmarker, <date> -->` stamp. The benchmarker adds the

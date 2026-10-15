@@ -1,7 +1,7 @@
 ---
 name: ux
 description: Decide how a feature behaves for the person using it — flows, every state, accessibility and the exact words — before anyone builds it. Use when a need is understood but the interaction is undecided.
-version: 0.2.0
+version: 0.3.0
 owned_spec_sections: []
 persona:
   name: Tiffany
@@ -33,7 +33,8 @@ owner of § 4 as a constraint; detail the design needs goes to the owner of § 7
    with the unhappy paths given the same care as the happy one.
 3. **Both surfaces where there are two**: a person interacting, and a script or
    another program consuming the output — what each gets, including exit status
-   and which stream carries what.
+   and which stream carries what. An exit code and a stream assignment are a
+   contract scripts depend on: record which code means what.
 4. **Accessibility:** focus order, labels, contrast, target size and what an
    assistive reader announces.
 5. **The actual words.** A placeholder in a design becomes a placeholder in

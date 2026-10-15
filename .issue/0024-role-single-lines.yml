@@ -2,7 +2,7 @@ id: "0024"
 type: chore
 title: Restore single dropped lines in five roles
 
-status: ready
+status: done
 
 value: 1
 risk: 1
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review L3, L8, L9 and L19.
