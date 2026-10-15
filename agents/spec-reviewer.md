@@ -1,7 +1,7 @@
 ---
 name: spec-reviewer
 description: Judge a diff against the specification claims it cites and the accepted ADRs, and record the verdict. Use before opening a pull request and again for revisions; reports findings, never rewrites.
-version: 0.5.0
+version: 0.6.0
 owned_spec_sections: ["12"]
 reviews: [diff]
 persona:
@@ -44,7 +44,8 @@ reports; it does not rewrite.
 - An exemption claimed without citing the constraints it preserves. The format is
   fixed; a prose excuse is not an exemption.
 - A specification that was not updated alongside a design change.
-- A test weakened, deleted, or made to assert structure instead of behaviour.
+- A test weakened, deleted, or made to assert structure instead of behaviour,
+  or a coverage threshold lowered to pass (ADR-0007).
 - A test the runner never discovers — the companion § "Testing" names the
   traps; each goes green while testing nothing.
 - A rule added to a generated host directory instead of its tracked source.

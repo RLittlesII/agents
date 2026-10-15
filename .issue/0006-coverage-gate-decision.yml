@@ -2,7 +2,7 @@ id: "0006"
 type: chore
 title: Decide the coverage gate
 
-status: ready
+status: done
 
 value: 3
 risk: 2
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review H9. LTI test-writer.md:67-80 and the code-coverage skill
@@ -32,6 +32,8 @@ acceptance_criteria:
   - "If kept: test-writer.md or sdd-conventions § Your companion names where the threshold lives."
   - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
 
-decisions: []
+decisions:
+  - "2026-10-14, repository owner: the method requires a changed-line coverage threshold; each companion names the number and its gate, and test-writer cites it (ADR-0007). Rejected: dropping the gate, and fixing a number in the method."
 
-out_of_scope: []
+out_of_scope:
+  - "LTI per-claim case classes (happy, edge, corner, under-the-rug): not adopted (ADR-0007 Consequences)."
