@@ -31,6 +31,10 @@ Read [sdd-conventions](skills/sdd-conventions/SKILL.md) with the skill for the t
 This repository has no companion skill of its own beyond `sdd-conventions`;
 its paths and commands are in [README.md](README.md).
 
+**One-way rule.** A role may name skills; a skill never names a role. Say who by
+section owner or review pass instead. Projection fails on a role name under
+`skills/` outside a generated block ([0001-F4](skills/.spec/README.md)).
+
 ## Roles
 
 [Role contracts and handoffs](agents/README.md). A role file is host-free; the
@@ -47,6 +51,7 @@ them. A command names roles and skills in frontmatter only.
 - [Projection](scripts/.spec/README.md) — `0001-F1`, the projector.
 - [Role contract](agents/.spec/README.md) — `0001-F2`, what a role file declares.
 - [Commands](commands/.spec/README.md) — `0001-F3`, prompts that convene roles.
+- [Skill boundary](skills/.spec/README.md) — `0001-F4`, the one-way rule.
 - [Decisions](.spec/adr/) — repository-wide ADRs.
 
 ## Specification-driven development
