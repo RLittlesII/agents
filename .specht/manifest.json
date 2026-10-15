@@ -83,5 +83,8 @@
     "draft": "🟡",
     "blocked": "🔴",
     "approved": "approved"
+  },
+  "rules": {
+    "SPEC060": "off"
   }
 }

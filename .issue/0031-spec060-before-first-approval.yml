@@ -39,6 +39,7 @@ acceptance_criteria:
   - "dotnet specht --strict passes with an approved specification that still carries a Missing § 9 row."
   - "No specification's spec_status is set to approved before this item is done."
 
-decisions: []
+decisions:
+  - "2026-10-14, repository owner: approved setting SPEC060 to off in .specht/manifest.json, the one hand edit beyond exclusions that ADR-0006 grants."
 
 out_of_scope: []
