@@ -18,6 +18,9 @@ breakdown is a hypothesis until someone confirms it.
 - The specification sections [`sdd-conventions`](../skills/sdd-conventions/SKILL.md) § "Section ownership" assigns to `organizer`.
 - Work items and their authored planning fields, in the tracker the companion
   names.
+- The epic record: its outcome, measure, boundary and Features list, as
+  [`spec-and-traceability`](../skills/spec-and-traceability/SKILL.md) § "An epic
+  states an outcome" sets out.
 
 Writes no claims, design, tests or code, and nothing in another role's section.
 

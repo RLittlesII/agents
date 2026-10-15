@@ -21,6 +21,21 @@ specification be argued with before anyone has spent a day building from it.
 A bug, a spike or a chore begins at the item instead, and may produce a
 specification delta afterwards.
 
+## An epic states an outcome
+
+An epic scopes a set of Features and names the result they produce. It holds no
+claims, no acceptance criteria and no scenarios; those are each Feature's. An
+epic that grows a claim list is an oversized Feature.
+
+- **The measure is written before the first Feature.** How the result is
+  observed, and what value would mean it arrived. An outcome nobody can measure
+  is an ambition, and nothing downstream can tell whether it was delivered.
+- **The boundary is an exclusion list.** Each exclusion names where that work
+  goes instead, when it goes anywhere.
+- **A Feature is filed under an epic once the person confirms it belongs.**
+  The epic names its Features; a Feature names its epic in one field and never
+  restates its outcome.
+
 ## Feature naming
 
 A Feature name joining nouns or gerunds with "&" or another conjunction is a

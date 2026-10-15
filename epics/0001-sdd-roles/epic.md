@@ -32,6 +32,16 @@ whichever host its people use, and it adds only a companion skill naming its
 own paths and stack. Without this epic each repository writes its own roles per
 host, and the copies drift from each other and from the method.
 
+## Measure
+
+The epic is delivered when all three hold:
+
+1. Every role, skill and command projects to Claude Code and Codex, and
+   `dotnet fsi scripts/project.fsx --check` passes in CI.
+2. A consuming repository pulls its roles, skills and commands from this
+   repository at a tag, and keeps no hand-edited copy of any of them.
+3. Each Feature below is approved with no `Missing` row in its § 9.
+
 ## Features
 
 | Feature | Name           | Specification                                         |
