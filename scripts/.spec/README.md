@@ -17,7 +17,7 @@ author: "spec-author"
 milestone: null
 children: []
 depends_on: []
-blocks: []
+blocks: ["F3"]
 spikes: []
 created: "2026-10-14"
 updated: "2026-10-14"
@@ -94,7 +94,7 @@ this Feature removes both failure states.
 | #   | Item                                                   | Exclusion Reason                                                                 |
 | --- | ------------------------------------------------------ | -------------------------------------------------------------------------------- |
 | 1   | Installing outputs into a consuming repository         | A consumer pulls a committed path with its own tooling; see the root README       |
-| 2   | Slash commands or host-specific prompts                | No role depends on one; deferred until a host needs it                           |
+| 2   | Commands                                               | [0001-F3 Commands](../../commands/.spec/README.md)                                |
 | 3   | Hosts other than Claude Code and Codex                 | Each needs its own overlay and renderer; added as a new host, not a change here  |
 | 4   | Linting the one-way rule between skills and roles      | A separate check over `skills/`; this Feature only generates the ownership table |
 | 5   | Validating the role body's section headings            | Owned by [0001-F2 Role contract](../../agents/.spec/README.md)                   |
@@ -217,8 +217,8 @@ test.
 
 ### Performance
 
-Not measured. Sixty-four outputs from twenty-four roles and seven skills
-complete well inside the `dotnet fsi` start-up time; a concern appears only if
+Not measured. Eighty outputs from twenty-four roles, seven skills and eight
+commands complete well inside the `dotnet fsi` start-up time; a concern appears only if
 the roster grows by an order of magnitude.
 
 ## 9. Traceability Matrix
