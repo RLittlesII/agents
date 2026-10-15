@@ -40,8 +40,9 @@ specification never names an item** beyond the Tasks list it cuts, because a
 specification outlives any number of items.
 
 Where one field is genuinely needed in both places, exactly one of them is the
-source and the other is **mirrored** — never hand-edited on the mirror side. The
-companion says which fields those are.
+source and the other is **mirrored** — never hand-edited on the mirror side.
+[`sdd-conventions`](../sdd-conventions/SKILL.md) § "The spec / work-item split"
+says which fields those are; the companion names where they land.
 
 ## Filling the blank
 
@@ -98,7 +99,8 @@ questions and tasks all have a twelfth member.
 Each section has exactly one owning role. A role that needs another's section
 changed **escalates**; it does not write there. Filling someone else's section
 removes the only signal that the preceding stage is incomplete. The ownership map
-is written in one place — the companion — and nowhere else.
+is written in one place — [`sdd-conventions`](../sdd-conventions/SKILL.md)
+§ "Section ownership" — and nowhere else.
 
 A bounded review adds to recorded approval coverage; it does not replace an
 approved baseline with a delta-only verdict. Preserve the earlier review's scope
