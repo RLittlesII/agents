@@ -184,9 +184,9 @@ None.
 
 <!-- last written by: spec-reviewer, 2026-10-14 -->
 
-| Section | Status | Reviewer      | Note                                                                 |
-| ------- | ------ | ------------- | -------------------------------------------------------------------- |
-| 1-12    | 🟡     | spec-reviewer | Draft. The eight commands read for C-1 and C-3: no transitions, no technology. |
+| Section | Status | Reviewer      | Note                                                                    |
+| ------- | ------ | ------------- | ----------------------------------------------------------------------- |
+| 1-12    | 🟡     | spec-reviewer | Draft. The twelve commands read for C-1 and C-3: no transitions, no technology. |
 
 ## Tasks
 
