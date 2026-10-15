@@ -55,7 +55,7 @@ unrelated question blocks nothing.
 | ---------------- | ------------------------------------------------------------------------- |
 | Intake or decomposition | author or split the agreement; do not demand the approval it will produce |
 | Design           | §§ 1-5 approved for the linked claims, no open question blocking them    |
-| Implementation   | §§ 1-7 approved, the design Ready, no blocking question, and every prerequisite delivered |
+| Implementation   | §§ 1-7 approved and the design Ready for the linked claims, no question blocking them, and every prerequisite delivered |
 | Spike            | a bounded question and a time box; the status alone authorizes nothing more |
 | Taken            | occupied: show it and reserve its lane; offer no new start there          |
 
