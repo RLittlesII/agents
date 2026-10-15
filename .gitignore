@@ -1,0 +1,10 @@
+.claude/*
+!.claude/agents/
+!.claude/skills/
+.codex/*
+!.codex/agents/
+.agents/*
+!.agents/skills/
+.artifacts/
+.DS_Store
+.idea/

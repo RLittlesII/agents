@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "specht.tool": {
+      "version": "0.1.90",
+      "commands": [
+        "specht"
+      ],
+      "rollForward": false
+    }
+  }
+}
