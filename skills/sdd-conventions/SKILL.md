@@ -39,16 +39,16 @@ flowchart LR
     Architecture --> Items[Work items]
     Items --> Tests[Tests]
     Tests --> Implementation[Implementation]
-    Implementation --> Review[Review: spec-reviewer]
+    Implementation --> Review[Diff review]
     Review --> PR[PR]
 ```
 
-The architect reviews the groomed agreement and records design readiness before
-tests and implementation. `spec-reviewer` reviews the local diff before the PR is
-opened; subsequent PR feedback follows the same ownership and revision rules.
-Standalone spikes start at their work item, with the architect taking the first
-pass at feasibility; written performance concerns go to `benchmarker` for
-measurement.
+The owner of § 7 reviews the groomed agreement and records design readiness
+before tests and implementation. The diff pass (§ "Review passes") reviews the
+local diff before the PR is opened; subsequent PR feedback follows the same
+ownership and revision rules. Standalone spikes start at their work item, with
+the owner of § 7 taking the first pass at feasibility; written performance
+concerns go to the owner of § 8 › `### Performance` for measurement.
 
 ## Section ownership
 
@@ -78,8 +78,8 @@ table.
 | Scoring                   | derived — recompute, never hand-edit |
 <!-- END GENERATED: section-ownership -->
 
-The `.feature` file belongs to `spec-author`; its step definitions belong to
-`test-writer`.
+The `.feature` file belongs to the owner of § 3; its step definitions belong to
+the owner of § 9.
 
 ## Review passes
 

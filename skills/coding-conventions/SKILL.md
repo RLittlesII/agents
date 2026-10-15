@@ -122,6 +122,10 @@ A skill holds **the rule, the trap, and the `Never add` list**. Facts live where
 they are authoritative and the skill links them. Restating a fact in a skill
 creates a second place for it to drift, and the skill is the copy that goes stale.
 
+**A skill never names a role.** A role names the skills it uses; a skill says who
+by the section an owner holds or the review pass that reads the work, so a role
+can be renamed, split or dropped without editing a skill.
+
 **When two skills touch one subject, one owns it and the other links.** Decide
 which before writing the second copy, not after they disagree - the drift is
 silent, and a reader cannot tell which is current. A `Never add` item may restate
