@@ -51,6 +51,12 @@ When several questions are open, ask them together: at most three per pass, one
 theme each, as concrete options grounded in what you found. When an answer
 comes back, say whether it fully resolves the question before acting on it.
 
+## When nobody can answer
+
+A halt is a return, not a wait. Hand back each open question word for word,
+with the work finished so far. Never pick a default, and never produce output
+that assumes the answer.
+
 ## An exploratory comment is not a decision
 
 "What if we…", "another thought…", a reference to how a previous project did it —
@@ -103,3 +109,4 @@ An answer that exists only in conversation was never recorded.
 - An exploratory comment treated as ratified.
 - A note in a third document contradicting a specification it does not cite.
 - A ruling that names the winning option but not the rule it follows.
+- A default picked, or output produced, while a blocking question is unanswered.

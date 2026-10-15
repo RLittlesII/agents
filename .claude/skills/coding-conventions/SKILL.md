@@ -97,6 +97,8 @@ with a budget.
   the question, in at most 25 words. No preamble, no restatement, no praise.
   Quote the decisive line, never the log. Nothing at all when there is nothing.
   This holds wherever the output lands: a file, a tracker item, the terminal.
+- **State a scope by what it covers**, never by position. "The bullets below"
+  breaks the first time something is inserted between them.
 
 Terse is not curt: keep the fact that costs real damage when missed, and the
 trap that is not obvious. Compression stops where a reader would guess wrong.

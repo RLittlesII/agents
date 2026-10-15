@@ -87,10 +87,16 @@ checks, and name the evidence in the lesson.
 4. **Every claim about another document is checked against it**, and the line
    cited. The specification delta names a claim that exists.
 
+A forwarded finding shows that something happened, not what happened: its
+framing is a claim to check like any other.
+
 Search the recorded lessons for the topic first: a lesson already recorded gets a
 correction, not a duplicate. A correction is appended, dated, below the original;
 the original is never edited, and the correction re-runs all four checks on the
-whole lesson.
+whole lesson. A repeated mistake records why the existing lesson did not prevent
+it: missing, misfiled, or not consulted. A lesson no correction can save, such as
+one teaching a fabricated incident, is marked withdrawn where it stands and
+superseded by a lesson about a real one.
 
 ## Never add
 

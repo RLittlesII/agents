@@ -64,6 +64,10 @@ rules. Standalone spikes start at their work item, with the owner of § 7 taking
 the first pass at feasibility; written performance concerns go to the owner of
 § 8 › `### Performance` for measurement.
 
+A shortcut may skip authoring, never approval. A gate tied to an approval is met
+only when that approval exists: a filled section is content, not consent, and an
+earlier approval is evidence, not this person's consent now.
+
 ## Delivery state
 
 Delivery state lives in the tracker; the companion names the field and its

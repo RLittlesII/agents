@@ -247,3 +247,5 @@ own **new** ids; an id already cited anywhere stays.
 - A green coverage signal for a test that does not exist.
 - A hand-kept index of specifications, decisions or lessons.
 - An item that a specification names as its owner.
+- A `Rule:` inserted mid-file in a `.feature`. It adopts every scenario after it;
+  append it instead.
