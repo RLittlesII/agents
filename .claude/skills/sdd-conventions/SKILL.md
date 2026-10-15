@@ -63,23 +63,23 @@ does not write there. The table is generated from each role's
 table.
 
 <!-- BEGIN GENERATED: section-ownership -->
-| Section                   | Owner                                |
-| ------------------------- | ------------------------------------ |
-| 1. Business Goal          | `spec-author`                        |
-| 2. User Needs             | `spec-author`                        |
-| 3. Acceptance Criteria    | `spec-author`                        |
-| 4. Constraints            | `spec-author`                        |
-| 5. Out of Scope           | `spec-author`                        |
-| 6. Concern Separation     | `architect`                          |
-| 7. Technical Design       | `architect`                          |
-| 8. Testing Strategy       | `test-writer`                        |
-| 8. › `### Performance`    | `benchmarker`                        |
-| 9. Traceability Matrix    | `test-writer`                        |
-| 10. Lessons / Spec Deltas | `spec-author`                        |
-| 11. Open Questions        | whoever is blocked                   |
-| 12. Sign-off              | `spec-reviewer`                      |
-| Tasks                     | `organizer`                          |
-| Scoring                   | derived — recompute, never hand-edit |
+| Section                   | Owner              |
+| ------------------------- | ------------------ |
+| 1. Business Goal          | `spec-author`      |
+| 2. User Needs             | `spec-author`      |
+| 3. Acceptance Criteria    | `spec-author`      |
+| 4. Constraints            | `spec-author`      |
+| 5. Out of Scope           | `spec-author`      |
+| 6. Concern Separation     | `architect`        |
+| 7. Technical Design       | `architect`        |
+| 8. Testing Strategy       | `test-writer`      |
+| 8. › `### Performance`    | `benchmarker`      |
+| 9. Traceability Matrix    | `test-writer`      |
+| 10. Lessons / Spec Deltas | `spec-author`      |
+| 11. Open Questions        | whoever is blocked |
+| 12. Sign-off              | `spec-reviewer`    |
+| Tasks                     | `organizer`        |
+| Scoring                   | `organizer`        |
 <!-- END GENERATED: section-ownership -->
 
 The `.feature` file belongs to the owner of § 3; its step definitions belong to

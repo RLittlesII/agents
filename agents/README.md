@@ -4,7 +4,6 @@ description: The documented role contracts that own the specification chain, and
 type: reference
 unowned_spec_sections:
   "11": whoever is blocked
-  Scoring: derived — recompute, never hand-edit
 review_units:
   design: a design, before implementation exists
   diff: a diff, against the claims and decisions it cites

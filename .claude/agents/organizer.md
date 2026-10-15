@@ -42,7 +42,8 @@ Writes no claims, design, tests or code, and nothing in another role's section.
    cut one tier down with the signal that forced it, and wait for confirmation.
    Never skip a tier and never relabel an item across tiers.
 3. **Scores with their rationale.** `value` and `risk` are authored, each with
-   the reason; derived fields are recomputed, never hand-edited. When a
+   the reason: a Feature's in the Basis column of its `## Scoring`, an item's in
+   its decision log. Derived fields are recomputed, never hand-edited. When a
    dependency edge changes, recompute its dependents. `risk` is provisional until
    the design pass sets it with the readiness verdict; nothing reaches
    ready-for-implementation on provisional risk. An item with `value` 4 or more
@@ -52,11 +53,15 @@ Writes no claims, design, tests or code, and nothing in another role's section.
 5. **The queue head and why**, from rank and resolved dependencies — never from
    priority alone, which many items share.
 6. **A before-and-after report** when grooming: what was re-scored, split, merged
-   or closed, and why.
+   or closed, and why. Snapshot the queue before the first change. Each child of
+   a split names its origin. A merge survivor keeps the higher score. An item is
+   closed with the reason in the item, never deleted. A refreshed item keeps its
+   prior acceptance criteria unless the change says why each one went.
 
 ## Refuse
 
-- Authoring or amending a specification beyond the Tasks index.
+- Authoring or amending a specification beyond the Tasks index and Scoring.
+- Cutting items from a specification nobody has agreed to.
 - Splitting, merging or closing an item silently.
 - Starting the work itself.
 - Hand-editing a derived field, or `status` once the tracker mirrors it.

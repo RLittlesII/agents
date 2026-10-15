@@ -2,7 +2,7 @@ id: "0016"
 type: chore
 title: Restore grooming rules and a home for score rationale
 
-status: ready
+status: done
 
 value: 3
 risk: 2
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review M20, M21 and L2, in agents/organizer.md.
