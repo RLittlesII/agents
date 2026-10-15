@@ -6,7 +6,7 @@ type: overview
 
 # agents
 
-Twenty-four role contracts, seven method skills and eight commands for
+Twenty-four role contracts, seven method skills and eleven commands for
 specification-driven development, written once, host-free, and projected into
 the files each AI host reads. The repository carries no product technology and
 no tool-specific knowledge: a consuming repository adds a companion skill that
@@ -77,8 +77,11 @@ roles' contracts decide what each does. Type `/<name>` in Claude Code or
 | ------------------------------------- | ----------------------------------------- | ---------------------------------------------------- |
 | [`spec`](commands/spec.md)            | analyst, spec-author                      | a raw ask taken to a written agreement               |
 | [`design`](commands/design.md)        | architect, domain, test-writer, critic    | a design, critiqued before anything is built on it   |
+| [`design-ui`](commands/design-ui.md)  | analyst, ux, ui                           | a screen or flow decided, then built                 |
 | [`test`](commands/test.md)            | test-writer, tester                       | failing tests from claims, then a run report         |
+| [`implement`](commands/implement.md)  | domain, implementer, ui                   | failing tests made green inside the design           |
 | [`review`](commands/review.md)        | spec-reviewer, adversary                  | a diff judged against its claims                     |
+| [`ship`](commands/ship.md)            | spec-reviewer, adversary, auditor, release | the final gate, then a confirmed release             |
 | [`bug`](commands/bug.md)              | bug-finder, test-writer, bug-fixer        | a failure reproduced, pinned, fixed and learned from |
 | [`groom`](commands/groom.md)          | organizer                                 | the queue re-scored and ranked                       |
 | [`document`](commands/document.md)    | document-writer                           | documents repaired against the repository            |

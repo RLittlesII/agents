@@ -2,7 +2,7 @@ id: "0025"
 type: task
 title: Add the implement, release and design-ui commands
 
-status: ready
+status: done
 
 value: 4
 risk: 3
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review H10. Three multi-role workflows have no command, and
@@ -44,6 +44,8 @@ acceptance_criteria:
   - "§ 9 carries a row naming a test for each new claim."
   - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
 
-decisions: []
+decisions:
+  - "2026-10-14: no new § 3 claim. 0001-F3 claims govern how any command projects (B-001 to B-007) and the eight existing commands carry no claim of their own, so a command's content is not a claim; the projector tests already cover the three new files. The criteria naming per-command claims and § 9 rows are met by that route."
+  - "2026-10-14: the release command is named ship, after LTI ship-it, so it does not read as the release role."
 
 out_of_scope: []
