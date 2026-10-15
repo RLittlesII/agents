@@ -1,6 +1,6 @@
 // Projection: turn host-free role contracts plus a host overlay into host-native
 // agent files, copy skills to each host's discovery directory, and generate the
-// section-ownership table. No top-level effects: project.fsx and
+// section-ownership table and the persona roster. No top-level effects: project.fsx and
 // project.tests.fsx load this file and call into it.
 //
 // Agreement: scripts/.spec/README.md. Claims are cited as B-00n in comments.
@@ -96,11 +96,15 @@ let splitFrontmatter (path: string) (text: string) =
 
 // ---------------------------------------------------------------- Roles
 
+/// 0001-F2 B-007: the name a role signs its prose with, and how that prose reads.
+type Persona = { Name: string; Voice: string }
+
 type Role =
     { Name: string
       Description: string
       Version: string
       OwnedSections: string list
+      Persona: Persona option
       Body: string
       Source: string }
 
@@ -132,14 +136,28 @@ let loadRole (root: string) (path: string) : Role =
     for section in owned do
         if not (sectionKey.IsMatch section) then
             fail (sprintf "%s: owned section '%s' must be \"<n>\", \"Tasks\", \"Scoring\" or \"<n>/<Subsection>\"" source section)
+    // 0001-F2 B-007: a persona carries a name and a voice, one line each.
+    let persona =
+        match tryGet "persona" pairs with
+        | None -> None
+        | Some (Mapping keys) ->
+            let text key =
+                match tryGet key keys with
+                | Some (Scalar s) when not (String.IsNullOrWhiteSpace s) && not (s.Contains "\n") -> s
+                | _ -> fail (sprintf "%s: persona.%s is required and must be a single line" source key)
+            Some { Name = text "name"; Voice = text "voice" }
+        | Some _ -> fail (sprintf "%s: persona must be a mapping of name and voice" source)
     { Name = name; Description = description; Version = version
-      OwnedSections = owned; Body = body; Source = source }
+      OwnedSections = owned; Persona = persona; Body = body; Source = source }
+
+/// Files in agents/ that are not roles: the roles index and the persona roster.
+let notRoles = set [ "README.md"; "PERSONAS.md" ]
 
 let loadRoles (root: string) : Role list =
     let directory = Path.Combine(root, "agents")
     if not (Directory.Exists directory) then fail "agents/ is missing"
     Directory.EnumerateFiles(directory, "*.md")
-    |> Seq.filter (fun f -> Path.GetFileName f <> "README.md")
+    |> Seq.filter (fun f -> not (notRoles.Contains(Path.GetFileName f)))
     |> Seq.sort
     |> Seq.map (loadRole root)
     |> List.ofSeq
@@ -290,14 +308,60 @@ let renderOwnershipTable (rows: (string * string) list) =
       for a, b in rows do yield line a b ]
     |> String.concat "\n"
 
-let beginMarker = "<!-- BEGIN GENERATED: section-ownership -->"
-let endMarker = "<!-- END GENERATED: section-ownership -->"
+let markers (block: string) =
+    sprintf "<!-- BEGIN GENERATED: %s -->" block, sprintf "<!-- END GENERATED: %s -->" block
 
-let replaceGenerated (text: string) (block: string) =
-    let start = text.IndexOf beginMarker
-    let finish = text.IndexOf endMarker
-    if start < 0 || finish < 0 || finish < start then fail "skills/sdd-conventions/SKILL.md lacks the section-ownership markers"
-    text.Substring(0, start + beginMarker.Length) + "\n" + block + "\n" + text.Substring finish
+let beginMarker, endMarker = markers "section-ownership"
+
+/// Replace the text between a named pair of generated markers in `file`.
+let replaceGenerated (file: string) (block: string) (text: string) (content: string) =
+    let opening, closing = markers block
+    let start = text.IndexOf opening
+    let finish = text.IndexOf closing
+    if start < 0 || finish < 0 || finish < start then fail (sprintf "%s lacks the %s markers" file block)
+    text.Substring(0, start + opening.Length) + "\n" + content + "\n" + text.Substring finish
+
+// ---------------------------------------------------------------- Personas
+
+/// 0001-F2 B-007: a persona name belongs to one role.
+let validatePersonas (roles: Role list) =
+    roles
+    |> List.choose (fun r -> r.Persona |> Option.map (fun p -> p.Name, r.Name))
+    |> List.groupBy fst
+    |> List.iter (fun (persona, holders) ->
+        match holders with
+        | (_, first) :: (_, second) :: _ ->
+            fail (sprintf "persona '%s' is declared by both '%s' and '%s'; a persona signs for one role" persona first second)
+        | _ -> ())
+
+/// B-011: the persona roster, one row per persona, sorted by persona name.
+let renderPersonaTable (roles: Role list) =
+    let rows =
+        roles
+        |> List.choose (fun r -> r.Persona |> Option.map (fun p -> p.Name, sprintf "[`%s`](%s.md)" r.Name r.Name, p.Voice))
+        |> List.sortBy (fun (persona, _, _) -> persona)
+    let width f header = rows |> List.map (fun r -> String.length (f r)) |> List.fold max (String.length header)
+    let w1 = width (fun (a, _, _) -> a) "Persona"
+    let w2 = width (fun (_, b, _) -> b) "Role"
+    let w3 = width (fun (_, _, c) -> c) "Voice"
+    let line (a: string) (b: string) (c: string) = sprintf "| %s | %s | %s |" (a.PadRight w1) (b.PadRight w2) (c.PadRight w3)
+    [ yield line "Persona" "Role" "Voice"
+      yield sprintf "| %s | %s | %s |" (String('-', w1)) (String('-', w2)) (String('-', w3))
+      for a, b, c in rows do yield line a b c ]
+    |> String.concat "\n"
+
+/// B-012: the line that tells a role which name to sign with. Machine-read
+/// stamps keep the role name, so a tool never has to map one to the other.
+let personaLine (role: Role) =
+    role.Persona
+    |> Option.map (fun p ->
+        sprintf "Persona: **%s**. %s Sign the prose you write — reports, findings, notes — as %s; a stamp a tool reads, such as `last written by` or `author`, keeps the role name `%s`."
+            p.Name p.Voice p.Name role.Name)
+
+/// Put a lead paragraph ahead of a body, separated by one blank line whether or
+/// not the body opens with its own.
+let private lead (paragraph: string) (body: string) =
+    paragraph + (if body.StartsWith "\n" then "\n" else "\n\n") + body
 
 // ---------------------------------------------------------------- Rendering
 
@@ -341,27 +405,31 @@ let tomlValue (value: Value) =
     | Mapping _ -> fail "a nested mapping cannot be emitted as an overlay key"
 
 /// B-001: Claude frontmatter is name, description, then the overlay; the body
-/// follows verbatim.
+/// follows verbatim. B-012: a persona line, when the role has one, comes first.
 let renderClaude (host: Host) (role: Role) =
     let keys = overlay host role
+    let body =
+        match personaLine role with
+        | Some line -> "\n" + lead line role.Body
+        | None -> role.Body
     [ yield "---"
       yield "name: " + yamlScalar role.Name
       yield "description: " + "\"" + role.Description.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\""
       for key, value in keys do yield key + ": " + yamlValue value
       yield "---" ]
     |> String.concat "\n"
-    |> fun front -> front + "\n" + role.Body
+    |> fun front -> front + "\n" + body
 
 /// B-002: Codex TOML is name, description, developer_instructions, then the
-/// overlay. The instructions are the prefix, one blank line, and the body
-/// verbatim; the body keeps the newline that follows the frontmatter, so the
-/// text after the prefix is byte-equal to the role body.
+/// overlay. The instructions are the prefix, the persona line (B-012), one blank
+/// line, and the body verbatim; the body keeps the newline that follows the
+/// frontmatter, so the text after the lead is byte-equal to the role body.
 let renderCodex (host: Host) (role: Role) =
-    let prefix =
-        host.InstructionsPrefix
-        |> Option.map (fun p -> p.Replace("{source}", role.Source) + (if role.Body.StartsWith "\n" then "\n" else "\n\n"))
-        |> Option.defaultValue ""
-    let instructions = prefix + role.Body
+    let prefix = host.InstructionsPrefix |> Option.map (fun p -> p.Replace("{source}", role.Source))
+    let instructions =
+        match List.choose id [ prefix; personaLine role ] with
+        | [] -> role.Body
+        | paragraphs -> lead (String.concat "\n\n" paragraphs) role.Body
     [ yield "name = " + tomlString role.Name
       yield "description = " + tomlString role.Description
       yield "developer_instructions = " + tomlString instructions
@@ -389,14 +457,18 @@ let plan (root: string) : Plan =
     let roles = loadRoles root
     if roles.IsEmpty then fail "agents/ holds no role files"
     validateSkillLinks root roles
+    validatePersonas roles
     let hosts = [ loadHost root "claude"; loadHost root "codex" ]
     for host in hosts do validateHostRoles host roles
     let unowned = loadUnowned root
     let template = loadTemplateSections root
     let table = ownershipRows roles unowned template |> renderOwnershipTable
-    let companion = Path.Combine(root, "skills", "sdd-conventions", "SKILL.md")
-    if not (File.Exists companion) then fail "skills/sdd-conventions/SKILL.md is missing"
-    let companionText = replaceGenerated (readText companion) table
+    let generated (rel: string) block content =
+        let path = Path.Combine(root, rel)
+        if not (File.Exists path) then fail (sprintf "%s is missing" rel)
+        replaceGenerated rel block (readText path) content
+    let companionText = generated "skills/sdd-conventions/SKILL.md" "section-ownership" table
+    let personasText = generated "agents/PERSONAS.md" "personas" (renderPersonaTable roles)
     let skillsDirectory = Path.Combine(root, "skills")
     let skills =
         Directory.EnumerateDirectories skillsDirectory
@@ -405,6 +477,7 @@ let plan (root: string) : Plan =
         |> List.ofSeq
     let outputs =
         [ yield "skills/sdd-conventions/SKILL.md", bytes companionText
+          yield "agents/PERSONAS.md", bytes personasText
           for host in hosts do
               for role in roles do
                   yield host.Output.Replace("{name}", role.Name), bytes (renderAgent host role)

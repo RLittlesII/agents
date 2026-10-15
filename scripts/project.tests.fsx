@@ -1,6 +1,6 @@
 // Tests for the projector. Names cite the claims they cover:
-//   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B010_
-//   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B006_
+//   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B012_
+//   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B007_
 //
 //   dotnet fsi scripts/project.tests.fsx        exit code = number of failures
 
@@ -62,8 +62,20 @@ unowned_spec_sections:
 ---
 """
 
+let personas = """---
+title: Personas
+---
+
+<!-- BEGIN GENERATED: personas -->
+<!-- END GENERATED: personas -->
+"""
+
 let role name (owned: string) (body: string) =
     sprintf "---\nname: %s\ndescription: Does %s things.\nversion: 0.1.0\nowned_spec_sections: %s\n---\n%s" name name owned body
+
+/// A role with a persona block; `persona` is the YAML under `persona:`.
+let personaRole name (owned: string) (persona: string) (body: string) =
+    sprintf "---\nname: %s\ndescription: Does %s things.\nversion: 0.1.0\nowned_spec_sections: %s\npersona:\n%s\n---\n%s" name name owned persona body
 
 let alphaBody = "\n# Alpha\n\nReads [`sdd-conventions`](../skills/sdd-conventions/SKILL.md).\n"
 let betaBody = "\n# Beta\n\nOwns nothing.\n"
@@ -73,8 +85,9 @@ let write (root: string) (rel: string) (text: string) =
     Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
     File.WriteAllText(path, text, UTF8Encoding(false))
 
-/// A synthetic checkout: two roles, both hosts, one skill, the companion and a
-/// template with three numbered sections plus Tasks and Scoring.
+/// A synthetic checkout: two roles, both hosts, one skill, the companion, an
+/// empty persona roster and a template with three numbered sections plus Tasks
+/// and Scoring.
 let checkout () =
     let root = Path.Combine(Path.GetTempPath(), "projection-tests", Guid.NewGuid().ToString("N"))
     Directory.CreateDirectory root |> ignore
@@ -84,6 +97,7 @@ let checkout () =
     write root "skills/sdd-conventions/SKILL.md" companion
     write root "skills/sdd-conventions/references/extra.md" "extra\n"
     write root "agents/README.md" readme
+    write root "agents/PERSONAS.md" personas
     write root "agents/alpha.md" (role "alpha" "[\"1\", \"2\", \"Tasks\"]" alphaBody)
     write root "agents/beta.md" (role "beta" "[\"3\"]" betaBody)
     root
@@ -276,6 +290,44 @@ let B010_RoleFileCarriesHostKey_FailsNamingTheKey () =
         contains (sprintf "host key '%s'" name) message
         nothingWritten root
 
+let B011_Personas_WriteRosterBetweenMarkers () =
+    let root = checkout ()
+    write root "agents/alpha.md" (personaRole "alpha" "[\"1\", \"2\", \"Tasks\"]" "  name: Zed\n  voice: Terse." alphaBody)
+    write root "agents/beta.md" (personaRole "beta" "[\"3\"]" "  name: Abe\n  voice: \"Asks first — then acts.\"" betaBody)
+    apply root (plan root) |> ignore
+    let text = read root "agents/PERSONAS.md"
+    let expected =
+        String.concat "\n"
+            [ "<!-- BEGIN GENERATED: personas -->"
+              "| Persona | Role                | Voice                   |"
+              "| ------- | ------------------- | ----------------------- |"
+              "| Abe     | [`beta`](beta.md)   | Asks first — then acts. |"
+              "| Zed     | [`alpha`](alpha.md) | Terse.                  |"
+              "<!-- END GENERATED: personas -->" ]
+    contains expected text
+    contains "title: Personas" text
+    // Idempotent, and a role without a persona has no row.
+    equal text (Encoding.UTF8.GetString (plan root).Outputs.["agents/PERSONAS.md"])
+    write root "agents/beta.md" (role "beta" "[\"3\"]" betaBody)
+    let without = Encoding.UTF8.GetString (plan root).Outputs.["agents/PERSONAS.md"]
+    if without.Contains "Abe" then failwith "a role without a persona has a row"
+    // The roster is not a role.
+    equal [ "alpha"; "beta" ] (loadRoles root |> List.map (fun r -> r.Name))
+
+let B012_Persona_PrecedesVerbatimBodyOnBothHosts () =
+    let root = checkout ()
+    write root "agents/alpha.md" (personaRole "alpha" "[\"1\", \"2\", \"Tasks\"]" "  name: Zed\n  voice: Terse." alphaBody)
+    apply root (plan root) |> ignore
+    let line = "Persona: **Zed**. Terse. Sign the prose you write — reports, findings, notes — as Zed; a stamp a tool reads, such as `last written by` or `author`, keeps the role name `alpha`."
+    let claude = read root ".claude/agents/alpha.md"
+    equal ("---\nname: alpha\ndescription: \"Does alpha things.\"\nmodel: opus\neffort: high\nskills: [sdd-conventions]\n---\n\n" + line + "\n" + alphaBody) claude
+    let codex = read root ".codex/agents/alpha.toml"
+    let instructions = codex.Split('\n') |> Array.find (fun l -> l.StartsWith "developer_instructions = ")
+    let prefix = "Read AGENTS.md first. The authoritative role source is agents/alpha.md. Resolve its relative links against that path in the repository."
+    equal (prefix + "\n\n" + line + "\n" + alphaBody) (decodeToml (instructions.Substring "developer_instructions = ".Length))
+    // A role without a persona is unchanged: beta's body follows the frontmatter directly.
+    contains ("---\n" + betaBody) (read root ".claude/agents/beta.md")
+
 let C3_Outputs_AreDeterministicAcrossRuns () =
     let root = checkout ()
     let first = (plan root).Outputs
@@ -337,6 +389,31 @@ let F2_B006_EverySkillLinkResolves () =
     contains "agents/beta.md: links skill 'ghost'" message
     nothingWritten root
 
+let F2_B007_PersonaRequiresNameAndVoiceAndIsUnique () =
+    // The real roster: every persona loads and no name is shared.
+    let roles = loadRoles repoRoot
+    validatePersonas roles
+    for r in roles do
+        match r.Persona with
+        | Some p when p.Name = r.Name -> failwithf "%s signs with its role name" r.Name
+        | _ -> ()
+    // A persona without a voice fails naming the role and the key.
+    let root = checkout ()
+    write root "agents/beta.md" (personaRole "beta" "[\"3\"]" "  name: Abe" betaBody)
+    contains "agents/beta.md: persona.voice is required" (expectFailure (fun () -> plan root))
+    nothingWritten root
+    // A persona that is not a mapping fails.
+    let root2 = checkout ()
+    write root2 "agents/beta.md" (role "beta" "[\"3\"]\npersona: Abe" betaBody)
+    contains "agents/beta.md: persona must be a mapping" (expectFailure (fun () -> plan root2))
+    // Two roles signing with one name fails naming the persona and both roles.
+    let root3 = checkout ()
+    write root3 "agents/alpha.md" (personaRole "alpha" "[\"1\", \"2\", \"Tasks\"]" "  name: Abe\n  voice: Terse." alphaBody)
+    write root3 "agents/beta.md" (personaRole "beta" "[\"3\"]" "  name: Abe\n  voice: Calm." betaBody)
+    let message = expectFailure (fun () -> plan root3)
+    contains "persona 'Abe' is declared by both 'alpha' and 'beta'" message
+    nothingWritten root3
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
@@ -352,12 +429,15 @@ let tests : (string * (unit -> unit)) list =
       nameof B009_OverlayNamesMissingRole_Fails, B009_OverlayNamesMissingRole_Fails
       nameof B009b_RoleNameDiffersFromFileName_Fails, B009b_RoleNameDiffersFromFileName_Fails
       nameof B010_RoleFileCarriesHostKey_FailsNamingTheKey, B010_RoleFileCarriesHostKey_FailsNamingTheKey
+      nameof B011_Personas_WriteRosterBetweenMarkers, B011_Personas_WriteRosterBetweenMarkers
+      nameof B012_Persona_PrecedesVerbatimBodyOnBothHosts, B012_Persona_PrecedesVerbatimBodyOnBothHosts
       nameof C3_Outputs_AreDeterministicAcrossRuns, C3_Outputs_AreDeterministicAcrossRuns
       nameof F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey, F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey
       nameof F2_B002_EveryTemplateSectionHasExactlyOneOwner, F2_B002_EveryTemplateSectionHasExactlyOneOwner
       nameof F2_B003_EveryRoleBodyCarriesTheFourSections, F2_B003_EveryRoleBodyCarriesTheFourSections
       nameof F2_B005_LookForRoleCarriesReport, F2_B005_LookForRoleCarriesReport
-      nameof F2_B006_EverySkillLinkResolves, F2_B006_EverySkillLinkResolves ]
+      nameof F2_B006_EverySkillLinkResolves, F2_B006_EverySkillLinkResolves
+      nameof F2_B007_PersonaRequiresNameAndVoiceAndIsUnique, F2_B007_PersonaRequiresNameAndVoiceAndIsUnique ]
 
 let mutable failures = 0
 for name, test in tests do
