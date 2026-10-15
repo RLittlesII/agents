@@ -54,6 +54,7 @@ them. A command names roles and skills in frontmatter only.
 - [Specification model](skills/spec-and-traceability/SKILL.md).
 - [Workflow](skills/sdd-conventions/SKILL.md#workflow).
 - [Section ownership](skills/sdd-conventions/SKILL.md#section-ownership).
+- [Review passes](skills/sdd-conventions/SKILL.md#review-passes).
 - [ID schemes](skills/sdd-conventions/SKILL.md#id-schemes).
 - [Spec layout and the checker](skills/sdd-conventions/SKILL.md#spec-layout).
 
