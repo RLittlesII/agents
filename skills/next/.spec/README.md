@@ -54,7 +54,7 @@ missing estimate or an unreadable tracker as zero or as permission to start.
 
 | ID  | Assumption                                                                                                              |
 | --- | ----------------------------------------------------------------------------------------------------------------------- |
-| A-1 | The companion `<project>-conventions` § "Next work" names tracker access, planning metadata, ranking inputs and reservations. |
+| A-1 | The companion `<project>-conventions` § "Next work" names tracker access, the identity contract, planning metadata, ranking inputs, shared-edit evidence, reservations and where standalone work appears. |
 | A-2 | Every specification read follows the method's layout: § 11 names the claims each question blocks and § 12 records approval by section. |
 
 ## 3. Acceptance Criteria

@@ -234,7 +234,7 @@ it must answer for each of these:
 | Testing      | the test projects, tiers, how scenarios execute and whether any are documentation only, assertion form, naming form and discovery traps, the changed-line coverage threshold and its gate |
 | Questions    | where answers are recorded and which questions are already settled     |
 | Specs        | where specifications live when the layout differs from § "Spec layout", the glossary and the epic blank |
-| Next work    | tracker access, planning metadata, ranking inputs and reservations     |
+| Next work    | tracker access, the identity contract, planning metadata, ranking inputs, shared-edit evidence, reservations and where standalone work appears |
 | Benchmarking | the harness, where benchmarks live and the measurement traps           |
 
 A companion restates no method rule. It says where the rule lands.
