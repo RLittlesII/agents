@@ -133,9 +133,31 @@ a rule as a single prohibition; a second explanation of it may not. Where the
 ownership boundaries sit is written once, in the project's own instructions —
 its companion skill names the file.
 
+## Regression check
+
+A green build does not prove nothing broke. Before calling a change done, read
+the whole diff against its base, not the files you remember touching:
+
+1. **Deletions before additions.** For every removed line, ask where that
+   behaviour went before reading what replaced it.
+2. **Every changed public signature against its call sites.** A dynamic call
+   site or a serialized contract breaks without a compiler error.
+3. **Each class of silent break:** a branch, guard or side effect dropped by a
+   refactor; a public member renamed, removed or narrowed; a field crossing a
+   process boundary renamed, retyped or removed; the same input now giving a
+   different result, exception or ordering; a dependency or configuration
+   default that changed behaviour; what is thrown, swallowed, wrapped or
+   retried; a test in the same diff loosened rather than failing honestly.
+4. **One level of blast radius** for each contract that changed.
+
+An accidental break blocks the change: fix it. An intentional one goes to the
+owner of § 7 for a versioning or migration path before it merges. A large or
+mixed diff is a finding in itself; split it rather than clearing it.
+
 ## Before finishing
 
 - Run the narrow check for what you touched, then the full build.
+- Run the regression check above.
 - Read the diff for changes you did not intend — a formatter pass, a reordered
   file, a stray generated artifact.
 - Update the specification section the design change affected, in the same change.
