@@ -32,6 +32,20 @@ Assert what the thing does, not how it is arranged. A test that names a private
 field, a call order that nothing depends on, or a type's shape fails on every
 harmless refactor and teaches the team to weaken tests.
 
+## A test's name is a citation
+
+§ 9 cites a test by name. Renaming it to suit an implementation breaks that
+citation silently: the row still reads as covered and points at nothing. Keep the
+name, or reword the claim and the row together.
+
+## Explicit state and execution
+
+Build fixtures and fakes from the inputs the scenario states, then call the same
+entry point a caller uses. A helper may stage input; it must not hide stage
+ordering, barrier handling or a setup branch the claim depends on. Prefer
+data-driven cases to loops or conditionals in a test body: a branch in a test is
+a second test that never reports on its own.
+
 ## Both tiers, deliberately
 
 An acceptance scenario proves the claim end to end. It does **not** relieve the
@@ -69,6 +83,8 @@ translation between an external format and the domain.
 - An ambient clock read, a `Sleep`, or a delay.
 - An assertion weakened to make a run green.
 - An assertion on structure where behaviour was claimed.
+- A test renamed while a § 9 row still cites the old name.
+- A helper that hides the ordering or setup branch a claim is about.
 - Recorded real traffic as a fixture.
 - A test that exists only to raise a coverage number.
 - A green coverage signal for a test that does not exist.
