@@ -5,6 +5,11 @@ type: reference
 unowned_spec_sections:
   "11": whoever is blocked
   Scoring: derived — recompute, never hand-edit
+review_units:
+  design: a design, before implementation exists
+  diff: a diff, against the claims and decisions it cites
+  surface: what a change exposes to a hostile caller
+  repository: the repository at rest, on a cadence or before a release
 ---
 
 # Role contracts
@@ -80,6 +85,11 @@ and written in exactly one place:
 The two sections no single role owns are declared in this file's frontmatter.
 Ownership is not restated in the role files — a second copy is a second thing to
 drift.
+
+The critic, the spec reviewer, the adversary and the auditor each review one
+unit of work, declared under `review_units` in this file's frontmatter and
+claimed by the role's `reviews`. Which pass reviews what, and in what order, is in
+[`sdd-conventions` § Review passes](../skills/sdd-conventions/SKILL.md#review-passes).
 
 Each role also declares the persona it signs its prose with; the roster is
 generated into [`PERSONAS.md`](PERSONAS.md).

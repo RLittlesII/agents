@@ -81,6 +81,47 @@ table.
 The `.feature` file belongs to `spec-author`; its step definitions belong to
 `test-writer`.
 
+## Review passes
+
+A review pass reads one unit of work and reports on it. Each unit has exactly
+one reviewer; the registry is generated from each role's `reviews` declaration
+and the units declared in the roles index, so change those, not the table.
+
+<!-- BEGIN GENERATED: review-passes -->
+| Order | Unit       | Reviews                                                  | Reviewer        |
+| ----- | ---------- | -------------------------------------------------------- | --------------- |
+| 1     | design     | a design, before implementation exists                   | `critic`        |
+| 2     | diff       | a diff, against the claims and decisions it cites        | `spec-reviewer` |
+| 3     | surface    | what a change exposes to a hostile caller                | `adversary`     |
+| 4     | repository | the repository at rest, on a cadence or before a release | `auditor`       |
+<!-- END GENERATED: review-passes -->
+
+Every pass is read-only. A pass reports findings and never fixes what it finds;
+the finding goes to whoever owns the artifact. No pass reviews its own work.
+
+**Order.** The design pass runs before implementation exists, because a design
+finding raised after the code is written costs the code. The diff pass runs
+before the surface pass: attacking a change that does not yet do what it claims
+produces findings about code that is about to change anyway. The repository pass
+never runs on a diff; its unit is the tree, and drift a change introduces is the
+diff pass's finding on that change.
+
+**The surface pass is not gated on a clean diff pass.** Where a change touches a
+credential, a permission or untrusted input, both run, and the diff pass's
+findings never delay or suppress the surface pass's. Order decides whose findings
+arrive first, not who is allowed to look.
+
+**The narrower unit owns a finding two passes can see.** A problem visible in the
+diff belongs to the diff pass even where the repository pass would also find it
+at rest. The exception is impact: a finding whose consequence is a security one
+belongs to the surface pass's report whoever noticed it, because the two rank
+severity by different measures — what it gets an attacker, against what failure
+it causes.
+
+**Two passes disagreeing on severity is not settled by precedence.** Both
+findings stand and the artifact's owner decides. One pass does not overrule
+another; a pass that could would stop being worth running.
+
 ## ID schemes
 
 | Scheme        | Form              | Scope                             | Cited from outside as |
