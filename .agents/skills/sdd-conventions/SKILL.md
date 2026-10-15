@@ -231,7 +231,7 @@ it must answer for each of these:
 | Layout       | the projects, directories and what sits beside them at the root        |
 | Coding       | the formatter, analyzers, dependency policy and build commands         |
 | Delivery     | the tracker, the delivery-state field, branches, merge strategy, where a claim citation survives |
-| Testing      | the test projects, tiers, assertion form, naming form and discovery traps, the changed-line coverage threshold and its gate |
+| Testing      | the test projects, tiers, how scenarios execute and whether any are documentation only, assertion form, naming form and discovery traps, the changed-line coverage threshold and its gate |
 | Questions    | where answers are recorded and which questions are already settled     |
 | Specs        | where specifications live when the layout differs from § "Spec layout", the glossary and the epic blank |
 | Next work    | tracker access, planning metadata, ranking inputs and reservations     |
