@@ -1,0 +1,39 @@
+id: "0035"
+type: chore
+title: Port the lti agents' review checks and failure traps into roles and skills
+
+status: in-progress
+
+value: 3
+cost: 3
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-15"
+updated: "2026-10-15"
+closed: null
+
+summary: |
+  An assessment of the older agents in /Users/rlittlesii/source/lti/.agents/agents
+  found concrete review checks and failure traps, learned from incidents there,
+  that the roles and skills here do not yet carry. Port them as prose rules;
+  leave out personas, state machines, host mechanics and tool-specific steps.
+
+acceptance_criteria:
+  - "spec-reviewer, implementer, architect, analyst, bug-finder, bug-fixer, test-writer and organizer carry the ported rules, each with a minor version bump."
+  - "clarify-requirements, deliver-change, spec-and-traceability, sdd-conventions and coding-conventions carry the ported rules and name no role."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions:
+  - "2026-10-15, repository owner: port both the high- and medium-value edits from the assessment. Rejected: personas, T-numbered state machines, direct-entry lists, MCP/gh fallback mechanics, round-counter files and the scorecard, which are host- or tool-bound or duplicate a rule already here."
+
+out_of_scope: []
