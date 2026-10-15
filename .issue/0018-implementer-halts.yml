@@ -2,7 +2,7 @@ id: "0018"
 type: chore
 title: Restore implementer halts and migration duties
 
-status: ready
+status: done
 
 value: 3
 risk: 2
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review M22 and M31, in agents/implementer.md.
