@@ -1,0 +1,45 @@
+id: "0030"
+type: chore
+title: Write the next skill's specification as Feature 0001-F5
+
+status: ready
+
+value: 3
+risk: 3
+
+parent: "0004"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Carved from 0004. skills/next shipped with no specification. Hooked's
+  .skills/next/.spec/ holds B-001 to B-035, a .feature and 15 decision
+  records, but in a free-form layout the checker excluded, and with
+  GitHub-specific claims (GitHub owns delivery state, a GitHub outage)
+  that do not hold for a portable skill or for this repository's local
+  .issue/ tracker. Porting it is a spec-author pass: rewrite the portable
+  claims into the twelve-section form at skills/next/.spec/README.md, with
+  a companion .feature, and register 0001-F5 in epic 0001.
+
+  0004 already put the stage gates, the derived-waiting rule and the
+  ranking model into skills/next/SKILL.md; the claims cite that text.
+
+acceptance_criteria:
+  - "skills/next/.spec/README.md and next.feature exist as 0001-F5 and pass dotnet specht --strict."
+  - "Epic 0001 lists 0001-F5 in children and its Features table."
+  - "Each Hooked claim and decision record is carried, rewritten as portable, or named as rejected with the reason."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

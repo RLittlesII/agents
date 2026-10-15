@@ -2,13 +2,13 @@ id: "0004"
 type: task
 title: Port the next skill's agreement with its ranking model and stage gates
 
-status: ready
+status: done
 
 value: 5
 risk: 4
 
 parent: "0001"
-children: []
+children: ["0030"]
 
 depends_on: []
 spikes: []
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review H4, carrying H2, H3 and M18. skills/next shipped with no
@@ -43,13 +43,13 @@ summary: |
     hand-set; cycle resolution order; only children can be the queue head.
 
 acceptance_criteria:
-  - "skills/next/.spec/README.md and its .feature exist and pass dotnet specht --strict."
   - "The ranking model is defined once, in the next skill or sdd-conventions, not per companion."
   - "skills/next states the per-stage gates and the derived-blocked rule."
-  - "Hooked decisions worth keeping are carried as decision records; the rest are named as rejected."
   - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
 
-decisions: []
+decisions:
+  - "2026-10-14: the specification port is carved into 0030. Hooked's agreement is free-form and GitHub-shaped, so it needs a spec-author rewrite, not a copy."
+  - "2026-10-14: the ranking model lives in skills/next § The ranking model; each companion names where its inputs are authored and does not change the arithmetic."
 
 out_of_scope:
   - "Any queue script. specht's next.py is Python and specht-specific."

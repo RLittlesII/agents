@@ -29,7 +29,8 @@ for the comparison, scores, paths, and lanes; identify when those inputs were re
 
 ## Derive an evidenced next step
 
-Follow the companion's identity, dependency, and ranking contracts. Count shared
+Follow the companion's identity and dependency contracts, the stage gates and
+the ranking model below. Count shared
 prerequisites once within a Feature's remaining work and promote the work that
 unlocks the selected Features. Do not substitute stored derived fields or invent
 missing estimates, value assessments, claim assignments, or delivery state.
@@ -43,6 +44,51 @@ Keep affected work unscored or withheld when evidence is incomplete, while
 retaining independent verified choices. Explain cycles, missing links, decision
 holds, and occupied work. A valid scope with no available start is an answer
 with reasons, not an empty success claim.
+
+## Stage gates
+
+Read approval from the § 12 rows by section, and open questions from § 11 by
+the claims they block. `spec_status` alone is not approval evidence, and an
+unrelated question blocks nothing.
+
+| Stage            | Next step, and the evidence it needs                                      |
+| ---------------- | ------------------------------------------------------------------------- |
+| Intake or decomposition | author or split the agreement; do not demand the approval it will produce |
+| Design           | §§ 1-5 approved for the linked claims, no open question blocking them    |
+| Implementation   | §§ 1-7 approved, the design Ready, no blocking question, and every prerequisite delivered |
+| Spike            | a bounded question and a time box; the status alone authorizes nothing more |
+| Taken            | occupied: show it and reserve its lane; offer no new start there          |
+
+Delivered means finished as completed. Work in review, closed as not planned or
+reopened does not satisfy a prerequisite. Design can proceed while
+implementation prerequisites are unfinished.
+
+Waiting is derived. An item whose `depends_on` or spikes are unfinished is
+waiting, whatever its status says; never set a status to record it. A container
+with unfinished children is never offered itself: its children are the
+candidates. A dependency cycle is reported with its members, which stay
+unscored; the rest of the queue is still ranked.
+
+## The ranking model
+
+One model, so two repositories rank the same queue the same way. The companion
+names where each input is authored; it does not change the arithmetic.
+
+1. **Priority tier first.** Order by the Feature's priority tier, highest first.
+2. **Then the completion score:** the Feature's value divided by the summed
+   cost of its unfinished closure — its open children and every open item they
+   wait on, in any Feature. Each item counts once per closure, at full cost
+   until it is delivered, even in progress or in review.
+3. **A prerequisite inherits** the strongest tier of a selected Feature it
+   advances, then the best score among those in that tier. An unselected
+   Feature never changes a focused recommendation.
+4. **Ties** break on the number of open items waiting on the item, then its
+   stable id. Compare exact values; round only for display.
+
+Missing value, missing cost, unknown decomposition or a cycle leaves a score
+uncomputed — never zero, never infinite. An active claim with neither planned
+work nor verified delivery is unknown scope: name the gap and leave the Feature
+unscored. No derived tier, score or gate is written back to a record.
 
 ## Use lanes to support the choice
 
