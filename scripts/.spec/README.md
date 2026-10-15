@@ -205,9 +205,9 @@ test.
 
 ### Performance
 
-Not measured. Twenty-seven outputs from six roles and seven skills complete well
-inside the `dotnet fsi` start-up time; a concern appears only if the roster grows
-by an order of magnitude.
+Not measured. Sixty-three outputs from twenty-four roles and seven skills
+complete well inside the `dotnet fsi` start-up time; a concern appears only if
+the roster grows by an order of magnitude.
 
 ## 9. Traceability Matrix
 

@@ -64,6 +64,8 @@ implicit and two roles end up writing the same section.
 | B-002 | Given the roles and the unowned declarations in the roles index, every section of the specification template has exactly one owner.                                      | `sdd-conventions` § Section ownership                                          | Active |
 | B-003 | Given a role body, it carries the headings Owns, Read first, Produce or Look for, and Refuse.                                                                              | Hooked role contracts                                                          | Active |
 | B-004 | Given a role body, it names no product technology, library, repository path, package or build tool; the consuming repository's companion skill names those.               | Root README § Purpose                                                          | Active |
+| B-005 | Given a role body carrying `## Look for`, it also carries `## Report`, so every reviewing role states the form its findings take. | OQ-1 | Active |
+| B-006 | Given a role body linking `../skills/<name>/SKILL.md`, that skill exists in `skills/`; projection fails naming the role and the skill otherwise. | C-1 | Active |
 
 ## 4. Constraints
 
@@ -82,7 +84,7 @@ implicit and two roles end up writing the same section.
 | #   | Item                                              | Exclusion Reason                                                        |
 | --- | ------------------------------------------------- | ----------------------------------------------------------------------- |
 | 1   | Rendering a role for a host                       | [0001-F1 Projection](../../scripts/.spec/README.md)                     |
-| 2   | Roles beyond the six                              | Added one at a time with their own ownership claims; the contract holds |
+| 2   | A role per technology or platform                 | A technology belongs in the consuming repository's companion skill (B-004) |
 | 3   | A persona or voice field                          | No host consumes one yet                                                |
 
 ## 6. Concern Separation
@@ -116,8 +118,8 @@ Sections no single role owns are declared once, in the frontmatter of
 roles' claims before the totality check.
 
 The body is free Markdown under four headings in this order: `## Owns`,
-`## Read first`, `## Produce` (or `## Look for` for a reviewing role), and
-`## Refuse`. Links to skills are relative, `../skills/<name>/SKILL.md`, so that
+`## Read first`, `## Produce` (or `## Look for` followed by `## Report` for a
+reviewing role), and `## Refuse`. A role may add a heading, such as `## Escalate`. Links to skills are relative, `../skills/<name>/SKILL.md`, so that
 the same bytes resolve from `agents/` and from a host's agents directory one
 level below the root.
 
@@ -134,10 +136,13 @@ edit that breaks the contract fails the same command CI runs. The scenarios in
 
 - B-001: `loadRoles` over `agents/`; the loader itself rejects a missing key,
   a non-semver version, a multi-line description or a host key, so the test
-  asserts the six roles load and carry the expected version.
+  asserts the roster loads and that both host overlays map every role.
 - B-002: `ownershipRows` over the real roles, index and template; one row per
   template section plus the subsection row.
 - B-003: the `## ` headings of each loaded body.
+- B-005: every loaded body carrying `## Look for` also carries `## Report`.
+- B-006: `validateSkillLinks` over the real roles passes, and a synthetic role
+  linking a missing skill makes `plan` fail before anything is written.
 - B-004 is a review question, not a test: at review, grep the role bodies for
   the names of the consuming project's stack and tooling. The reviewer records
   the result in § 12. A lint over a word list was considered and rejected
@@ -157,6 +162,8 @@ Not applicable.
 | B-002    | Every template section has exactly one owner        | `F2_B002_EveryTemplateSectionHasExactlyOneOwner`         | Covered |
 | B-003    | Every role body carries the four headings           | `F2_B003_EveryRoleBodyCarriesTheFourSections`            | Covered |
 | B-004    | A role body names no product technology             | Manual: review question in § 8                           | Partial |
+| B-005    | A reviewing role states its report                  | `F2_B005_LookForRoleCarriesReport`                       | Covered |
+| B-006    | A role links only skills that exist                 | `F2_B006_EverySkillLinkResolves`                         | Covered |
 
 ## 10. Lessons / Spec Deltas
 
@@ -170,7 +177,7 @@ None.
 
 | ID   | Question                                                                                   | Blocks | Resolution |
 | ---- | ------------------------------------------------------------------------------------------ | ------ | ---------- |
-| OQ-1 | Should the contract require a `## Report` heading for reviewing roles, as `spec-reviewer` and `architect` already carry? | B-003  | Open       |
+| OQ-1 | Should the contract require a `## Report` heading for reviewing roles, as `spec-reviewer` and `architect` already carry? | B-003  | Resolved 2026-10-14: yes. A body with `## Look for` also carries `## Report`; claimed as B-005. |
 
 ## 12. Sign-off
 
@@ -178,12 +185,13 @@ None.
 
 | Section | Status | Reviewer      | Note                                                            |
 | ------- | ------ | ------------- | --------------------------------------------------------------- |
-| 1-12    | 🟡     | spec-reviewer | Scaffold draft; B-004 reviewed by grep at the scaffolding change. |
+| 1-12    | 🟡     | spec-reviewer | Draft. B-004 reviewed by grep at the scaffolding change and again for the second-wave roster (2026-10-14): no product technology in any role body. |
 
 ## Tasks
 
-None cut. The six roles landed with the scaffolding change; a new role or a
-contract change cuts its own work item.
+None cut. The first six roles landed with the scaffolding change and the second
+wave of eighteen with the roster change; a new role or a contract change cuts
+its own work item.
 
 ## Scoring
 

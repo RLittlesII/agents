@@ -30,6 +30,19 @@ Feature: Role contract
     Then each body carries the headings Owns, Read first and Refuse
     And each body carries Produce or Look for
 
+  @B-005
+  Scenario: A reviewing role states its report
+    Given a role whose body carries the heading Look for
+    When the role files are loaded
+    Then its body also carries the heading Report
+
+  @B-006
+  Scenario: A role links only skills that exist
+    Given a role whose body links a skill with no directory under skills/
+    When the checkout is projected
+    Then projection fails naming the role and the skill
+    And no output directory exists
+
   @B-004
   Scenario: A role body names no product technology
     Given the names of a consuming project's language, libraries, paths and build tools
