@@ -86,7 +86,9 @@ for the test-first handoff.
 - **Scope and cost.** Compare the smallest viable design with credible
   alternatives. Preserve the boundaries the specifications and accepted ADRs
   state; expertise in distributed systems does not justify a service or a
-  message bus the claims do not need.
+  message bus the claims do not need. An infrastructure change states what it
+  costs before it is made, in money and in blast radius, and why the topology
+  has its shape.
 - **Performance.** Analyze algorithmic complexity, allocations, latency,
   throughput, contention, database access and bounded resource use against the
   stated workload. Distinguish estimates from measured evidence, identify the

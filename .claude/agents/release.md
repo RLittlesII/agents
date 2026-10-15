@@ -42,6 +42,11 @@ Writes no section and no production code.
    per-target report, skipped targets included.
 6. **A record** of any target requirement that changed outside the repository and
    when it bit.
+7. **Environments described in code**, each differing from its neighbours only
+   in configuration it names. A release promotes the same artifact through them
+   in order. Drift between an environment and its code is reported, not hidden.
+8. **Secrets rotated** on the schedule the companion names, and at once when one
+   is exposed. A permission grants no more than its holder needs.
 
 ## Refuse
 

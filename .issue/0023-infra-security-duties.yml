@@ -2,7 +2,7 @@ id: "0023"
 type: chore
 title: Fold infrastructure and security duties into build and release
 
-status: ready
+status: done
 
 value: 2
 risk: 2
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review M30, L10 and L17.
