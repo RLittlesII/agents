@@ -1,0 +1,43 @@
+id: "0031"
+type: chore
+title: Turn SPEC060 off before the first specification is approved
+
+status: ready
+
+value: 3
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review H11, left open by 0005. ADR-0006 decides a § 9 Missing row
+  blocks the merge, not approval, and defers the checker side: SPEC060 fails
+  an approved specification that still has a Missing cell, so
+  .specht/manifest.json must set "rules": { "SPEC060": "off" } before the
+  first specification is approved. Nothing enforced that deferral once 0005
+  closed. This item is the reminder: it gates the first approval.
+
+  The manifest edit needs the repository owner's go-ahead (ADR-0004 limits
+  hand edits under .specht/ to exclusions; ADR-0006 amends that for this
+  one key).
+
+acceptance_criteria:
+  - ".specht/manifest.json sets SPEC060 to off, with the owner's approval recorded in decisions."
+  - "dotnet specht --strict passes with an approved specification that still carries a Missing § 9 row."
+  - "No specification's spec_status is set to approved before this item is done."
+
+decisions: []
+
+out_of_scope: []
