@@ -1,0 +1,33 @@
+# Claude Code overlay. The projector merges `defaults` with each role's entry and
+# emits the result as frontmatter after `name` and `description`.
+# Accepted `model` values: sonnet, opus, haiku, fable, a full model id, inherit.
+# Accepted `effort` values: low, medium, high, xhigh, max.
+output: .claude/agents/{name}.md
+skills_output: .claude/skills
+defaults:
+  model: inherit
+  effort: medium
+roles:
+  spec-author:
+    model: opus
+    effort: high
+    skills: [sdd-conventions, spec-and-traceability, clarify-requirements]
+  architect:
+    model: opus
+    effort: xhigh
+    skills: [sdd-conventions, coding-conventions]
+  test-writer:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions, test-from-scenarios]
+  implementer:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions, coding-conventions]
+  spec-reviewer:
+    model: opus
+    effort: high
+    tools: [Read, Grep, Glob, Bash]
+  benchmarker:
+    model: sonnet
+    effort: medium

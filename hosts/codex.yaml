@@ -1,0 +1,20 @@
+# Codex overlay. The projector merges `defaults` with each role's entry and emits
+# the result as top-level TOML keys after `developer_instructions`.
+# `instructions_prefix` is prepended to the role body; `{source}` is the role's
+# repository path.
+output: .codex/agents/{name}.toml
+skills_output: .agents/skills
+instructions_prefix: "Read AGENTS.md first. The authoritative role source is {source}. Resolve its relative links against that path in the repository."
+defaults:
+  model: gpt-6.1-sol
+  model_reasoning_effort: medium
+roles:
+  spec-author:
+    model_reasoning_effort: high
+  architect:
+    model_reasoning_effort: high
+  spec-reviewer:
+    model_reasoning_effort: high
+  test-writer: {}
+  implementer: {}
+  benchmarker: {}
