@@ -2,7 +2,7 @@ id: "0029"
 type: task
 title: Check section stamps against the ownership table
 
-status: ready
+status: done
 
 value: 3
 risk: 3
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review M15. Every section carries a "last written by" stamp, but

@@ -158,6 +158,14 @@ Feature: Projection
     Then projection fails naming beta and style
     And no output directory exists
 
+  @B-016
+  Scenario: A section stamp names a role that does not own it
+    Given a specification whose Business Goal is stamped by beta
+    And alpha owns the Business Goal
+    When the checkout is projected
+    Then projection fails naming the file, the Business Goal, beta and alpha
+    And no output directory exists
+
   @boundary
   Scenario: A role absent from an overlay receives the defaults
     Given a role named beta that no overlay names

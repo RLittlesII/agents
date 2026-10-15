@@ -1,5 +1,5 @@
 // Tests for the projector. Names cite the claims they cover:
-//   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B015_
+//   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B016_
 //   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B009_
 //   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B007_
 //   skills/.spec/README.md   (0001-F4 Skill boundary) F4_B001_..F4_B003_
@@ -395,6 +395,21 @@ let B015_UnreviewedOrUndeclaredUnit_FailsNamingIt () =
     contains "agents/beta.md: reviews 'style', which agents/README.md review_units does not declare" (expectFailure (fun () -> plan root2))
     nothingWritten root2
 
+let B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles () =
+    let root = checkout ()
+    let spec stamp1 =
+        String.concat "\n"
+            [ "## 1. Business Goal"; ""; sprintf "<!-- last written by: %s, 2026-10-14 -->" stamp1; ""
+              "```markdown"; "## 3. Acceptance Criteria"; "<!-- last written by: alpha, 2026-10-14 -->"; "```"; ""
+              "## Scoring"; ""; "<!-- last written by: beta, 2026-10-14 -->"; "" ]
+    // The owner's stamp passes; a fenced example and a section without a single owner are not checked.
+    write root "area/.spec/README.md" (spec "alpha")
+    plan root |> ignore
+    write root "area/.spec/README.md" (spec "beta")
+    let message = expectFailure (fun () -> plan root)
+    contains "area/.spec/README.md: section '1. Business Goal' is stamped by 'beta', but 'alpha' owns it" message
+    nothingWritten root
+
 let C3_Outputs_AreDeterministicAcrossRuns () =
     let root = checkout ()
     let first = (plan root).Outputs
@@ -677,6 +692,7 @@ let tests : (string * (unit -> unit)) list =
       nameof B013_ReviewUnits_WriteRegistryBetweenMarkers, B013_ReviewUnits_WriteRegistryBetweenMarkers
       nameof B014_TwoRolesReviewOneUnit_FailsNamingBoth, B014_TwoRolesReviewOneUnit_FailsNamingBoth
       nameof B015_UnreviewedOrUndeclaredUnit_FailsNamingIt, B015_UnreviewedOrUndeclaredUnit_FailsNamingIt
+      nameof B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles, B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles
       nameof C3_Outputs_AreDeterministicAcrossRuns, C3_Outputs_AreDeterministicAcrossRuns
       nameof F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey, F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey
       nameof F2_B002_EveryTemplateSectionHasExactlyOneOwner, F2_B002_EveryTemplateSectionHasExactlyOneOwner

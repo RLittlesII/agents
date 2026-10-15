@@ -77,6 +77,7 @@ this Feature removes both failure states.
 | B-013 | Given the review units declared in the roles index and the roles' `reviews`, this Feature writes the review-pass registry into `sdd-conventions` between its generated markers, one row per unit in declared order. | LTI `generate-review-passes.sh` | Active |
 | B-014 | Given two roles reviewing one unit, this Feature fails naming the unit and both roles, and writes nothing. | LTI double-claim rule | Active |
 | B-015 | Given a declared unit no role reviews, or a role reviewing a unit the index does not declare, this Feature fails naming the unit, and writes nothing. | LTI totality rule | Active |
+| B-016 | Given a specification whose section carries a `last written by` stamp naming a role other than the section's owner in the ownership table, this Feature fails naming the file, the section and both roles, and writes nothing. A section with no single owning role and a stamp inside a fenced block are not checked. | LTI `validate-spec-ownership.sh` | Active |
 
 ## 4. Constraints
 
@@ -133,6 +134,7 @@ flowchart LR
   hosts["hosts/*.yaml"] --> host[loadHost]
   template[".specht/templates/feature.md"] --> sections[loadTemplateSections]
   load & unowned & sections --> own[ownershipRows]
+  own --> stamps["validateStamps: **/.spec/README.md"]
   load & readme --> passes[reviewRows]
   passes --> companion
   own --> table[renderOwnershipTable]
@@ -172,6 +174,10 @@ Design positions:
   same one-owner and totality rules to review units that `ownershipRows`
   applies to sections, and both blocks are replaced in the companion in memory
   before it is written or copied.
+- **Stamps are read against the table they feed.** `validateStamps` reads every
+  `<area>/.spec/README.md` outside a dot-directory and checks each stamp against
+  the row `ownershipRows` produced for its heading, before anything is rendered.
+  A `###` heading is its own row only where the table lists it.
 - **The persona roster is the same kind of file.** `agents/PERSONAS.md` holds
   prose around a generated block; the roles loader skips it as it skips the
   roles index. The persona line is the one text projection adds to a role: it
@@ -221,6 +227,9 @@ Mechanism per claim:
 - B-013, B-014, B-015: `reviewRows` and `renderReviewTable` through `plan` on a
   fixture with two units; exact registry, then a double claim, an unreviewed
   unit and an undeclared one, each failing before anything is written.
+- B-016: `validateStamps` through `plan`; a fixture specification passes with
+  the owner's stamp, a fenced example and a stamp on an unowned section, then
+  fails naming the file, section and both roles when a non-owner signs.
 - C-3: two plans produce identical bytes, no byte-order mark, no absolute path.
 
 Anything the design makes hard to test: the command-line exit codes are a thin
@@ -254,6 +263,7 @@ the roster grows by an order of magnitude.
 | B-013    | Review units become the registry                           | `B013_ReviewUnits_WriteRegistryBetweenMarkers`                    | Covered |
 | B-014    | Two roles review one unit                                  | `B014_TwoRolesReviewOneUnit_FailsNamingBoth`                      | Covered |
 | B-015    | A unit no role reviews, or one nobody declared             | `B015_UnreviewedOrUndeclaredUnit_FailsNamingIt`                   | Covered |
+| B-016    | A section stamp names a role that does not own it          | `B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles`     | Covered |
 
 ## 10. Lessons / Spec Deltas
 

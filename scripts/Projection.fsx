@@ -361,6 +361,49 @@ let renderTable (headers: string list) (rows: string list list) =
 let renderOwnershipTable (rows: (string * string) list) =
     renderTable [ "Section"; "Owner" ] (rows |> List.map (fun (a, b) -> [ a; b ]))
 
+let private stamp = Regex(@"^<!-- last written by: ([\w-]+), [^>]*-->\s*$")
+let private sectionHeading = Regex(@"^(#{2,3})\s+(\S.*?)\s*$")
+
+/// Every specification outside a dot-directory: `<area>/.spec/README.md`.
+let specificationFiles (root: string) =
+    Directory.EnumerateFiles(root, "README.md", SearchOption.AllDirectories)
+    |> Seq.filter (fun f -> Path.GetFileName(Path.GetDirectoryName f) = ".spec")
+    |> Seq.map (relative root)
+    |> Seq.filter (fun rel -> not (rel.StartsWith "."))
+    |> Seq.sort
+    |> List.ofSeq
+
+/// B-016: a section's `last written by` stamp names the role that owns it. A
+/// section with no single owning role, or a heading the table lacks, is not
+/// checked; a fenced block is not read.
+let validateStamps (root: string) (rows: (string * string) list) =
+    let owner heading = rows |> List.tryFind (fun (h, _) -> h = heading) |> Option.map snd
+    for rel in specificationFiles root do
+        let mutable fenced = false
+        let mutable section : string option = None
+        let mutable parent : string option = None
+        for line in (readText (Path.Combine(root, rel))).Split('\n') do
+            if line.TrimStart().StartsWith "```" then fenced <- not fenced
+            elif not fenced then
+                let h = sectionHeading.Match line
+                if h.Success && h.Groups.[1].Value = "##" then
+                    section <- Some h.Groups.[2].Value
+                    parent <- section
+                elif h.Success then
+                    // A subsection is its own row only where the table lists it.
+                    let number = parent |> Option.map (fun p -> p.Substring(0, max 0 (p.IndexOf '.')))
+                    let row = number |> Option.map (fun n -> sprintf "%s. › `### %s`" n h.Groups.[2].Value)
+                    section <- (match row with Some r when (owner r).IsSome -> Some r | _ -> parent)
+                else
+                    let s = stamp.Match line
+                    match s.Success, section |> Option.bind owner with
+                    | true, Some declared when declared.StartsWith "`" ->
+                        let expected = declared.Trim('`')
+                        let actual = s.Groups.[1].Value
+                        if actual <> expected then
+                            fail (sprintf "%s: section '%s' is stamped by '%s', but '%s' owns it" rel section.Value actual expected)
+                    | _ -> ()
+
 /// B-013, B-014, B-015: one reviewer per unit, every unit reviewed, no role
 /// reviewing a unit the vocabulary lacks. Rows follow the vocabulary's order.
 let reviewRows (roles: Role list) (units: ReviewUnit list) : (ReviewUnit * string) list =
@@ -677,7 +720,9 @@ let plan (root: string) : Plan =
     for host in hosts do validateHostRoles host roles
     let unowned = loadUnowned root
     let template = loadTemplateSections root
-    let table = ownershipRows roles unowned template |> renderOwnershipTable
+    let rows = ownershipRows roles unowned template
+    validateStamps root rows
+    let table = renderOwnershipTable rows
     let generated (rel: string) block content =
         let path = Path.Combine(root, rel)
         if not (File.Exists path) then fail (sprintf "%s is missing" rel)
