@@ -1,0 +1,38 @@
+id: "0032"
+type: chore
+title: Remove the empty gather and release command files
+
+status: in-progress
+
+value: 3
+cost: 1
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  25a791b added commands/gather.md and commands/release.md as empty files.
+  The projector fails on them ("commands/gather.md: missing frontmatter"),
+  so dotnet fsi scripts/project.fsx --check and
+  F3_B003_CommandNamingMissingRole_FailsNamingBoth fail on main and CI is red.
+
+acceptance_criteria:
+  - "commands/gather.md and commands/release.md are removed."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions:
+  - "2026-10-14, repository owner: remove both rather than fill them. ship already convenes the release workflow (0025 named it ship so it does not read as the release role), and spec covers gathering, with grooming and documentation excluded from it by 0001-F3 § 5 rows 4 and 5. Rejected: a discovery-only gather and a release-only release, which 0001-F3 § 5 row 1 excludes as single-role commands; aliases of spec and ship, which duplicate them and reverse 0025."
+
+out_of_scope: []
