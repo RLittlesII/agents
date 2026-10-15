@@ -57,6 +57,14 @@ Feature: Role contract
     Then projection fails naming Abe, alpha and beta
     And no output directory exists
 
+  @B-008
+  Scenario: A reviewing role carries the reviewing headings
+    Given a role declaring that it reviews the diff
+    And its body has no Look for or Report heading
+    When the checkout is projected
+    Then projection fails naming the role
+    And no output directory exists
+
   @B-004
   Scenario: A role body names no product technology
     Given the names of a consuming project's language, libraries, paths and build tools

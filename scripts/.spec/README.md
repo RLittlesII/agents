@@ -74,6 +74,9 @@ this Feature removes both failure states.
 | B-010 | Given a role file carrying `model`, `effort`, `tools` or `model_reasoning_effort`, this Feature fails naming the key.                                                                                                  | ADR-0001                                      | Active |
 | B-011 | Given the roles' personas, this Feature writes the persona roster into `agents/PERSONAS.md` between its generated markers, one row per persona sorted by persona name, carrying the persona, a link to the role and the voice. | [0001-F2](../../agents/.spec/README.md) B-007 | Active |
 | B-012 | Given a role with a persona, both host files carry one generated line naming the persona and its voice and saying machine-read stamps keep the role name, ahead of the role body, which follows verbatim; a role without a persona gets no line. | 0001-F2 B-007 | Active |
+| B-013 | Given the review units declared in the roles index and the roles' `reviews`, this Feature writes the review-pass registry into `sdd-conventions` between its generated markers, one row per unit in declared order. | LTI `generate-review-passes.sh` | Active |
+| B-014 | Given two roles reviewing one unit, this Feature fails naming the unit and both roles, and writes nothing. | LTI double-claim rule | Active |
+| B-015 | Given a declared unit no role reviews, or a role reviewing a unit the index does not declare, this Feature fails naming the unit, and writes nothing. | LTI totality rule | Active |
 
 ## 4. Constraints
 
@@ -130,6 +133,8 @@ flowchart LR
   hosts["hosts/*.yaml"] --> host[loadHost]
   template[".specht/templates/feature.md"] --> sections[loadTemplateSections]
   load & unowned & sections --> own[ownershipRows]
+  load & readme --> passes[reviewRows]
+  passes --> companion
   own --> table[renderOwnershipTable]
   table --> companion["skills/sdd-conventions/SKILL.md"]
   load --> roster["agents/PERSONAS.md"]
@@ -163,6 +168,10 @@ Design positions:
 - **The companion is both a source and an output.** Its generated block is
   replaced in memory, the result is written back to `skills/sdd-conventions/SKILL.md`
   and copied to each host with the same bytes.
+- **The registry is the ownership table's twin.** `reviewRows` applies the
+  same one-owner and totality rules to review units that `ownershipRows`
+  applies to sections, and both blocks are replaced in the companion in memory
+  before it is written or copied.
 - **The persona roster is the same kind of file.** `agents/PERSONAS.md` holds
   prose around a generated block; the roles loader skips it as it skips the
   roles index. The persona line is the one text projection adds to a role: it
@@ -209,6 +218,9 @@ Mechanism per claim:
 - B-012: `personaLine` through `renderClaude` and `renderCodex`; whole Claude
   file and decoded Codex instructions compared, and a persona-less role
   unchanged.
+- B-013, B-014, B-015: `reviewRows` and `renderReviewTable` through `plan` on a
+  fixture with two units; exact registry, then a double claim, an unreviewed
+  unit and an undeclared one, each failing before anything is written.
 - C-3: two plans produce identical bytes, no byte-order mark, no absolute path.
 
 Anything the design makes hard to test: the command-line exit codes are a thin
@@ -239,6 +251,9 @@ the roster grows by an order of magnitude.
 | B-010    | A role file carries a host key                             | `B010_RoleFileCarriesHostKey_FailsNamingTheKey`                   | Covered |
 | B-011    | Personas become the roster                                 | `B011_Personas_WriteRosterBetweenMarkers`                         | Covered |
 | B-012    | A persona line precedes the body on both hosts             | `B012_Persona_PrecedesVerbatimBodyOnBothHosts`                    | Covered |
+| B-013    | Review units become the registry                           | `B013_ReviewUnits_WriteRegistryBetweenMarkers`                    | Covered |
+| B-014    | Two roles review one unit                                  | `B014_TwoRolesReviewOneUnit_FailsNamingBoth`                      | Covered |
+| B-015    | A unit no role reviews, or one nobody declared             | `B015_UnreviewedOrUndeclaredUnit_FailsNamingIt`                   | Covered |
 
 ## 10. Lessons / Spec Deltas
 

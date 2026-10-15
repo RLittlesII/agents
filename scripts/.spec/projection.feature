@@ -128,6 +128,36 @@ Feature: Projection
     And the role body follows that line unchanged on both hosts
     And beta, which has no persona, gets no line
 
+  @B-013
+  Scenario: Review units become the registry
+    Given the roles index declares the units design and diff, in that order
+    And beta reviews the design and alpha reviews the diff
+    When the checkout is projected
+    Then the companion skill carries a review-pass registry between its generated markers
+    And the registry lists design before diff, each with its one reviewer
+    And projecting again leaves the companion unchanged
+
+  @B-014
+  Scenario: Two roles review one unit
+    Given alpha and beta both review the diff
+    When the checkout is projected
+    Then projection fails naming the diff, alpha and beta
+    And no output directory exists
+
+  @B-015
+  Scenario: A declared unit no role reviews
+    Given no role reviews the design
+    When the checkout is projected
+    Then projection fails naming the design
+    And no output directory exists
+
+  @B-015
+  Scenario: A role reviews a unit nobody declared
+    Given beta reviews style and the roles index declares no such unit
+    When the checkout is projected
+    Then projection fails naming beta and style
+    And no output directory exists
+
   @boundary
   Scenario: A role absent from an overlay receives the defaults
     Given a role named beta that no overlay names

@@ -67,6 +67,7 @@ implicit and two roles end up writing the same section.
 | B-005 | Given a role body carrying `## Look for`, it also carries `## Report`, so every reviewing role states the form its findings take. | OQ-1 | Active |
 | B-006 | Given a role body linking `../skills/<name>/SKILL.md`, that skill exists in `skills/`; projection fails naming the role and the skill otherwise. | C-1 | Active |
 | B-007 | Given a role declaring `persona`, it carries a one-line `name` and a one-line `voice`, and no other role declares the same persona name; the role name stays the file stem, the host agent name and every machine-read stamp. | Brief: personas | Active |
+| B-008 | Given a role declaring `reviews`, each entry is a review unit and the body carries `## Look for` and `## Report`; projection fails naming the role otherwise. | `sdd-conventions` § Review passes | Active |
 
 ## 4. Constraints
 
@@ -99,6 +100,7 @@ implicit and two roles end up writing the same section.
 | 3   | Keeping product technology out of a role body     | Business       |
 | 4   | Validating the keys                               | Technical      |
 | 5   | The name a role signs its prose with              | Business       |
+| 6   | Which unit of work a role reviews                 | Business       |
 
 ## 7. Technical Design
 
@@ -115,12 +117,19 @@ that function is the authority, not this section.
 | `version`             | semver, bumped when the contract changes                  |
 | `owned_spec_sections` | list of `"<n>"`, `"Tasks"`, `"Scoring"` or `"<n>/<Subsection>"`; empty is valid |
 | `persona`             | optional; `name` and `voice`, one line each; the name unique across roles |
+| `reviews`             | optional list of review units from the roles index; a reviewing body follows |
 
 A persona is how a role signs the prose it writes: reports, findings, review
 notes. Projection puts one generated line naming it ahead of the body and lists
 every persona in [`PERSONAS.md`](../PERSONAS.md). A stamp a tool reads —
 `last written by`, `author`, the § 12 Reviewer column — keeps the role name, so
 no tool has to map a persona back to a role.
+
+The review units — design, diff, surface, repository — are declared once, in
+the same frontmatter under `review_units`, in the order their passes run. A role
+declaring `reviews` carries the reviewing headings (B-008); which role reviews
+which unit is generated into
+[`sdd-conventions` § Review passes](../../skills/sdd-conventions/SKILL.md#review-passes).
 
 Sections no single role owns are declared once, in the frontmatter of
 [`README.md`](../README.md) under `unowned_spec_sections`, and merged with the
@@ -155,6 +164,8 @@ edit that breaks the contract fails the same command CI runs. The scenarios in
 - B-007: `loadRole` rejects a persona missing a key or not a mapping and
   `validatePersonas` rejects a shared name; the test runs both on synthetic
   roles and runs `validatePersonas` over the real roster.
+- B-008: the real roster declares exactly the four passes; a synthetic role
+  declaring a unit on a body without the reviewing headings fails `plan`.
 - B-004 is a review question, not a test: at review, grep the role bodies for
   the names of the consuming project's stack and tooling. The reviewer records
   the result in § 12. A lint over a word list was considered and rejected
@@ -177,6 +188,7 @@ Not applicable.
 | B-005    | A reviewing role states its report                  | `F2_B005_LookForRoleCarriesReport`                       | Covered |
 | B-006    | A role links only skills that exist                 | `F2_B006_EverySkillLinkResolves`                         | Covered |
 | B-007    | A persona carries a name and a voice and is unique  | `F2_B007_PersonaRequiresNameAndVoiceAndIsUnique`         | Covered |
+| B-008    | A reviewing role carries the reviewing headings     | `F2_B008_ReviewingRoleCarriesLookForAndReport`           | Covered |
 
 ## 10. Lessons / Spec Deltas
 
