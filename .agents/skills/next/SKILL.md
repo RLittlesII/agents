@@ -84,8 +84,9 @@ names where each input is authored; it does not change the arithmetic.
 3. **A prerequisite inherits** the strongest tier of a selected Feature it
    advances, then the best score among those in that tier. An unselected
    Feature never changes a focused recommendation.
-4. **Ties** break on the number of open items waiting on the item, then its
-   stable id. Compare exact values; round only for display.
+4. **Ties** break on the number of open items waiting on the item, most first,
+   then its stable id, lowest first. Compare exact values; round only for
+   display.
 
 Missing value, missing cost, unknown decomposition or a cycle leaves a score
 uncomputed — never zero, never infinite. An active claim with neither planned
