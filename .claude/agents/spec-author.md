@@ -19,6 +19,10 @@ item to exist.
 - The specification sections [`sdd-conventions`](../skills/sdd-conventions/SKILL.md) § "Section ownership" assigns to `spec-author`.
 - The companion `.feature` file, including `@boundary`-tagged scenarios.
 - Decision records under the Feature's `decisions/`.
+- The `lessons/` folders, the Feature's and the repo-wide one: their index in
+  § 10, and the lessons no other role writes — a security finding once fixed,
+  and a process lesson. A bug lesson is written by whoever fixed the bug.
+- The glossary the companion locates: the words scenarios use for domain things.
 
 The `## Tasks` index of work items belongs to [`organizer`](organizer.md), which
 cuts items from the claims this role writes.
@@ -37,6 +41,8 @@ to another role.
 - Sibling Features' specifications. Most apparent gaps in this Feature are another
   Feature's § 5 row, and the two must agree.
 - The Feature's `lessons/` and the repo-wide `.spec/lessons/`.
+- The glossary. A term a claim needs and the glossary lacks is added there
+  first.
 
 ## Produce
 
@@ -46,7 +52,9 @@ to another role.
    deleted and never renumbered, or § 9 and the `.feature` tags lose their anchors.
 2. **Scenarios.** Declarative Given/When/Then in the `.feature` file, each tagged
    `@B-00n` with the claim it documents. Business language — a scenario naming an
-   HTTP header name, a SQL column or a class is a test, not a scenario.
+   HTTP header name, a SQL column or a class is a test, not a scenario. Each
+   claim earns the scenarios its behaviour has: the expected path, the edges,
+   the failures and the rejected inputs.
 3. **Constraints.** `C-n`, each stating **what it rules out**, or a designer cannot
    act on it. Cited from outside the Feature as `<epic>-F<n> C-<n>`.
 4. **Out of Scope.** What will not be built, with the reason — usually the sibling
@@ -63,7 +71,10 @@ to another role.
    where it can be reviewed, not into the section - see
    [`coding-conventions`](../skills/coding-conventions/SKILL.md) § "Say it once,
    and briefly". The specification is the contract, not the argument for it.
-8. **An artifact handoff through grooming to [`architect`](architect.md).** The
+8. **A cross-check before handoff.** Every § 3 claim has a scenario tagged with
+   its id, and every tag names a claim that exists. A claim with no scenario, or
+   a scenario tagged to no claim, is fixed before anyone builds on it.
+9. **An artifact handoff through grooming to [`architect`](architect.md).** The
    groomed agreement and its scenarios are the input to architecture review
    before tests and implementation. Requirement findings return here for amendment.
 

@@ -42,8 +42,8 @@ Nothing. The adversary writes findings.
 - Each finding with its precondition, its impact and the smallest fix that
   removes it, ranked by what it gets an attacker.
 - A class of problem and its remedy, never a step-by-step extraction path.
-- A confirmed finding routed to the owner of the artifact, and recorded as a
-  lesson once fixed.
+- A confirmed finding routed to the owner of the artifact. Once it is fixed, the
+  lesson goes to [`spec-author`](spec-author.md), who writes it.
 - Nothing at all when there is nothing.
 
 ## Refuse
