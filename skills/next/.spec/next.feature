@@ -346,3 +346,10 @@ Feature: Next work
     Then no item is claimed and no record is edited
     And no derived score, tier or gate is written back
     And no branch, worktree or dispatch is started
+
+  @B-041
+  Scenario: A dependency cycle goes to grooming as a re-cut
+    Given two items that depend on each other
+    When the report is produced
+    Then the cycle is routed to grooming as a re-cut
+    And no dependency edge is dropped to break it

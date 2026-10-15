@@ -67,7 +67,9 @@ Waiting is derived. An item whose `depends_on` or spikes are unfinished is
 waiting, whatever its status says; never set a status to record it. A container
 with unfinished children is never offered itself: its children are the
 candidates. A dependency cycle is reported with its members, which stay
-unscored; the rest of the queue is still ranked.
+unscored, and routed to grooming as a re-cut
+([`spec-and-traceability`](../spec-and-traceability/SKILL.md) § "Decomposition");
+the rest of the queue is still ranked.
 
 ## The ranking model
 

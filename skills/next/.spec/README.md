@@ -105,6 +105,7 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 | B-038 | Given actionable standalone work, this Feature keeps it visible in the report as the companion directs.                                                                                           | § Use lanes to support the choice        | Active |
 | B-039 | Given a request to expand detail on a report, this Feature shows the same choices from the same inputs.                                                                                           | § Report without taking work             | Active |
 | B-040 | Given a request for the next work, this Feature claims no item, edits no record, writes back no derived value, and starts no branch, worktree or dispatch.                                         | § Report without taking work; § The ranking model; § Never add | Active |
+| B-041 | Given a dependency cycle in scope, this Feature routes it to grooming as a re-cut and drops no edge to break it.                                                                              | § Stage gates                            | Active |
 
 ## 4. Constraints
 
@@ -200,6 +201,7 @@ Not applicable.
 | B-038    | Standalone work stays visible                               | Missing | Missing |
 | B-039    | Expanding the report does not change its choices            | Missing | Missing |
 | B-040    | Asking what is next takes no work                           | Missing | Missing |
+| B-041    | A dependency cycle goes to grooming as a re-cut             | Missing | Missing |
 
 ## 10. Lessons / Spec Deltas
 
