@@ -82,6 +82,18 @@ is a child. A Feature is cut into typed children:
 A cut that yields a single child is a smell: the parent was already one
 responsibility, or the cut missed a dimension.
 
+A dependency cycle means two units were cut across a boundary that does not
+hold. No edge is dropped to break it; it is re-cut, trying these in order:
+
+1. **Merge.** The members were one unit of work; they become one child.
+2. **Extract.** The shared part becomes a new unit both depend on.
+3. **Narrow the edge to the child grain.** When the cycle sits between Features
+   and the split is sound, move the dependency off the Feature and onto only the
+   children that need it.
+
+The re-cut is its own commit, and the cycle check runs again before any order is
+trusted.
+
 ## Two records, one authority each
 
 | Record            | Authority over                                        |
