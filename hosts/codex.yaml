@@ -2,8 +2,12 @@
 # the result as top-level TOML keys after `developer_instructions`.
 # `instructions_prefix` is prepended to the role body; `{source}` is the role's
 # repository path.
+# `commands_output` is where a command lands: a Codex skill, which has no
+# `$ARGUMENTS`, so `commands_arguments` replaces it. See ADR-0005.
 output: .codex/agents/{name}.toml
 skills_output: .agents/skills
+commands_output: .agents/skills/{name}/SKILL.md
+commands_arguments: "the request that invoked this skill"
 instructions_prefix: "Read AGENTS.md first. The authoritative role source is {source}. Resolve its relative links against that path in the repository."
 defaults:
   model: gpt-6.1-sol

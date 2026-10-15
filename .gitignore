@@ -1,6 +1,7 @@
 .claude/*
 !.claude/agents/
 !.claude/skills/
+!.claude/commands/
 .codex/*
 !.codex/agents/
 .agents/*
