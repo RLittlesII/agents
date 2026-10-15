@@ -34,7 +34,8 @@ lands there. Read all three.
    then the full build. A green build proves only that the targets it declares
    ran — read what they actually cover.
 8. **Open the pull request, then watch it.** A failing check is yours to fix, not
-   the reviewer's to discover.
+   the reviewer's to discover. Merging is the person's call: never merge without
+   their explicit approval, however green the checks.
 9. **Review feedback is a loop, not a conversation.** For each round: make the
    change, commit, push, then resolve every thread the commit addressed with a
    reply naming only that commit. Nothing else goes in the thread - the diff is
@@ -69,3 +70,4 @@ A **product** lesson changes the claim and scenario, not a skill.
 - A green build read as proof of coverage.
 - A review thread resolved without a pushed commit, or with prose beyond the
   commit that addressed it.
+- A merge without the person's explicit approval.
