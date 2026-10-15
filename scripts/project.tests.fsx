@@ -2,6 +2,7 @@
 //   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B015_
 //   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B008_
 //   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B007_
+//   skills/.spec/README.md   (0001-F4 Skill boundary) F4_B001_..F4_B003_
 //
 //   dotnet fsi scripts/project.tests.fsx        exit code = number of failures
 
@@ -583,6 +584,47 @@ let F3_B007_CommandNamedLikeSkill_Fails () =
     contains "command 'sdd-conventions' has the name of skill 'sdd-conventions'" (expectFailure (fun () -> plan root))
     nothingWritten root
 
+// ---------------------------------------------------------------- 0001-F4 Skill boundary
+
+/// The synthetic checkout plus a hyphenated role, log-reader, signing as Zed.
+let lintCheckout () =
+    let root = checkout ()
+    write root "agents/log-reader.md" (personaRole "log-reader" "[]" "  name: Zed\n  voice: Terse." "\n# Log reader\n")
+    root
+
+let F4_B001_SkillNamingRole_FailsNamingFileLineAndRole () =
+    let cases =
+        [ "Ask `alpha` first.", "skills/other/SKILL.md:6: names role 'alpha'"
+          "Hand it to the log-reader.", "skills/other/SKILL.md:6: names role 'log-reader'"
+          "Zed signs the report.", "skills/other/SKILL.md:6: names role 'log-reader'"
+          "See [alpha](../agents/alpha.md).", "skills/other/SKILL.md:6: names a path into agents/"
+          "Read agents/alpha.md first.", "skills/other/SKILL.md:6: names a path into agents/" ]
+    for line, expected in cases do
+        let root = lintCheckout ()
+        write root "skills/other/SKILL.md" ("---\nname: other\n---\n\n# Other\n" + line + "\n")
+        contains expected (expectFailure (fun () -> plan root))
+        nothingWritten root
+    // Ordinary words are not role names: a bare one-word name, a longer
+    // hyphenated word, a host directory, and a lower-case word.
+    let root = lintCheckout ()
+    write root "skills/other/SKILL.md" "---\nname: other\n---\n\nThe alpha release; a log-reader-like tool; .claude/agents/ holds agents; zed.\n"
+    lintSkills root (loadRoles root)
+
+let F4_B002_GeneratedBlockIsExempt () =
+    let root = lintCheckout ()
+    let text =
+        "---\nname: other\n---\n\n<!-- BEGIN GENERATED: table -->\n| `alpha` | log-reader | Zed |\n<!-- END GENERATED: table -->\n\nAsk `beta`.\n"
+    write root "skills/other/SKILL.md" text
+    // Only the line after the block is reported, at its own line number.
+    let message = expectFailure (fun () -> plan root)
+    contains "skills/other/SKILL.md:9: names role 'beta'" message
+    if message.Contains "'alpha'" || message.Contains "'log-reader'" then failwithf "a generated block was linted:\n%s" message
+    write root "skills/other/SKILL.md" (text.Replace("Ask `beta`.", "Ask the owner."))
+    lintSkills root (loadRoles root)
+
+let F4_B003_RepositorySkillsNameNoRole () =
+    lintSkills repoRoot (loadRoles repoRoot)
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
@@ -617,7 +659,10 @@ let tests : (string * (unit -> unit)) list =
       nameof F3_B004_CommandNamingMissingSkill_FailsNamingBoth, F3_B004_CommandNamingMissingSkill_FailsNamingBoth
       nameof F3_B005_MalformedCommand_Fails, F3_B005_MalformedCommand_Fails
       nameof F3_B006_CommandsFollowTheHostAndStaleOnesAreReported, F3_B006_CommandsFollowTheHostAndStaleOnesAreReported
-      nameof F3_B007_CommandNamedLikeSkill_Fails, F3_B007_CommandNamedLikeSkill_Fails ]
+      nameof F3_B007_CommandNamedLikeSkill_Fails, F3_B007_CommandNamedLikeSkill_Fails
+      nameof F4_B001_SkillNamingRole_FailsNamingFileLineAndRole, F4_B001_SkillNamingRole_FailsNamingFileLineAndRole
+      nameof F4_B002_GeneratedBlockIsExempt, F4_B002_GeneratedBlockIsExempt
+      nameof F4_B003_RepositorySkillsNameNoRole, F4_B003_RepositorySkillsNameNoRole ]
 
 let mutable failures = 0
 for name, test in tests do

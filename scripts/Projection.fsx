@@ -376,6 +376,40 @@ let replaceGenerated (file: string) (block: string) (text: string) (content: str
     if start < 0 || finish < 0 || finish < start then fail (sprintf "%s lacks the %s markers" file block)
     text.Substring(0, start + opening.Length) + "\n" + content + "\n" + text.Substring finish
 
+// ---------------------------------------------------------------- One-way rule
+
+let private generatedBlock = Regex(@"<!-- BEGIN GENERATED: ([\w-]+) -->.*?<!-- END GENERATED: \1 -->", RegexOptions.Singleline)
+let private agentsPath = Regex(@"\.\./agents/|(?<![\w./-])agents/[\w-]+\.md")
+
+/// 0001-F4 B-001, B-002: no file under skills/ names a role outside a generated
+/// block. A role is named by its name in backticks, a hyphenated name as a whole
+/// word, its persona name as a whole word, or a path into agents/. A bare
+/// one-word role name is ordinary English and is left to review.
+let lintSkills (root: string) (roles: Role list) =
+    let patterns =
+        [ for role in roles do
+            yield role.Name, Regex(Regex.Escape("`" + role.Name + "`"))
+            if role.Name.Contains "-" then
+                yield role.Name, Regex(@"(?<![\w-])" + Regex.Escape role.Name + @"(?![\w-])")
+            match role.Persona with
+            | Some p -> yield role.Name, Regex(@"\b" + Regex.Escape p.Name + @"\b")
+            | None -> () ]
+    let findings =
+        [ for file in filesUnder (Path.Combine(root, "skills")) do
+            let raw = File.ReadAllBytes file
+            if not (Array.contains 0uy raw) then
+                // Blank each generated block but keep its newlines, so line numbers hold.
+                let text =
+                    generatedBlock.Replace(normalize (utf8.GetString raw), fun m -> String('\n', m.Value.Split('\n').Length - 1))
+                let rel = relative root file
+                for i, line in text.Split('\n') |> Array.indexed do
+                    for name, pattern in patterns do
+                        if pattern.IsMatch line then yield sprintf "%s:%d: names role '%s'" rel (i + 1) name
+                    if agentsPath.IsMatch line then yield sprintf "%s:%d: names a path into agents/" rel (i + 1) ]
+        |> List.distinct
+    if not findings.IsEmpty then
+        fail (sprintf "a skill never names a role; name the section owner or the review pass instead:\n%s" (String.concat "\n" findings))
+
 // ---------------------------------------------------------------- Personas
 
 /// 0001-F2 B-007: a persona name belongs to one role.
@@ -617,6 +651,7 @@ let plan (root: string) : Plan =
     if roles.IsEmpty then fail "agents/ holds no role files"
     validateSkillLinks root roles
     validatePersonas roles
+    lintSkills root roles
     let hosts = [ loadHost root "claude"; loadHost root "codex" ]
     for host in hosts do validateHostRoles host roles
     let unowned = loadUnowned root
