@@ -51,7 +51,9 @@ ids and the traceability matrix in CI. The shared facts are in
 | [`document-writer`](agents/document-writer.md) | stale or missing prose                  | documents checked against what exists                     |
 | [`auditor`](agents/auditor.md)                 | the repository at rest                  | drift findings, grouped by rule                           |
 
-The handoff rules are in [`agents/README.md`](agents/README.md).
+The handoff rules are in [`agents/README.md`](agents/README.md). Each role signs
+the prose it writes with a persona; the roster is in
+[`agents/PERSONAS.md`](agents/PERSONAS.md).
 
 ## Skills
 
@@ -85,7 +87,7 @@ The role files name no path or command of yours; the companion does.
 | Kind       | Paths                                                                  | Rule                                        |
 | ---------- | ---------------------------------------------------------------------- | ------------------------------------------- |
 | Source     | `agents/*.md`, `skills/*/SKILL.md`, `hosts/*.yaml`, `scripts/*.fsx`     | edit here, in a pull request                |
-| Generated  | `.claude/agents/`, `.claude/skills/`, `.codex/agents/`, `.agents/skills/`, the ownership table in `sdd-conventions` | never hand-edit; run the projector |
+| Generated  | `.claude/agents/`, `.claude/skills/`, `.codex/agents/`, `.agents/skills/`, the ownership table in `sdd-conventions`, the roster in `agents/PERSONAS.md` | never hand-edit; run the projector |
 | Tool-owned | `.specht/`                                                              | written by `dotnet specht init`             |
 | Records    | `.spec/adr/`, `scripts/.spec/`, `agents/.spec/`                         | the method applied to this repository       |
 

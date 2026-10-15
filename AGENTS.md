@@ -34,7 +34,8 @@ its paths and commands are in [README.md](README.md).
 ## Roles
 
 [Role contracts and handoffs](agents/README.md). A role file is host-free; the
-model, effort and tools a host uses are in [`hosts/`](hosts/).
+model, effort and tools a host uses are in [`hosts/`](hosts/). The name each role
+signs its prose with is in [`agents/PERSONAS.md`](agents/PERSONAS.md).
 
 ## Specifications
 
@@ -52,10 +53,11 @@ model, effort and tools a host uses are in [`hosts/`](hosts/).
 
 ## Generated files
 
-Never hand-edit `.claude/`, `.codex/`, `.agents/`, or the block between the
-generated markers in `skills/sdd-conventions/SKILL.md`. Edit the source under
-`agents/`, `skills/` or `hosts/` and run `dotnet fsi scripts/project.fsx`. CI
-runs the same command with `--check` and fails on drift.
+Never hand-edit `.claude/`, `.codex/`, `.agents/`, or the blocks between the
+generated markers in `skills/sdd-conventions/SKILL.md` and `agents/PERSONAS.md`.
+Edit the source under `agents/`, `skills/` or `hosts/` and run
+`dotnet fsi scripts/project.fsx`. CI runs the same command with `--check` and
+fails on drift.
 
 ## Code conventions
 
