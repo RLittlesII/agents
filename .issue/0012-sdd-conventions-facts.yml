@@ -2,7 +2,7 @@ id: "0012"
 type: chore
 title: Restore shared facts dropped from sdd-conventions
 
-status: ready
+status: done
 
 value: 3
 risk: 3
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review M2, M9, M10, M14, M19, L1 and L13, all in
@@ -47,6 +47,7 @@ acceptance_criteria:
   - "§ Workflow edges name the command that runs each step."
   - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
 
-decisions: []
+decisions:
+  - "2026-10-14: lifecycle entry conditions live in sdd-conventions § Lifecycle, the one place; the item template keeps only the vocabulary."
 
 out_of_scope: []

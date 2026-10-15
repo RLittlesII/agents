@@ -34,25 +34,51 @@ here rather than maintaining another copy.
 
 ```mermaid
 flowchart LR
-    Specification[Specification + scenarios] --> Grooming[Grooming]
-    Grooming --> Architecture[Architecture]
+    Ask[Raw ask] -->|/spec| Specification[Specification + scenarios]
+    Specification -->|/groom| Grooming[Grooming]
+    Grooming -->|/design| Architecture[Architecture]
     Architecture --> Items[Work items]
     Items --> Stubs[Interface stubs]
-    Stubs --> Tests[Tests]
-    Tests --> Implementation[Implementation]
-    Implementation --> Review[Diff review]
+    Stubs -->|/test| Tests[Tests]
+    Tests -->|/implement| Implementation[Implementation]
+    Implementation -->|/review| Review[Diff review]
     Review --> PR[PR]
+    PR -->|/ship| Release[Release]
 ```
+
+An edge label names the command that runs the step; Claude Code invokes it as
+`/<name>`, Codex as `$<name>`. A step with no label is a continuation of the one
+before it.
 
 The owner of § 7 reviews the groomed agreement and records design readiness
 before tests and implementation. Once the design is Ready, the owner of § 7
 scaffolds the declared interfaces as compiling stubs, so a test fails on
 behaviour rather than on a compile error; the tests and the implementation start
 from them. The diff pass (§ "Review passes") reviews the local diff before the
-PR is opened; subsequent PR feedback follows the same
-ownership and revision rules. Standalone spikes start at their work item, with
-the owner of § 7 taking the first pass at feasibility; written performance
-concerns go to the owner of § 8 › `### Performance` for measurement.
+PR is opened; subsequent PR feedback follows the same ownership and revision
+rules. Standalone spikes start at their work item, with the owner of § 7 taking
+the first pass at feasibility; written performance concerns go to the owner of
+§ 8 › `### Performance` for measurement.
+
+## Lifecycle
+
+A work item's delivery state, with the condition for entering each. The
+companion names the field that carries it; this is the one statement of when it
+moves.
+
+| State                      | Entered when                                                       |
+| -------------------------- | ------------------------------------------------------------------ |
+| `needs-decomposition`      | an epic or Feature trips an oversize signal, or is not yet split   |
+| `ready-for-architecture`   | the Feature is split and §§ 1-5 are approved for the item's claims |
+| `ready-for-implementation` | the § 7 readiness verdict is Ready, with the item's risk set from it |
+| `ready`                    | a spike, bug or chore whose dependencies are delivered             |
+| `in-progress`              | someone signals they have taken it, before the branch              |
+| `in-review`                | its pull request is open                                           |
+| `blocked`                  | work bounced back; the reason is written in the item              |
+| `done`                     | its pull request merged with a test row for every claim it delivers |
+
+No child advances before its Feature is split. Waiting on an unfinished
+dependency is derived, never a state someone sets.
 
 ## Section ownership
 
@@ -122,6 +148,18 @@ belongs to the surface pass's report whoever noticed it, because the two rank
 severity by different measures — what it gets an attacker, against what failure
 it causes.
 
+**Severity.** Every finding carries one:
+
+| Severity     | Means                                                                 |
+| ------------ | --------------------------------------------------------------------- |
+| Blocking     | the change cannot merge: a claim unmet, a constraint broken, a test weakened |
+| Major        | fixed before the item is done                                         |
+| Minor        | fixed, or the reason it was not is recorded                           |
+| Suggestion   | the owner's choice                                                    |
+
+A finding that names no claim, constraint, record or convention is at most a
+Suggestion.
+
 **Two passes disagreeing on severity is not settled by precedence.** Both
 findings stand and the artifact's owner decides. One pass does not overrule
 another; a pass that could would stop being worth running.
@@ -150,16 +188,22 @@ item and sibling specification. A dropped claim leaves its number retired.
 **Delivery state is tracked in the work-item tracker; content is tracked in the
 repository.** Exactly one field crosses that line in each direction: the item
 names its specification, and the specification's `status` frontmatter mirrors
-the item's delivery state once the item exists. `priority` is authored in the
+the item's delivery state once the item exists. Drift between the two is a
+review finding; the offline checker never calls the tracker. `priority` is authored in the
 specification and never mirrored. Derived fields — `rank`, `blocks` — are
 recomputed, never hand-edited. The companion names the tracker and the label or
 field that carries delivery state.
 
 ## Spec layout
 
-- A Feature's specification is `<area>/.spec/README.md`, beside the code it
-  governs. Exactly one `.feature` file sits beside it, each scenario tagged with
-  the `@B-00n` claim it documents.
+- A Feature's specification is `<area>/.spec/README.md`, in the narrowest
+  directory that covers all the code it governs. The same rule places one for
+  build, CI or documentation; no empty code folder is made to host one.
+- Exactly one `.feature` file sits beside it, each scenario tagged with the
+  `@B-00n` claim it documents. A `.feature` file with no specification beside it
+  is an orphan: every scenario has an owning agreement.
+- A scenario uses the glossary's word for each domain thing. A synonym it coins
+  is a finding; the companion names where the glossary lives.
 - Three record folders sit beside the specification: `decisions/` (product and
   scope calls), `adr/` (durable technical rules) and `lessons/` (incidents and
   what they changed). A record binding the whole repository lives at the root
@@ -189,7 +233,7 @@ it must answer for each of these:
 | Delivery     | the tracker, the delivery-state field, branches, merge strategy, where a claim citation survives |
 | Testing      | the test projects, tiers, assertion form, naming form and discovery traps, the changed-line coverage threshold and its gate |
 | Questions    | where answers are recorded and which questions are already settled     |
-| Specs        | where specifications live when the layout differs from § "Spec layout" |
+| Specs        | where specifications live when the layout differs from § "Spec layout", and the glossary |
 | Next work    | tracker access, planning metadata, ranking inputs and reservations     |
 | Benchmarking | the harness, where benchmarks live and the measurement traps           |
 
