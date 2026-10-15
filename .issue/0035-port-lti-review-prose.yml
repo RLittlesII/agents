@@ -2,7 +2,7 @@ id: "0035"
 type: chore
 title: Port the lti agents' review checks and failure traps into roles and skills
 
-status: in-progress
+status: done
 
 value: 3
 cost: 3
@@ -20,7 +20,7 @@ claims: []
 
 created: "2026-10-15"
 updated: "2026-10-15"
-closed: null
+closed: "2026-10-15"
 
 summary: |
   An assessment of the older agents in /Users/rlittlesii/source/lti/.agents/agents
