@@ -1,6 +1,6 @@
 // Tests for the projector. Names cite the claims they cover:
 //   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B015_
-//   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B008_
+//   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B009_
 //   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B007_
 //   skills/.spec/README.md   (0001-F4 Skill boundary) F4_B001_..F4_B003_
 //
@@ -335,13 +335,29 @@ let B012_Persona_PrecedesVerbatimBodyOnBothHosts () =
     // A role without a persona is unchanged: beta's body follows the frontmatter directly.
     contains ("---\n" + betaBody) (read root ".claude/agents/beta.md")
 
+/// Two review units, each declaring what it reviews, when it runs and what it
+/// never does.
+let reviewUnits =
+    String.concat "\n"
+        [ "review_units:"
+          "  design:"
+          "    reviews: a design"
+          "    runs_when: before code"
+          "    never: edits"
+          "  diff:"
+          "    reviews: a diff"
+          "    runs_when: before merge"
+          "    never: rewrites"
+          "---"
+          "" ]
+
 let reviewBody title = sprintf "\n# %s\n\n## Look for\n\n- Drift.\n\n## Report\n\nOne finding per line.\n" title
 
 /// The synthetic checkout with two review units, alpha reviewing the diff and
 /// beta the design.
 let reviewsCheckout () =
     let root = checkout ()
-    write root "agents/README.md" (readme.Replace("---\n", "") |> fun front -> "---\n" + front + "review_units:\n  design: a design\n  diff: a diff\n---\n")
+    write root "agents/README.md" (readme.Replace("---\n", "") |> fun front -> "---\n" + front + reviewUnits)
     write root "agents/alpha.md" (role "alpha" "[\"1\", \"2\", \"Tasks\"]\nreviews: [diff]" (reviewBody "Alpha"))
     write root "agents/beta.md" (role "beta" "[\"3\"]\nreviews: [design]" (reviewBody "Beta"))
     root
@@ -353,10 +369,10 @@ let B013_ReviewUnits_WriteRegistryBetweenMarkers () =
     let expected =
         String.concat "\n"
             [ "<!-- BEGIN GENERATED: review-passes -->"
-              "| Order | Unit   | Reviews  | Reviewer |"
-              "| ----- | ------ | -------- | -------- |"
-              "| 1     | design | a design | `beta`   |"
-              "| 2     | diff   | a diff   | `alpha`  |"
+              "| Order | Unit   | Reviews  | Runs when    | Never    | Reviewer |"
+              "| ----- | ------ | -------- | ------------ | -------- | -------- |"
+              "| 1     | design | a design | before code  | edits    | `beta`   |"
+              "| 2     | diff   | a diff   | before merge | rewrites | `alpha`  |"
               "<!-- END GENERATED: review-passes -->" ]
     contains expected text
     // The ownership table still sits between its own markers.
@@ -474,6 +490,22 @@ let F2_B008_ReviewingRoleCarriesLookForAndReport () =
     write root "agents/beta.md" (role "beta" "[\"3\"]\nreviews: [diff]" betaBody)
     contains "agents/beta.md: reviews diff but lacks ## Look for or ## Report" (expectFailure (fun () -> plan root))
     nothingWritten root
+
+let F2_B009_ReviewUnitDeclaresTriggerAndRefusal () =
+    // The real index: every unit declares all three, so the registry renders.
+    for unit in loadReviewUnits repoRoot do
+        if String.IsNullOrWhiteSpace unit.RunsWhen || String.IsNullOrWhiteSpace unit.Never then
+            failwithf "review unit '%s' lacks a trigger or a refusal" unit.Unit
+    // A unit with no `never` fails naming the unit and the key.
+    let root = reviewsCheckout ()
+    write root "agents/README.md" (readme.Replace("---\n", "") |> fun front -> "---\n" + front + reviewUnits.Replace("    never: edits\n", ""))
+    contains "agents/README.md: review unit 'design' lacks never" (expectFailure (fun () -> plan root))
+    nothingWritten root
+    // A unit given as bare text fails: it states no trigger or refusal.
+    let root2 = reviewsCheckout ()
+    write root2 "agents/README.md" (readme.Replace("---\n", "") |> fun front -> "---\n" + front + "review_units:\n  design: a design\n  diff: a diff\n---\n")
+    contains "agents/README.md: review unit 'design' must declare reviews, runs_when and never" (expectFailure (fun () -> plan root2))
+    nothingWritten root2
 
 // ---------------------------------------------------------------- 0001-F3 Commands
 
@@ -653,6 +685,7 @@ let tests : (string * (unit -> unit)) list =
       nameof F2_B006_EverySkillLinkResolves, F2_B006_EverySkillLinkResolves
       nameof F2_B007_PersonaRequiresNameAndVoiceAndIsUnique, F2_B007_PersonaRequiresNameAndVoiceAndIsUnique
       nameof F2_B008_ReviewingRoleCarriesLookForAndReport, F2_B008_ReviewingRoleCarriesLookForAndReport
+      nameof F2_B009_ReviewUnitDeclaresTriggerAndRefusal, F2_B009_ReviewUnitDeclaresTriggerAndRefusal
       nameof F3_B001_CommandProjectsToClaudeCommandFile, F3_B001_CommandProjectsToClaudeCommandFile
       nameof F3_B002_CommandProjectsToCodexSkill, F3_B002_CommandProjectsToCodexSkill
       nameof F3_B003_CommandNamingMissingRole_FailsNamingBoth, F3_B003_CommandNamingMissingRole_FailsNamingBoth

@@ -201,9 +201,30 @@ let private indexMapping (root: string) (key: string) : (string * string) list =
 /// `unowned_spec_sections: { "<key>": <who> }`.
 let loadUnowned (root: string) = indexMapping root "unowned_spec_sections"
 
-/// B-013: the review units, in pass order, declared in agents/README.md
-/// frontmatter as `review_units: { <unit>: <what it reviews> }`.
-let loadReviewUnits (root: string) = indexMapping root "review_units"
+/// A review unit: what it reviews, when its pass runs, and what the pass never
+/// does.
+type ReviewUnit = { Unit: string; Reviews: string; RunsWhen: string; Never: string }
+
+/// B-013, 0001-F2 B-009: the review units, in pass order, declared in
+/// agents/README.md frontmatter as
+/// `review_units: { <unit>: { reviews: ..., runs_when: ..., never: ... } }`.
+let loadReviewUnits (root: string) : ReviewUnit list =
+    let path = Path.Combine(root, "agents", "README.md")
+    if not (File.Exists path) then [] else
+    let pairs, _ = splitFrontmatter "agents/README.md" (readText path)
+    match tryGet "review_units" pairs with
+    | Some (Mapping entries) ->
+        entries |> List.map (fun (unit, value) ->
+            match value with
+            | Mapping keys ->
+                let text key =
+                    match tryGet key keys with
+                    | Some (Scalar s) when not (String.IsNullOrWhiteSpace s) -> s
+                    | _ -> fail (sprintf "agents/README.md: review unit '%s' lacks %s" unit key)
+                { Unit = unit; Reviews = text "reviews"; RunsWhen = text "runs_when"; Never = text "never" }
+            | _ -> fail (sprintf "agents/README.md: review unit '%s' must declare reviews, runs_when and never" unit))
+    | Some _ -> fail "agents/README.md: review_units must be a mapping"
+    | None -> []
 
 // ---------------------------------------------------------------- Hosts
 
@@ -342,11 +363,11 @@ let renderOwnershipTable (rows: (string * string) list) =
 
 /// B-013, B-014, B-015: one reviewer per unit, every unit reviewed, no role
 /// reviewing a unit the vocabulary lacks. Rows follow the vocabulary's order.
-let reviewRows (roles: Role list) (units: (string * string) list) : (string * string * string) list =
+let reviewRows (roles: Role list) (units: ReviewUnit list) : (ReviewUnit * string) list =
     let reviewers =
         [ for role in roles do
             for unit in role.Reviews do
-                if not (units |> List.exists (fun (u, _) -> u = unit)) then
+                if not (units |> List.exists (fun u -> u.Unit = unit)) then
                     fail (sprintf "%s: reviews '%s', which agents/README.md review_units does not declare" role.Source unit)
                 yield unit, role.Name ]
     for unit, holders in reviewers |> List.groupBy fst do
@@ -354,14 +375,14 @@ let reviewRows (roles: Role list) (units: (string * string) list) : (string * st
         | (_, first) :: (_, second) :: _ ->
             fail (sprintf "review unit '%s' is reviewed by both '%s' and '%s'; a unit has exactly one reviewer" unit first second)
         | _ -> ()
-    let missing = units |> List.map fst |> List.filter (fun u -> not (reviewers |> List.exists (fun (r, _) -> r = u)))
+    let missing = units |> List.map (fun u -> u.Unit) |> List.filter (fun u -> not (reviewers |> List.exists (fun (r, _) -> r = u)))
     if not missing.IsEmpty then
         fail (sprintf "the review-pass registry is not total; reviewed by nobody: %s" (String.Join(", ", missing)))
-    units |> List.map (fun (unit, what) -> unit, what, reviewers |> List.find (fun (u, _) -> u = unit) |> snd)
+    units |> List.map (fun u -> u, reviewers |> List.find (fun (r, _) -> r = u.Unit) |> snd)
 
-let renderReviewTable (rows: (string * string * string) list) =
-    renderTable [ "Order"; "Unit"; "Reviews"; "Reviewer" ]
-        (rows |> List.mapi (fun i (unit, what, role) -> [ string (i + 1); unit; what; sprintf "`%s`" role ]))
+let renderReviewTable (rows: (ReviewUnit * string) list) =
+    renderTable [ "Order"; "Unit"; "Reviews"; "Runs when"; "Never"; "Reviewer" ]
+        (rows |> List.mapi (fun i (u, role) -> [ string (i + 1); u.Unit; u.Reviews; u.RunsWhen; u.Never; sprintf "`%s`" role ]))
 
 let markers (block: string) =
     sprintf "<!-- BEGIN GENERATED: %s -->" block, sprintf "<!-- END GENERATED: %s -->" block

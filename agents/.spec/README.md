@@ -68,6 +68,7 @@ implicit and two roles end up writing the same section.
 | B-006 | Given a role body linking `../skills/<name>/SKILL.md`, that skill exists in `skills/`; projection fails naming the role and the skill otherwise. | C-1 | Active |
 | B-007 | Given a role declaring `persona`, it carries a one-line `name` and a one-line `voice`, and no other role declares the same persona name; the role name stays the file stem, the host agent name and every machine-read stamp. | Brief: personas | Active |
 | B-008 | Given a role declaring `reviews`, each entry is a review unit and the body carries `## Look for` and `## Report`; projection fails naming the role otherwise. | `sdd-conventions` § Review passes | Active |
+| B-009 | Given a review unit in the roles index, it declares what it reviews, when its pass runs and what the pass never does, and the registry shows all three; projection fails naming the unit and the missing key otherwise. | LTI review-pass registry | Active |
 
 ## 4. Constraints
 
@@ -88,6 +89,8 @@ implicit and two roles end up writing the same section.
 | 1   | Rendering a role for a host                       | [0001-F1 Projection](../../scripts/.spec/README.md)                     |
 | 2   | A role per technology or platform                 | A technology belongs in the consuming repository's companion skill (B-004) |
 | 3   | Persona traits beyond a name and a voice          | A name and one line of voice are what a reader acts on; a trait list is restated prose |
+| 4   | A role-level declaration of how scenarios execute, or an opt-out into documentation-only scenarios | How the runner executes scenarios is the companion's § "Testing"; a scenario alone is not coverage either way |
+| 5   | A database role                                   | Migration duties sit with `implementer`, storage shape with `domain`; the engine is the companion's (B-004) |
 
 ## 6. Concern Separation
 
@@ -126,7 +129,9 @@ every persona in [`PERSONAS.md`](../PERSONAS.md). A stamp a tool reads —
 no tool has to map a persona back to a role.
 
 The review units — design, diff, surface, repository — are declared once, in
-the same frontmatter under `review_units`, in the order their passes run. A role
+the same frontmatter under `review_units`, in the order their passes run, each
+with what it reviews, when its pass runs and what the pass never does (B-009). A
+role
 declaring `reviews` carries the reviewing headings (B-008); which role reviews
 which unit is generated into
 [`sdd-conventions` § Review passes](../../skills/sdd-conventions/SKILL.md#review-passes).
@@ -166,6 +171,8 @@ edit that breaks the contract fails the same command CI runs. The scenarios in
   roles and runs `validatePersonas` over the real roster.
 - B-008: the real roster declares exactly the four passes; a synthetic role
   declaring a unit on a body without the reviewing headings fails `plan`.
+- B-009: every real unit loads with all three keys; a synthetic unit missing
+  `never`, or given as bare text, fails `plan` naming the unit.
 - B-004 is a review question, not a test: at review, grep the role bodies for
   the names of the consuming project's stack and tooling. The reviewer records
   the result in § 12. A lint over a word list was considered and rejected
@@ -189,6 +196,7 @@ Not applicable.
 | B-006    | A role links only skills that exist                 | `F2_B006_EverySkillLinkResolves`                         | Covered |
 | B-007    | A persona carries a name and a voice and is unique  | `F2_B007_PersonaRequiresNameAndVoiceAndIsUnique`         | Covered |
 | B-008    | A reviewing role carries the reviewing headings     | `F2_B008_ReviewingRoleCarriesLookForAndReport`           | Covered |
+| B-009    | A review unit declares its trigger and refusal      | `F2_B009_ReviewUnitDeclaresTriggerAndRefusal`            | Covered |
 
 ## 10. Lessons / Spec Deltas
 

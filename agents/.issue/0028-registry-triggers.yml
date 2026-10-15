@@ -2,7 +2,7 @@ id: "0028"
 type: task
 title: Restore registry triggers and settle two role-contract exclusions
 
-status: ready
+status: done
 
 value: 2
 risk: 2
@@ -15,11 +15,12 @@ spikes: []
 
 spec: agents/.spec/README.md
 
-claims: []
+claims:
+  - B-009
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review M4, L12 and L18, against 0001-F2.
@@ -39,6 +40,8 @@ acceptance_criteria:
   - "§ 9 carries a row naming a test for each new claim."
   - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
 
-decisions: []
+decisions:
+  - "2026-10-14: the trigger and refusal are declared per unit in the roles index, beside what the unit reviews, rather than per role as LTI did; a unit is the thing with one trigger."
+  - "2026-10-14: runner mode and a database role are excluded in 0001-F2 § 5 rows 4 and 5."
 
 out_of_scope: []

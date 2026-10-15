@@ -118,12 +118,12 @@ one reviewer; the registry is generated from each role's `reviews` declaration
 and the units declared in the roles index, so change those, not the table.
 
 <!-- BEGIN GENERATED: review-passes -->
-| Order | Unit       | Reviews                                                  | Reviewer        |
-| ----- | ---------- | -------------------------------------------------------- | --------------- |
-| 1     | design     | a design, before implementation exists                   | `critic`        |
-| 2     | diff       | a diff, against the claims and decisions it cites        | `spec-reviewer` |
-| 3     | surface    | what a change exposes to a hostile caller                | `adversary`     |
-| 4     | repository | the repository at rest, on a cadence or before a release | `auditor`       |
+| Order | Unit       | Reviews                                           | Runs when                                                                     | Never                                                                        | Reviewer        |
+| ----- | ---------- | ------------------------------------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | --------------- |
+| 1     | design     | a design, before implementation exists            | a design exists and implementation has not started                            | propose a redesign, or review its own design                                 | `critic`        |
+| 2     | diff       | a diff, against the claims and decisions it cites | a change is proposed for merge                                                | edit the change, or approve one whose claims it cannot locate                | `spec-reviewer` |
+| 3     | surface    | what a change exposes to a hostile caller         | a change touches a boundary, a credential, a permission or input from outside | write a working exploit, or soften a finding because the fix is inconvenient | `adversary`     |
+| 4     | repository | the repository at rest                            | on a cadence, or before a release; never on a single diff                     | fix what it finds, or grade a judgment call as a violation                   | `auditor`       |
 <!-- END GENERATED: review-passes -->
 
 Every pass is read-only. A pass reports findings and never fixes what it finds;

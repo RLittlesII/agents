@@ -5,10 +5,22 @@ type: reference
 unowned_spec_sections:
   "11": whoever is blocked
 review_units:
-  design: a design, before implementation exists
-  diff: a diff, against the claims and decisions it cites
-  surface: what a change exposes to a hostile caller
-  repository: the repository at rest, on a cadence or before a release
+  design:
+    reviews: a design, before implementation exists
+    runs_when: a design exists and implementation has not started
+    never: propose a redesign, or review its own design
+  diff:
+    reviews: a diff, against the claims and decisions it cites
+    runs_when: a change is proposed for merge
+    never: edit the change, or approve one whose claims it cannot locate
+  surface:
+    reviews: what a change exposes to a hostile caller
+    runs_when: a change touches a boundary, a credential, a permission or input from outside
+    never: write a working exploit, or soften a finding because the fix is inconvenient
+  repository:
+    reviews: the repository at rest
+    runs_when: on a cadence, or before a release; never on a single diff
+    never: fix what it finds, or grade a judgment call as a violation
 ---
 
 # Role contracts

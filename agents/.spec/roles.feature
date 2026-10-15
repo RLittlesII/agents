@@ -65,6 +65,14 @@ Feature: Role contract
     Then projection fails naming the role
     And no output directory exists
 
+  @B-009
+  Scenario: A review unit declares its trigger and refusal
+    Given a review unit in the roles index that says what it reviews and when its pass runs
+    And it does not say what the pass never does
+    When the checkout is projected
+    Then projection fails naming the unit and the missing key
+    And no output directory exists
+
   @B-004
   Scenario: A role body names no product technology
     Given the names of a consuming project's language, libraries, paths and build tools
