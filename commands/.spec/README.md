@@ -89,6 +89,7 @@ that no longer exist, and two hosts drift into two versions of the same ritual.
 | 2   | Command-to-command transitions               | A command is a prompt, not a state machine (C-1)                                         |
 | 3   | Host-specific command keys such as allowed tools or a model | A command inherits the role's host mapping; added when a host needs one   |
 | 4   | Grooming or design inside `spec`             | Items are cut after agreement (`groom`) and design follows it (`design`); convening either in `spec` would act before the agreement exists |
+| 5   | Documentation inside `spec`                  | The specification is the agreement's only document; a README or guide changes with the code that makes it true, not before |
 
 ## 6. Concern Separation
 
