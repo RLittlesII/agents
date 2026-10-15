@@ -6,7 +6,7 @@ type: overview
 
 # agents
 
-Six role contracts and seven method skills for specification-driven
+Twenty-four role contracts and seven method skills for specification-driven
 development, written once, host-free, and projected into the files each AI host
 reads. The repository carries no product technology and no tool-specific
 knowledge: a consuming repository adds a companion skill that names its own
@@ -24,14 +24,32 @@ ids and the traceability matrix in CI. The shared facts are in
 
 ## Roles
 
-| Role                                         | Turns                                | Into                                                |
-| -------------------------------------------- | ------------------------------------ | --------------------------------------------------- |
-| [`spec-author`](agents/spec-author.md)       | a decided need                       | the agreement, and the `.feature` file              |
-| [`architect`](agents/architect.md)           | the authored agreement and scenarios | a technical design, diagrams and readiness findings |
-| [`test-writer`](agents/test-writer.md)       | a claim                              | a failing scenario and failing tests                |
-| [`implementer`](agents/implementer.md)       | a failing test and recorded design   | production code, and design feedback                |
-| [`spec-reviewer`](agents/spec-reviewer.md)   | a diff                               | a sign-off, or findings                             |
-| [`benchmarker`](agents/benchmarker.md)       | a stated cost concern                | a benchmark and a recorded finding                  |
+| Role                                           | Turns                                   | Into                                                      |
+| ---------------------------------------------- | --------------------------------------- | --------------------------------------------------------- |
+| [`analyst`](agents/analyst.md)                 | a raw ask                               | discovery notes and a decided need                        |
+| [`spec-author`](agents/spec-author.md)         | a decided need                          | the agreement, and the `.feature` file                    |
+| [`organizer`](agents/organizer.md)             | agreed claims                           | ranked work items and the Tasks index                     |
+| [`architect`](agents/architect.md)             | the authored agreement and scenarios    | a technical design, diagrams and readiness findings       |
+| [`domain`](agents/domain.md)                   | business rules in claims                | a domain model whose invariants cannot be bypassed        |
+| [`ux`](agents/ux.md)                           | user needs and claims                   | a decided interaction: flows, states and copy             |
+| [`critic`](agents/critic.md)                   | a design before it is built             | findings, never a redesign                                |
+| [`test-writer`](agents/test-writer.md)         | a claim                                 | a failing scenario and failing tests                      |
+| [`implementer`](agents/implementer.md)         | a failing test and recorded design      | production code, and design feedback                      |
+| [`ui`](agents/ui.md)                           | a decided interaction and failing tests | presentation code                                         |
+| [`pair-programmer`](agents/pair-programmer.md) | a task the person wants to steer        | small visible steps and a decision record                 |
+| [`tester`](agents/tester.md)                   | a change to verify                      | a run report and reproductions                            |
+| [`spec-reviewer`](agents/spec-reviewer.md)     | a diff                                  | a sign-off, or findings                                   |
+| [`adversary`](agents/adversary.md)             | the surface a change exposes            | security findings                                         |
+| [`benchmarker`](agents/benchmarker.md)         | a stated cost concern                   | a benchmark and a recorded finding                        |
+| [`metric-nerd`](agents/metric-nerd.md)         | a decision that needs evidence          | a baseline and a comparison                               |
+| [`bug-finder`](agents/bug-finder.md)           | a failure report                        | a reproduction and a root-cause record                    |
+| [`bug-fixer`](agents/bug-fixer.md)             | a diagnosed cause and a failing test    | the fix and its lesson                                    |
+| [`log-parser`](agents/log-parser.md)           | a long log                              | the sequence and the decisive lines                       |
+| [`yak-shaver`](agents/yak-shaver.md)           | an incidental obstacle                  | the obstacle removed, and what was left alone             |
+| [`build`](agents/build.md)                     | a broken or missing gate                | a reproducible build and gates that fail when they should |
+| [`release`](agents/release.md)                 | an artifact that passed the gates       | a confirmed release with a rollback                       |
+| [`document-writer`](agents/document-writer.md) | stale or missing prose                  | documents checked against what exists                     |
+| [`auditor`](agents/auditor.md)                 | the repository at rest                  | drift findings, grouped by rule                           |
 
 The handoff rules are in [`agents/README.md`](agents/README.md).
 
