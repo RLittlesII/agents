@@ -49,9 +49,9 @@ title: Convene the implement step as a command
 # edit.
 status: ready
 
-# `value` and `risk` are AUTHORED. NOTHING DERIVED IS STORED: an item carries no
-# `priority`, `rank` or `blocks` field. Rank and priority are computed on every
-# read of the queue, from `value`, `risk`, `depends_on`, `parent` and `status`
+# `value`, `cost` and `risk` are AUTHORED. NOTHING DERIVED IS STORED: an item
+# carries no `priority`, `rank` or `blocks` field. Rank and priority are
+# computed on every read of the queue, from `value`, `cost`, `depends_on`, `parent` and `status`
 # alone, so neither goes stale and neither is ever set by hand. What an item
 # gates - the open items whose `depends_on` names it - is derived the same way,
 # not kept here.
@@ -62,8 +62,8 @@ status: ready
 # each input is authored in this repository:
 #
 #   value     this item's `value`; a child may omit it to inherit the parent's.
-#   cost      this item's `risk`; there is no size field. Open is any status
-#             but done.
+#   cost      this item's `cost`, counted in full until it is done. Open is
+#             any status but done. `risk` is uncertainty, never cost.
 #   closure   `depends_on`, `parent` and `children`, through any number of
 #             edges, in ANY Feature. A `depends_on` naming an open Feature
 #             counts that Feature's open children.
@@ -71,7 +71,9 @@ status: ready
 #             under no Feature is tiered and scored on its own value and the
 #             cost of itself and what it waits on.
 value: 4 # 1-5. AUTHORED. Optional on a child: omit to inherit the parent's
-risk: 3 # 1-5. AUTHORED and REQUIRED, never inherited. The cost rank divides by
+cost: 3 # 1, 2, 3, 5 or 8 relative points. AUTHORED at grooming and REQUIRED,
+        # never inherited. What ranking divides by; missing leaves it unscored.
+risk: 3 # 1-5. AUTHORED and REQUIRED, never inherited. Uncertainty, not size
 
 parent: "0001" # id of the epic or feature this hangs under
 children: [] # ids carved out of this item, so its own scope shrank

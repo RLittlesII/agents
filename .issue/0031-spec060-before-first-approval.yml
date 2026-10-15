@@ -5,6 +5,7 @@ title: Turn SPEC060 off before the first specification is approved
 status: ready
 
 value: 3
+cost: 1
 risk: 1
 
 parent: "0001"
