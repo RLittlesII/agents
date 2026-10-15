@@ -1,0 +1,50 @@
+id: "0002"
+type: chore
+title: Fix three port-gap contradictions in skill and role text
+
+status: done
+
+value: 3
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: "2026-10-14"
+
+summary: |
+  A port-gap review (2026-10-14) compared this repository with its two
+  sources, Hooked and the LTI agents repository. Three findings were text
+  contradictions fixable without a new claim:
+
+  - M25: bug-fixer refused to close any bug without a lesson, while
+    deliver-change says a fix that reveals nothing writes none.
+  - M13: spec-and-traceability said the companion holds the section
+    ownership map and names the mirrored fields; sdd-conventions owns both.
+  - H8: deliver-change never said who may merge. LTI's
+    github-pull-requestor required the person's explicit approval.
+
+  Delivered in 67fceea, 686574b and 31f1da4, before this tracker existed;
+  this item records them after the fact.
+
+acceptance_criteria:
+  - "agents/bug-fixer.md owes a lesson only when the fix reveals a gap, matching deliver-change § When a bug fix reveals a gap; version 0.3.0."
+  - "skills/spec-and-traceability points at sdd-conventions for the ownership map and the mirrored fields."
+  - "skills/deliver-change step 8 and Never add require the person's explicit approval to merge."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+  - "Exemption: no .feature change needed; method text only, no projector behaviour changes. Constraints preserved: 0001-F1 C-1, 0001-F1 C-3, 0001-F2 C-3."
+
+decisions:
+  - "2026-10-14, repository owner: work is tracked in local .issue/ items from here on; this item is filed retroactively for commits made before the tracker existed."
+
+out_of_scope:
+  - "The other 63 port-gap findings: items 0003 to 0029."
