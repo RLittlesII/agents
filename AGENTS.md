@@ -48,6 +48,7 @@ them. A command names roles and skills in frontmatter only.
 
 ## Specifications
 
+- [Epic 0001](epics/0001-sdd-roles/epic.md) — the roles, skills and commands, and the Features below.
 - [Projection](scripts/.spec/README.md) — `0001-F1`, the projector.
 - [Role contract](agents/.spec/README.md) — `0001-F2`, what a role file declares.
 - [Commands](commands/.spec/README.md) — `0001-F3`, prompts that convene roles.

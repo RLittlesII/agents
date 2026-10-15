@@ -108,7 +108,7 @@ The role files name no path or command of yours; the companion does.
 | Source     | `agents/*.md`, `skills/*/SKILL.md`, `commands/*.md`, `hosts/*.yaml`, `scripts/*.fsx` | edit here, in a pull request                |
 | Generated  | `.claude/agents/`, `.claude/skills/`, `.claude/commands/`, `.codex/agents/`, `.agents/skills/`, the ownership table and review-pass registry in `sdd-conventions`, the roster in `agents/PERSONAS.md` | never hand-edit; run the projector |
 | Tool-owned | `.specht/`                                                              | written by `dotnet specht init`             |
-| Records    | `.spec/adr/`, `scripts/.spec/`, `agents/.spec/`, `commands/.spec/`, `skills/.spec/` | the method applied to this repository       |
+| Records    | `epics/`, `.spec/adr/`, `scripts/.spec/`, `agents/.spec/`, `commands/.spec/`, `skills/.spec/` | the method applied to this repository       |
 
 ## Maintaining
 
