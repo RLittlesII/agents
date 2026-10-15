@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_NOLOGO: "1"
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      NuGetPackageSourceCredentials_specht: "Username=${{ vars.SPECHT_PACKAGES_USER }};Password=${{ secrets.SPECHT_PACKAGES_TOKEN }};ValidAuthenticationTypes=Basic"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: Check specifications
+        run: dotnet specht --strict
+
+      - name: Check projected outputs
+        run: dotnet fsi scripts/project.fsx --check
+
+      - name: Test the projector
+        run: dotnet fsi scripts/project.tests.fsx
