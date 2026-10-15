@@ -2,7 +2,7 @@ id: "0005"
 type: chore
 title: Decide whether a Missing traceability row blocks approval
 
-status: ready
+status: done
 
 value: 4
 risk: 2
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review H11 and M1. spec-reviewer.md:76 refuses to block
@@ -30,10 +30,13 @@ summary: |
 
 acceptance_criteria:
   - "An ADR in .spec/adr/ records whether a Missing row blocks approval, the merge, or only the item reaching done."
-  - "spec-reviewer.md agrees with the ADR, or SPEC060's level is set with specht set to match it."
+  - "spec-reviewer.md agrees with the ADR, or SPEC060's level is set to match it."
   - "spec-reviewer.md § Look for flags a diff citing a claim whose § 9 row is Missing."
   - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
 
-decisions: []
+decisions:
+  - "2026-10-14, repository owner: a Missing row blocks the merge delivering its claim and the item reaching done, not approval (ADR-0006). Rejected: blocking approval (SPEC060 as shipped), and blocking only the item."
+  - "2026-10-14: SPEC060 is left at its default while every specification is draft. Setting \"rules\": { \"SPEC060\": \"off\" } in .specht/manifest.json waits until the first approval, since ADR-0004 limits hand edits there to exclusions."
 
-out_of_scope: []
+out_of_scope:
+  - "Re-grading SPEC060 in .specht/manifest.json: deferred to the first approved specification (ADR-0006 Consequences)."

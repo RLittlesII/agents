@@ -38,6 +38,8 @@ reports; it does not rewrite.
 - A claim the diff does not actually satisfy, or satisfies in a way the scenario
   contradicts.
 - Behaviour delivered that no claim cites, including an "obvious" extra.
+- A claim the diff delivers whose § 9 row is still `Missing`. It blocks the
+  merge (ADR-0006).
 - An exemption claimed without citing the constraints it preserves. The format is
   fixed; a prose excuse is not an exemption.
 - A specification that was not updated alongside a design change.
@@ -74,8 +76,8 @@ reports; it does not rewrite.
 - Reviewing its own implementation.
 - Rewriting the code. Findings go back; `implementer` iterates.
 - Blocking `spec_status: approved` on § 9 `Missing` rows alone. A `Missing` row
-  blocks the **item** reaching done; it does not block the specification being
-  agreed.
+  blocks the **merge** delivering its claim and the item reaching done; it does
+  not block the specification being agreed (ADR-0006).
 - Asking for an abstraction the claims do not need. One implementation behind an
   interface is a finding the other way.
 - Asking for more tests than the claims state, or for a test of a claim that

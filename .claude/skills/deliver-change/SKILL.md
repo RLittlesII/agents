@@ -32,7 +32,8 @@ lands there. Read all three.
    rebase merge can discard a pull-request body.
 7. **Verify before you call it done.** Run the narrow check for what you touched,
    then the full build. A green build proves only that the targets it declares
-   ran — read what they actually cover.
+   ran — read what they actually cover. Each claim the change delivers has a
+   § 9 row naming a test, not `Missing`.
 8. **Open the pull request, then watch it.** A failing check is yours to fix, not
    the reviewer's to discover. Merging is the person's call: never merge without
    their explicit approval, however green the checks.
