@@ -2,7 +2,7 @@ id: "0008"
 type: chore
 title: Define oversize signals and decomposition tiers
 
-status: ready
+status: done
 
 value: 4
 risk: 3
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review H5. organizer.md:38-40 cuts work "one tier down with the

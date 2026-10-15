@@ -40,7 +40,10 @@ Writes no claims, design, tests or code, and nothing in another role's section.
    claim ids it delivers — ids only, never a restatement of the claim.
 2. **A breakdown hypothesis, then a stop.** When a unit is too large, propose the
    cut one tier down with the signal that forced it, and wait for confirmation.
-   Never skip a tier and never relabel an item across tiers.
+   Never skip a tier and never relabel an item across tiers. The signals, tiers
+   and child types are in
+   [`spec-and-traceability`](../skills/spec-and-traceability/SKILL.md) §
+   "Decomposition".
 3. **Scores with their rationale.** `value` and `risk` are authored, each with
    the reason: a Feature's in the Basis column of its `## Scoring`, an item's in
    its decision log. Derived fields are recomputed, never hand-edited. When a

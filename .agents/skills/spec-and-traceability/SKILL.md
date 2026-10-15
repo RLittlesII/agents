@@ -43,6 +43,44 @@ decomposition smell, not an automatic split. At naming, grooming and migration,
 check whether it joins independent capabilities or intentionally names one.
 Keep or split the Feature according to that boundary, not the wording alone.
 
+## Decomposition
+
+Three tiers, and only the last is handed on to be built:
+
+| Tier     | Grain                                                        |
+| -------- | ------------------------------------------------------------ |
+| Epic     | a subsystem or theme; a coordination record                  |
+| Feature  | one capability dimension of it, deliverable on its own; a coordination record |
+| Child    | one responsibility that can be implemented, reviewed and merged |
+
+A unit is oversized when any of these trips, read from the raw ask for an epic
+and from § 3 for a Feature:
+
+1. More than three acceptance criteria with no shared dependency. Criteria
+   resting on one change count once.
+2. Two or more deployment or ownership boundaries crossed. Layers inside one
+   boundary are one.
+3. Five or more steps that could each merge on their own without leaving the
+   system broken.
+4. Unstarted across two grooming horizons. This is staleness, not size: if
+   none of 1 to 3 trips, rescore it rather than cut it.
+
+Cut one tier down, never two. An epic is cut along capability dimensions, not
+layers, phases or single changes: a Feature delivers value with its siblings
+unbuilt, fills its own criteria, constraints and exclusions, and survives a
+sibling leaving scope. A Feature whose scope reads as one verb phrase ("add X")
+is a child. A Feature is cut into typed children:
+
+| Type    | Cut out when                                                   |
+| ------- | -------------------------------------------------------------- |
+| `task`  | a criterion needs implementation                               |
+| `test`  | verification is big enough to land apart from the code it covers |
+| `bug`   | a defect surfaced in the work that is not new scope            |
+| `spike` | a design question blocks estimating or building the rest       |
+
+A cut that yields a single child is a smell: the parent was already one
+responsibility, or the cut missed a dimension.
+
 ## Two records, one authority each
 
 | Record            | Authority over                                        |
