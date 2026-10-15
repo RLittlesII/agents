@@ -2,7 +2,7 @@ id: "0015"
 type: chore
 title: Widen test-writer's tier and testability duties
 
-status: ready
+status: done
 
 value: 2
 risk: 1
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review M26 and L15, in agents/test-writer.md.

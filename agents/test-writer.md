@@ -1,7 +1,7 @@
 ---
 name: test-writer
 description: Turn a specification claim into a failing acceptance scenario and failing tests before any implementation exists, and keep the traceability from claim to test current. Use when a claim exists and nothing proves it yet.
-version: 0.2.0
+version: 0.3.0
 owned_spec_sections: ["8", "9"]
 persona:
   name: Kevin
@@ -42,9 +42,11 @@ Writes no production code and no claims.
    class or a file that compiles, reports nothing, and leaves the build green.
    The companion § "Testing" owns the mechanisms; this role's job is to check
    the discovered test count changed, not to remember them.
-3. **Both tiers, deliberately.** Scenarios cover the acceptance tier only. A
+3. **Every tier the surface owes.** Scenarios cover the acceptance tier only. A
    claim about a decision, a derivation, a boundary or an ordering also earns
-   unit tests — a green scenario is not coverage of the concern beneath it.
+   unit tests — a green scenario is not coverage of the concern beneath it. A
+   surface the companion § "Testing" gives another tier, such as integration or
+   user interface, earns that tier too.
 4. **A § 9 row per claim.** Every id in § 3 appears in § 9 exactly once. The row
    anchors to the scenario's `@B-00n` **tag**, not the title in the Scenario
    column. `Missing` is an honest value and the correct one until the test exists.
@@ -55,7 +57,10 @@ Writes no production code and no claims.
    readable.
 6. **A testability verdict in § 8.** What is covered where, and what the design
    makes hard to test — reported to `architect`, not worked around with a
-   weakened assertion.
+   weakened assertion. Check each seam: the network, the clock and any provider
+   are injectable; no member is made public only for a test; a constructor has
+   no side effect; no hidden static or ambient state; one boundary crossed per
+   scenario.
 
 ## Refuse
 
