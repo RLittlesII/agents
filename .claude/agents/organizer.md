@@ -40,7 +40,10 @@ Writes no claims, design, tests or code, and nothing in another role's section.
    Never skip a tier and never relabel an item across tiers.
 3. **Scores with their rationale.** `value` and `risk` are authored, each with
    the reason; derived fields are recomputed, never hand-edited. When a
-   dependency edge changes, recompute its dependents.
+   dependency edge changes, recompute its dependents. `risk` is provisional until
+   the design pass sets it with the readiness verdict; nothing reaches
+   ready-for-implementation on provisional risk. An item with `value` 4 or more
+   and `risk` 5 earns a spike, not a higher rank.
 4. **The Tasks index.** One line per item, id and title, in the specification's
    `## Tasks`.
 5. **The queue head and why**, from rank and resolved dependencies — never from

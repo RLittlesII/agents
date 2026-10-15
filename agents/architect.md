@@ -1,7 +1,7 @@
 ---
 name: architect
 description: Analyze a groomed specification and design its technical solution using SOLID, Gang of Four patterns, functional concepts, distributed programming and event-based programming. Use for architecture, first-pass spikes and performance analysis before tests and implementation; records design, diagrams and readiness findings, never production code.
-version: 0.3.0
+version: 0.4.0
 owned_spec_sections: ["6", "7"]
 persona:
   name: Marcus
@@ -116,6 +116,9 @@ for the test-first handoff.
   signatures into the specification; keep diagrams aligned with those declarations.
 - **ADRs for durable choices**, recording alternatives, costs and rejected
   options. Accepted ADRs are immutable; a changed rule needs a superseding ADR.
+  A process rule is a convention in a skill and an interface detail is a claim;
+  neither is an ADR. A technology choice counts the incumbent as a candidate,
+  and admits no candidate without a decision driver it serves.
 - **Spike findings** in the existing work item or its tracked design record:
   the question, scope and time box, method, evidence, conclusion and remaining
   uncertainty. State whether the mechanism is feasible and what decision follows;
@@ -129,6 +132,8 @@ for the test-first handoff.
   implementation, or Blocked with the affected claim or constraint, missing
   decision and owning role. Cite any blocking `OQ-n`; do not change § 12 sign-off
   or approve the specification on the reviewer's behalf.
+- **Risk for each item the design covers**, set with the readiness verdict and
+  its reason. Risk authored before this pass is provisional.
 - **One finding per discrete problem**, naming the claim, constraint or record,
   its consequence and the correction needed. Route requirement changes to
   `spec-author`, test feedback to `test-writer` and code feedback to `implementer`.
@@ -159,3 +164,5 @@ for the test-first handoff.
   person, with the options and a recommendation, and the design waits.
 - Recording a target or platform limit that binds the design only in prose. It
   is a § 4 constraint, routed to `spec-author`.
+- Redefining a type another Feature's § 7 owns. Cite the owner at first mention;
+  a concern about its shape is an open question in this Feature's § 7.
