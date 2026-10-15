@@ -62,7 +62,7 @@ this Feature removes both failure states.
 
 | ID    | Claim                                                                                                                                                                                                                 | Source                                        | Status |
 | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------ |
-| B-001 | Given a role file and the Claude overlay, this Feature emits `.claude/agents/<name>.md` whose frontmatter carries the name, the description and the overlay keys in overlay order, and whose body is the role body verbatim. | [ADR-0001](../../.spec/adr/0001-roles-are-host-free-and-hosts-are-overlays.md) | Active |
+| B-001 | Given a role file and the Claude overlay, this Feature emits `.claude/agents/<name>.md` whose frontmatter carries the name, the description and the overlay keys in overlay order, and whose body is the role body verbatim, preceded only by the persona line of B-012. | [ADR-0001](../../.spec/adr/0001-roles-are-host-free-and-hosts-are-overlays.md) | Active |
 | B-002 | Given a role file and the Codex overlay, this Feature emits `.codex/agents/<name>.toml` carrying the name, the description, `developer_instructions` prefixed with the authoritative-source sentence, and the overlay keys. | ADR-0001                                      | Active |
 | B-003 | Given a role body containing quotes, backslashes, tabs, non-ASCII text and characters outside the Basic Multilingual Plane, the Codex file parses as TOML and the text after the prefix equals the role body.          | [ADR-0003](../../.spec/adr/0003-the-projector-is-an-fsharp-script.md) | Active |
 | B-004 | Given a directory under `skills/`, this Feature copies every file in it byte for byte to the Claude skills directory and to the Codex discovery directory.                                                            | A-1, A-2                                      | Active |
@@ -72,6 +72,8 @@ this Feature removes both failure states.
 | B-008 | Given outputs equal to what the sources produce, `--check` exits 0; given a changed, a missing or a stale output, `--check` exits 1 naming each path and writes nothing.                                               | [ADR-0002](../../.spec/adr/0002-generated-host-outputs-are-committed.md) | Active |
 | B-009 | Given an overlay naming a role with no file, or a role file whose `name` differs from its file name, this Feature fails naming the role.                                                                              | ADR-0001                                      | Active |
 | B-010 | Given a role file carrying `model`, `effort`, `tools` or `model_reasoning_effort`, this Feature fails naming the key.                                                                                                  | ADR-0001                                      | Active |
+| B-011 | Given the roles' personas, this Feature writes the persona roster into `agents/PERSONAS.md` between its generated markers, one row per persona sorted by persona name, carrying the persona, a link to the role and the voice. | [0001-F2](../../agents/.spec/README.md) B-007 | Active |
+| B-012 | Given a role with a persona, both host files carry one generated line naming the persona and its voice and saying machine-read stamps keep the role name, ahead of the role body, which follows verbatim; a role without a persona gets no line. | 0001-F2 B-007 | Active |
 
 ## 4. Constraints
 
@@ -130,6 +132,7 @@ flowchart LR
   load & unowned & sections --> own[ownershipRows]
   own --> table[renderOwnershipTable]
   table --> companion["skills/sdd-conventions/SKILL.md"]
+  load --> roster["agents/PERSONAS.md"]
   load & host --> render["renderClaude / renderCodex"]
   companion & skills["skills/**"] --> copy["skill copies"]
   render & copy --> plan["Plan: Map<path, byte[]>"]
@@ -160,6 +163,10 @@ Design positions:
 - **The companion is both a source and an output.** Its generated block is
   replaced in memory, the result is written back to `skills/sdd-conventions/SKILL.md`
   and copied to each host with the same bytes.
+- **The persona roster is the same kind of file.** `agents/PERSONAS.md` holds
+  prose around a generated block; the roles loader skips it as it skips the
+  roles index. The persona line is the one text projection adds to a role: it
+  goes before the body, never into it, so C-2 holds for every byte of the body.
 
 Durable choices are recorded in [ADR-0001](../../.spec/adr/0001-roles-are-host-free-and-hosts-are-overlays.md),
 [ADR-0002](../../.spec/adr/0002-generated-host-outputs-are-committed.md) and
@@ -197,6 +204,11 @@ Mechanism per claim:
   that no output directory exists afterwards.
 - B-008: `differences` and `apply`; one changed, one missing and one stale file
   planted, all three reported, none touched by the check, all repaired by apply.
+- B-011: `renderPersonaTable` through `plan`; exact table, sorted by persona,
+  idempotent, and a role without a persona has no row.
+- B-012: `personaLine` through `renderClaude` and `renderCodex`; whole Claude
+  file and decoded Codex instructions compared, and a persona-less role
+  unchanged.
 - C-3: two plans produce identical bytes, no byte-order mark, no absolute path.
 
 Anything the design makes hard to test: the command-line exit codes are a thin
@@ -205,7 +217,7 @@ test.
 
 ### Performance
 
-Not measured. Sixty-three outputs from twenty-four roles and seven skills
+Not measured. Sixty-four outputs from twenty-four roles and seven skills
 complete well inside the `dotnet fsi` start-up time; a concern appears only if
 the roster grows by an order of magnitude.
 
@@ -225,6 +237,8 @@ the roster grows by an order of magnitude.
 | B-008    | Check passes when current and names every drift            | `B008_Check_IsSilentWhenCurrentAndNamesEveryDrift`                | Covered |
 | B-009    | An overlay or a role name points at nothing                | `B009_OverlayNamesMissingRole_Fails`, `B009b_RoleNameDiffersFromFileName_Fails` | Covered |
 | B-010    | A role file carries a host key                             | `B010_RoleFileCarriesHostKey_FailsNamingTheKey`                   | Covered |
+| B-011    | Personas become the roster                                 | `B011_Personas_WriteRosterBetweenMarkers`                         | Covered |
+| B-012    | A persona line precedes the body on both hosts             | `B012_Persona_PrecedesVerbatimBodyOnBothHosts`                    | Covered |
 
 ## 10. Lessons / Spec Deltas
 

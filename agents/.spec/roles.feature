@@ -43,6 +43,20 @@ Feature: Role contract
     Then projection fails naming the role and the skill
     And no output directory exists
 
+  @B-007
+  Scenario: A persona carries a name and a voice
+    Given a role declaring a persona with a name and no voice
+    When the checkout is projected
+    Then projection fails naming the role and the missing voice
+    And no output directory exists
+
+  @B-007
+  Scenario: Two roles sign with one name
+    Given alpha and beta both declare the persona Abe
+    When the checkout is projected
+    Then projection fails naming Abe, alpha and beta
+    And no output directory exists
+
   @B-004
   Scenario: A role body names no product technology
     Given the names of a consuming project's language, libraries, paths and build tools

@@ -66,6 +66,7 @@ implicit and two roles end up writing the same section.
 | B-004 | Given a role body, it names no product technology, library, repository path, package or build tool; the consuming repository's companion skill names those.               | Root README § Purpose                                                          | Active |
 | B-005 | Given a role body carrying `## Look for`, it also carries `## Report`, so every reviewing role states the form its findings take. | OQ-1 | Active |
 | B-006 | Given a role body linking `../skills/<name>/SKILL.md`, that skill exists in `skills/`; projection fails naming the role and the skill otherwise. | C-1 | Active |
+| B-007 | Given a role declaring `persona`, it carries a one-line `name` and a one-line `voice`, and no other role declares the same persona name; the role name stays the file stem, the host agent name and every machine-read stamp. | Brief: personas | Active |
 
 ## 4. Constraints
 
@@ -85,7 +86,7 @@ implicit and two roles end up writing the same section.
 | --- | ------------------------------------------------- | ----------------------------------------------------------------------- |
 | 1   | Rendering a role for a host                       | [0001-F1 Projection](../../scripts/.spec/README.md)                     |
 | 2   | A role per technology or platform                 | A technology belongs in the consuming repository's companion skill (B-004) |
-| 3   | A persona or voice field                          | No host consumes one yet                                                |
+| 3   | Persona traits beyond a name and a voice          | A name and one line of voice are what a reader acts on; a trait list is restated prose |
 
 ## 6. Concern Separation
 
@@ -97,6 +98,7 @@ implicit and two roles end up writing the same section.
 | 2   | Which body headings a role carries                | Business       |
 | 3   | Keeping product technology out of a role body     | Business       |
 | 4   | Validating the keys                               | Technical      |
+| 5   | The name a role signs its prose with              | Business       |
 
 ## 7. Technical Design
 
@@ -112,6 +114,13 @@ that function is the authority, not this section.
 | `description`         | one line; the host's trigger text                         |
 | `version`             | semver, bumped when the contract changes                  |
 | `owned_spec_sections` | list of `"<n>"`, `"Tasks"`, `"Scoring"` or `"<n>/<Subsection>"`; empty is valid |
+| `persona`             | optional; `name` and `voice`, one line each; the name unique across roles |
+
+A persona is how a role signs the prose it writes: reports, findings, review
+notes. Projection puts one generated line naming it ahead of the body and lists
+every persona in [`PERSONAS.md`](../PERSONAS.md). A stamp a tool reads —
+`last written by`, `author`, the § 12 Reviewer column — keeps the role name, so
+no tool has to map a persona back to a role.
 
 Sections no single role owns are declared once, in the frontmatter of
 [`README.md`](../README.md) under `unowned_spec_sections`, and merged with the
@@ -143,6 +152,9 @@ edit that breaks the contract fails the same command CI runs. The scenarios in
 - B-005: every loaded body carrying `## Look for` also carries `## Report`.
 - B-006: `validateSkillLinks` over the real roles passes, and a synthetic role
   linking a missing skill makes `plan` fail before anything is written.
+- B-007: `loadRole` rejects a persona missing a key or not a mapping and
+  `validatePersonas` rejects a shared name; the test runs both on synthetic
+  roles and runs `validatePersonas` over the real roster.
 - B-004 is a review question, not a test: at review, grep the role bodies for
   the names of the consuming project's stack and tooling. The reviewer records
   the result in § 12. A lint over a word list was considered and rejected
@@ -164,6 +176,7 @@ Not applicable.
 | B-004    | A role body names no product technology             | Manual: review question in § 8                           | Partial |
 | B-005    | A reviewing role states its report                  | `F2_B005_LookForRoleCarriesReport`                       | Covered |
 | B-006    | A role links only skills that exist                 | `F2_B006_EverySkillLinkResolves`                         | Covered |
+| B-007    | A persona carries a name and a voice and is unique  | `F2_B007_PersonaRequiresNameAndVoiceAndIsUnique`         | Covered |
 
 ## 10. Lessons / Spec Deltas
 

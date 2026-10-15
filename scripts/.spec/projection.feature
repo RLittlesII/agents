@@ -111,6 +111,23 @@ Feature: Projection
       | tools                  |
       | model_reasoning_effort |
 
+  @B-011
+  Scenario: Personas become the roster
+    Given alpha signs as Zed and beta signs as Abe
+    When the checkout is projected
+    Then agents/PERSONAS.md carries a roster between its generated markers
+    And Abe's row comes before Zed's, each linking its role and giving its voice
+    And projecting again leaves the roster unchanged
+
+  @B-012
+  Scenario: A persona line precedes the body on both hosts
+    Given alpha signs as Zed with the voice Terse
+    When the checkout is projected
+    Then the Claude agent file for alpha opens its body with the line naming Zed, the voice and the role name alpha
+    And the Codex instructions carry the same line after the authoritative-source sentence
+    And the role body follows that line unchanged on both hosts
+    And beta, which has no persona, gets no line
+
   @boundary
   Scenario: A role absent from an overlay receives the defaults
     Given a role named beta that no overlay names
