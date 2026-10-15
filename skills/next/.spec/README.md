@@ -215,7 +215,9 @@ This agreement ports Hooked's free-form `next` agreement (B-001 to B-035,
 C-1 to C-4, decisions 0001 to 0015). Each Hooked claim, constraint and decision
 is carried, rewritten as portable, or rejected. A Hooked call not stated in
 `SKILL.md` is an open question in § 11, not a claim. Hooked's OQ-1 to OQ-12 were
-resolved there into its decisions and are mapped through them.
+resolved there into its decisions and are mapped through them. Every Hooked
+decision was carried or rewritten, none wholly rejected, and each is a decision
+record here, named in its row with the ids it governs.
 
 | Hooked        | F5                         | Disposition                                                                                                 |
 | ------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------- |
@@ -258,21 +260,21 @@ resolved there into its decisions and are mapped through them.
 | C-2           | —                          | Rejected: Hooked's two specification layouts are its corpus                                                 |
 | C-3           | —                          | Rejected: Hooked's pinned checker version is its tooling                                                    |
 | C-4           | C-2                        | Rewritten: a skill needing no private source becomes a skill naming no repository or tool                   |
-| Decision 0001 | B-009, B-012               | Carried                                                                                                     |
-| Decision 0002 | B-023, B-024, B-025        | Carried; effort becomes cost                                                                                |
-| Decision 0003 | B-022, B-025               | Carried; the `critical`/`high`/`med`/`low` vocabulary rejected as the companion's (C-2)                    |
-| Decision 0004 | B-024                      | Carried for full cost; the `1, 2, 3, 5, 8` scale and frontmatter storage rejected as the companion's (C-2) |
-| Decision 0005 | B-028, B-029, B-037        | Carried                                                                                                     |
-| Decision 0006 | B-003, B-005, B-006, § 5 row 4 | Carried; the `/next feature` syntax rejected as an invocation form                                      |
-| Decision 0007 | B-003                      | Carried                                                                                                     |
-| Decision 0008 | B-021, C-1, OQ-1           | Rewritten tracker-neutral; the `"#228"` reference syntax rejected as tracker syntax                         |
-| Decision 0009 | B-031                      | Rewritten: the frontmatter field rejected as the companion's                                                |
-| Decision 0010 | B-011 to B-015, B-018, B-020 | Carried; "agreement 1-5, design 6-7" is the method's ownership map                                        |
-| Decision 0011 | B-017, B-034 to B-036, OQ-2, OQ-6 | Carried; review reservation is OQ-2, one active item per Feature is OQ-6                             |
-| Decision 0012 | B-029, B-030, OQ-1         | Carried; a mirror standing in for an unreadable tracker is OQ-1                                             |
-| Decision 0013 | B-001, B-039, B-040        | Carried with its reversal (Feature comparisons first); compact default and `--all` rejected as invocation forms |
-| Decision 0014 | B-038, B-003               | Carried                                                                                                     |
-| Decision 0015 | § 5 row 6, § 7             | Carried; Hooked's paths rejected                                                                            |
+| Decision 0001 | [decisions/0001](decisions/0001-every-actionable-stage-can-be-next.md): B-009, B-010, B-012 | Carried                                                                    |
+| Decision 0002 | [decisions/0002](decisions/0002-rank-toward-feature-completion.md): B-023 to B-026 | Carried; effort becomes cost                                                         |
+| Decision 0003 | [decisions/0003](decisions/0003-priority-tier-before-completion-score.md): B-022, B-025, B-040, C-3 | Carried; the `critical`/`high`/`med`/`low` vocabulary rejected as the companion's (C-2) |
+| Decision 0004 | [decisions/0004](decisions/0004-cost-is-an-explicit-estimate-counted-in-full.md): B-023, B-024, § 5 row 2 | Carried for full cost; the `1, 2, 3, 5, 8` scale and frontmatter storage rejected as the companion's (C-2) |
+| Decision 0005 | [decisions/0005](decisions/0005-missing-cost-stays-unscored.md): B-028, B-029, B-037 | Carried                                                                            |
+| Decision 0006 | [decisions/0006](decisions/0006-repository-and-requested-feature-scopes.md): B-004, B-005, B-006, § 5 row 4 | Carried; the `/next feature` syntax rejected as an invocation form       |
+| Decision 0007 | [decisions/0007](decisions/0007-include-other-features-prerequisites.md): B-003 | Carried                                                                                   |
+| Decision 0008 | [decisions/0008](decisions/0008-one-authoring-source-for-dependencies.md): B-019, B-021, C-1, OQ-1 | Rewritten tracker-neutral; the `"#228"` reference syntax rejected as tracker syntax |
+| Decision 0009 | [decisions/0009](decisions/0009-explicit-claim-assignment.md): B-031 | Rewritten: the frontmatter field rejected as the companion's                                           |
+| Decision 0010 | [decisions/0010](decisions/0010-readiness-by-stage-and-linked-claims.md): B-011 to B-015, B-018, B-020 | Carried; "agreement 1-5, design 6-7" is the method's ownership map          |
+| Decision 0011 | [decisions/0011](decisions/0011-lanes-inferred-from-shared-edits.md): B-017, B-034 to B-036, § 5 row 5, OQ-2, OQ-6 | Carried; review reservation is OQ-2, one active item per Feature is OQ-6 |
+| Decision 0012 | [decisions/0012](decisions/0012-isolate-incomplete-delivery-evidence.md): B-029, B-030, B-032, OQ-1 | Carried; a mirror standing in for an unreadable tracker is OQ-1           |
+| Decision 0013 | [decisions/0013](decisions/0013-recommend-without-taking-work.md): B-001, B-002, B-008, B-039, B-040, § 5 row 1 | Carried with its reversal (Feature comparisons first); compact default and `--all` rejected as invocation forms |
+| Decision 0014 | [decisions/0014](decisions/0014-standalone-work-stays-visible.md): B-003, B-038 | Carried; the separate section is the companion's to direct                              |
+| Decision 0015 | [decisions/0015](decisions/0015-a-skill-not-an-executable.md): § 5 row 6, § 7, § 8 | Carried; Hooked's paths and its no-Feature placement rejected                         |
 
 ## 11. Open Questions
 
@@ -286,7 +288,7 @@ resolved there into its decisions and are mapped through them.
 | OQ-4 | Given an open question whose § 11 row names no blocked claim, does it block every claim of the Feature, none, or leave the work's readiness unverified? Hooked B-009.                             | B-011, B-013, B-015    | Open       |
 | OQ-5 | Given a Feature whose closure is empty and whose claims are all delivered, is it reported as finished, and is it left out of ranking? `SKILL.md` says only when a score is never infinite. Hooked B-022. | B-033                  | Open       |
 | OQ-6 | Given two startable items in one Feature with no shared edit, are they two lanes, or is a Feature itself one lane with one active item? Hooked decision 0011.                                      | B-034, B-035           | Open       |
-| OQ-7 | Should the Hooked calls carried here be recorded as decision records in this Feature's `decisions/`, so the alternatives they rejected can be reviewed beside the claims?                          | None                   | Open       |
+| OQ-7 | Should the Hooked calls carried here be recorded as decision records in this Feature's `decisions/`, so the alternatives they rejected can be reviewed beside the claims?                          | None                   | Resolved 2026-10-14: yes. Each carried or rewritten Hooked decision is a record in [`decisions/`](decisions/), 0001 to 0015, named in its § 10 row. |
 
 ## 12. Sign-off
 
