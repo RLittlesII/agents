@@ -6,7 +6,7 @@ type: overview
 
 # agents
 
-Twenty-four role contracts, seven method skills and eleven commands for
+Twenty-four role contracts, seven method skills and twelve commands for
 specification-driven development, written once, host-free, and projected into
 the files each AI host reads. The repository carries no product technology and
 no tool-specific knowledge: a consuming repository adds a companion skill that
@@ -81,9 +81,10 @@ roles' contracts decide what each does. Type `/<name>` in Claude Code or
 | [`test`](commands/test.md)            | test-writer, tester                       | failing tests from claims, then a run report         |
 | [`implement`](commands/implement.md)  | domain, implementer, ui                   | failing tests made green inside the design           |
 | [`review`](commands/review.md)        | spec-reviewer, adversary                  | a diff judged against its claims                     |
+| [`pr`](commands/pr.md)                | spec-reviewer, build, implementer         | a pull request opened, then reviewed to merge        |
 | [`ship`](commands/ship.md)            | spec-reviewer, adversary, auditor, release | the final gate, then a confirmed release             |
 | [`bug`](commands/bug.md)              | bug-finder, test-writer, bug-fixer        | a failure reproduced, pinned, fixed and learned from |
-| [`groom`](commands/groom.md)          | organizer                                 | the queue re-scored and ranked                       |
+| [`groom`](commands/groom.md)          | organizer                                 | the queue ranked, an item filed, or its health       |
 | [`document`](commands/document.md)    | document-writer                           | documents repaired against the repository            |
 | [`cleanup`](commands/cleanup.md)      | organizer, document-writer, architect     | a tidying pass, delivered as one change              |
 

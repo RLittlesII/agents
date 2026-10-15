@@ -42,7 +42,7 @@ flowchart LR
     Stubs -->|/test| Tests[Tests]
     Tests -->|/implement| Implementation[Implementation]
     Implementation -->|/review| Review[Diff review]
-    Review --> PR[PR]
+    Review -->|/pr| PR[PR]
     PR -->|/ship| Release[Release]
 ```
 

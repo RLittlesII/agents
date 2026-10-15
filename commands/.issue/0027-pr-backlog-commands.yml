@@ -2,7 +2,7 @@ id: "0027"
 type: task
 title: Decide the pull-request, backlog and single-role commands
 
-status: ready
+status: done
 
 value: 2
 risk: 2
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review M34, M35 and L7.
@@ -36,6 +36,9 @@ acceptance_criteria:
   - "Each workflow has a command, or a 0001-F3 § 5 row excluding it with a reason."
   - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
 
-decisions: []
+decisions:
+  - "2026-10-14: one pr command covers opening the pull request and the review-feedback loop, convening spec-reviewer, build and implementer."
+  - "2026-10-14: backlog work is modes of groom (file, health), not new commands; prioritising without a full groom is a scoped groom."
+  - "2026-10-14: single-role commands stay excluded; 0001-F3 § 5 row 1 now says a role's halts live in its contract."
 
 out_of_scope: []
