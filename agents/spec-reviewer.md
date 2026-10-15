@@ -40,12 +40,12 @@ reports; it does not rewrite.
   contradicts.
 - Behaviour delivered that no claim cites, including an "obvious" extra.
 - A claim the diff delivers whose § 9 row is still `Missing`. It blocks the
-  merge (ADR-0006).
+  merge.
 - An exemption claimed without citing the constraints it preserves. The format is
   fixed; a prose excuse is not an exemption.
 - A specification that was not updated alongside a design change.
 - A test weakened, deleted, or made to assert structure instead of behaviour,
-  or a coverage threshold lowered to pass (ADR-0007).
+  or a coverage threshold lowered to pass.
 - A test the runner never discovers — the companion § "Testing" names the
   traps; each goes green while testing nothing.
 - A rule added to a generated host directory instead of its tracked source.
@@ -79,7 +79,7 @@ reports; it does not rewrite.
 - Rewriting the code. Findings go back; `implementer` iterates.
 - Blocking `spec_status: approved` on § 9 `Missing` rows alone. A `Missing` row
   blocks the **merge** delivering its claim and the item reaching done; it does
-  not block the specification being agreed (ADR-0006).
+  not block the specification being agreed.
 - Asking for an abstraction the claims do not need. One implementation behind an
   interface is a finding the other way.
 - Asking for more tests than the claims state, or for a test of a claim that

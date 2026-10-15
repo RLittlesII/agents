@@ -130,8 +130,43 @@ guaranteed to go stale and will be believed anyway.
   a scenario title is a human-reading courtesy and a stale one is a cleanup, not
   a gate failure.
 - The **traceability matrix is the gate**: every claim appears there exactly once.
-  A row whose test is missing blocks the item reaching done. It does not block the
-  specification being agreed — those are different questions.
+  A row whose test is missing blocks the merge that delivers its claim and the
+  item reaching done. It does not block the specification being agreed — those
+  are different questions.
+- § 9 Status is one of five values:
+
+  | Status      | Means                                                          |
+  | ----------- | -------------------------------------------------------------- |
+  | `Covered`   | a scenario and a test pin the claim and its mechanism          |
+  | `Partial`   | a scenario covers it; the mechanism beneath has no unit test   |
+  | `Missing`   | no test yet                                                    |
+  | `Withdrawn` | the claim was withdrawn; the row stays as history              |
+  | `Waived`    | deliberately unverified, with a § 11 row naming who approved shipping it and when |
+
+  An undocumented `Waived` is a `Missing`. A withdrawn claim's scenario tag is
+  removed in the same edit.
+- Cite a row, a claim or a section by its id, never by its position.
+
+## Amending an approved specification
+
+An approved specification is accountable, not frozen. A change follows a path
+rather than an edit:
+
+1. Record the reason in § 10: the date, the trigger and what changed.
+2. A changed behaviour is a claim with a **new** id; the old one is withdrawn.
+   A behaviour that is not a claim cannot be traced, tested or signed off.
+3. Add its § 9 row as `Missing`.
+4. Set `spec_status` back to in review and reset the affected § 12 rows to
+   draft. An amended specification is no longer approved.
+5. A reworded claim that items already cite changes their brief: name those
+   items in the change.
+
+A Feature re-cut rather than amended is superseded: its specification names the
+replacement in § 10 and stays in place, never deleted.
+
+Rename a claim's subject, a type or a section only once a search for the old
+name finds nothing left to update, and update every diagram that shows it in the
+same edit.
 
 ## An imported rule is a decision, not a constraint
 

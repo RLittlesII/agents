@@ -2,7 +2,7 @@ id: "0009"
 type: chore
 title: Add the path to amend an approved specification
 
-status: ready
+status: done
 
 value: 4
 risk: 3
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review H6, with M6 and L14. Nothing revokes spec_status
@@ -40,6 +40,8 @@ acceptance_criteria:
   - "The rename and row-citation rules are stated."
   - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
 
-decisions: []
+decisions:
+  - "2026-10-14: § 9 Status keeps Covered, Partial and Missing, and restores Withdrawn and Waived; Waived needs a § 11 row naming the approver and date, or it counts as Missing. Rejected: LTI Verified and Scaffolded, which Covered and Missing already express."
+  - "2026-10-14: portable role and skill files cite no ADR of this repository; spec-reviewer and test-writer lines added under 0005 and 0006 lose their ADR ids."
 
 out_of_scope: []

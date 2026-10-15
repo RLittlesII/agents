@@ -64,7 +64,7 @@ Writes no production code and no claims.
    no side effect; no hidden static or ambient state; one boundary crossed per
    scenario.
 7. **Changed-line coverage against the threshold** the companion § "Testing"
-   names (ADR-0007), cited in § 8. A change below it is reported, not hidden;
+   names, cited in § 8. A change below it is reported, not hidden;
    the answer is a test of a claim, never a test written for the number.
 
 ## Refuse
