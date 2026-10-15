@@ -2,7 +2,7 @@ id: "0011"
 type: chore
 title: Restore delivery rules dropped from deliver-change
 
-status: ready
+status: done
 
 value: 4
 risk: 2
@@ -19,7 +19,7 @@ claims: []
 
 created: "2026-10-14"
 updated: "2026-10-14"
-closed: null
+closed: "2026-10-14"
 
 summary: |
   Port-gap review H7, M3, M5, M32 and L4, all in skills/deliver-change.
@@ -42,6 +42,7 @@ acceptance_criteria:
   - "deliver-change step 7 runs the spec checker; Never add carries the git rules; step 3 names the grooming remedy."
   - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
 
-decisions: []
+decisions:
+  - "2026-10-14: the lesson gate lands in deliver-change § When a bug fix reveals a gap, beside the rule that owes the lesson, rather than in a new skill."
 
 out_of_scope: []
