@@ -1,8 +1,8 @@
 // Projection: turn host-free role contracts plus a host overlay into host-native
 // agent files, copy skills to each host's discovery directory, and generate the
-// section-ownership table and the persona roster, and project commands. No
-// top-level effects: project.fsx and project.tests.fsx load this file and call
-// into it.
+// section-ownership table, the review-pass registry and the persona roster, and
+// project commands. No top-level effects: project.fsx and project.tests.fsx load
+// this file and call into it.
 //
 // Agreement: scripts/.spec/README.md. Claims are cited as B-00n in comments.
 
@@ -106,6 +106,8 @@ type Role =
       Version: string
       OwnedSections: string list
       Persona: Persona option
+      /// 0001-F2 B-008: the review units this role reviews.
+      Reviews: string list
       Body: string
       Source: string }
 
@@ -148,8 +150,16 @@ let loadRole (root: string) (path: string) : Role =
                 | _ -> fail (sprintf "%s: persona.%s is required and must be a single line" source key)
             Some { Name = text "name"; Voice = text "voice" }
         | Some _ -> fail (sprintf "%s: persona must be a mapping of name and voice" source)
+    // 0001-F2 B-008: a reviewing role states what it looks for and how it reports.
+    let reviews =
+        match tryGet "reviews" pairs with
+        | Some (List units) -> units
+        | Some (Scalar "") | None -> []
+        | Some _ -> fail (sprintf "%s: reviews must be a list" source)
+    if not reviews.IsEmpty && not (body.Contains "\n## Look for\n" && body.Contains "\n## Report\n") then
+        fail (sprintf "%s: reviews %s but lacks ## Look for or ## Report" source (String.Join(", ", reviews)))
     { Name = name; Description = description; Version = version
-      OwnedSections = owned; Persona = persona; Body = body; Source = source }
+      OwnedSections = owned; Persona = persona; Reviews = reviews; Body = body; Source = source }
 
 /// Files in agents/ that are not roles: the roles index and the persona roster.
 let notRoles = set [ "README.md"; "PERSONAS.md" ]
@@ -173,20 +183,27 @@ let validateSkillLinks (root: string) (roles: Role list) =
             if not (File.Exists(Path.Combine(root, "skills", skill, "SKILL.md"))) then
                 fail (sprintf "%s: links skill '%s', which has no skills/%s/SKILL.md" role.Source skill skill)
 
-/// Sections no single role owns, declared in agents/README.md frontmatter as
-/// `unowned_spec_sections: { "<key>": <who> }`.
-let loadUnowned (root: string) : (string * string) list =
+/// A text-valued mapping from the roles index's frontmatter, in declared order.
+let private indexMapping (root: string) (key: string) : (string * string) list =
     let path = Path.Combine(root, "agents", "README.md")
     if not (File.Exists path) then [] else
     let pairs, _ = splitFrontmatter "agents/README.md" (readText path)
-    match tryGet "unowned_spec_sections" pairs with
+    match tryGet key pairs with
     | Some (Mapping entries) ->
-        entries |> List.map (fun (key, value) ->
+        entries |> List.map (fun (k, value) ->
             match value with
-            | Scalar who -> key, who
-            | _ -> fail "agents/README.md: unowned_spec_sections values must be text")
-    | Some _ -> fail "agents/README.md: unowned_spec_sections must be a mapping"
+            | Scalar text -> k, text
+            | _ -> fail (sprintf "agents/README.md: %s values must be text" key))
+    | Some _ -> fail (sprintf "agents/README.md: %s must be a mapping" key)
     | None -> []
+
+/// Sections no single role owns, declared in agents/README.md frontmatter as
+/// `unowned_spec_sections: { "<key>": <who> }`.
+let loadUnowned (root: string) = indexMapping root "unowned_spec_sections"
+
+/// B-013: the review units, in pass order, declared in agents/README.md
+/// frontmatter as `review_units: { <unit>: <what it reviews> }`.
+let loadReviewUnits (root: string) = indexMapping root "review_units"
 
 // ---------------------------------------------------------------- Hosts
 
@@ -310,15 +327,41 @@ let ownershipRows (roles: Role list) (unowned: (string * string) list) (template
             if isSub s && s.StartsWith(section.Key + "/") then
                 yield (sprintf "%s. › `### %s`" section.Key (s.Substring(s.IndexOf '/' + 1)), owner) ]
 
-let renderOwnershipTable (rows: (string * string) list) =
-    let width (column: string * string -> string) = rows |> List.map (fun r -> (column r).Length) |> List.max
-    let w1 = max (width fst) "Section".Length
-    let w2 = max (width snd) "Owner".Length
-    let line (a: string) (b: string) = sprintf "| %s | %s |" (a.PadRight w1) (b.PadRight w2)
-    [ yield line "Section" "Owner"
-      yield sprintf "| %s | %s |" (String('-', w1)) (String('-', w2))
-      for a, b in rows do yield line a b ]
+/// A Markdown table with every column padded to its widest cell.
+let renderTable (headers: string list) (rows: string list list) =
+    let widths =
+        headers |> List.mapi (fun i h -> rows |> List.fold (fun w row -> max w (String.length (List.item i row))) h.Length)
+    let line cells = "| " + String.Join(" | ", List.map2 (fun (c: string) w -> c.PadRight w) cells widths) + " |"
+    [ yield line headers
+      yield line (widths |> List.map (fun w -> String('-', w)))
+      for row in rows do yield line row ]
     |> String.concat "\n"
+
+let renderOwnershipTable (rows: (string * string) list) =
+    renderTable [ "Section"; "Owner" ] (rows |> List.map (fun (a, b) -> [ a; b ]))
+
+/// B-013, B-014, B-015: one reviewer per unit, every unit reviewed, no role
+/// reviewing a unit the vocabulary lacks. Rows follow the vocabulary's order.
+let reviewRows (roles: Role list) (units: (string * string) list) : (string * string * string) list =
+    let reviewers =
+        [ for role in roles do
+            for unit in role.Reviews do
+                if not (units |> List.exists (fun (u, _) -> u = unit)) then
+                    fail (sprintf "%s: reviews '%s', which agents/README.md review_units does not declare" role.Source unit)
+                yield unit, role.Name ]
+    for unit, holders in reviewers |> List.groupBy fst do
+        match holders with
+        | (_, first) :: (_, second) :: _ ->
+            fail (sprintf "review unit '%s' is reviewed by both '%s' and '%s'; a unit has exactly one reviewer" unit first second)
+        | _ -> ()
+    let missing = units |> List.map fst |> List.filter (fun u -> not (reviewers |> List.exists (fun (r, _) -> r = u)))
+    if not missing.IsEmpty then
+        fail (sprintf "the review-pass registry is not total; reviewed by nobody: %s" (String.Join(", ", missing)))
+    units |> List.map (fun (unit, what) -> unit, what, reviewers |> List.find (fun (u, _) -> u = unit) |> snd)
+
+let renderReviewTable (rows: (string * string * string) list) =
+    renderTable [ "Order"; "Unit"; "Reviews"; "Reviewer" ]
+        (rows |> List.mapi (fun i (unit, what, role) -> [ string (i + 1); unit; what; sprintf "`%s`" role ]))
 
 let markers (block: string) =
     sprintf "<!-- BEGIN GENERATED: %s -->" block, sprintf "<!-- END GENERATED: %s -->" block
@@ -348,19 +391,10 @@ let validatePersonas (roles: Role list) =
 
 /// B-011: the persona roster, one row per persona, sorted by persona name.
 let renderPersonaTable (roles: Role list) =
-    let rows =
-        roles
-        |> List.choose (fun r -> r.Persona |> Option.map (fun p -> p.Name, sprintf "[`%s`](%s.md)" r.Name r.Name, p.Voice))
-        |> List.sortBy (fun (persona, _, _) -> persona)
-    let width f header = rows |> List.map (fun r -> String.length (f r)) |> List.fold max (String.length header)
-    let w1 = width (fun (a, _, _) -> a) "Persona"
-    let w2 = width (fun (_, b, _) -> b) "Role"
-    let w3 = width (fun (_, _, c) -> c) "Voice"
-    let line (a: string) (b: string) (c: string) = sprintf "| %s | %s | %s |" (a.PadRight w1) (b.PadRight w2) (c.PadRight w3)
-    [ yield line "Persona" "Role" "Voice"
-      yield sprintf "| %s | %s | %s |" (String('-', w1)) (String('-', w2)) (String('-', w3))
-      for a, b, c in rows do yield line a b c ]
-    |> String.concat "\n"
+    roles
+    |> List.choose (fun r -> r.Persona |> Option.map (fun p -> [ p.Name; sprintf "[`%s`](%s.md)" r.Name r.Name; p.Voice ]))
+    |> List.sortBy List.head
+    |> renderTable [ "Persona"; "Role"; "Voice" ]
 
 /// B-012: the line that tells a role which name to sign with. Machine-read
 /// stamps keep the role name, so a tool never has to map one to the other.
@@ -592,7 +626,11 @@ let plan (root: string) : Plan =
         let path = Path.Combine(root, rel)
         if not (File.Exists path) then fail (sprintf "%s is missing" rel)
         replaceGenerated rel block (readText path) content
-    let companionText = generated "skills/sdd-conventions/SKILL.md" "section-ownership" table
+    let reviews = reviewRows roles (loadReviewUnits root) |> renderReviewTable
+    let companionText =
+        let companion = "skills/sdd-conventions/SKILL.md"
+        let withOwnership = generated companion "section-ownership" table
+        replaceGenerated companion "review-passes" withOwnership reviews
     let personasText = generated "agents/PERSONAS.md" "personas" (renderPersonaTable roles)
     let skillsDirectory = Path.Combine(root, "skills")
     let skills =

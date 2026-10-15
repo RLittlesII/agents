@@ -1,6 +1,6 @@
 // Tests for the projector. Names cite the claims they cover:
-//   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B012_
-//   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B007_
+//   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B015_
+//   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B008_
 //   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B007_
 //
 //   dotnet fsi scripts/project.tests.fsx        exit code = number of failures
@@ -54,6 +54,11 @@ name: sdd-conventions
 <!-- END GENERATED: section-ownership -->
 
 The `.feature` file belongs to `spec-author`.
+
+## Review passes
+
+<!-- BEGIN GENERATED: review-passes -->
+<!-- END GENERATED: review-passes -->
 """
 
 let readme = """---
@@ -329,6 +334,50 @@ let B012_Persona_PrecedesVerbatimBodyOnBothHosts () =
     // A role without a persona is unchanged: beta's body follows the frontmatter directly.
     contains ("---\n" + betaBody) (read root ".claude/agents/beta.md")
 
+let reviewBody title = sprintf "\n# %s\n\n## Look for\n\n- Drift.\n\n## Report\n\nOne finding per line.\n" title
+
+/// The synthetic checkout with two review units, alpha reviewing the diff and
+/// beta the design.
+let reviewsCheckout () =
+    let root = checkout ()
+    write root "agents/README.md" (readme.Replace("---\n", "") |> fun front -> "---\n" + front + "review_units:\n  design: a design\n  diff: a diff\n---\n")
+    write root "agents/alpha.md" (role "alpha" "[\"1\", \"2\", \"Tasks\"]\nreviews: [diff]" (reviewBody "Alpha"))
+    write root "agents/beta.md" (role "beta" "[\"3\"]\nreviews: [design]" (reviewBody "Beta"))
+    root
+
+let B013_ReviewUnits_WriteRegistryBetweenMarkers () =
+    let root = reviewsCheckout ()
+    apply root (plan root) |> ignore
+    let text = read root "skills/sdd-conventions/SKILL.md"
+    let expected =
+        String.concat "\n"
+            [ "<!-- BEGIN GENERATED: review-passes -->"
+              "| Order | Unit   | Reviews  | Reviewer |"
+              "| ----- | ------ | -------- | -------- |"
+              "| 1     | design | a design | `beta`   |"
+              "| 2     | diff   | a diff   | `alpha`  |"
+              "<!-- END GENERATED: review-passes -->" ]
+    contains expected text
+    // The ownership table still sits between its own markers.
+    contains "| 3. Acceptance Criteria | `beta`" text
+    equal text (Encoding.UTF8.GetString (plan root).Outputs.["skills/sdd-conventions/SKILL.md"])
+
+let B014_TwoRolesReviewOneUnit_FailsNamingBoth () =
+    let root = reviewsCheckout ()
+    write root "agents/beta.md" (role "beta" "[\"3\"]\nreviews: [design, diff]" (reviewBody "Beta"))
+    contains "review unit 'diff' is reviewed by both 'alpha' and 'beta'" (expectFailure (fun () -> plan root))
+    nothingWritten root
+
+let B015_UnreviewedOrUndeclaredUnit_FailsNamingIt () =
+    let root = reviewsCheckout ()
+    write root "agents/beta.md" (role "beta" "[\"3\"]" betaBody)
+    contains "not total; reviewed by nobody: design" (expectFailure (fun () -> plan root))
+    nothingWritten root
+    let root2 = reviewsCheckout ()
+    write root2 "agents/beta.md" (role "beta" "[\"3\"]\nreviews: [design, style]" (reviewBody "Beta"))
+    contains "agents/beta.md: reviews 'style', which agents/README.md review_units does not declare" (expectFailure (fun () -> plan root2))
+    nothingWritten root2
+
 let C3_Outputs_AreDeterministicAcrossRuns () =
     let root = checkout ()
     let first = (plan root).Outputs
@@ -414,6 +463,16 @@ let F2_B007_PersonaRequiresNameAndVoiceAndIsUnique () =
     let message = expectFailure (fun () -> plan root3)
     contains "persona 'Abe' is declared by both 'alpha' and 'beta'" message
     nothingWritten root3
+
+let F2_B008_ReviewingRoleCarriesLookForAndReport () =
+    // The real roster: exactly the four review passes, each on a reviewing body.
+    let reviewing = loadRoles repoRoot |> List.filter (fun r -> not r.Reviews.IsEmpty) |> List.map (fun r -> r.Name, r.Reviews)
+    equal [ "adversary", [ "surface" ]; "auditor", [ "repository" ]; "critic", [ "design" ]; "spec-reviewer", [ "diff" ] ] reviewing
+    // A role declaring a unit without the reviewing headings fails.
+    let root = checkout ()
+    write root "agents/beta.md" (role "beta" "[\"3\"]\nreviews: [diff]" betaBody)
+    contains "agents/beta.md: reviews diff but lacks ## Look for or ## Report" (expectFailure (fun () -> plan root))
+    nothingWritten root
 
 // ---------------------------------------------------------------- 0001-F3 Commands
 
@@ -541,6 +600,9 @@ let tests : (string * (unit -> unit)) list =
       nameof B010_RoleFileCarriesHostKey_FailsNamingTheKey, B010_RoleFileCarriesHostKey_FailsNamingTheKey
       nameof B011_Personas_WriteRosterBetweenMarkers, B011_Personas_WriteRosterBetweenMarkers
       nameof B012_Persona_PrecedesVerbatimBodyOnBothHosts, B012_Persona_PrecedesVerbatimBodyOnBothHosts
+      nameof B013_ReviewUnits_WriteRegistryBetweenMarkers, B013_ReviewUnits_WriteRegistryBetweenMarkers
+      nameof B014_TwoRolesReviewOneUnit_FailsNamingBoth, B014_TwoRolesReviewOneUnit_FailsNamingBoth
+      nameof B015_UnreviewedOrUndeclaredUnit_FailsNamingIt, B015_UnreviewedOrUndeclaredUnit_FailsNamingIt
       nameof C3_Outputs_AreDeterministicAcrossRuns, C3_Outputs_AreDeterministicAcrossRuns
       nameof F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey, F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey
       nameof F2_B002_EveryTemplateSectionHasExactlyOneOwner, F2_B002_EveryTemplateSectionHasExactlyOneOwner
@@ -548,6 +610,7 @@ let tests : (string * (unit -> unit)) list =
       nameof F2_B005_LookForRoleCarriesReport, F2_B005_LookForRoleCarriesReport
       nameof F2_B006_EverySkillLinkResolves, F2_B006_EverySkillLinkResolves
       nameof F2_B007_PersonaRequiresNameAndVoiceAndIsUnique, F2_B007_PersonaRequiresNameAndVoiceAndIsUnique
+      nameof F2_B008_ReviewingRoleCarriesLookForAndReport, F2_B008_ReviewingRoleCarriesLookForAndReport
       nameof F3_B001_CommandProjectsToClaudeCommandFile, F3_B001_CommandProjectsToClaudeCommandFile
       nameof F3_B002_CommandProjectsToCodexSkill, F3_B002_CommandProjectsToCodexSkill
       nameof F3_B003_CommandNamingMissingRole_FailsNamingBoth, F3_B003_CommandNamingMissingRole_FailsNamingBoth
