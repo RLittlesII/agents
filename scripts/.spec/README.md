@@ -99,7 +99,7 @@ this Feature removes both failure states.
 | 1   | Installing outputs into a consuming repository         | A consumer pulls a committed path with its own tooling; see the root README       |
 | 2   | Commands                                               | [0001-F3 Commands](../../commands/.spec/README.md)                                |
 | 3   | Hosts other than Claude Code and Codex                 | Each needs its own overlay and renderer; added as a new host, not a change here  |
-| 4   | Linting the one-way rule between skills and roles      | A separate check over `skills/`; this Feature only generates the ownership table |
+| 4   | Linting the one-way rule between skills and roles      | [0001-F4 Skill boundary](../../skills/.spec/README.md)                         |
 | 5   | Validating the role body's section headings            | Owned by [0001-F2 Role contract](../../agents/.spec/README.md)                   |
 
 ## 6. Concern Separation
