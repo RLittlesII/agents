@@ -46,12 +46,16 @@ ordering, barrier handling or a setup branch the claim depends on. Prefer
 data-driven cases to loops or conditionals in a test body: a branch in a test is
 a second test that never reports on its own.
 
-## Both tiers, deliberately
+## Every tier the surface owes
 
 An acceptance scenario proves the claim end to end. It does **not** relieve the
 concern beneath it of unit coverage: a decision, a derivation, a boundary check,
 an ordering guarantee, a mapping — each earns its own test at the level it lives
 at. A claim covered only by a green scenario has its mechanism untested.
+
+Acceptance and unit are the floor, not the list. A surface the companion
+§ "Testing" gives another tier, such as integration or user interface, earns a
+test in that tier too.
 
 ## Time is injected, always
 

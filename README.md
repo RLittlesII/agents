@@ -63,7 +63,7 @@ the prose it writes with a persona; the roster is in
 | [`spec-and-traceability`](skills/spec-and-traceability/SKILL.md)   | the specification model, claims, records, blast radius            |
 | [`clarify-requirements`](skills/clarify-requirements/SKILL.md)     | when to ask versus decide, and writing the answer back            |
 | [`deliver-change`](skills/deliver-change/SKILL.md)                 | work item to branch to specification to pull request              |
-| [`test-from-scenarios`](skills/test-from-scenarios/SKILL.md)       | a claim first, injected time, synthetic fixtures, both tiers      |
+| [`test-from-scenarios`](skills/test-from-scenarios/SKILL.md)       | a claim first, injected time, synthetic fixtures, every tier owed |
 | [`coding-conventions`](skills/coding-conventions/SKILL.md)         | orient, keep the design direct, say it once                       |
 | [`next`](skills/next/SKILL.md)                                     | Feature comparisons, completion paths, and next actionable work   |
 
