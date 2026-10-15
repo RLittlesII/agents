@@ -18,6 +18,9 @@ item to exist.
 - The companion `.feature` file, including `@boundary`-tagged scenarios.
 - Decision records under the Feature's `decisions/`.
 
+The `## Tasks` index of work items belongs to [`organizer`](organizer.md), which
+cuts items from the claims this role writes.
+
 Writes no production code, no tests, and nothing in a section that table assigns
 to another role.
 

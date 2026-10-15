@@ -144,6 +144,16 @@ let loadRoles (root: string) : Role list =
     |> Seq.map (loadRole root)
     |> List.ofSeq
 
+let private skillLink = Regex(@"\.\./skills/([^/\s)]+)/SKILL\.md")
+
+/// 0001-F2 B-006: every skill a role body links resolves to a skill directory.
+let validateSkillLinks (root: string) (roles: Role list) =
+    for role in roles do
+        for m in skillLink.Matches role.Body do
+            let skill = m.Groups.[1].Value
+            if not (File.Exists(Path.Combine(root, "skills", skill, "SKILL.md"))) then
+                fail (sprintf "%s: links skill '%s', which has no skills/%s/SKILL.md" role.Source skill skill)
+
 /// Sections no single role owns, declared in agents/README.md frontmatter as
 /// `unowned_spec_sections: { "<key>": <who> }`.
 let loadUnowned (root: string) : (string * string) list =
@@ -378,6 +388,7 @@ let outputRoots (hosts: Host list) =
 let plan (root: string) : Plan =
     let roles = loadRoles root
     if roles.IsEmpty then fail "agents/ holds no role files"
+    validateSkillLinks root roles
     let hosts = [ loadHost root "claude"; loadHost root "codex" ]
     for host in hosts do validateHostRoles host roles
     let unowned = loadUnowned root

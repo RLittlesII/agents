@@ -1,6 +1,6 @@
 // Tests for the projector. Names cite the claims they cover:
 //   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B010_
-//   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B003_
+//   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B006_
 //
 //   dotnet fsi scripts/project.tests.fsx        exit code = number of failures
 
@@ -288,12 +288,24 @@ let C3_Outputs_AreDeterministicAcrossRuns () =
 
 // ---------------------------------------------------------------- 0001-F2 Role contract
 
+let roster =
+    [ "adversary"; "analyst"; "architect"; "auditor"; "benchmarker"; "bug-finder"; "bug-fixer"; "build"
+      "critic"; "document-writer"; "domain"; "implementer"; "log-parser"; "metric-nerd"; "organizer"
+      "pair-programmer"; "release"; "spec-author"; "spec-reviewer"; "test-writer"; "tester"; "ui"; "ux"; "yak-shaver" ]
+
 let F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey () =
+    // loadRole itself rejects a missing key, a non-semver version, a multi-line
+    // description and a host key.
     let roles = loadRoles repoRoot
-    equal [ "architect"; "benchmarker"; "implementer"; "spec-author"; "spec-reviewer"; "test-writer" ] (roles |> List.map (fun r -> r.Name))
+    equal roster (roles |> List.map (fun r -> r.Name))
     for role in roles do
         if String.IsNullOrWhiteSpace role.Description then failwithf "%s has no description" role.Name
-        equal "0.1.0" role.Version
+    // Every role is mapped on both hosts.
+    for id in [ "claude"; "codex" ] do
+        let host = loadHost repoRoot id
+        for role in roles do
+            if not (host.Roles |> List.exists (fun (r, _) -> r = role.Name)) then
+                failwithf "hosts/%s.yaml does not map %s" id role.Name
 
 let F2_B002_EveryTemplateSectionHasExactlyOneOwner () =
     let rows = ownershipRows (loadRoles repoRoot) (loadUnowned repoRoot) (loadTemplateSections repoRoot)
@@ -308,6 +320,22 @@ let F2_B003_EveryRoleBodyCarriesTheFourSections () =
             if not (List.contains required heads) then failwithf "%s lacks ## %s" role.Name required
         if not (List.contains "Produce" heads || List.contains "Look for" heads) then
             failwithf "%s lacks ## Produce or ## Look for" role.Name
+
+let F2_B005_LookForRoleCarriesReport () =
+    let reviewing = loadRoles repoRoot |> List.filter (fun r -> r.Body.Contains "\n## Look for\n")
+    if reviewing.IsEmpty then failwith "no role carries ## Look for"
+    for role in reviewing do
+        if not (role.Body.Contains "\n## Report\n") then failwithf "%s has ## Look for but no ## Report" role.Name
+
+let F2_B006_EverySkillLinkResolves () =
+    // The real checkout passes.
+    validateSkillLinks repoRoot (loadRoles repoRoot)
+    // A link to a skill with no directory fails naming the role and the skill.
+    let root = checkout ()
+    write root "agents/beta.md" (role "beta" "[\"3\"]" "\n# Beta\n\nReads [`ghost`](../skills/ghost/SKILL.md).\n")
+    let message = expectFailure (fun () -> plan root)
+    contains "agents/beta.md: links skill 'ghost'" message
+    nothingWritten root
 
 // ---------------------------------------------------------------- Runner
 
@@ -327,7 +355,9 @@ let tests : (string * (unit -> unit)) list =
       nameof C3_Outputs_AreDeterministicAcrossRuns, C3_Outputs_AreDeterministicAcrossRuns
       nameof F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey, F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey
       nameof F2_B002_EveryTemplateSectionHasExactlyOneOwner, F2_B002_EveryTemplateSectionHasExactlyOneOwner
-      nameof F2_B003_EveryRoleBodyCarriesTheFourSections, F2_B003_EveryRoleBodyCarriesTheFourSections ]
+      nameof F2_B003_EveryRoleBodyCarriesTheFourSections, F2_B003_EveryRoleBodyCarriesTheFourSections
+      nameof F2_B005_LookForRoleCarriesReport, F2_B005_LookForRoleCarriesReport
+      nameof F2_B006_EverySkillLinkResolves, F2_B006_EverySkillLinkResolves ]
 
 let mutable failures = 0
 for name, test in tests do

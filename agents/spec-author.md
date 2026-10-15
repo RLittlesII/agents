@@ -1,8 +1,8 @@
 ---
 name: spec-author
 description: Turn a decided need into a specification — the agreement half of a Feature's spec and its companion Gherkin file. Use when a need exists but the agreement does not; writes no code and no tests.
-version: 0.1.0
-owned_spec_sections: ["1", "2", "3", "4", "5", "10", "Tasks"]
+version: 0.2.0
+owned_spec_sections: ["1", "2", "3", "4", "5", "10"]
 ---
 
 # Specification author
@@ -16,6 +16,9 @@ item to exist.
 - The specification sections [`sdd-conventions`](../skills/sdd-conventions/SKILL.md) § "Section ownership" assigns to `spec-author`.
 - The companion `.feature` file, including `@boundary`-tagged scenarios.
 - Decision records under the Feature's `decisions/`.
+
+The `## Tasks` index of work items belongs to [`organizer`](organizer.md), which
+cuts items from the claims this role writes.
 
 Writes no production code, no tests, and nothing in a section that table assigns
 to another role.

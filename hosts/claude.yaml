@@ -31,3 +31,98 @@ roles:
   benchmarker:
     model: sonnet
     effort: medium
+  # Elicitation turns ambiguity into a decided need; a wrong reading costs a Feature.
+  analyst:
+    model: opus
+    effort: high
+    skills: [sdd-conventions, clarify-requirements, spec-and-traceability]
+  # Design review is judgement against claims and laws; read-only.
+  critic:
+    model: opus
+    effort: high
+    tools: [Read, Grep, Glob, Bash]
+    skills: [sdd-conventions, coding-conventions, spec-and-traceability]
+  # Queue work is bookkeeping against a fixed scoring model.
+  organizer:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions, next, deliver-change, spec-and-traceability]
+  # Prose checked against existing text; volume over depth.
+  document-writer:
+    model: haiku
+    effort: low
+    skills: [sdd-conventions, coding-conventions]
+  # Runs commands and reports verbatim.
+  tester:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions, test-from-scenarios]
+  # Root cause needs deep tracing before anyone edits; read-only on code.
+  bug-finder:
+    model: opus
+    effort: high
+    tools: [Read, Grep, Glob, Bash]
+    skills: [sdd-conventions, spec-and-traceability, test-from-scenarios]
+  # The fix is small and bounded by a diagnosed cause and a red test.
+  bug-fixer:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions, test-from-scenarios, coding-conventions, deliver-change]
+  # Interactive small steps; latency matters more than depth.
+  pair-programmer:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions, coding-conventions, clarify-requirements]
+  # Bounded incidental fixes.
+  yak-shaver:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions, coding-conventions, deliver-change]
+  # Long input, mechanical reading; read-only.
+  log-parser:
+    model: haiku
+    effort: low
+    tools: [Read, Grep, Glob, Bash]
+    skills: [sdd-conventions]
+  # Baselines and comparisons; arithmetic over judgement.
+  metric-nerd:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions]
+  # Hostile review needs depth; a missed finding ships; read-only.
+  adversary:
+    model: opus
+    effort: high
+    tools: [Read, Grep, Glob, Bash]
+    skills: [sdd-conventions, coding-conventions]
+  # Whole-tree consistency across many records; read-only.
+  auditor:
+    model: opus
+    effort: high
+    tools: [Read, Grep, Glob, Bash]
+    skills: [sdd-conventions, spec-and-traceability]
+  # Invariants are where business rules go wrong silently.
+  domain:
+    model: opus
+    effort: high
+    skills: [sdd-conventions, coding-conventions, clarify-requirements]
+  # Flows and copy; judgement bounded by stated needs.
+  ux:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions, clarify-requirements]
+  # Implementation against a decided interaction.
+  ui:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions, coding-conventions]
+  # Procedural, confirmation-gated.
+  release:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions, deliver-change]
+  # Procedural; reproduce, change the script, see the gate fail.
+  build:
+    model: sonnet
+    effort: medium
+    skills: [sdd-conventions, deliver-change, coding-conventions]

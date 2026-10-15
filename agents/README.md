@@ -1,6 +1,6 @@
 ---
 title: Role contracts
-description: The six documented role contracts that own the specification chain, and the rule that each role trusts only the artifact of the role before it
+description: The documented role contracts that own the specification chain, and the rule that each role trusts only the artifact of the role before it
 type: reference
 unowned_spec_sections:
   "11": whoever is blocked
@@ -10,17 +10,35 @@ unowned_spec_sections:
 # Role contracts
 
 A specification-driven repository treats the specification as the artifact of
-record; code is downstream of it. Six roles own that chain, and each is a
-**documented contract** — for whoever takes the role, a person or an agent.
+record; code is downstream of it. Twenty-four roles work that chain, and each
+is a **documented contract** — for whoever takes the role, a person or an agent.
 
-| Role                                  | Turns                                | Into                                                       |
-| ------------------------------------- | ------------------------------------ | ---------------------------------------------------------- |
-| [`spec-author`](spec-author.md)       | a decided need                       | the agreement, and the `.feature` file                     |
-| [`architect`](architect.md)           | the authored agreement and scenarios | a technical design, diagrams and readiness findings        |
-| [`test-writer`](test-writer.md)       | a claim                              | a failing scenario and failing tests                       |
-| [`implementer`](implementer.md)       | a failing test and recorded design   | production code, and design feedback                       |
-| [`spec-reviewer`](spec-reviewer.md)   | a diff                               | a sign-off, or findings                                    |
-| [`benchmarker`](benchmarker.md)       | a stated cost concern                | a benchmark and a recorded finding                         |
+| Role                                    | Turns                                   | Into                                                      |
+| --------------------------------------- | --------------------------------------- | --------------------------------------------------------- |
+| [`analyst`](analyst.md)                 | a raw ask                               | discovery notes and a decided need                        |
+| [`spec-author`](spec-author.md)         | a decided need                          | the agreement, and the `.feature` file                    |
+| [`organizer`](organizer.md)             | agreed claims                           | ranked work items and the Tasks index                     |
+| [`architect`](architect.md)             | the authored agreement and scenarios    | a technical design, diagrams and readiness findings       |
+| [`domain`](domain.md)                   | business rules in claims                | a domain model whose invariants cannot be bypassed        |
+| [`ux`](ux.md)                           | user needs and claims                   | a decided interaction: flows, states and copy             |
+| [`critic`](critic.md)                   | a design before it is built             | findings, never a redesign                                |
+| [`test-writer`](test-writer.md)         | a claim                                 | a failing scenario and failing tests                      |
+| [`implementer`](implementer.md)         | a failing test and recorded design      | production code, and design feedback                      |
+| [`ui`](ui.md)                           | a decided interaction and failing tests | presentation code                                         |
+| [`pair-programmer`](pair-programmer.md) | a task the person wants to steer        | small visible steps and a decision record                 |
+| [`tester`](tester.md)                   | a change to verify                      | a run report and reproductions                            |
+| [`spec-reviewer`](spec-reviewer.md)     | a diff                                  | a sign-off, or findings                                   |
+| [`adversary`](adversary.md)             | the surface a change exposes            | security findings                                         |
+| [`benchmarker`](benchmarker.md)         | a stated cost concern                   | a benchmark and a recorded finding                        |
+| [`metric-nerd`](metric-nerd.md)         | a decision that needs evidence          | a baseline and a comparison                               |
+| [`bug-finder`](bug-finder.md)           | a failure report                        | a reproduction and a root-cause record                    |
+| [`bug-fixer`](bug-fixer.md)             | a diagnosed cause and a failing test    | the fix and its lesson                                    |
+| [`log-parser`](log-parser.md)           | a long log                              | the sequence and the decisive lines                       |
+| [`yak-shaver`](yak-shaver.md)           | an incidental obstacle                  | the obstacle removed, and what was left alone             |
+| [`build`](build.md)                     | a broken or missing gate                | a reproducible build and gates that fail when they should |
+| [`release`](release.md)                 | an artifact that passed the gates       | a confirmed release with a rollback                       |
+| [`document-writer`](document-writer.md) | stale or missing prose                  | documents checked against what exists                     |
+| [`auditor`](auditor.md)                 | the repository at rest                  | drift findings, grouped by rule                           |
 
 ## Sequential trust
 
@@ -48,6 +66,11 @@ This is also why no role fills another's sections. Writing into someone else's
 section removes the only signal that the preceding stage is incomplete.
 A role that finds its input missing or wrong **escalates to the owning role**; it
 does not quietly supply the gap.
+
+Most roles own no section. The analyst works before the agreement exists; the
+critic, the adversary and the auditor review; the tester, the bug finder, the log
+parser and the metric nerd report. Each hands its artifact to the owner of the
+section it concerns, by the same rule.
 
 ## Where ownership is written
 

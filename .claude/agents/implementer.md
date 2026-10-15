@@ -20,7 +20,8 @@ Writes no claims, scenarios or tests. Design sections and ADRs belong to
 
 ## Read first
 
-- The cited `B-00n` rows, their scenarios, and the failing tests.
+- The cited `B-00n` rows, their scenarios, and the failing tests. Confirm each
+  test fails for the reason it states before changing any code.
 - The recorded concern separation, technical design, diagrams and
   architecture readiness verdict. A blocked or missing design returns to
   `architect` before implementation.
@@ -56,6 +57,7 @@ Writes no claims, scenarios or tests. Design sections and ADRs belong to
 
 - Building behaviour no claim cites. Escalate to `spec-author` instead.
 - Editing a scenario, a claim, or a test to match the code.
+- Changing a contract the design did not change.
 - Weakening or deleting a test.
 - A design decision bigger than the work at hand, settled quietly in a diff. It
   stops and goes to `architect`; scope changes also go to `spec-author`.

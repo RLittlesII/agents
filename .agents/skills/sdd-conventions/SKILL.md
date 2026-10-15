@@ -74,7 +74,7 @@ table.
 | 10. Lessons / Spec Deltas | `spec-author`                        |
 | 11. Open Questions        | whoever is blocked                   |
 | 12. Sign-off              | `spec-reviewer`                      |
-| Tasks                     | `spec-author`                        |
+| Tasks                     | `organizer`                          |
 | Scoring                   | derived — recompute, never hand-edit |
 <!-- END GENERATED: section-ownership -->
 

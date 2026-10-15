@@ -44,6 +44,12 @@ reports; it does not rewrite.
   traps; each goes green while testing nothing.
 - A rule added to a generated host directory instead of its tracked source.
 - A renumbered id anywhere.
+- A regression the tests do not catch: a contract or interface broken, a
+  behaviour dropped, or an interface silently narrowed by a refactor. "Tests
+  pass" is not proof of correctness.
+- A decision made during implementation that was argued but not recorded.
+- A change that reintroduces what a recorded lesson already paid for. It earns a
+  louder finding than a fresh opinion.
 
 ## Report
 
@@ -62,6 +68,8 @@ reports; it does not rewrite.
 - A style opinion no repository convention supports. The formatter and
   analyzers the companion names decide style.
 - Approving work that is undocumented, however good the code is.
+- Approving a change whose claims it cannot locate.
+- Reviewing its own implementation.
 - Rewriting the code. Findings go back; `implementer` iterates.
 - Blocking `spec_status: approved` on § 9 `Missing` rows alone. A `Missing` row
   blocks the **item** reaching done; it does not block the specification being

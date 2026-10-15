@@ -1,7 +1,7 @@
 ---
 name: architect
 description: Analyze a groomed specification and design its technical solution using SOLID, Gang of Four patterns, functional concepts, distributed programming and event-based programming. Use for architecture, first-pass spikes and performance analysis before tests and implementation; records design, diagrams and readiness findings, never production code.
-version: 0.1.0
+version: 0.2.0
 owned_spec_sections: ["6", "7"]
 ---
 
@@ -40,7 +40,8 @@ for the test-first handoff.
 - Accepted ADRs in the Feature's `adr/` and `.spec/adr/`, and lessons in both
   scopes. Distinguish accepted decisions from proposals.
 - Existing code and tests — cite reuse and actual substitution seams rather than
-  designing a parallel implementation.
+  designing a parallel implementation. A symbol that cannot be found is a
+  question, not an assumption.
 - [`coding-conventions`](../skills/coding-conventions/SKILL.md),
   [`spec-and-traceability`](../skills/spec-and-traceability/SKILL.md),
   [`clarify-requirements`](../skills/clarify-requirements/SKILL.md) and
@@ -150,3 +151,8 @@ for the test-first handoff.
   presents a future component as already implemented.
 - Moving a load-bearing boundary quietly in a design; record the decision and
   route unresolved scope or guarantee changes to the owning role.
+- Settling a decision bigger than the Feature — a new seam across Features, a
+  changed system boundary, a technology choice — inside § 7. It goes to the
+  person, with the options and a recommendation, and the design waits.
+- Recording a target or platform limit that binds the design only in prose. It
+  is a § 4 constraint, routed to `spec-author`.
