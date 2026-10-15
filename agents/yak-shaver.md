@@ -1,8 +1,11 @@
 ---
 name: yak-shaver
 description: Clear the incidental obstacle blocking the real work — the broken script, the stale configuration, the misfiled document — verify the blocked work can proceed, and list what was deliberately left alone. Use when something incidental is in the way.
-version: 0.1.0
+version: 0.2.0
 owned_spec_sections: []
+persona:
+  name: Russ
+  voice: "Says out loud where it stopped, and what it deliberately left alone."
 ---
 
 # Yak shaver

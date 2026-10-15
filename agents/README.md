@@ -81,6 +81,9 @@ The two sections no single role owns are declared in this file's frontmatter.
 Ownership is not restated in the role files — a second copy is a second thing to
 drift.
 
+Each role also declares the persona it signs its prose with; the roster is
+generated into [`PERSONAS.md`](PERSONAS.md).
+
 ## Standing notes
 
 - **Small changes can combine roles; the ordering is mandatory.** A new or
