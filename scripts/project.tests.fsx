@@ -1,6 +1,7 @@
 // Tests for the projector. Names cite the claims they cover:
 //   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B012_
 //   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B007_
+//   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B007_
 //
 //   dotnet fsi scripts/project.tests.fsx        exit code = number of failures
 
@@ -414,6 +415,115 @@ let F2_B007_PersonaRequiresNameAndVoiceAndIsUnique () =
     contains "persona 'Abe' is declared by both 'alpha' and 'beta'" message
     nothingWritten root3
 
+// ---------------------------------------------------------------- 0001-F3 Commands
+
+let command name (roles: string) (skills: string) (body: string) =
+    sprintf "---\nname: %s\ndescription: Convene for %s.\nroles: %s\nskills: %s\nargument-hint: \"<what>\"\n---\n%s" name name roles skills body
+
+let commandBody = "\nDo the thing.\n\nWork on: $ARGUMENTS\n"
+
+/// The synthetic checkout with commands enabled on both hosts and one command,
+/// `convene`, naming both roles and the companion skill.
+let commandsCheckout () =
+    let root = checkout ()
+    write root "hosts/claude.yaml" (claudeHost + "commands_output: .claude/commands/{name}.md\n")
+    write root "hosts/codex.yaml" (codexHost + "commands_output: .agents/skills/{name}/SKILL.md\ncommands_arguments: the request that invoked this skill\n")
+    write root "commands/convene.md" (command "convene" "[alpha, beta]" "[sdd-conventions]" commandBody)
+    root
+
+let keep = "keep the boundaries it declares: a role that refuses a kind of work still refuses it here."
+
+let F3_B001_CommandProjectsToClaudeCommandFile () =
+    let root = commandsCheckout ()
+    apply root (plan root) |> ignore
+    let expected =
+        String.concat "\n"
+            [ "---"
+              "description: \"Convene for convene.\""
+              "argument-hint: \"<what>\""
+              "---"
+              ""
+              "Convene these roles, in this order:"
+              ""
+              "- `alpha`, whose contract is `.claude/agents/alpha.md`"
+              "- `beta`, whose contract is `.claude/agents/beta.md`"
+              ""
+              "Read each role's contract before acting as it, and " + keep
+              ""
+              "Use these skills: `sdd-conventions` (`.claude/skills/sdd-conventions/SKILL.md`)."
+              "" ]
+    equal (expected + commandBody) (read root ".claude/commands/convene.md")
+
+let F3_B002_CommandProjectsToCodexSkill () =
+    let root = commandsCheckout ()
+    write root "commands/solo.md" (command "solo" "[beta]" "[]" commandBody)
+    apply root (plan root) |> ignore
+    let expected =
+        String.concat "\n"
+            [ "---"
+              "name: solo"
+              "description: \"Convene for solo.\""
+              "---"
+              ""
+              "Act as the `beta` role, whose contract is `.codex/agents/beta.toml`. Read it before acting, and " + keep
+              ""
+              "Do the thing."
+              ""
+              "Work on: the request that invoked this skill"
+              "" ]
+    equal expected (read root ".agents/skills/solo/SKILL.md")
+    contains "`sdd-conventions` (`.agents/skills/sdd-conventions/SKILL.md`)" (read root ".agents/skills/convene/SKILL.md")
+    // Claude keeps the placeholder; it substitutes the arguments itself.
+    contains "Work on: $ARGUMENTS" (read root ".claude/commands/solo.md")
+
+let F3_B003_CommandNamingMissingRole_FailsNamingBoth () =
+    // The real commands name only roles and skills that exist.
+    let real = loadCommands repoRoot
+    if real.IsEmpty then failwith "commands/ holds no command"
+    let skills = Directory.EnumerateDirectories(Path.Combine(repoRoot, "skills")) |> Seq.map Path.GetFileName |> List.ofSeq
+    validateCommands (loadRoles repoRoot) skills real
+    let root = commandsCheckout ()
+    write root "commands/convene.md" (command "convene" "[alpha, ghost]" "[]" commandBody)
+    contains "commands/convene.md: names role 'ghost'" (expectFailure (fun () -> plan root))
+    nothingWritten root
+
+let F3_B004_CommandNamingMissingSkill_FailsNamingBoth () =
+    let root = commandsCheckout ()
+    write root "commands/convene.md" (command "convene" "[alpha]" "[ghost]" commandBody)
+    contains "commands/convene.md: names skill 'ghost'" (expectFailure (fun () -> plan root))
+    nothingWritten root
+
+let F3_B005_MalformedCommand_Fails () =
+    let cases =
+        [ "convene.md", command "other" "[alpha]" "[]" commandBody, "name 'other' does not match the file name 'convene'"
+          "convene.md", "---\nname: convene\ndescription: |\n  Two\n  lines.\nroles: [alpha]\n---\n" + commandBody, "description is required and must be a single line"
+          "convene.md", command "convene" "[]" "[]" commandBody, "roles must name at least one role"
+          "convene.md", command "convene" "[alpha]" "[]" "\nSee [alpha](../agents/alpha.md).\n", "the body links into agents/ or skills/" ]
+    for file, text, expected in cases do
+        let root = commandsCheckout ()
+        write root ("commands/" + file) text
+        contains expected (expectFailure (fun () -> plan root))
+        nothingWritten root
+
+let F3_B006_CommandsFollowTheHostAndStaleOnesAreReported () =
+    // A host without commands_output projects no command.
+    let root = checkout ()
+    write root "commands/convene.md" (command "convene" "[alpha]" "[]" commandBody)
+    apply root (plan root) |> ignore
+    if exists root ".claude/commands/convene.md" || exists root ".agents/skills/convene/SKILL.md" then
+        failwith "a host without commands_output projected a command"
+    // A command output with no source is stale.
+    let root2 = commandsCheckout ()
+    apply root2 (plan root2) |> ignore
+    write root2 ".claude/commands/gone.md" "no source"
+    equal [ Stale ".claude/commands/gone.md" ] (differences root2 (plan root2))
+
+let F3_B007_CommandNamedLikeSkill_Fails () =
+    let root = commandsCheckout ()
+    write root "commands/sdd-conventions.md" (command "sdd-conventions" "[alpha]" "[]" commandBody)
+    contains "command 'sdd-conventions' has the name of skill 'sdd-conventions'" (expectFailure (fun () -> plan root))
+    nothingWritten root
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
@@ -437,7 +547,14 @@ let tests : (string * (unit -> unit)) list =
       nameof F2_B003_EveryRoleBodyCarriesTheFourSections, F2_B003_EveryRoleBodyCarriesTheFourSections
       nameof F2_B005_LookForRoleCarriesReport, F2_B005_LookForRoleCarriesReport
       nameof F2_B006_EverySkillLinkResolves, F2_B006_EverySkillLinkResolves
-      nameof F2_B007_PersonaRequiresNameAndVoiceAndIsUnique, F2_B007_PersonaRequiresNameAndVoiceAndIsUnique ]
+      nameof F2_B007_PersonaRequiresNameAndVoiceAndIsUnique, F2_B007_PersonaRequiresNameAndVoiceAndIsUnique
+      nameof F3_B001_CommandProjectsToClaudeCommandFile, F3_B001_CommandProjectsToClaudeCommandFile
+      nameof F3_B002_CommandProjectsToCodexSkill, F3_B002_CommandProjectsToCodexSkill
+      nameof F3_B003_CommandNamingMissingRole_FailsNamingBoth, F3_B003_CommandNamingMissingRole_FailsNamingBoth
+      nameof F3_B004_CommandNamingMissingSkill_FailsNamingBoth, F3_B004_CommandNamingMissingSkill_FailsNamingBoth
+      nameof F3_B005_MalformedCommand_Fails, F3_B005_MalformedCommand_Fails
+      nameof F3_B006_CommandsFollowTheHostAndStaleOnesAreReported, F3_B006_CommandsFollowTheHostAndStaleOnesAreReported
+      nameof F3_B007_CommandNamedLikeSkill_Fails, F3_B007_CommandNamedLikeSkill_Fails ]
 
 let mutable failures = 0
 for name, test in tests do

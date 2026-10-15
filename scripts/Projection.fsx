@@ -1,7 +1,8 @@
 // Projection: turn host-free role contracts plus a host overlay into host-native
 // agent files, copy skills to each host's discovery directory, and generate the
-// section-ownership table and the persona roster. No top-level effects: project.fsx and
-// project.tests.fsx load this file and call into it.
+// section-ownership table and the persona roster, and project commands. No
+// top-level effects: project.fsx and project.tests.fsx load this file and call
+// into it.
 //
 // Agreement: scripts/.spec/README.md. Claims are cited as B-00n in comments.
 
@@ -194,6 +195,10 @@ type Host =
       Output: string
       SkillsOutput: string
       InstructionsPrefix: string option
+      /// 0001-F3: where a command lands, with `{name}`; None projects no commands.
+      CommandsOutput: string option
+      /// 0001-F3 B-002: the text that replaces `$ARGUMENTS` on a host without it.
+      CommandsArguments: string option
       Defaults: (string * Value) list
       Roles: (string * (string * Value) list) list }
 
@@ -206,11 +211,16 @@ let loadHost (root: string) (id: string) : Host =
     let output = getScalar "output" pairs
     if not (output.Contains "{name}") then fail (sprintf "hosts/%s.yaml: output must contain {name}" id)
     let skillsOutput = getScalar "skills_output" pairs
-    let prefix =
-        match tryGet "instructions_prefix" pairs with
+    let optional key =
+        match tryGet key pairs with
         | Some (Scalar s) -> Some s
-        | Some _ -> fail (sprintf "hosts/%s.yaml: instructions_prefix must be text" id)
+        | Some _ -> fail (sprintf "hosts/%s.yaml: %s must be text" id key)
         | None -> None
+    let prefix = optional "instructions_prefix"
+    let commandsOutput = optional "commands_output"
+    match commandsOutput with
+    | Some o when not (o.Contains "{name}") -> fail (sprintf "hosts/%s.yaml: commands_output must contain {name}" id)
+    | _ -> ()
     let mapping key =
         match tryGet key pairs with
         | Some (Mapping m) -> m
@@ -224,7 +234,9 @@ let loadHost (root: string) (id: string) : Host =
             | Scalar "" -> role, []
             | _ -> fail (sprintf "hosts/%s.yaml: roles.%s must be a mapping" id role))
     { Id = id; Output = output; SkillsOutput = skillsOutput
-      InstructionsPrefix = prefix; Defaults = mapping "defaults"; Roles = roles }
+      InstructionsPrefix = prefix; CommandsOutput = commandsOutput
+      CommandsArguments = optional "commands_arguments"
+      Defaults = mapping "defaults"; Roles = roles }
 
 /// The overlay for one role: defaults, then the role's own keys, later keys
 /// replacing earlier ones while keeping first-seen order.
@@ -440,6 +452,115 @@ let renderCodex (host: Host) (role: Role) =
 let renderAgent (host: Host) (role: Role) =
     if host.Output.EndsWith ".toml" then renderCodex host role else renderClaude host role
 
+// ---------------------------------------------------------------- Commands
+
+/// 0001-F3: a composable prompt that convenes roles and names skills. Roles and
+/// skills are named once, in frontmatter; projection writes the paths per host.
+type Command =
+    { Name: string
+      Description: string
+      Roles: string list
+      Skills: string list
+      ArgumentHint: string option
+      Body: string
+      Source: string }
+
+let private relativeLink = Regex(@"\]\(\.\./(agents|skills)/")
+
+let loadCommand (root: string) (path: string) : Command =
+    let source = relative root path
+    let pairs, body = splitFrontmatter source (readText path)
+    // B-005: a well-formed command.
+    let name = getScalar "name" pairs
+    let stem = Path.GetFileNameWithoutExtension path
+    if name <> stem then fail (sprintf "%s: name '%s' does not match the file name '%s'" source name stem)
+    let description =
+        match tryGet "description" pairs with
+        | Some (Scalar s) when not (String.IsNullOrWhiteSpace s) && not (s.Contains "\n") -> s
+        | _ -> fail (sprintf "%s: description is required and must be a single line" source)
+    let list key =
+        match tryGet key pairs with
+        | Some (List items) -> items
+        | Some (Scalar "") | None -> []
+        | Some _ -> fail (sprintf "%s: %s must be a list" source key)
+    let roles = list "roles"
+    if roles.IsEmpty then fail (sprintf "%s: roles must name at least one role" source)
+    if relativeLink.IsMatch body then
+        fail (sprintf "%s: the body links into agents/ or skills/; name roles and skills in frontmatter, which projection turns into each host's paths" source)
+    let hint =
+        match tryGet "argument-hint" pairs with
+        | Some (Scalar s) -> Some s
+        | Some _ -> fail (sprintf "%s: argument-hint must be text" source)
+        | None -> None
+    { Name = name; Description = description; Roles = roles; Skills = list "skills"
+      ArgumentHint = hint; Body = body; Source = source }
+
+let loadCommands (root: string) : Command list =
+    let directory = Path.Combine(root, "commands")
+    if not (Directory.Exists directory) then [] else
+    Directory.EnumerateFiles(directory, "*.md")
+    |> Seq.filter (fun f -> Path.GetFileName f <> "README.md")
+    |> Seq.sort
+    |> Seq.map (loadCommand root)
+    |> List.ofSeq
+
+/// B-003, B-004, B-007: every role and skill a command names exists, and no
+/// command shares a name with a skill.
+let validateCommands (roles: Role list) (skills: string list) (commands: Command list) =
+    for command in commands do
+        for role in command.Roles do
+            if not (roles |> List.exists (fun r -> r.Name = role)) then
+                fail (sprintf "%s: names role '%s', which has no file agents/%s.md" command.Source role role)
+        for skill in command.Skills do
+            if not (List.contains skill skills) then
+                fail (sprintf "%s: names skill '%s', which has no skills/%s/SKILL.md" command.Source skill skill)
+        if List.contains command.Name skills then
+            fail (sprintf "%s: command '%s' has the name of skill '%s'; a host that projects commands as skills would hold both in one place" command.Source command.Name command.Name)
+
+/// The generated paragraphs ahead of a command body: each role's contract and
+/// each skill at this host's paths.
+let commandPreamble (host: Host) (command: Command) =
+    let contract role = host.Output.Replace("{name}", role)
+    let keep = "keep the boundaries it declares: a role that refuses a kind of work still refuses it here."
+    let roles =
+        match command.Roles with
+        | [ role ] ->
+            sprintf "Act as the `%s` role, whose contract is `%s`. Read it before acting, and %s" role (contract role) keep
+        | many ->
+            [ yield "Convene these roles, in this order:"
+              yield ""
+              for role in many do yield sprintf "- `%s`, whose contract is `%s`" role (contract role)
+              yield ""
+              yield "Read each role's contract before acting as it, and " + keep ]
+            |> String.concat "\n"
+    let skills =
+        command.Skills
+        |> List.map (fun s -> sprintf "`%s` (`%s/%s/SKILL.md`)" s host.SkillsOutput s)
+    match skills with
+    | [] -> roles
+    | _ -> roles + "\n\nUse these skills: " + String.Join(", ", skills) + "."
+
+let private quoted (s: string) = "\"" + s.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\""
+
+/// B-001: a command file — description and argument hint, the preamble, then
+/// the body verbatim. B-002: a skill file — name and description, the preamble,
+/// then the body with `$ARGUMENTS` replaced by the host's text for it.
+let renderCommand (host: Host) (command: Command) =
+    let asSkill = (defaultArg host.CommandsOutput "").EndsWith "/SKILL.md"
+    let body =
+        match host.CommandsArguments with
+        | Some text -> command.Body.Replace("$ARGUMENTS", text)
+        | None -> command.Body
+    [ yield "---"
+      if asSkill then yield "name: " + yamlScalar command.Name
+      yield "description: " + quoted command.Description
+      match command.ArgumentHint with
+      | Some hint when not asSkill -> yield "argument-hint: " + quoted hint
+      | _ -> ()
+      yield "---" ]
+    |> String.concat "\n"
+    |> fun front -> front + "\n\n" + lead (commandPreamble host command) body
+
 // ---------------------------------------------------------------- Plan
 
 type Plan =
@@ -449,7 +570,11 @@ type Plan =
 let outputRoots (hosts: Host list) =
     [ for host in hosts do
         yield Path.GetDirectoryName(host.Output).Replace('\\', '/')
-        yield host.SkillsOutput ]
+        yield host.SkillsOutput
+        // 0001-F3 B-006: the directory before `{name}`, so a stale command is found.
+        match host.CommandsOutput with
+        | Some output -> yield output.Substring(0, output.IndexOf "{name}").TrimEnd('/')
+        | None -> () ]
     |> List.distinct
     |> List.sort
 
@@ -475,6 +600,8 @@ let plan (root: string) : Plan =
         |> Seq.filter (fun d -> Path.GetFileName d <> ".spec")
         |> Seq.sort
         |> List.ofSeq
+    let commands = loadCommands root
+    validateCommands roles (skills |> List.map Path.GetFileName) commands
     let outputs =
         [ yield "skills/sdd-conventions/SKILL.md", bytes companionText
           yield "agents/PERSONAS.md", bytes personasText
@@ -488,7 +615,12 @@ let plan (root: string) : Plan =
                       let content =
                           if rel = "sdd-conventions/SKILL.md" then bytes companionText
                           else File.ReadAllBytes file
-                      yield host.SkillsOutput + "/" + rel, content ]
+                      yield host.SkillsOutput + "/" + rel, content
+              match host.CommandsOutput with
+              | Some output ->
+                  for command in commands do
+                      yield output.Replace("{name}", command.Name), bytes (renderCommand host command)
+              | None -> () ]
         |> Map.ofList
     { Outputs = outputs; OutputRoots = outputRoots hosts }
 
