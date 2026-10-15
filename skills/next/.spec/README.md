@@ -134,14 +134,220 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 
 <!-- last written by: architect, 2026-10-14 -->
 
-Not yet assessed.
+| #   | Concern                                                                                                                              | Classification |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
+| 1   | The report: Feature comparisons first with their facts kept apart, unscored and standalone work placed apart (B-001, B-002, B-037, B-038) | Business   |
+| 2   | The requested scope: prerequisites another Feature owns, unrelated work left out, an unknown Feature as an error, an empty answer explained (B-003 to B-006) | Business |
+| 3   | The evidence each stage needs before it is offered (B-009 to B-016)                                                                  | Business       |
+| 4   | What counts as delivered, taken, waiting or a candidate (B-017 to B-020)                                                             | Business       |
+| 5   | Ranking policy: tier before completion, a prerequisite's standing taken from the selected Features only (B-022, B-025, B-026)        | Business       |
+| 6   | Ranking arithmetic: the closure counted once at full cost, exact comparison, the total tie order (B-023, B-024, B-027)               | Technical      |
+| 7   | Authored inputs only: no stored derived field, no claim link inferred from prose (B-021, B-031)                                      | Technical      |
+| 8   | Incomplete evidence: uncomputed scores, withheld starts, named gaps, a Feature not called finished, independent work still ranked (B-028 to B-030, B-032, B-033) | Both |
+| 9   | Detecting a dependency cycle and routing it to grooming as a re-cut (B-041)                                                          | Both           |
+| 10  | Lanes: one head per lane, shared edits joining lanes, each inferred conflict with its evidence and uncertainty (B-034 to B-036)      | Both           |
+| 11  | One observed input set, its read time, and detail that leaves the choices unchanged (B-007, B-008, B-039)                            | Technical      |
+| 12  | Recommending without taking work or writing anything back (B-040)                                                                    | Business       |
+| 13  | The companion seam: where each input is authored and how delivery state is read (C-2, C-3)                                           | Technical      |
 
 ## 7. Technical Design
 
 <!-- last written by: architect, 2026-10-14 -->
 
 The deliverable is prose in [`SKILL.md`](../SKILL.md), which an agent follows;
-there is no code. Design readiness is not yet recorded.
+there is no code ([decision 0015](decisions/0015-a-skill-not-an-executable.md)).
+`SKILL.md` is the declaring file, and this section records the positions it
+carries. [0001-F1](../../../scripts/.spec/README.md) B-004 copies it byte for
+byte to each host's skills directory, where the copies are committed and
+drift-checked
+([ADR-0002](../../../.spec/adr/0002-generated-host-outputs-are-committed.md)). It
+names no role ([0001-F4](../../.spec/README.md) B-001): the next actor is a
+stage, such as grooming, or a section owner.
+
+### Design positions
+
+- **Observe once, then derive.** The companion's inputs, the specifications'
+  frontmatter and §§ 3, 7, 11 and 12, and the tracker's delivery state are read
+  once, as one snapshot stamped with its read time (B-007, B-008). Scope, gates,
+  closures, scores, paths and lanes are derived from that snapshot alone, so
+  expanding detail re-renders the same choices (B-039). Reading is the only
+  effect.
+- **Read-only.** No item is claimed, no record edited, and no branch, worktree
+  or dispatch started (B-040); taking work is delivery's (§ 5 row 1). The
+  tracker owns delivery state (C-1); whether a mirrored status may stand in for
+  it is OQ-1.
+- **Derived values are never written back.** Tier, score, gate, waiting and what
+  an item gates exist only in the report (B-040). A stored derived field, such
+  as `rank`, `blocks` or a status recording waiting, is never an input; the
+  authored fields are (B-019, B-021, decision 0008).
+- **Authored evidence only.** A missing value, cost, decomposition, claim link
+  or delivery state is a gap, never a default: the dependent score stays
+  uncomputed, the affected start is withheld and the gap is named, while
+  independent work is still ranked (B-028 to B-032, decisions 0005 and 0012). A
+  claim link is the companion's claim assignment, never the item's prose (B-031).
+- **Gates per stage and per linked claim.** Approval is read from § 12 by
+  section and open questions from § 11 by the claims they block; neither
+  `spec_status` nor an item status stands in (B-011, B-013 to B-015). Decision
+  0010 scopes every gate to the work's linked claims, the implementation gate's
+  "design Ready" included, so a verdict that excepts some claims withholds only
+  work linking them. Delivered means finished as completed (B-018); waiting is
+  derived from unfinished `depends_on` and spikes (B-019); a container with open
+  children yields its children (B-020).
+- **One ranking model; the companion names its inputs.** `SKILL.md` § "The
+  ranking model" is the only statement of the arithmetic (C-3). Work orders by
+  one lexicographic key: priority tier, highest first; then completion score,
+  the Feature's value over the summed cost of its unfinished closure; then the
+  number of open items waiting on the item, most first; then stable id, lowest
+  first (B-022, B-023, and the B-027 scenarios). The closure is a set — the open
+  children and every open item they wait on, transitively and in any Feature —
+  so each item counts once, at full cost until delivered (B-023, B-024). Scores
+  compare as exact ratios, rounded only for display. A prerequisite takes the
+  strongest tier among the selected Features it advances, then the best score in
+  that tier, so an unselected Feature cannot move it (B-025, B-026). A score
+  missing an input, or whose closure sums to no cost, is uncomputed — never
+  zero, never infinite (B-028); how an empty closure is reported is OQ-5.
+- **A cycle is routed, never broken.** Collecting a closure as a set terminates
+  on a cycle; the members, and every Feature whose closure reaches one, stay
+  unscored (B-028). The report names the members and the work they affect
+  (B-032) and routes the cycle to grooming as a re-cut under
+  [`spec-and-traceability`](../../spec-and-traceability/SKILL.md)
+  § "Decomposition" — merge, extract, or narrow the edge — with no edge dropped
+  (B-041). The rest of the queue is still ranked (B-029).
+- **Lanes partition the open work.** Each item has one lane, and a dependency
+  path or an evidenced shared edit puts two items in the same one, so joins are
+  transitive (B-035). An inferred join states its evidence and its uncertainty
+  (B-036); a lane predicts parallel work and promises no conflict-free merge
+  (decision 0011). Whether a shared parent Feature is such a path is OQ-6. A
+  lane holding taken work is occupied (B-017); every other lane offers its first
+  startable item in ranking order (B-034). Actionable unscored work is listed
+  apart, not as blocked (B-037).
+
+### The companion seam
+
+`SKILL.md` keeps every rule and defers every repository fact to the companion's
+§ "Next work" (C-2, A-1).
+
+| `SKILL.md` fixes                                         | The companion names                                                                         |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Tier before score, the score, the closure, the tie order | Where value, cost and priority are authored; the tier vocabulary in order; the estimate scale |
+| What delivered, taken and waiting mean                   | Tracker access, the field carrying delivery state, how taken work is recorded               |
+| Each stage's gate and its evidence                       | The claim assignment; the identity and dependency contracts                                 |
+| Shared edits join lanes, with their evidence             | Where shared-edit evidence is read                                                          |
+| Standalone work stays visible                            | Where the report shows it                                                                   |
+
+In this repository, [`.spec/templates/item.yml`](../../../.spec/templates/item.yml)
+names where each input is authored and leaves the arithmetic to `SKILL.md`; its
+cost mapping is finding 3.
+
+### Views
+
+Ownership and the seam; every element exists.
+
+```mermaid
+flowchart LR
+    Person(["Person"]) -->|"asks what is next"| Agent["Agent following next"]
+    subgraph Method["Method skills: portable, name no repository"]
+        Next["next SKILL.md: gates, ranking model, lanes, report"]
+        Decomp["spec-and-traceability § Decomposition"]
+    end
+    subgraph Repo["Consuming repository"]
+        Companion["Companion § Next work"]
+        Specs["Specifications: frontmatter, §§ 3, 7, 11, 12"]
+        Tracker[("Tracker: delivery state")]
+    end
+    Agent -->|"follows"| Next
+    Next -->|"defers inputs to"| Companion
+    Next -->|"routes a cycle to grooming per"| Decomp
+    Agent -->|"reads once"| Companion
+    Agent -->|"reads once"| Specs
+    Agent -->|"reads once"| Tracker
+    Agent -->|"report, no writes"| Person
+    Person -.->|"takes work via deliver-change, outside this Feature"| Tracker
+```
+
+One request, including the unreadable-tracker and scope-error paths.
+
+```mermaid
+sequenceDiagram
+    actor Person
+    participant Agent as Agent following next
+    participant Companion as Companion § Next work
+    participant Specs as Specifications
+    participant Tracker
+    Person->>Agent: what is next, optionally for a Feature set
+    Agent->>Companion: read where each input is authored
+    Agent->>Specs: read frontmatter and §§ 3, 7, 11, 12
+    Agent->>Tracker: read delivery state
+    alt state missing, ambiguous or unreadable
+        Tracker-->>Agent: no verified state for some work
+        Note over Agent: that work gets no start (B-030), independent work is still ranked (B-029)
+    else state read
+        Tracker-->>Agent: delivery state
+    end
+    Note over Agent: one snapshot with its read time (B-007, B-008), then scope, gates, closures, scores and lanes derived in memory
+    alt requested Feature does not resolve
+        Agent-->>Person: scope error, nothing widened (B-005)
+    else scope resolves
+        Agent-->>Person: Feature comparisons first, then lanes, blockers, occupied, unscored, diagnostics
+    end
+    Note over Agent,Tracker: no write, claim, branch, worktree or dispatch (B-040)
+    Person->>Agent: more detail
+    Agent-->>Person: same snapshot, same choices (B-039)
+```
+
+No entity, class or state view applies: nothing is stored, there is no code,
+and the delivery lifecycle is the tracker's (C-1).
+
+### Review map
+
+§ 3's Source column names the sections each claim is read against. By section,
+a reviewer checks:
+
+| `SKILL.md` section                | Claims                                            | Check                                                                                          |
+| --------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| § Start with the Feature choice   | B-002 to B-005, B-007, B-008                      | Comparison facts stay apart; scope neither widens nor drops a prerequisite; one input set, with its read time |
+| § Derive an evidenced next step   | B-006, B-009, B-014, B-021, B-023, B-029 to B-032 | Every stage can be next; no default, stored derived value or inferred link; each gap named     |
+| § Stage gates                     | B-010 to B-020, B-029, B-032, B-041               | Each gate's evidence; delivered, taken, waiting and container rules; a cycle routed, no edge dropped |
+| § The ranking model               | B-022 to B-028, B-033, B-040                      | The key order; B-023's 4 ÷ 13; uncomputed is never zero or infinite; nothing written back       |
+| § Use lanes to support the choice | B-017, B-034 to B-038                             | One head per lane; shared edits join lanes, with evidence; unscored and standalone placement   |
+| § Report without taking work      | B-001, B-003, B-033, B-039, B-040                 | Features first; finished needs agreement and delivery; detail changes no choice; no work taken |
+| § Never add                       | B-001, B-035, B-040                               | Each prohibition matches its claim                                                             |
+
+Across the whole file the reviewer checks C-2 (no repository, path, command,
+tracker or tool), C-3 (no per-repository variant of the model) and 0001-F4 B-001
+(no role name).
+
+### Findings
+
+1. **B-027, `SKILL.md` § "The ranking model" step 4.** It names the tie keys
+   but not their direction; the B-027 scenarios fix most waiting first, then
+   lowest stable id. Read alone, the skill lets two repositories order a tie
+   both ways, against C-3. Correction: state both directions in step 4. To
+   `implementer`; the scenarios settle the design, so no claim waits on it.
+2. **B-013, `SKILL.md` § "Stage gates", Implementation row.** Neither the row
+   nor B-013 scopes "the design Ready" to the linked claims, as decision 0010
+   does. Read alone, the skill withholds all implementation behind a verdict
+   that excepts some claims, as this section's does. Correction: scope the row
+   to the linked claims (`implementer`) and B-013's wording (`spec-author`).
+3. **Decisions 0002 and 0004 against this repository's seam.** Both reject an
+   item's risk as its cost; [`.spec/templates/item.yml`](../../../.spec/templates/item.yml)
+   maps cost to `risk` and has no cost field, so this repository ranks its own
+   queue on a cost the agreement rejects. Options: a cost field in the item
+   schema (recommended: the decisions keep size apart from uncertainty), or an
+   appended reversal of both decisions. To the person, who owns both.
+4. **A-1 against `SKILL.md`.** A-1, like the Next work row of `sdd-conventions`
+   § "Your companion", lists tracker access, planning metadata, ranking inputs
+   and reservations; `SKILL.md` also defers the identity contract, shared-edit
+   evidence and where standalone work shows (B-005, B-035, B-036, B-038). A
+   companion written from that list omits them. Correction: name them in A-1
+   (`spec-author`) and in the companion contract (the person; outside this
+   Feature).
+
+The excepted claims each wait on `spec-author` answering their question in
+§ 11. OQ-1 and OQ-3 block claims not yet written; findings 1 to 4 block no
+claim.
+
+Readiness: **Ready for tests and implementation, except B-011, B-013 and B-015 (OQ-4), B-017 (OQ-2), B-033 (OQ-5), and B-034 and B-035 (OQ-6).**
 
 ## 8. Testing Strategy
 
