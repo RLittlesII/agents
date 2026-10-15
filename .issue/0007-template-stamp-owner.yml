@@ -2,7 +2,7 @@ id: "0007"
 type: chore
 title: Raise the section 6 and 7 stamp owner with specht
 
-status: ready
+status: blocked
 
 value: 3
 risk: 1
@@ -32,6 +32,19 @@ acceptance_criteria:
   - "specht is asked to make the template's stamps configurable or neutral, or an ADR-0004 exception is recorded."
   - "A new spec copied from the template carries the owner the ownership table names."
 
-decisions: []
+decisions:
+  - "2026-10-14: blocked on specht. The request below goes to specht; no ADR-0004 exception is taken, so .specht/templates/ stays tool-owned."
+  - "2026-10-14: mitigated here by 0001-F1 B-016 (0029). A spec copied from the template with implementer on §§ 6-7 now fails projection naming the section and architect, so the wrong owner cannot land."
 
 out_of_scope: []
+
+upstream_request: |
+  specht: the feature template hard-codes each section's "last written by"
+  role. §§ 6-7 say implementer; this repository's ownership table says
+  architect, so every copy carries the wrong owner and a consumer cannot fix
+  it without hand-editing a tool-owned file. Ask: let the manifest declare an
+  owner per section (for example "sections": [{"key": "6", "owner":
+  "architect"}]) and render {{owner}} into the stamp, or emit a neutral
+  "<!-- last written by: {{owner}}, {{date}} -->" placeholder the author
+  fills. Either way, a rule that flags a stamp naming a role other than the
+  declared owner would let consumers drop their own check.
