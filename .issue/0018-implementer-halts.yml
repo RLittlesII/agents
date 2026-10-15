@@ -1,0 +1,42 @@
+id: "0018"
+type: chore
+title: Restore implementer halts and migration duties
+
+status: ready
+
+value: 3
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M22 and M31, in agents/implementer.md.
+  - M22: no halt or escalation when no failing test exists; no suite run and
+    regression checklist before handoff; no check that a symbol exists
+    before calling it (LTI backend.md:41,53,58).
+  - M31: database method not folded in: verify a generated migration against
+    its intent, a rollback per migration, seed only what start-up needs,
+    record what a squash or baseline removed (LTI
+    database-administrator.md:52-58).
+
+acceptance_criteria:
+  - "implementer.md § Refuse halts without a failing test; § Produce runs the regression check before handoff."
+  - "Migration duties land in implementer.md or release.md."
+  - "Role version bumped."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

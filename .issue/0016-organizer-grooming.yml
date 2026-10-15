@@ -1,0 +1,43 @@
+id: "0016"
+type: chore
+title: Restore grooming rules and a home for score rationale
+
+status: ready
+
+value: 3
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M20, M21 and L2, in agents/organizer.md.
+  - M20: grooming lost a baseline snapshot before any change, recording the
+    origin on every split, carrying the higher score onto a merge survivor,
+    closing never deleting with the reason in the item, and keeping prior
+    criteria when refreshing (LTI backlog-grooming).
+  - M21: Scoring is "derived, never hand-edit" in sdd-conventions:78, yet the
+    organizer must record score rationale and specs carry a Basis column.
+  - L2: refusing to cut items from an unagreed specification.
+
+acceptance_criteria:
+  - "organizer.md Produce 6 carries the grooming rules."
+  - "The score rationale has one named home."
+  - "organizer.md § Refuse covers cutting items before agreement."
+  - "Role version bumped."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

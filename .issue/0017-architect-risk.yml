@@ -1,0 +1,43 @@
+id: "0017"
+type: chore
+title: Move risk to the design pass and restore architect lines
+
+status: ready
+
+value: 2
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M17 and L11, in agents/architect.md.
+  - M17: the organizer now authors risk. In LTI risk came from the design
+    pass, was provisional until then, nothing reached
+    ready-for-implementation on provisional risk, and value 4+ with risk 5
+    filed a spike instead of boosting rank (feature-prioritization).
+  - L11: ADR boundary (a process rule is a convention, an interface detail
+    is a claim, neither is an ADR); a consuming Feature's § 7 never redefines
+    another Feature's type; technology-selection rules (the incumbent is
+    always a candidate; no driver, no candidate).
+
+acceptance_criteria:
+  - "architect.md § Report sets risk with the readiness verdict; organizer.md consumes it."
+  - "architect.md carries the ADR boundary and the type-ownership rule."
+  - "Role versions bumped."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

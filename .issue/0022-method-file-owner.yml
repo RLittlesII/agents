@@ -1,0 +1,41 @@
+id: "0022"
+type: chore
+title: Give role, skill and command files an owner
+
+status: ready
+
+value: 2
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M29 and L16, in agents/document-writer.md.
+  - M29: role, skill and command files have no owning role; document-writer
+    owns READMEs, guides and indexes only. LTI ai-author owned them and ran
+    the gates before handing on.
+  - L16: a migration is done at zero old-path grep hits with fixes in their
+    own commit; deletion of superseded files in a later pass; register a new
+    folder before its first file (LTI tidying).
+
+acceptance_criteria:
+  - "One role owns role, skill and command files and runs the projector check before handoff."
+  - "document-writer.md carries the migration rules."
+  - "Role version bumped."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

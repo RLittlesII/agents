@@ -1,0 +1,37 @@
+id: "0006"
+type: chore
+title: Decide the coverage gate
+
+status: ready
+
+value: 3
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review H9. LTI test-writer.md:67-80 and the code-coverage skill
+  held an 80% changed-line coverage gate as the single source of truth, with
+  happy, edge, corner and under-the-rug case classes per claim. The port
+  dropped it with no decision record and no Out of Scope row.
+
+acceptance_criteria:
+  - "An ADR records keeping or dropping a coverage threshold, and why."
+  - "If kept: test-writer.md or sdd-conventions § Your companion names where the threshold lives."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

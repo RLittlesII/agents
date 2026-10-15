@@ -1,0 +1,37 @@
+id: "0007"
+type: chore
+title: Raise the section 6 and 7 stamp owner with specht
+
+status: ready
+
+value: 3
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M12. .specht/templates/feature.md stamps §§ 6-7
+  "last written by: implementer"; the generated ownership table in
+  sdd-conventions says architect. Every new spec copy carries the wrong
+  owner. ADR-0004 makes .specht/templates/ tool-owned, so the fix is
+  upstream in specht or an ADR-0004 exception here.
+
+acceptance_criteria:
+  - "specht is asked to make the template's stamps configurable or neutral, or an ADR-0004 exception is recorded."
+  - "A new spec copied from the template carries the owner the ownership table names."
+
+decisions: []
+
+out_of_scope: []

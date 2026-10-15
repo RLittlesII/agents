@@ -1,0 +1,45 @@
+id: "0014"
+type: chore
+title: Restore spec-author checks and give lessons an owner
+
+status: ready
+
+value: 3
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: ["0012"]
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M7, M28 and the role half of M10, in agents/spec-author.md.
+  - M7: the claim-to-scenario cross-check before handoff (a claim with no
+    scenario, a scenario tagged to no claim), and happy, edge, failure and
+    validation scenarios per claim (LTI analyst.md:59, gherkin-authoring).
+  - M28: lessons/ has no owner. bug-fixer writes bug lessons, but
+    adversary.md:45-46 and process lessons have no writer, and spec-author
+    indexes § 10 without owning lessons/.
+  - M10: spec-author reads and maintains the glossary.
+
+  Depends on 0012: the glossary is defined in sdd-conventions first.
+
+acceptance_criteria:
+  - "spec-author.md § Produce carries the cross-check and the scenario classes."
+  - "One role owns lessons/; adversary and process lessons have a writer."
+  - "spec-author.md names the glossary in Read first or Owns."
+  - "Role version bumped for the contract change."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

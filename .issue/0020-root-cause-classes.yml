@@ -1,0 +1,39 @@
+id: "0020"
+type: chore
+title: Restore root-cause classification
+
+status: ready
+
+value: 3
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M24, in agents/bug-finder.md. Lost from LTI
+  root-cause-analysis: the regression, integration and configuration
+  classes; the symptom-versus-cause rule ("the root cause is X because Y");
+  one failing test per root cause; a cause needing an architecture change
+  goes to the architect before any fix; the person accepts the analysis
+  before handoff.
+
+acceptance_criteria:
+  - "bug-finder.md § Produce carries the classes and the symptom-versus-cause rule."
+  - "Role version bumped."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

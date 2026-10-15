@@ -1,0 +1,41 @@
+id: "0024"
+type: chore
+title: Restore single dropped lines in five roles
+
+status: ready
+
+value: 1
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review L3, L8, L9 and L19.
+  - L3 benchmarker.md: out-of-process toolchain; only exporter files leave a
+    machine; never compare against a result from different hardware.
+  - L8 ux.md: an exit code and a stream assignment are a contract scripts
+    depend on; record which code means what.
+  - L9 domain.md: a needed dependency needs the abstraction the design
+    named; record the concepts that earned their own type and why.
+  - L19 analyst.md: reflect each answer back; close discovery only on a
+    confirmed summary.
+
+acceptance_criteria:
+  - "Each line lands in its role; each touched role's version is bumped."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

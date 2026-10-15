@@ -1,0 +1,38 @@
+id: "0019"
+type: chore
+title: Restore the regression checklist
+
+status: ready
+
+value: 3
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M23. The regression checklist shrank to one line in
+  spec-reviewer.md:50-52 and bug-fixer.md:39-40. LTI regression skill
+  checked wire and DTO contracts, error-handling contracts, dependency and
+  config drift, read deletions before additions, checked every changed
+  signature's call sites, and sent intentional breaking changes to the
+  design owner with a migration path.
+
+acceptance_criteria:
+  - "skills/coding-conventions § Before finishing carries the checklist."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

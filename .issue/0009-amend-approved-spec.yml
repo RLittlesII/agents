@@ -1,0 +1,45 @@
+id: "0009"
+type: chore
+title: Add the path to amend an approved specification
+
+status: ready
+
+value: 4
+risk: 3
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review H6, with M6 and L14. Nothing revokes spec_status
+  approved. LTI specification/references/authoring.md:791-809 recorded the
+  reason in § 10, gave a new claim a new id and a Missing row, set
+  spec_status in-review and reset affected § 12 rows to draft. Also gone:
+  superseding by naming the replacement, and "a reworded claim cited by
+  items changes their brief".
+
+  M6: § 9 statuses narrowed to Covered, Partial, Missing; Waived (needs a
+  § 11 approver and date) and Withdrawn are gone.
+  L14: rename only at zero grep hits; update every diagram in the same edit;
+  cite rows by id, never position.
+
+acceptance_criteria:
+  - "skills/spec-and-traceability has an Amending section covering reopen, supersede and the brief rule."
+  - "§ 9 status vocabulary is stated, including whether Waived and Withdrawn exist."
+  - "The rename and row-citation rules are stated."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

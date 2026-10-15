@@ -1,0 +1,52 @@
+id: "0012"
+type: chore
+title: Restore shared facts dropped from sdd-conventions
+
+status: ready
+
+value: 3
+risk: 3
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M2, M9, M10, M14, M19, L1 and L13, all in
+  skills/sdd-conventions.
+  - M2: no severity scale (Blocking, Major, Minor, Suggestion); a finding
+    with no grounding anchor is no longer demoted (LTI code-review).
+  - M9: every standalone .feature needs an owning agreement (Hooked
+    references/specs.md:88-124, lesson 0007).
+  - M10: the glossary of words scenarios must use (LTI analyst.md:53,
+    AGENTS.md:114).
+  - M14: placement narrowed to "beside the code it governs"; lost the
+    narrowest covering directory, the same rule for build, CI and docs, and
+    no empty code folders (Hooked references/specs.md:42-48).
+  - M19: lifecycle states have no entry conditions; the readiness verdict is
+    not tied to ready-for-implementation; no child advances before its
+    Feature is split.
+  - L1: status-mirror drift is checked in review; the offline checker never
+    calls the tracker.
+  - L13: workflow edges no longer carry command labels.
+
+acceptance_criteria:
+  - "sdd-conventions § Review passes defines a severity scale."
+  - "§ Spec layout states the owning-agreement rule, the glossary and the placement rule."
+  - "Lifecycle entry conditions are stated once."
+  - "§ Workflow edges name the command that runs each step."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

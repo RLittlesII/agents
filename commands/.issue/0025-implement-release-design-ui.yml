@@ -1,0 +1,49 @@
+id: "0025"
+type: task
+title: Add the implement, release and design-ui commands
+
+status: ready
+
+value: 4
+risk: 3
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: commands/.spec/README.md
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review H10. Three multi-role workflows have no command, and
+  0001-F3 § 5 row 1 excludes only single-role commands:
+  - implement (LTI commands/code/implement.md): the tests-red to implemented
+    step, with halts back to the design owner on a missing design and to the
+    test owner on a missing test, and ordering across model, presentation
+    and service code.
+  - release (LTI commands/release/ship-it.md): diff, surface and repository
+    passes, then release with a rollback and explicit confirmation. The
+    auditor's "before a release" trigger has no caller without it.
+  - design-ui (LTI design/design-ui.md, design-cli.md; vNext.md:36): ux and
+    ui appear in no command; the halt "interaction and every failure state
+    decided before anything is built" is lost.
+
+  The § 3 claims are written first by the 0001-F3 § 3 owner; this item then
+  cites them.
+
+acceptance_criteria:
+  - "0001-F3 § 3 carries a claim per new command, or § 5 excludes it with a reason."
+  - "commands/implement.md, commands/release.md and commands/design-ui.md exist for each claimed command."
+  - "§ 9 carries a row naming a test for each new claim."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

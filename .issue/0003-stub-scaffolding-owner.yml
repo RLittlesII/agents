@@ -1,0 +1,40 @@
+id: "0003"
+type: chore
+title: Give stub scaffolding an owner between design and tests
+
+status: ready
+
+value: 5
+risk: 3
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review H1. architect.md:139 refuses scaffolding code, yet
+  test-writer.md:37 requires tests that fail on behaviour, not on a compile
+  error, and the implementer starts only after tests exist. No role can
+  create the types the tests need without breaking role order. LTI had a
+  Contracted stage between design and tests (architect.md:58, the /scaffold
+  command, docs/workflow.md:49).
+
+acceptance_criteria:
+  - "One role owns producing compiling interface stubs from the recorded design, stated in its Produce or Report section."
+  - "sdd-conventions § Workflow shows the stub step between design and tests."
+  - "test-writer.md and implementer.md read consistently with the new step."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

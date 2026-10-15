@@ -1,0 +1,39 @@
+id: "0029"
+type: task
+title: Check section stamps against the ownership table
+
+status: ready
+
+value: 3
+risk: 3
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: scripts/.spec/README.md
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M15. Every section carries a "last written by" stamp, but
+  nothing checks it against the generated ownership table. LTI ran
+  validate-spec-ownership.sh. specht reads no stamps, so either the
+  projector checks them under a new 0001-F1 claim, or specht gains the rule
+  (asked separately).
+
+acceptance_criteria:
+  - "A 0001-F1 claim states the stamp check, or § 5 excludes it in favour of specht."
+  - "If claimed: the projector fails on a stamp naming a role that does not own the section, and a claim-named test proves it."
+  - "§ 9 carries a row naming a test for the new claim."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

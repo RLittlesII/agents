@@ -1,0 +1,40 @@
+id: "0015"
+type: chore
+title: Widen test-writer's tier and testability duties
+
+status: ready
+
+value: 2
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M26 and L15, in agents/test-writer.md.
+  - M26: "both tiers" narrowed the duty to add every tier the surface owes,
+    such as UI or integration (LTI test-writer.md:53, mobile.md:41).
+  - L15: testability dimensions narrowed to network, clock and provider;
+    lost members made public only for tests, constructor side effects,
+    hidden statics, one boundary per scenario (LTI testability-review).
+
+acceptance_criteria:
+  - "test-writer.md Produce 3 owes every tier the companion names for the surface."
+  - "test-writer.md Produce 6 lists the wider testability dimensions."
+  - "Role version bumped."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

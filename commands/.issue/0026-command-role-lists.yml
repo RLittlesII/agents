@@ -1,0 +1,40 @@
+id: "0026"
+type: task
+title: Widen the roles that design, spec and bug convene
+
+status: ready
+
+value: 2
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: commands/.spec/README.md
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M33, L20 and L6.
+  - M33: commands/design.md omits domain (invariants) and test-writer
+    (testability verdict); no command convenes domain (LTI
+    design-session.md).
+  - L20: commands/spec.md convenes analyst and spec-author; LTI
+    gather-requirements also had organizer, architect and document-writer.
+  - L6: commands/bug.md lost ranking a batch of reports and dropping an
+    unattributable report with the reason (LTI bug/triage.md).
+
+acceptance_criteria:
+  - "design.md, spec.md and bug.md roles lists are widened, or 0001-F3 § 5 records why not."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

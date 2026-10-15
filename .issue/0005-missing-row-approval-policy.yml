@@ -1,0 +1,39 @@
+id: "0005"
+type: chore
+title: Decide whether a Missing traceability row blocks approval
+
+status: ready
+
+value: 4
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review H11 and M1. spec-reviewer.md:76 refuses to block
+  spec_status approved on § 9 Missing rows alone. specht SPEC060 fails CI on
+  exactly that. Dormant today: all four specs are draft. Separately, a diff
+  citing a claim whose § 9 row is still Missing gets no finding (M1); LTI
+  reviewer.md:58 blocked the merge on it.
+
+acceptance_criteria:
+  - "An ADR in .spec/adr/ records whether a Missing row blocks approval, the merge, or only the item reaching done."
+  - "spec-reviewer.md agrees with the ADR, or SPEC060's level is set with specht set to match it."
+  - "spec-reviewer.md § Look for flags a diff citing a claim whose § 9 row is Missing."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

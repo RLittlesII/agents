@@ -1,0 +1,47 @@
+id: "0011"
+type: chore
+title: Restore delivery rules dropped from deliver-change
+
+status: ready
+
+value: 4
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review H7, M3, M5, M32 and L4, all in skills/deliver-change.
+  - H7: the lesson verification gate (LTI lessons/references/lessons.md):
+    incident confirmed in history, identifiers copied not recalled,
+    spec_delta names a live claim, corrections appended not edited,
+    grep before writing to avoid duplicates.
+  - M3: the exemption format. spec-reviewer.md:41 rejects any exemption not
+    in "the fixed format", but no file defines it. Hooked
+    references/delivery.md:118-142 had "Satisfies <epic>-F<n> B-00n.
+    Constraints preserved: ..." in the commit body.
+  - M5: run the spec checker before opening the pull request.
+  - M32: label commits by substance, split at ownership lines and at size,
+    no force-push, branch from the trunk ref.
+  - L4: an oversized change goes back to grooming rather than stacking.
+
+acceptance_criteria:
+  - "deliver-change states the lesson verification gate."
+  - "deliver-change § Exemptions defines the exemption and citation format."
+  - "deliver-change step 7 runs the spec checker; Never add carries the git rules; step 3 names the grooming remedy."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

@@ -1,0 +1,39 @@
+id: "0010"
+type: chore
+title: Give epic records an owner, a rule and a measure
+
+status: ready
+
+value: 3
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M16. No role owns the epic record and no epic template
+  exists. LTI epic-definition and Epic-Role-Sdd.md:39-60 said an epic has
+  no acceptance criteria and its measure is written before the first
+  Feature, with a stop for confirmation before filing a Feature under it.
+  epics/0001-sdd-roles/epic.md has Business Value but no measurable outcome.
+
+acceptance_criteria:
+  - "organizer.md § Owns names the epic record."
+  - "skills/spec-and-traceability states the epic rules."
+  - "epics/0001-sdd-roles/epic.md carries a measurable outcome."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

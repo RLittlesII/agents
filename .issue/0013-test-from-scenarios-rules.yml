@@ -1,0 +1,40 @@
+id: "0013"
+type: chore
+title: Restore test rules dropped from test-from-scenarios
+
+status: ready
+
+value: 3
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M8 and M11, in skills/test-from-scenarios.
+  - M8: § 9 cites a test by name, so renaming a test to suit the
+    implementation breaks the citation; reword the claim or keep the name
+    (Hooked references/testing.md:59-60).
+  - M11: explicit state and execution: build fixtures from the stated
+    inputs, call the production entry point a caller uses, no helper hiding
+    stage ordering or setup branches, prefer data-driven cases (Hooked
+    references/testing.md:62-67).
+
+acceptance_criteria:
+  - "test-from-scenarios states the rename rule and the explicit-state rules."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

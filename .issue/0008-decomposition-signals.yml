@@ -1,0 +1,40 @@
+id: "0008"
+type: chore
+title: Define oversize signals and decomposition tiers
+
+status: ready
+
+value: 4
+risk: 3
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review H5. organizer.md:38-40 cuts work "one tier down with the
+  signal that forced it", but no file defines the signals or the tiers. LTI
+  epic-decomposition (references/oversize-signals.md, slicing.md) defined
+  four signals (unshared criteria, two or more boundaries, five or more
+  shippable steps, staleness, where staleness alone means rescore), the
+  capability-dimension grain, the typed children (task, test, bug, spike)
+  and the single-child smell.
+
+acceptance_criteria:
+  - "skills/spec-and-traceability (or next) has a Decomposition section defining the signals, the tiers and the child types."
+  - "organizer.md links to it."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

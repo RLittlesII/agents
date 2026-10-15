@@ -1,0 +1,55 @@
+id: "0004"
+type: task
+title: Port the next skill's agreement with its ranking model and stage gates
+
+status: ready
+
+value: 5
+risk: 4
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review H4, carrying H2, H3 and M18. skills/next shipped with no
+  specification, though Hooked's .skills/next/.spec/ has claims B-001 to
+  B-035, a .feature and 15 decision records. Repeats Hooked lesson 0007
+  (tooling scenarios had no owning agreement).
+
+  The skill text also lost:
+  - H2: the ranking model. next defers ranking to each companion, so two
+    consumers rank the same queue differently. Hooked
+    references/next.md:153-183 and LTI feature-prioritization define it:
+    priority tier first, then value ÷ unfinished effort, items counted once,
+    prerequisites inherit the strongest beneficiary's priority, missing input
+    leaves a score uncomputed. This repository's .spec/templates/item.yml now
+    defines rank for its own tracker; the portable rule still has no home.
+  - H3: per-stage gates (Hooked references/next.md:120-151). Design needs
+    §§ 1-5 approved and no blocking open question; implementation needs
+    §§ 1-7 approved and prerequisites closed as completed; spec_status alone
+    is not evidence.
+  - M18: blocked is derived from unresolved depends_on and spikes, never
+    hand-set; cycle resolution order; only children can be the queue head.
+
+acceptance_criteria:
+  - "skills/next/.spec/README.md and its .feature exist and pass dotnet specht --strict."
+  - "The ranking model is defined once, in the next skill or sdd-conventions, not per companion."
+  - "skills/next states the per-stage gates and the derived-blocked rule."
+  - "Hooked decisions worth keeping are carried as decision records; the rest are named as rejected."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope:
+  - "Any queue script. specht's next.py is Python and specht-specific."

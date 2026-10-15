@@ -1,0 +1,41 @@
+id: "0027"
+type: task
+title: Decide the pull-request, backlog and single-role commands
+
+status: ready
+
+value: 2
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: commands/.spec/README.md
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M34, M35 and L7.
+  - M34: no commands for opening a pull request or acting on review
+    feedback, though vNext.summary.md:32,35 lists both (LTI
+    review/open-pull-request.md, fix-feedback.md).
+  - M35: no backlog commands: create item, prioritise without a full groom,
+    the health snapshot with its "what is tracked nowhere" check (LTI
+    backlog/*.md).
+  - L7: single-role commands (audit, tidy, benchmark, parse-logs, adr)
+    carried halts; 0001-F3 § 5 row 1 excludes them only if they add nothing.
+
+acceptance_criteria:
+  - "Each workflow has a command, or a 0001-F3 § 5 row excluding it with a reason."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

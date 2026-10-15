@@ -1,0 +1,41 @@
+id: "0023"
+type: chore
+title: Fold infrastructure and security duties into build and release
+
+status: ready
+
+value: 2
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M30, L10 and L17.
+  - M30: LTI infrastructure.md content not folded: cost and blast radius
+    stated before a change, secret rotation, environment definition and
+    promotion, why a topology has its shape.
+  - L10: a gate failure names what broke and where (LTI build.md:53).
+  - L17: vulnerability audit as a gate; never suppress a finding without a
+    tracked item and a deadline; rotate any secret that was echoed.
+
+acceptance_criteria:
+  - "build.md and release.md carry the infrastructure and security duties; cost reasoning sits with the design owner."
+  - "build.md § Produce requires legible gate failures."
+  - "Role versions bumped."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []

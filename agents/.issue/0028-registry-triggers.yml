@@ -1,0 +1,44 @@
+id: "0028"
+type: task
+title: Restore registry triggers and settle two role-contract exclusions
+
+status: ready
+
+value: 2
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: agents/.spec/README.md
+
+claims: []
+
+created: "2026-10-14"
+updated: "2026-10-14"
+closed: null
+
+summary: |
+  Port-gap review M4, L12 and L18, against 0001-F2.
+  - M4: the review-pass registry lost its Runs when and Never columns, and
+    the rule that a pass declaring a unit without its trigger and refusal
+    is an error (LTI AGENTS.md:165-170, commit 8939fdd). Touches 0001-F2
+    B-008 and the 0001-F1 registry claims.
+  - L12: the BDD runner mode declaration and its documentation-mode
+    opt-out are gone with no recorded decision.
+  - L18: the LTI database role was neither delivered nor explicitly
+    excluded.
+
+acceptance_criteria:
+  - "0001-F2 carries the trigger and never declaration in a claim, and the projector renders both columns."
+  - "An ADR or a 0001-F2 § 5 row settles the runner mode."
+  - "A 0001-F2 § 5 row excludes the database role, or the role exists."
+  - "§ 9 carries a row naming a test for each new claim."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions: []
+
+out_of_scope: []
