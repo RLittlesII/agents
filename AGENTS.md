@@ -83,6 +83,7 @@ fails on drift.
 | Specification sections and ids | [.specht/manifest.json](.specht/manifest.json)                |
 | Specification blanks          | [.specht/templates/](.specht/templates/)                       |
 | Work items                    | [.spec/templates/item.yml](.spec/templates/item.yml)       |
+| Epic records                  | [.spec/templates/epic.md](.spec/templates/epic.md)       |
 | Projector design              | [Projection specification § 7](scripts/.spec/README.md#7-technical-design) |
 | Continuous integration        | [.github/workflows/ci.yml](.github/workflows/ci.yml)           |
 

@@ -29,7 +29,8 @@ epic that grows a claim list is an oversized Feature.
 
 - **The measure is written before the first Feature.** How the result is
   observed, and what value would mean it arrived. An outcome nobody can measure
-  is an ambition, and nothing downstream can tell whether it was delivered.
+  is an ambition, and nothing downstream can tell whether it was delivered. The
+  epic record starts from the blank the companion names.
 - **The boundary is an exclusion list.** Each exclusion names where that work
   goes instead, when it goes anywhere.
 - **A Feature is filed under an epic once the person confirms it belongs.**

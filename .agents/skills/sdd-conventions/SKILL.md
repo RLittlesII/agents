@@ -233,7 +233,7 @@ it must answer for each of these:
 | Delivery     | the tracker, the delivery-state field, branches, merge strategy, where a claim citation survives |
 | Testing      | the test projects, tiers, assertion form, naming form and discovery traps, the changed-line coverage threshold and its gate |
 | Questions    | where answers are recorded and which questions are already settled     |
-| Specs        | where specifications live when the layout differs from § "Spec layout", and the glossary |
+| Specs        | where specifications live when the layout differs from § "Spec layout", the glossary and the epic blank |
 | Next work    | tracker access, planning metadata, ranking inputs and reservations     |
 | Benchmarking | the harness, where benchmarks live and the measurement traps           |
 
