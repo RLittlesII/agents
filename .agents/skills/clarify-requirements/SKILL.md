@@ -34,6 +34,23 @@ an open question rather than re-asked.
 - **Never resolve material ambiguity by assumption** — not under a spike framing,
   not under a prototype framing, not because the session is nearly over.
 
+Weigh how hard the action is to undo against how ambiguous it is:
+
+|                  | Reversible            | Hard to reverse       | Irreversible |
+| ---------------- | --------------------- | --------------------- | ------------ |
+| Low ambiguity    | proceed, state it     | proceed, state it     | ask          |
+| Medium ambiguity | proceed, state it     | ask                   | ask          |
+| High ambiguity   | ask                   | ask                   | ask          |
+
+An irreversible action always stops for an answer. A reversible one with little
+ambiguity never does: asking there is indecision, and it teaches the person to
+stop trusting the judgement. A standing instruction or an earlier authorization
+already answers what it covers; within its scope, do not ask again.
+
+When several questions are open, ask them together: at most three per pass, one
+theme each, as concrete options grounded in what you found. When an answer
+comes back, say whether it fully resolves the question before acting on it.
+
 ## An exploratory comment is not a decision
 
 "What if we…", "another thought…", a reference to how a previous project did it —
@@ -58,7 +75,9 @@ the section.** When a design genuinely is superseded, the honest move is an open
 question or a decision-required block **on the specification that owns it** —
 never a contradicting note in a third document that points at neither.
 
-The project's lessons record the incident behind both halves of this rule.
+The incident behind both halves: a "what if we…" about a load-bearing boundary
+was relayed as a decision and design started toward it; the pullback that
+followed was then read as withdrawing more than it named.
 
 ## Write the answer back
 
@@ -77,6 +96,8 @@ An answer that exists only in conversation was never recorded.
 ## Never add
 
 - An assumption standing in for a material decision.
+- An irreversible action taken on an assumption.
+- A question asked that a standing instruction already answers.
 - A question asked that the specification already answers.
 - A decision recorded without its rejected alternative.
 - An exploratory comment treated as ratified.
