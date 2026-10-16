@@ -66,6 +66,14 @@ missing. Reuse the agreement and design that remain valid for the affected
 claims. The authoritative ordering and gates are in
 [sdd-conventions § Workflow](../skills/sdd-conventions/SKILL.md#workflow).
 
+```mermaid
+flowchart TB
+    Inputs["Affected claims and existing artifacts"] --> Lead["One current lead<br/>Accountable for the complete result"]
+    Lead -->|"Claims or concern<br/>Allowed artifacts<br/>Completion evidence"| Specialist["Relevant specialists<br/>Only when their trigger applies"]
+    Specialist -->|"Contribution or recorded gap"| Lead
+    Lead --> Result["Integrated artifact<br/>Within existing ownership and approvals"]
+```
+
 An assignment names its affected claims or concern, allowed files or artifacts,
 and completion evidence. The specialist returns its contribution or a recorded
 gap to the lead. The lead integrates contributions and obtains any missing
