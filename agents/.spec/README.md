@@ -647,63 +647,75 @@ the cited tests, with B-004 assessed manually as described below.
 
 ### Collaboration amendment
 
-Testability verdict: **Ready to write source/projection conformance tests against
-DR-1–DR-5; agent-behavior coverage remains an explicit delivery gap.**
-B-010–B-036 have tagged scenarios but no executable tests or scenario execution
-evidence. The existing projector suite does not execute them; all amendment
-§ 9 rows remain `Missing`. This design-only assessment adds neither tests nor
-coverage. — Kevin
+Testability verdict: **Source/projection conformance verified; live-agent
+behavior remains unverified.** Before implementation, the baseline ran 37 tests
+with no failures. The expanded suite discovered 44 tests and failed three:
+the old twenty-role roster, absent database specialist and retired analyst
+command binding. After implementation, independent verification reported
+44 tests passing. All 37 baseline tests remain registered. — Kevin
 
-| Claims | Proposed verification and limit |
+The seven additional tests in
+[`project.tests.fsx`](../../scripts/project.tests.fsx) exercise existing seams:
+
+| Claim tag | Executed test | Verified guarantee |
+| --- | --- | --- |
+| [@B-033](roles.feature) | `F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts` | Exact nineteen-role membership and explicit mappings on both hosts. |
+| [@B-033](roles.feature) | `F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles` | Database and restored metric-nerd own no sections, use agreed host profiles and project their source bodies unchanged. |
+| [@B-034](roles.feature) | `F2_B034_FourReviewUnitsAndSectionOwnersStayUnchanged` | Existing section owners and four ordered review units remain unchanged; spec-reviewer holds design and diff. |
+| [@B-034](roles.feature) | `F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck` | Synthetic twenty-to-nineteen migration reports all six stale and four missing host files; check writes nothing, apply removes retirees and writes additions, then public check exits zero. |
+| [@B-034](roles.feature) | `F2_B034_RetiredBindingsFailBeforeWriting` | Commands and host mappings to all six absent retired identities fail planning before outputs; the public CLI rejects a retired command with exit two. |
+| [@B-034](roles.feature) | `F2_B034_ActiveConveningBindingsResolveToRetainedRoles` | Delivered command bindings, host bindings and contract links resolve without retired identities. |
+| [@B-035](roles.feature) | `F2_B035_HistoricalEvidenceAndExistingOutputsSurviveRejectedPlans` | Invented historical identities and claim anchors retain their exact bytes through projection and rejected planning; rejection preserves existing output bytes. |
+
+Unit checks exercise loading, overlays, ownership and review decisions.
+Integration checks exercise `plan`, `differences`, `apply` and the public CLI
+with explicit temporary roots. The migration checks observe CLI exit one for
+drift and zero after apply, including diagnostic content and unchanged drift
+before apply. Existing duplicate/missing review-holder and deterministic-output
+tests remain in the suite. No test mutates the working checkout's generated files.
+
+These tests establish mechanical roster, binding and preservation guarantees.
+They do not establish duty transfer, lead selection, secret protection, approval
+compliance or independence of an actual reviewing instance. A synthetic scenario
+walkthrough can assess instruction conformance, but cannot establish that a live
+agent obeys the instructions.
+
+### Independent instruction-conformance walkthrough
+
+Priya, independent instance `/root/verify_role_migration`, reported the following
+manual walkthroughs on 2026-10-16. Each used invented prerequisite states from
+all positive and negative scenarios bearing the cited tag in
+[`roles.feature`](roles.feature), then inspected the delivered instructions for
+the selected lead, contribution, gate/refusal and evidence boundary. All listed
+instruction-conformance assertions passed. These are manual walkthrough results,
+not live-agent execution or proof of behavioral compliance. — Kevin
+
+| Scenario tag | Supplied prerequisite and observed instruction decision |
 | --- | --- |
-| B-010–B-014 | Independently inspect supplied assignments and integrated artifacts against state leads, justified expertise, ownership and earliest unmet prerequisite. Include unchanged-model and missing-approval cases. |
-| B-015–B-020 | Exercise discovery, correction, obstruction, collaboration, log analysis and design review with synthetic scenario inputs; inspect decisions, refusals, evidence gaps and distinct author/reviewer identities. |
-| B-021–B-025 | Review persistence assignments, invariant conflicts, compatibility/recovery evidence and measurement/instrumentation ownership. This Feature tests the specialist contract, not an application's database migration. |
-| B-026–B-032 | Independently walk each tagged positive and negative situation case using supplied artifacts; record selected responsibility, unmet gates and supporting evidence. |
-| B-033 | Add a real-checkout test asserting the exact nineteen-role set and both host mappings. Count alone cannot detect a substituted role. |
-| B-034 | Add synthetic migration integration checks through `plan`, `differences` and `apply`; inspect projected instruction bytes, stale retirement outputs, command references and unchanged ownership. |
-| B-035–B-036 | Verify synthetic historical records survive projection byte-for-byte; independently classify real retirement-search hits and review bounded guidance for all six situations. |
-
-The first four rows require acceptance evidence against the actual assignments,
-contributions, approvals and findings when available. A synthetic artifact
-walkthrough assesses the instructions' routing and refusal guidance; it does
-not execute an agent or establish that an agent obeys them. Record the scenario
-tag, supplied prerequisites, observed artifact/decision, assertion result and
-independent reviewer in the existing companion-named evidence location.
-Review contract wording for transferred duties and boundaries, not a keyword
-whose presence is reported as behavioral coverage. Source checks can prove
-that instructions are present and preserved, never lead selection, secret
-protection, gate compliance or independence of an actual reviewing instance.
-
-Executable tiers reuse [`project.tests.fsx`](../../scripts/project.tests.fsx):
-unit tests exercise existing loading, ownership and review-unit decisions;
-integration tests exercise the real plan/write/check path on synthetic temporary
-checkouts. A single retained reviewer must own both design and diff while all
-four ordered units remain total; duplicate/missing holders must still fail.
-The rebased baseline already combines design and diff review; preserve that
-assignment and the absorbed correction/log-analysis duties in retained contracts.
-Existing deterministic-output and review-registry tests are reused, not replaced.
-Update the existing roster expectation and preserve the current reviewer
-expectation without weakening baseline checks. Register each added test in the
-explicit `tests` list and confirm the reported discovered count increases;
-a function definition alone never runs.
-
-For migration, first project a synthetic checkout representing the twenty-role
-rebased baseline recorded in decision 0001, then change its source contracts,
-commands and overlays to the agreed nineteen-role roster. Retire the remaining
-`analyst`, `pair-programmer` and `yak-shaver` identities; restore separate
-`metric-nerd` expertise from source history and add `database`. Review restored
-measurement boundaries against B-024/B-025 rather than undoing the already
-absorbed correction, log-analysis and independent-review duties.
-Check that `differences` reports the three retired roles' host files as stale
-and both restored metric-nerd and new database host files as missing;
-`apply` must remove stale files and write the expected bytes; a new
-`plan` and check must report no differences. Exercise the public CLI's
-`--root <synthetic-dir>` and `--check` for exit status and drift reporting rather
-than imitating their decisions. Invalid retired command references, host mappings
-to absent source roles and invalid review assignments must fail planning before output writes.
-Preserve historical fixture bytes and existing outputs on rejected plans.
-No mutation of the working checkout's generated files belongs in these tests.
+| [@B-010](roles.feature) | Each of six state responsibilities selects its agreed lead. |
+| [@B-011](roles.feature) | Changed business rules and presentation select domain and ui; rendering an unchanged model selects ui alone. |
+| [@B-012](roles.feature) | Multiple bounded contributions leave implementer accountable for integration. |
+| [@B-013](roles.feature) | An unresolved database storage decision returns to architect rather than authorizing another owner to write the design. |
+| [@B-014](roles.feature) | Valid earlier artifacts permit implementation; a missing applicable approval blocks it. |
+| [@B-015](roles.feature) | An ambiguous raw ask requires a separating question and confirmed need in discovery. |
+| [@B-016](roles.feature) | Accepted cause and observed red regression permit bounded correction; removing either prerequisite stops correction. |
+| [@B-017](roles.feature) | A bounded build obstruction returns to parent work with proof it resumes; adjacent work remains separate. |
+| [@B-018](roles.feature) | Pairing during agreement authoring exposes steps and decisions while retaining spec-author's write boundary. |
+| [@B-019](roles.feature) | Concurrent log evidence requires window, correlation, first anomaly, inference and secret boundaries; bounded analysis retains diagnosis ownership. |
+| [@B-020](roles.feature) | Design review selects a different read-only instance; its author is refused as reviewer. |
+| [@B-021](roles.feature) | Persistence concerns select database advice, assigned code, read-only investigation or release recovery by state; UI-only work requires no database assignment. |
+| [@B-022](roles.feature) | Storage cannot redefine invariants; unresolved design returns to architect and an unsettled business rule to spec-author. |
+| [@B-023](roles.feature) | Changed stored information requires compatibility, rollout and recovery evidence; destructive changes require backup and loss assessment. |
+| [@B-024](roles.feature) | A written cost/performance concern selects benchmarker; operational comparison selects metric-nerd; telemetry alone triggers no benchmark. |
+| [@B-025](roles.feature) | Operational signal requirements remain distinct from production instrumentation assigned to implementation. |
+| [@B-026](roles.feature) | An existing-claim bug requires diagnosis, red regression, correction and independent verification; disputed behavior returns to spec-author and a design change to architect. |
+| [@B-027](roles.feature) | New-feature artifact gates precede implementation and release; presentation-only work selects ui without inventing database work. |
+| [@B-028](roles.feature) | Unknown feasibility selects architect, unexpected behavior bug-finder and a broken gate build; each returns to the original lead. |
+| [@B-029](roles.feature) | An unaccepted pitch stays in discovery; bounded feasibility returns disposable decision evidence without authorizing implementation. |
+| [@B-030](roles.feature) | Incident diagnosis, operational comparison and confirmed recovery retain distinct responsibilities; configuration-only recovery invents no code assignment, and recovery never substitutes for correction verification. |
+| [@B-031](roles.feature) | Missing telemetry is an explicit evidence gap and cannot prove a cause or absence of failure. |
+| [@B-032](roles.feature) | Shipped amendments withdraw old IDs and add replacement IDs, revised tests and dependency assessment; interaction-only changes select ux without inventing migration. |
+| [@B-036](roles.feature) | All six local situation routes identify bounded leads, expertise and artifact dependencies, linking authoritative rules without a global peer graph. |
 
 Critical seams and remaining gaps:
 
@@ -721,7 +733,7 @@ cases, application database/UI tiers and compiling interface stubs are not
 applicable because this amendment introduces instructions, not runtime APIs or
 persisted data. Use no credentials, live traffic, sleeps or wall-clock assertions.
 
-Keep proposed evidence distinct from executed coverage. Neither walkthroughs nor
+Keep manual instruction conformance distinct from executed behavioral coverage. Neither walkthroughs nor
 projector checks justify marking behavioral rows `Covered`. Under
 [ADR-0006](../../.spec/adr/0006-a-missing-row-blocks-the-merge-not-approval.md),
 `Missing` does not block agreement or design approval, but blocks delivery of
@@ -738,42 +750,42 @@ Not applicable.
 
 | Claim ID | Scenario                                            | Test                                                     | Status  |
 | -------- | --------------------------------------------------- | -------------------------------------------------------- | ------- |
-| B-001    | Every role declares the contract keys               | `F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey`   | Covered |
-| B-002    | Every template section has exactly one owner        | `F2_B002_EveryTemplateSectionHasExactlyOneOwner`         | Covered |
-| B-003    | Every role body carries the four headings           | `F2_B003_EveryRoleBodyCarriesTheFourSections`            | Covered |
-| B-004    | A role body names no product technology             | Manual: review question in § 8                           | Partial |
-| B-005    | A reviewing role states its report                  | `F2_B005_LookForRoleCarriesReport`                       | Covered |
-| B-006    | A role links only skills that exist                 | `F2_B006_EverySkillLinkResolves`                         | Covered |
-| B-007    | A persona carries a name and a voice and is unique  | `F2_B007_PersonaRequiresNameAndVoiceAndIsUnique`         | Covered |
-| B-008    | A reviewing role carries the reviewing headings     | `F2_B008_ReviewingRoleCarriesLookForAndReport`           | Covered |
-| B-009    | A review unit declares its trigger and refusal      | `F2_B009_ReviewUnitDeclaresTriggerAndRefusal`            | Covered |
-| B-010 | Each state has one accountable lead | Missing | Missing |
-| B-011 | Specialists join for bounded relevant work | Missing | Missing |
-| B-012 | The lead integrates specialist contributions | Missing | Missing |
-| B-013 | Lead accountability preserves section ownership | Missing | Missing |
-| B-014 | A bounded change reuses valid earlier artifacts | Missing | Missing |
-| B-015 | Discovery belongs to the specification author | Missing | Missing |
-| B-016 | The implementer owns a diagnosed correction | Missing | Missing |
-| B-017 | Obstruction removal returns to the blocked work | Missing | Missing |
-| B-018 | Pairing is a mode of the active role | Missing | Missing |
-| B-019 | Investigation includes correlated log analysis | Missing | Missing |
-| B-020 | A different reviewer performs design review | Missing | Missing |
-| B-021 | Database expertise joins an affected state | Missing | Missing |
-| B-022 | Database decisions follow agreed invariants | Missing | Missing |
-| B-023 | Changing existing data requires recovery evidence | Missing | Missing |
-| B-024 | Measurements follow their purpose | Missing | Missing |
-| B-025 | Production instrumentation follows implementation ownership | Missing | Missing |
-| B-026 | A bug follows the existing agreement | Missing | Missing |
-| B-027 | A new feature follows artifact dependencies | Missing | Missing |
-| B-028 | Technical obstacles select relevant investigation | Missing | Missing |
-| B-029 | An exploratory idea stays in discovery | Missing | Missing |
-| B-030 | A production incident uses available evidence and recovery | Missing | Missing |
-| B-031 | Missing telemetry remains an evidence gap | Missing | Missing |
-| B-032 | Changed shipped behavior amends the existing agreement | Missing | Missing |
-| B-033 | The simplified roster exposes nineteen roles | Missing | Missing |
-| B-034 | Active references follow the consolidated roles | Missing | Missing |
-| B-035 | Historical evidence survives retirement | Missing | Missing |
-| B-036 | Handoff guidance answers who is involved and when | Missing | Missing |
+| B-001    | [@B-001](roles.feature) Every role declares the contract keys | `F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey`   | Covered |
+| B-002    | [@B-002](roles.feature) Every template section has exactly one owner | `F2_B002_EveryTemplateSectionHasExactlyOneOwner`         | Covered |
+| B-003    | [@B-003](roles.feature) Every role body carries the four headings | `F2_B003_EveryRoleBodyCarriesTheFourSections`            | Covered |
+| B-004    | [@B-004](roles.feature) A role body names no product technology | Manual: review question in § 8                           | Partial |
+| B-005    | [@B-005](roles.feature) A reviewing role states its report | `F2_B005_LookForRoleCarriesReport`                       | Covered |
+| B-006    | [@B-006](roles.feature) A role links only skills that exist | `F2_B006_EverySkillLinkResolves`                         | Covered |
+| B-007    | [@B-007](roles.feature) A persona carries a name and a voice and is unique | `F2_B007_PersonaRequiresNameAndVoiceAndIsUnique`         | Covered |
+| B-008    | [@B-008](roles.feature) A reviewing role carries the reviewing headings | `F2_B008_ReviewingRoleCarriesLookForAndReport`           | Covered |
+| B-009    | [@B-009](roles.feature) A review unit declares its trigger and refusal | `F2_B009_ReviewUnitDeclaresTriggerAndRefusal`            | Covered |
+| B-010 | [@B-010](roles.feature) Each state has one accountable lead | Manual: Priya, @B-010 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-011 | [@B-011](roles.feature) Specialists join for bounded relevant work | Manual: Priya, @B-011 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-012 | [@B-012](roles.feature) The lead integrates specialist contributions | Manual: Priya, @B-012 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-013 | [@B-013](roles.feature) Lead accountability preserves section ownership | Manual: Priya, @B-013 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-014 | [@B-014](roles.feature) A bounded change reuses valid earlier artifacts | Manual: Priya, @B-014 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-015 | [@B-015](roles.feature) Discovery belongs to the specification author | Manual: Priya, @B-015 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-016 | [@B-016](roles.feature) The implementer owns a diagnosed correction | Manual: Priya, @B-016 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-017 | [@B-017](roles.feature) Obstruction removal returns to the blocked work | Manual: Priya, @B-017 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-018 | [@B-018](roles.feature) Pairing is a mode of the active role | Manual: Priya, @B-018 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-019 | [@B-019](roles.feature) Investigation includes correlated log analysis | Manual: Priya, @B-019 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-020 | [@B-020](roles.feature) A different reviewer performs design review | Manual: Priya, @B-020 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-021 | [@B-021](roles.feature) Database expertise joins an affected state | Manual: Priya, @B-021 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-022 | [@B-022](roles.feature) Database decisions follow agreed invariants | Manual: Priya, @B-022 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-023 | [@B-023](roles.feature) Changing existing data requires recovery evidence | Manual: Priya, @B-023 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-024 | [@B-024](roles.feature) Measurements follow their purpose | Manual: Priya, @B-024 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-025 | [@B-025](roles.feature) Production instrumentation follows implementation ownership | Manual: Priya, @B-025 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-026 | [@B-026](roles.feature) A bug follows the existing agreement | Manual: Priya, @B-026 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-027 | [@B-027](roles.feature) A new feature follows artifact dependencies | Manual: Priya, @B-027 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-028 | [@B-028](roles.feature) Technical obstacles select relevant investigation | Manual: Priya, @B-028 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-029 | [@B-029](roles.feature) An exploratory idea stays in discovery | Manual: Priya, @B-029 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-030 | [@B-030](roles.feature) A production incident uses available evidence and recovery | Manual: Priya, @B-030 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-031 | [@B-031](roles.feature) Missing telemetry remains an evidence gap | Manual: Priya, @B-031 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-032 | [@B-032](roles.feature) Changed shipped behavior amends the existing agreement | Manual: Priya, @B-032 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-033 | [@B-033](roles.feature) The simplified roster exposes nineteen roles | `F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts`; `F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles`; mechanical guarantees only (§ 8) | Covered |
+| B-034 | [@B-034](roles.feature) Active references follow the consolidated roles | `F2_B034_FourReviewUnitsAndSectionOwnersStayUnchanged`; `F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck`; `F2_B034_RetiredBindingsFailBeforeWriting`; `F2_B034_ActiveConveningBindingsResolveToRetainedRoles`; mechanical guarantees only (§ 8) | Covered |
+| B-035 | [@B-035](roles.feature) Historical evidence survives retirement | `F2_B035_HistoricalEvidenceAndExistingOutputsSurviveRejectedPlans`; mechanical guarantees only (§ 8) | Covered |
+| B-036 | [@B-036](roles.feature) Handoff guidance answers who is involved and when | Manual: Priya, @B-036 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
 
 ## 10. Lessons / Spec Deltas
 
