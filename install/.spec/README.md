@@ -390,18 +390,66 @@ Written by Marcus.
 
 ## 8. Testing Strategy
 
-Not authored; follows the agreed delivery sequence.
+<!-- last written by: test-writer, 2026-10-16 -->
+
+`python3 -m unittest discover -s install -p 'test_*.py' -v` discovers 23
+public-entry tests in `install/test_install.py`; discovery previously had zero
+installer tests. The `.feature` scenarios are documentary; named unittest cases
+execute their acceptance behaviors through `install` and `main`.
+
+Synthetic checkouts exercise all four host/manager combinations. A patched
+`subprocess.run` parses each actual manifest grammar, checks argument lists,
+checked execution and isolated working directories, and copies staged local
+packages to the manager's declared output location. No network, real manager,
+credential, ambient clock, delay or recorded traffic enters this suite.
+
+Focused boundary cases pin TOML prefix derivation, dependency closure, missing
+or failed managers, changed/missing/ambiguous output, all-plan conflicts,
+idempotence, forced replacements, structural path errors, source/destination/
+staged links, simulated Windows reparse attributes and publication rollback.
+The tests substitute existing subprocess and filesystem seams; no production
+member is exposed for testing. Module import has no effects; constructors and
+clock/provider seams are not applicable to this functional filesystem CLI.
+
+Initial red evidence: 21 tests discovered against the declared stubs; complete
+installation and CLI cases fail with `NotImplementedError`, without import,
+fixture or discovery errors. Rejection cases explicitly reject an unimplemented
+stub as evidence of correct validation. After implementation, all 23 discovered
+tests pass locally on macOS, Python 3.13.5. The revised apm package-list
+invocation first failed both apm acceptance cases against the prior command,
+then passed after implementation. Synthetic skills include relative sibling
+links so byte-preservation checks cover the compatibility issue.
+
+Cross-platform execution belongs to the Python CI matrix for Windows, macOS and
+Linux. Local macOS execution cannot substantiate Windows/Linux claims; those
+runs remain pending CI. Real-manager compatibility smoke is separate feasibility
+evidence in § 7, not an offline acceptance substitute.
+
+README § Maintaining defines no changed-line coverage percentage or gate;
+therefore no numeric threshold is asserted. Behavioral test discovery and the
+full existing repository checks are required. No numeric coverage claim or
+threshold is asserted; generated coverage reports are not committed.
+
+Written by Kevin.
 
 ## 9. Traceability Matrix
 
+<!-- last written by: test-writer, 2026-10-16 -->
+
 | Claim ID | Scenario | Test | Status |
 | --- | --- | --- | --- |
-| B-001 | @B-001 in install.feature | Missing | Missing |
-| B-002 | @B-002 in install.feature | Missing | Missing |
-| B-003 | @B-003 in install.feature | Missing | Missing |
-| B-004 | @B-004 in install.feature | Missing | Missing |
-| B-005 | @B-005 in install.feature | Missing | Missing |
-| B-006 | @B-006 in install.feature | Missing | Missing |
+| B-001 | [@B-001](install.feature#L5) | `test_B001_B003_claude_skillfile_complete_installation`; `test_B001_B004_claude_apm_complete_installation` | Covered |
+| B-002 | [@B-002](install.feature#L14) | `test_B002_B003_codex_skillfile_complete_installation`; `test_B002_B004_codex_apm_complete_installation` | Covered |
+| B-003 | [@B-003](install.feature#L23) | `test_B001_B003_claude_skillfile_complete_installation`; `test_B002_B003_codex_skillfile_complete_installation`; `test_C5_failed_manager_leaves_consumer_unchanged` | Covered |
+| B-004 | [@B-004](install.feature#L35) | `test_B001_B004_claude_apm_complete_installation`; `test_B002_B004_codex_apm_complete_installation` | Covered |
+| B-005 | [@B-005](install.feature#L47) | `test_B005_cli_accepts_host_manager_target_and_force`; `test_B005_cli_help_invalid_arguments_and_failure_exit`; all four complete-installation tests on the three-OS CI matrix | Covered |
+| B-006 | [@B-006](install.feature#L60) | `test_B006_codex_rebases_only_source_prefix_and_supplies_dependencies`; `test_B001_B003_claude_skillfile_complete_installation`; `test_B006_unexpected_codex_source_prefix_is_rejected`; `test_B006_missing_authoritative_role_is_rejected`; `test_B006_missing_referenced_private_method_is_rejected` | Covered |
+
+B-005 has executable acceptance and argument-mechanism coverage; actual
+Windows/Linux CI execution remains pending. Local macOS results do not assert
+execution on those platforms. Written by Kevin.
+
+
 
 ## 10. Lessons / Spec Deltas
 
