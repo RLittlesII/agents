@@ -28,8 +28,8 @@ Read [sdd-conventions](skills/sdd-conventions/SKILL.md) with the skill for the t
 | Resolve requirement ambiguity                     | [clarify-requirements](skills/clarify-requirements/SKILL.md)       |
 | Author or review specifications and traceability  | [spec-and-traceability](skills/spec-and-traceability/SKILL.md)     |
 
-This repository has no companion skill of its own beyond `sdd-conventions`;
-its paths and commands are in [README.md](README.md).
+This repository has no companion skill; where a skill says companion, read
+[README.md](README.md) § Layout and § Maintaining.
 
 **One-way rule.** A role may name skills; a skill never names a role. Say who by
 section owner or review pass instead. Projection fails on a role name under

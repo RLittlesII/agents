@@ -43,7 +43,7 @@ is a **documented contract** — for whoever takes the role, a person or an agen
 | [`ui`](ui.md)                           | a decided interaction and failing tests | presentation code                                         |
 | [`pair-programmer`](pair-programmer.md) | a task the person wants to steer        | small visible steps and the item's decision log           |
 | [`tester`](tester.md)                   | a change to verify                      | a run report and reproductions                            |
-| [`spec-reviewer`](spec-reviewer.md)     | a diff                                  | a sign-off, or findings                                   |
+| [`spec-reviewer`](spec-reviewer.md)     | a diff                                  | a verdict per section, and findings                       |
 | [`adversary`](adversary.md)             | the surface a change exposes            | security findings                                         |
 | [`benchmarker`](benchmarker.md)         | a stated cost concern                   | a benchmark and a recorded finding                        |
 | [`metric-nerd`](metric-nerd.md)         | a decision that needs evidence          | a baseline and a comparison                               |

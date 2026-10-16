@@ -36,9 +36,9 @@ ids and the traceability matrix in CI. The shared facts are in
 | [`test-writer`](agents/test-writer.md)         | a claim                                 | a failing scenario and failing tests                      |
 | [`implementer`](agents/implementer.md)         | a failing test and recorded design      | production code, and design feedback                      |
 | [`ui`](agents/ui.md)                           | a decided interaction and failing tests | presentation code                                         |
-| [`pair-programmer`](agents/pair-programmer.md) | a task the person wants to steer        | small visible steps and a decision record                 |
+| [`pair-programmer`](agents/pair-programmer.md) | a task the person wants to steer        | small visible steps and the item's decision log           |
 | [`tester`](agents/tester.md)                   | a change to verify                      | a run report and reproductions                            |
-| [`spec-reviewer`](agents/spec-reviewer.md)     | a diff                                  | a sign-off, or findings                                   |
+| [`spec-reviewer`](agents/spec-reviewer.md)     | a diff                                  | a verdict per section, and findings                       |
 | [`adversary`](agents/adversary.md)             | the surface a change exposes            | security findings                                         |
 | [`benchmarker`](agents/benchmarker.md)         | a stated cost concern                   | a benchmark and a recorded finding                        |
 | [`metric-nerd`](agents/metric-nerd.md)         | a decision that needs evidence          | a baseline and a comparison                               |
@@ -69,24 +69,24 @@ the prose it writes with a persona; the roster is in
 
 ## Commands
 
-A command convenes roles in an order and names the skills they work with; the
+A command convenes roles as its body directs and names the skills they work with; the
 roles' contracts decide what each does. Type `/<name>` in Claude Code or
 `$<name>` in Codex.
 
 | Command                               | Convenes                                  | For                                                  |
 | ------------------------------------- | ----------------------------------------- | ---------------------------------------------------- |
 | [`spec`](commands/spec.md)            | analyst, spec-author                      | a raw ask taken to a written agreement               |
-| [`design`](commands/design.md)        | architect, domain, test-writer, critic    | a design, critiqued before anything is built on it   |
-| [`design-ui`](commands/design-ui.md)  | analyst, ux, ui                           | a screen or flow decided, then built                 |
+| [`design`](commands/design.md)        | architect, domain, test-writer, benchmarker, critic | a design, critiqued before anything is built on it |
+| [`design-ui`](commands/design-ui.md)  | analyst, ux                               | a screen or flow decided before it is built          |
 | [`test`](commands/test.md)            | test-writer, tester                       | failing tests from claims, then a run report         |
 | [`implement`](commands/implement.md)  | domain, implementer, ui                   | failing tests made green inside the design           |
 | [`review`](commands/review.md)        | spec-reviewer, adversary                  | a diff judged against its claims                     |
-| [`pr`](commands/pr.md)                | spec-reviewer, build, implementer         | a pull request opened, then reviewed to merge        |
-| [`ship`](commands/ship.md)            | spec-reviewer, adversary, auditor, release | the final gate, then a confirmed release             |
-| [`bug`](commands/bug.md)              | bug-finder, test-writer, bug-fixer        | a failure reproduced, pinned, fixed and learned from |
+| [`pr`](commands/pr.md)                | spec-reviewer, implementer, build         | a pull request opened, then reviewed to merge        |
+| [`ship`](commands/ship.md)            | spec-reviewer, adversary, auditor, metric-nerd, release | the final gate, then a confirmed release |
+| [`bug`](commands/bug.md)              | bug-finder, log-parser, test-writer, bug-fixer | a failure reproduced, pinned, fixed and learned from |
 | [`groom`](commands/groom.md)          | organizer                                 | the queue ranked, an item filed, or its health       |
 | [`document`](commands/document.md)    | document-writer                           | documents repaired against the repository            |
-| [`cleanup`](commands/cleanup.md)      | organizer, document-writer, architect     | a tidying pass, delivered as one change              |
+| [`cleanup`](commands/cleanup.md)      | auditor, organizer, document-writer       | a tidying pass, delivered as one change              |
 
 ## Consuming
 
@@ -144,5 +144,5 @@ the root `.issue/`. Ids share one number space with `epics/`, and
 `.issue/.sequence` holds the last id claimed: take the next and write it back in
 the same commit. The fields, the status vocabulary and the rank definition are in
 [`.spec/templates/item.yml`](.spec/templates/item.yml). Set `status: in-progress`
-before the branch; the pull request that delivers an item sets `done` and
-`closed:`.
+before the branch; `done` and `closed:` land when the pull request that delivers
+the item merges.
