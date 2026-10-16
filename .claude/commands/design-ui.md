@@ -3,7 +3,7 @@ description: "Decide how a screen or flow behaves — need, interaction, every s
 argument-hint: "<the screen or flow>"
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `analyst`, whose contract is `.claude/agents/analyst.md`
 - `ux`, whose contract is `.claude/agents/ux.md`

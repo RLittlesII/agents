@@ -3,7 +3,7 @@ name: design
 description: "Design the technical solution for an agreed Feature, then have the design critiqued before any test or code is written against it."
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `architect`, whose contract is `.codex/agents/architect.toml`
 - `domain`, whose contract is `.codex/agents/domain.toml`

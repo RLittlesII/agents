@@ -3,7 +3,7 @@ description: "Design the technical solution for an agreed Feature, then have the
 argument-hint: "<Feature specification path>"
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `architect`, whose contract is `.claude/agents/architect.md`
 - `domain`, whose contract is `.claude/agents/domain.md`

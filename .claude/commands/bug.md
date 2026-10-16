@@ -3,7 +3,7 @@ description: "Reproduce a failure and prove its cause, pin it with a failing tes
 argument-hint: "<the report, or a path to it>"
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `bug-finder`, whose contract is `.claude/agents/bug-finder.md`
 - `log-parser`, whose contract is `.claude/agents/log-parser.md`

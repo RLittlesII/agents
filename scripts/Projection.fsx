@@ -659,7 +659,7 @@ let commandPreamble (host: Host) (command: Command) =
         | [ role ] ->
             sprintf "Act as the `%s` role, whose contract is `%s`. Read it before acting, and %s" role (contract role) keep
         | many ->
-            [ yield "Convene these roles, in this order:"
+            [ yield "Convene these roles as the body directs:"
               yield ""
               for role in many do yield sprintf "- `%s`, whose contract is `%s`" role (contract role)
               yield ""

@@ -3,7 +3,7 @@ name: spec
 description: "Take a raw ask to a decided need, then to the agreement sections and the scenario file of a Feature specification."
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `analyst`, whose contract is `.codex/agents/analyst.toml`
 - `spec-author`, whose contract is `.codex/agents/spec-author.toml`

@@ -3,7 +3,7 @@ description: "Make failing tests green inside the boundary the recorded design d
 argument-hint: "<item id or concern path>"
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `domain`, whose contract is `.claude/agents/domain.md`
 - `implementer`, whose contract is `.claude/agents/implementer.md`

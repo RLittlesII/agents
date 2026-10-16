@@ -3,7 +3,7 @@ name: pr
 description: "Take a finished change through the diff pass to an open pull request, and work each round of review feedback until the person merges it."
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `spec-reviewer`, whose contract is `.codex/agents/spec-reviewer.toml`
 - `implementer`, whose contract is `.codex/agents/implementer.toml`

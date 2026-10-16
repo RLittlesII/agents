@@ -3,7 +3,7 @@ description: "Run a tidying pass over the repository — what is misfiled, what 
 argument-hint: "[scope]"
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `auditor`, whose contract is `.claude/agents/auditor.md`
 - `organizer`, whose contract is `.claude/agents/organizer.md`

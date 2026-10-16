@@ -3,7 +3,7 @@ name: cleanup
 description: "Run a tidying pass over the repository — what is misfiled, what is stale, and what has drifted structurally — and deliver it as one reviewable change."
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `auditor`, whose contract is `.codex/agents/auditor.toml`
 - `organizer`, whose contract is `.codex/agents/organizer.toml`

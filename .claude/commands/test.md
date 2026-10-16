@@ -3,7 +3,7 @@ description: "Turn agreed claims into failing scenarios and tests, then run and 
 argument-hint: "<claim ids, a Feature, or a change>"
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `test-writer`, whose contract is `.claude/agents/test-writer.md`
 - `tester`, whose contract is `.claude/agents/tester.md`

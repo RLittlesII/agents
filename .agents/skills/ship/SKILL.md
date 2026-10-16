@@ -3,7 +3,7 @@ name: ship
 description: "Run the final gate before a release — the diff, the exposed surface and the repository at rest — then release with a rollback and explicit confirmation."
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `spec-reviewer`, whose contract is `.codex/agents/spec-reviewer.toml`
 - `adversary`, whose contract is `.codex/agents/adversary.toml`

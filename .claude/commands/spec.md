@@ -3,7 +3,7 @@ description: "Take a raw ask to a decided need, then to the agreement sections a
 argument-hint: "<the raw ask, or a path to notes>"
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `analyst`, whose contract is `.claude/agents/analyst.md`
 - `spec-author`, whose contract is `.claude/agents/spec-author.md`

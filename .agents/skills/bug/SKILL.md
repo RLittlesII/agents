@@ -3,7 +3,7 @@ name: bug
 description: "Reproduce a failure and prove its cause, pin it with a failing test, then fix it and record the lesson the fix reveals."
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `bug-finder`, whose contract is `.codex/agents/bug-finder.toml`
 - `log-parser`, whose contract is `.codex/agents/log-parser.toml`

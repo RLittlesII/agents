@@ -550,7 +550,7 @@ let F3_B001_CommandProjectsToClaudeCommandFile () =
               "argument-hint: \"<what>\""
               "---"
               ""
-              "Convene these roles, in this order:"
+              "Convene these roles as the body directs:"
               ""
               "- `alpha`, whose contract is `.claude/agents/alpha.md`"
               "- `beta`, whose contract is `.claude/agents/beta.md`"

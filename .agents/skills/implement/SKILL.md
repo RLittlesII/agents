@@ -3,7 +3,7 @@ name: implement
 description: "Make failing tests green inside the boundary the recorded design drew, model first, then service, then presentation — nothing more."
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `domain`, whose contract is `.codex/agents/domain.toml`
 - `implementer`, whose contract is `.codex/agents/implementer.toml`

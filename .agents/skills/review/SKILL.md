@@ -3,7 +3,7 @@ name: review
 description: "Judge a diff against the claims and decisions it cites, and add a hostile pass when it touches a boundary; findings ranked most severe first."
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `spec-reviewer`, whose contract is `.codex/agents/spec-reviewer.toml`
 - `adversary`, whose contract is `.codex/agents/adversary.toml`

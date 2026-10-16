@@ -3,7 +3,7 @@ description: "Run the final gate before a release — the diff, the exposed surf
 argument-hint: "<item id, branch or version>"
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `spec-reviewer`, whose contract is `.claude/agents/spec-reviewer.md`
 - `adversary`, whose contract is `.claude/agents/adversary.md`

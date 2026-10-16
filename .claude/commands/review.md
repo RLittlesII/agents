@@ -3,7 +3,7 @@ description: "Judge a diff against the claims and decisions it cites, and add a 
 argument-hint: "<diff, branch or path>"
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `spec-reviewer`, whose contract is `.claude/agents/spec-reviewer.md`
 - `adversary`, whose contract is `.claude/agents/adversary.md`

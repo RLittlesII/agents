@@ -3,7 +3,7 @@ name: design-ui
 description: "Decide how a screen or flow behaves — need, interaction, every state and the exact words — before its components are built."
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `analyst`, whose contract is `.codex/agents/analyst.toml`
 - `ux`, whose contract is `.codex/agents/ux.toml`

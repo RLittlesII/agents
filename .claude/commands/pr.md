@@ -3,7 +3,7 @@ description: "Take a finished change through the diff pass to an open pull reque
 argument-hint: "<item id, branch or pull request>"
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `spec-reviewer`, whose contract is `.claude/agents/spec-reviewer.md`
 - `implementer`, whose contract is `.claude/agents/implementer.md`

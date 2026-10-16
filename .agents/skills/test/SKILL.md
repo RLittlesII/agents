@@ -3,7 +3,7 @@ name: test
 description: "Turn agreed claims into failing scenarios and tests, then run and explore the change and report what ran, what passed and what failed."
 ---
 
-Convene these roles, in this order:
+Convene these roles as the body directs:
 
 - `test-writer`, whose contract is `.codex/agents/test-writer.toml`
 - `tester`, whose contract is `.codex/agents/tester.toml`
