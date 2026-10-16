@@ -1,0 +1,62 @@
+id: "0036"
+type: task
+title: Record and design the role collaboration amendment
+status: in-progress
+value: 4
+cost: 3
+risk: 2
+parent: "0001"
+children: []
+depends_on: []
+spikes: []
+spec: agents/.spec/README.md
+claims:
+  - B-010
+  - B-011
+  - B-012
+  - B-013
+  - B-014
+  - B-015
+  - B-016
+  - B-017
+  - B-018
+  - B-019
+  - B-020
+  - B-021
+  - B-022
+  - B-023
+  - B-024
+  - B-025
+  - B-026
+  - B-027
+  - B-028
+  - B-029
+  - B-030
+  - B-031
+  - B-032
+  - B-033
+  - B-034
+  - B-035
+  - B-036
+created: "2026-10-16"
+updated: "2026-10-16"
+closed: null
+summary: |
+  Preserve the reviewed 0001-F2 agreement in an isolated worktree, then
+  record the contract and reference migration design before tests and
+  implementation. This item authors design; it does not deliver the new
+  role behavior or convert its Missing coverage to Covered.
+acceptance_criteria:
+  - "B-010, B-011, B-012, B-013, B-014 — state leads, bounded contributions and artifact boundaries."
+  - "B-015, B-016, B-017, B-018, B-019, B-020 — consolidation and retained modes."
+  - "B-021, B-022, B-023, B-024, B-025 — database and measurement responsibilities."
+  - "B-026, B-027, B-028, B-029, B-030, B-031, B-032 — the six entry situations."
+  - "B-033, B-034, B-035, B-036 — roster, reference migration and handoff guidance."
+  - "A testability verdict and independent design critique support the recorded readiness verdict."
+  - "Existing traceability evidence is preserved and new coverage remains Missing until executable tests exist."
+decisions:
+  - "2026-10-16: user authorized committing the agreement in a worktree and starting the next part; the next unmet responsibility is design."
+  - "2026-10-16: value 4 removes recurring coordination friction; cost 3 covers contract/reference design and critique; risk 2 is provisional pending architecture."
+out_of_scope:
+  - "Agent, command, host, projector and generated-output implementation is subsequent delivery work against this design."
+  - "0001-F2 § 5 rows 5-7 exclude engine-specific tooling, a workflow engine and unrelated role or ownership changes."
