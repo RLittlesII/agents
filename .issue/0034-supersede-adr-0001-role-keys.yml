@@ -2,7 +2,7 @@ id: "0034"
 type: chore
 title: Supersede ADR-0001 with a record of the keys a role file declares
 
-status: in-progress
+status: done
 
 value: 2
 cost: 1
@@ -20,7 +20,7 @@ claims: []
 
 created: "2026-10-15"
 updated: "2026-10-15"
-closed: null
+closed: "2026-10-15"
 
 summary: |
   ADR-0001 § Decision says a role file declares name, description, version
@@ -39,6 +39,7 @@ acceptance_criteria:
 
 decisions:
   - "2026-10-15: supersede rather than amend. Rejected: editing ADR-0001 § Decision in place, which the ADR blank forbids for an accepted record; leaving ADR-0001 as it stands with 0001-F2 § 7 as the current list, which leaves an accepted record contradicting the roster."
+  - "2026-10-15: verified. ADR-0008 accepted at 8169a5d; ADR-0001 § Status reads superseded by ADR-0008. dotnet specht --strict reports 0 errors and 0 warnings, dotnet fsi scripts/project.fsx --check reports 88 outputs up to date, and dotnet fsi scripts/project.tests.fsx passes 37 tests. The diff touches .spec/adr/ and .issue/ only."
 
 out_of_scope:
   - "Re-pointing the Source cells that cite ADR-0001 (agents/.spec/README.md B-001; scripts/.spec/README.md B-001, B-002, B-009, B-010 and § 7) to the new ADR. The rule they cite is unchanged and carried forward; § 3 and § 7 belong to their owners, and this item changes no specification."
