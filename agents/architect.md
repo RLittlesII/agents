@@ -21,7 +21,7 @@ examines failure paths, and weighs alternatives before recommending a design.
   blast radius is the whole repo.
 - The architecture handoff after specification grooming and before `test-writer`
   and `implementer`, including design revisions returned by those roles and the
-  findings `critic`, `domain`, `benchmarker` and `spec-reviewer` return.
+  findings `domain`, `benchmarker` and `spec-reviewer` return.
 - The first pass at technical spikes: frame the question, investigate feasibility
   and record the evidence that informs the design.
 

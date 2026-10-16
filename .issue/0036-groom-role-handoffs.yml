@@ -1,0 +1,44 @@
+id: "0036"
+type: chore
+title: Groom the role handoff graph and merge four duplicated roles
+
+status: in-progress
+
+value: 4
+cost: 5
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-15"
+updated: "2026-10-15"
+closed: null
+
+summary: |
+  The handoff diagram in agents/README.md § Handoffs has a happy path that
+  stops at spec-reviewer (no approved-diff edge to build), dead ends at
+  bug-fixer, ui and organizer, eight roles nothing hands to, a ux-to-ui route
+  that reaches code before any claim exists, and four roles that duplicate
+  another: critic beside spec-reviewer's design diff, bug-fixer beside
+  test-writer to implementer, metric-nerd beside benchmarker, and log-parser
+  feeding only bug-finder. Merge the four, redraw the graph so every role
+  has an edge in and out, and keep the shortest route to spec review at
+  analyst, spec-author, spec-reviewer.
+
+acceptance_criteria:
+  - "bug-fixer is folded into implementer, critic into spec-reviewer (reviews design and diff), metric-nerd into benchmarker, and log-parser into bug-finder; the four role files, host entries and command references are gone."
+  - "The handoff diagram has no role without an edge in and an edge out, a solid path from analyst to release, and spec-reviewer two hops from analyst."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions:
+  - "2026-10-15, repository owner: merge all four duplicated roles into the survivors named above; keep pair-programmer and yak-shaver, drawn as roles convened by name. Rejected: dropping pair-programmer or yak-shaver."
+
+out_of_scope: []

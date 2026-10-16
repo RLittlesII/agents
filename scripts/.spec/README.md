@@ -238,7 +238,7 @@ test.
 
 ### Performance
 
-Not measured. Eighty-eight outputs from twenty-four roles, seven skills and twelve
+Not measured. Eighty outputs from twenty roles, seven skills and twelve
 commands complete well inside the `dotnet fsi` start-up time; a concern appears only if
 the roster grows by an order of magnitude.
 

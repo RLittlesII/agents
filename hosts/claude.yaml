@@ -22,14 +22,16 @@ roles:
     skills: [sdd-conventions, coding-conventions, spec-and-traceability, clarify-requirements]
   test-writer:
     skills: [sdd-conventions, test-from-scenarios]
+  # Also fixes a diagnosed bug behind its red test.
   implementer:
-    skills: [sdd-conventions, coding-conventions, deliver-change]
-  # The diff pass reports a verdict and findings; it edits nothing.
+    skills: [sdd-conventions, test-from-scenarios, coding-conventions, deliver-change]
+  # The design and diff passes report verdicts and findings; they edit nothing.
   spec-reviewer:
     model: opus
     effort: high
     tools: [Read, Grep, Glob]
-    skills: [sdd-conventions, spec-and-traceability]
+    skills: [sdd-conventions, coding-conventions, spec-and-traceability]
+  # Cost benchmarks, and baselines and comparisons for a decision.
   benchmarker:
     skills: [sdd-conventions]
   # Elicitation turns ambiguity into a decided need; a wrong reading costs a Feature.
@@ -37,12 +39,6 @@ roles:
     model: opus
     effort: high
     skills: [sdd-conventions, clarify-requirements, spec-and-traceability]
-  # Design review is judgement against claims and laws; read-only.
-  critic:
-    model: opus
-    effort: high
-    tools: [Read, Grep, Glob]
-    skills: [sdd-conventions, coding-conventions, spec-and-traceability]
   # Queue work is bookkeeping against a fixed scoring model.
   organizer:
     skills: [sdd-conventions, next, deliver-change, spec-and-traceability]
@@ -62,24 +58,12 @@ roles:
     effort: high
     tools: [Read, Grep, Glob, Bash, Edit]
     skills: [sdd-conventions, spec-and-traceability, test-from-scenarios]
-  # The fix is small and bounded by a diagnosed cause and a red test.
-  bug-fixer:
-    skills: [sdd-conventions, test-from-scenarios, coding-conventions, deliver-change]
   # Interactive small steps; latency matters more than depth.
   pair-programmer:
     skills: [sdd-conventions, coding-conventions, clarify-requirements]
   # Bounded incidental fixes.
   yak-shaver:
     skills: [sdd-conventions, coding-conventions, deliver-change]
-  # Long input, mechanical reading; read-only.
-  log-parser:
-    model: haiku
-    effort: low
-    tools: [Read, Grep, Glob]
-    skills: [sdd-conventions]
-  # Baselines and comparisons; arithmetic over judgement.
-  metric-nerd:
-    skills: [sdd-conventions]
   # Hostile review needs depth; a missed finding ships; read-only.
   adversary:
     model: opus
