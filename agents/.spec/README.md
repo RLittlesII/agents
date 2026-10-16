@@ -270,6 +270,16 @@ The incumbent representation already supports empty section ownership and
 multiple review units per role. A new hierarchy or machine-readable state
 registry would duplicate the agreement without enforcing agent behavior.
 
+The implementation baseline is main `785de62`: twenty role contracts.
+Commit `5924065` already folded correction into `implementer`, log analysis
+into `bug-finder` and design review into `spec-reviewer`; preserve those duties
+and verify their agreement boundaries. It also folded operational comparison
+into `benchmarker`. The later user agreement requires that expertise to remain
+distinct, so this amendment restores `metric-nerd`, adds `database` and retires
+the remaining `analyst`, `pair-programmer` and `yak-shaver`: twenty minus three
+plus two equals nineteen. The original twenty-four-role roster and its six
+retirement mappings remain historical context, not the current migration input.
+
 [`agents/README.md`](../README.md) becomes the operational entry point: state
 leads, conditional specialist triggers, retained modes and six short situation
 routes replace its global peer graph. Keep its existing `review_units` and
@@ -295,7 +305,7 @@ The diagram shows existing projection components and the proposed source edits
 ```mermaid
 flowchart LR
     subgraph Sources["Tracked sources — proposed edits"]
-        Contracts["Retained role contracts and new database contract"]
+        Contracts["Retained contracts, restored metric-nerd and new database"]
         Index["Roles index: bounded guidance and existing review units"]
         Commands["Command frontmatter: applicable retained roles"]
         Hosts["Existing host overlays: nineteen role entries"]
@@ -314,21 +324,22 @@ flowchart LR
 
 ### DR-2 — Retire identities after transferring their duties
 
-For B-015–B-020 and B-033–B-035, transfer the duties before removing the six
-source files and overlay entries. Preserve retained personas and machine-read
+For B-015–B-020 and B-033–B-035, transfer the remaining three roles' duties
+before removing their source files and overlay entries; do not recreate the
+three already-retired roles. Preserve retained personas and machine-read
 role stamps; retired personas disappear only from the generated active roster.
 Bump the minor version of each changed role contract; start the new database
 contract at `0.1.0`. Modes remain prose within existing headings, with no
 independent persona, host setting or alias.
 
-| Source destination | Required integration |
+| Source destination | Baseline and required integration |
 | --- | --- |
-| [`spec-author.md`](../spec-author.md) | Absorb `analyst.md` discovery inputs, settled-answer search, separating questions and confirmed-need artifact. Discovery cannot invent claims; agreement authoring follows confirmation. Its description covers both activities. |
-| [`implementer.md`](../implementer.md) | Absorb `bug-fixer.md` correction mode: accepted proven diagnosis, regression test observed failing for that cause, minimal correction, regression/systemic-site checks and a lesson when a gap is revealed. Preserve separate investigation and test ownership. |
-| [`bug-finder.md`](../bug-finder.md) | Absorb `log-parser.md` window, correlation, first anomaly, ordered evidence, inference, secret protection and gap reporting. A large evidence task returns a bounded account to this lead. Change its correction handoff to `implementer`. An unsupported cause remains unproven. |
-| [`spec-reviewer.md`](../spec-reviewer.md) | Absorb `critic.md` design review, including complexity, reuse, failure paths, diagram consistency and testability checks. Keep design findings separate from diff verdicts and preserve read-only behavior. |
-| All retained contracts | Offer the active role's collaboration mode by linking the portable rule below; the mode adds visible steps and recorded decisions, not authority to write another artifact. |
-| All six lead contracts | Retain the parent assignment during obstruction removal, request only relevant expertise, require proof the blocked work resumes and return adjacent work for separate tracking. |
+| [`spec-author.md`](../spec-author.md) | Remaining transfer: absorb `analyst.md` discovery inputs, settled-answer search, separating questions and confirmed-need artifact. Discovery cannot invent claims; agreement authoring follows confirmation. Its description covers both activities. |
+| [`implementer.md`](../implementer.md) | Correction already folded from bug-fixer: preserve minimal cause-bounded correction, regression/systemic-site checks and gap lessons. Verify explicit accepted diagnosis and the regression test observed failing for that cause; retain separate investigation and test ownership. |
+| [`bug-finder.md`](../bug-finder.md) | Log analysis and correction handoff to implementer already landed: preserve window, correlation, first anomaly, ordered evidence, inference, secret protection and gap reporting. Complete the bounded large-evidence assignment and missing-telemetry guidance; an unsupported cause remains unproven. |
+| [`spec-reviewer.md`](../spec-reviewer.md) | Design review already folded from critic: preserve complexity, reuse, failure-path, diagram and testability checks. Verify design findings remain separate from diff verdicts and read-only behavior remains intact. |
+| All retained contracts | Remaining mode integration: link the portable collaboration procedure below; visible steps and recorded decisions grant no authority to write another artifact. |
+| All six lead contracts | Remaining obstruction integration: retain parent ownership, request relevant expertise, require proof the blocked work resumes and return adjacent work for separate tracking. |
 
 Put the shared collaboration-mode procedure once in the non-generated prose of
 [`coding-conventions`](../../skills/coding-conventions/SKILL.md): show the next
@@ -340,11 +351,11 @@ Bounded obstruction guidance replaces `yak-shaver.md`; it does not authorize
 an investigator or reviewer to make production changes. That work goes to the
 appropriate implementation assignment.
 
-Set `spec-reviewer`'s existing `reviews` to `[design, diff]` and remove
-`critic.md`. Keep the four review units and their order unchanged.
+Preserve `spec-reviewer`'s existing `reviews: [design, diff]`; `critic.md`
+is already removed. Keep the four review units and their order unchanged.
 [`reviewRows`](../../scripts/Projection.fsx) requires one role per unit, not one
-unit per role, so no projector change is needed. Amend the roles index's
-one-unit-per-reviewer wording. A design-review instance must not have authored
+unit per role, so no projector change is needed. Preserve the roles index's
+updated multiple-unit wording. A design-review instance must not have authored
 the design; diff review likewise remains independent of its subject. Record
 the reviewing instance and authored scope in the review evidence. Combining
 contracts never permits self-review; projector totality proves assignment of
@@ -376,13 +387,23 @@ path and potential loss assessment before release. Keep migrations as history.
 This contract does not introduce a database or prescribe an application's
 schema; each affected Feature must settle those details in its own design.
 
-Clarify [`metric-nerd.md`](../metric-nerd.md) as operational signal requirements,
-baselines and comparisons, with missing telemetry recorded as missing evidence.
-It routes instrumentation code to `implementer` or the assigned implementation
-specialist. Preserve [`benchmarker.md`](../benchmarker.md)'s written performance,
-cost or structural concern trigger, measurement ownership and prohibition on
-production behavior. Neither instrumentation nor telemetry availability implies
-a performance benchmark.
+Restore the currently absent `agents/metric-nerd.md` from its historical
+`ea553e9:agents/metric-nerd.md` contract, retaining persona Tess and empty section
+ownership; advance its historical `0.2.0` version to `0.3.0` for the clarified
+boundary. Its trigger is an operational decision requiring signal requirements,
+baselines, trends or comparison. Missing telemetry remains an evidence gap.
+It supplies instrumentation requirements and routes production instrumentation
+code to `implementer` or the assigned implementation specialist.
+
+Separate those operational duties from the current
+[`benchmarker.md`](../benchmarker.md): remove the broad operational-decision
+trigger, comparison/instrumentation procedure and corresponding rollout
+handoffs transferred by `5924065`. Preserve its written performance, cost or
+structural concern trigger, baseline comparisons within such a benchmark,
+measurement ownership, `8/Performance` ownership and prohibition on production
+behavior. This preserves all agreed duties without leaving two owners for
+operational comparison. Neither instrumentation nor telemetry availability
+implies a performance benchmark.
 
 ### DR-4 — Route from artifact gaps, not a mandatory chain of agents
 
@@ -466,15 +487,16 @@ change after the failing checks are recorded. The exact active surfaces are:
 
 | Surface | Migration |
 | --- | --- |
-| `agents/*.md` | Revise the retained contracts described above and specialist collaboration boundaries; add `database.md`; remove `analyst.md`, `bug-fixer.md`, `yak-shaver.md`, `pair-programmer.md`, `log-parser.md`, `critic.md` after duty transfer. Remove retired links, descriptions and handoffs in every retained body, including `architect.md`'s feedback sources. |
-| `agents/README.md`, root `README.md` | Replace the peer graph and twenty-four-role/count wording with the agreed six leads and thirteen specialists; update command summaries and discovery/review descriptions. Keep one active grouping authority in the roles index. |
+| `agents/*.md` | Revise retained contracts and specialist boundaries; restore `metric-nerd.md`; add `database.md`; remove the remaining `analyst.md`, `yak-shaver.md`, `pair-programmer.md` after duty transfer. Preserve already-landed correction/log-analysis/design-review folds and absence of their old files; remove any stale active links or handoffs. |
+| `agents/README.md`, root `README.md` | Replace the remaining peer graph and twenty-role/count wording with six leads and thirteen specialists; restore operational metric-nerd participation and update command/discovery summaries. Keep one active grouping authority in the roles index. |
 | `commands/spec.md`, `design-ui.md` | Replace analyst participation with `spec-author` discovery mode; deduplicate the role in `spec`. |
-| `commands/design.md` | Convene `spec-reviewer` for independent design review in place of critic; add conditional database design advice. Retain conditional domain, testability and benchmarking contributions. |
-| `commands/bug.md` | Convene `bug-finder`, `test-writer`, `implementer`; use integrated log analysis and correction mode. Add conditional database expertise for persistence failures. |
-| `commands/implement.md`, `ship.md` | Add conditional database implementation or compatibility/recovery participation. Implementer coordinates applicable contributions; no database assignment for unrelated changes. Other command role lists remain unchanged unless a stale reference is found. |
-| `hosts/claude.yaml`, `hosts/codex.yaml` | Remove six retired mappings and add database. Preserve retained model/effort settings and read-only tool limits. Database uses the domain specialist's existing judgment profile: Claude `opus`/`high`, unrestricted tools for assigned writes, preloads `sdd-conventions`, `coding-conventions`, `clarify-requirements`; Codex existing default model with `high` effort. Merge critic's `coding-conventions` preload into Claude spec-reviewer without expanding its read-only tools. |
+| `commands/design.md` | Preserve existing spec-reviewer design review; add conditional database design advice. Retain conditional domain, testability and written-cost benchmarking contributions. |
+| `commands/bug.md` | Preserve existing bug-finder/test-writer/implementer list and integrated log/correction duties; add conditional database expertise for persistence failures. |
+| `commands/implement.md` | Add conditional database implementation. Implementer coordinates applicable contributions; no database assignment for unrelated changes. |
+| `commands/ship.md` | Replace benchmarker participation for operational rollout comparison with restored metric-nerd; update the body to operational evidence. Add conditional database compatibility/recovery participation. Written-cost benchmarks remain conditionally selected when their own trigger applies. Other command lists remain unchanged unless a stale reference is found. |
+| `hosts/claude.yaml`, `hosts/codex.yaml` | Remove remaining analyst/pair-programmer/yak-shaver mappings; add database and restored metric-nerd. Preserve retained model/effort settings, existing spec-reviewer preloads/read-only tools and absent retired mappings. Database uses domain's judgment profile: Claude `opus`/`high`, unrestricted tools for assigned writes, preloads `sdd-conventions`, `coding-conventions`, `clarify-requirements`; Codex existing default model with `high` effort. Restore metric-nerd's historical default profile: Claude `skills: [sdd-conventions]` inheriting `sonnet`/`medium`; Codex empty override inheriting its defaults. |
 | `skills/coding-conventions/SKILL.md`, other active skill prose | Add the portable collaboration rule. Search outside generated markers for retired names/personas or role links and replace any with section-owner/review-pass language. Do not add role-name aliases to the linter. |
-| `scripts/project.tests.fsx` | Test writer revises the existing real-roster expectation and reviewer/unit expectation, preserving all baseline checks, then adds amendment coverage through existing fixture/library seams. No production projector change is planned. |
+| `scripts/project.tests.fsx` | Test writer revises the existing twenty-role expectation to nineteen, verifies restored operational/performance separation and preserves the already-updated design/diff reviewer expectation and all baseline checks. Add amendment coverage through existing fixture/library seams; no production projector change is planned. |
 
 Commands name roles and skills in frontmatter only; their bodies describe
 conditional contributions and modes using existing responsibility labels.
@@ -488,13 +510,16 @@ An explicit retirement search is therefore necessary even when lint passes.
 Run the projector to regenerate `.claude/agents/`, `.codex/agents/`, affected
 `.claude/commands/`, `.agents/skills/` and `.claude/skills/`, the generated review
 registry/ownership block and `agents/PERSONAS.md`. Existing `differences` detects
-each retired agent file as stale; existing `apply` removes it. The database
-host files are new planned outputs. Ownership rows must remain identical;
-the design reviewer changes to `spec-reviewer` while the four units retain
-their order. Never hand-edit generated files.
+the three remaining retired agent files per host as stale; existing `apply`
+removes them. Database and restored metric-nerd host files are new planned
+outputs. Ownership rows, the existing spec-reviewer assignment for design/diff,
+and the four review units' order must remain identical. Regeneration restores
+Tess to the active persona roster and removes only the remaining retirees.
+Verify already-retired host files stay absent. Never hand-edit generated files.
 
-Search all tracked files for the retired names, personas, twenty-four-role
-counts and old reviewer assumptions. Classify each hit: migrate active
+Search all tracked files for the six retired names/personas, old twenty- and
+twenty-four-role counts, merged measurement wording and reviewer assumptions.
+Classify each hit: migrate active
 guidance, regenerate generated content, and preserve historical decisions,
 sign-offs, lesson evidence and claim Source citations (B-035). A historical
 link to a retired path can remain evidence; an active convening link cannot.
@@ -550,9 +575,9 @@ spec-reviewer. Review evidence must distinguish the design author's identity
 from the reviewing instance and preserve the earlier scoped baseline evidence.
 
 Performance reasoning: the workload remains one small checkout processed
-offline. Removing six roles and adding one reduces role-rendering work from
-twenty-four to nineteen; validation/rendering still scales with source bytes
-and output count using the existing plan. This is a cost model, not a measured
+offline. Retiring three roles, restoring metric-nerd and adding database reduces
+role-rendering work from twenty to nineteen. Validation/rendering still scales
+with source bytes and output count using the existing plan. This is a cost model, not a measured
 latency claim, and introduces no target or infrastructure cost. No application
 domain model or performance workload is present, so domain implementation and
 benchmark measurement are not required for this contract change. If later
@@ -570,12 +595,17 @@ Amendment readiness: **Ready for tests and implementation for B-010–B-036**
 within the source/projection and evidence boundaries above. On 2026-10-16,
 testability review found the source/projection approach ready and retained
 unverified behavioral coverage as `Missing`; see § 8 Collaboration amendment.
-Independent design critique returned Ready with no outstanding findings after
-the B-030 recovery-path finding was resolved and re-reviewed. All three
-Mermaid views rendered and were visually inspected. No material decision or
-blocking OQ remains; the six retirements, database boundary and nineteen-role
-shape are already agreed. These amendment reviews do not reassess or replace
-the B-001–B-009 baseline readiness and evidence recorded above.
+Independent design critique of the preceding design returned Ready after the
+B-030 recovery-path finding was resolved and re-reviewed. Those reviews remain
+evidence for that scope. Refreshed testability and independent design/diff
+review approved the reconciliation against main `785de62`, including restored
+operational expertise and the twenty-to-nineteen migration, within the
+source/projection scope. Behavioral evidence remains pending and ADR-0006's
+delivery gate remains intact. All three Mermaid views rendered and were
+visually inspected. No material decision or blocking OQ remains; the six
+retirements, database boundary and nineteen-role shape are already agreed.
+These amendment reviews do not reassess or replace the B-001–B-009 baseline
+readiness and evidence recorded above.
 
 Design risk: **2 (medium)** for this collaboration-design scope: the mechanism
 is reused, but active-reference retirement spans contracts, commands, overlays
