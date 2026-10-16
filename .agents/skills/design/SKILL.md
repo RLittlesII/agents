@@ -9,7 +9,7 @@ Convene these roles as the body directs:
 - `domain`, whose contract is `.codex/agents/domain.toml`
 - `test-writer`, whose contract is `.codex/agents/test-writer.toml`
 - `benchmarker`, whose contract is `.codex/agents/benchmarker.toml`
-- `critic`, whose contract is `.codex/agents/critic.toml`
+- `spec-reviewer`, whose contract is `.codex/agents/spec-reviewer.toml`
 
 Read each role's contract before acting as it, and keep the boundaries it declares: a role that refuses a kind of work still refuses it here.
 
@@ -20,8 +20,8 @@ diagrams and a readiness verdict. When the claims carry business rules, the
 domain modeller places each invariant where it cannot be bypassed. The test
 writer reads the design for testability and records the verdict, before any
 test depends on it. When the design states a cost, the benchmarker measures it
-and records the number in the performance strategy. The critic then reads the
-design and returns findings; the architect answers each in the design or
-records why not, and the critic re-reads what changed.
+and records the number in the performance strategy. The spec reviewer then
+reads the design and returns findings; the architect answers each in the design
+or records why not, and the reviewer re-reads what changed.
 
 Work on: the request that invoked this skill

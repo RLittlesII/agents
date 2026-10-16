@@ -26,7 +26,7 @@ review_units:
 # Role contracts
 
 A specification-driven repository treats the specification as the artifact of
-record; code is downstream of it. Twenty-four roles work that chain, and each
+record; code is downstream of it. Twenty roles work that chain, and each
 is a **documented contract** — for whoever takes the role, a person or an agent.
 
 | Role                                    | Turns                                   | Into                                                      |
@@ -37,19 +37,15 @@ is a **documented contract** — for whoever takes the role, a person or an agen
 | [`architect`](architect.md)             | the authored agreement and scenarios    | a technical design, diagrams and readiness findings       |
 | [`domain`](domain.md)                   | business rules in claims                | a domain model whose invariants cannot be bypassed        |
 | [`ux`](ux.md)                           | user needs and claims                   | a decided interaction: flows, states and copy             |
-| [`critic`](critic.md)                   | a design before it is built             | findings, never a redesign                                |
 | [`test-writer`](test-writer.md)         | a claim                                 | a failing scenario and failing tests                      |
-| [`implementer`](implementer.md)         | a failing test and recorded design      | production code, and design feedback                      |
+| [`implementer`](implementer.md)         | a failing test, or a diagnosed bug      | production code, design feedback and bug lessons          |
 | [`ui`](ui.md)                           | a decided interaction and failing tests | presentation code                                         |
 | [`pair-programmer`](pair-programmer.md) | a task the person wants to steer        | small visible steps and the item's decision log           |
 | [`tester`](tester.md)                   | a change to verify                      | a run report and reproductions                            |
-| [`spec-reviewer`](spec-reviewer.md)     | a diff                                  | a verdict per section, and findings                       |
+| [`spec-reviewer`](spec-reviewer.md)     | a design, or a diff                     | a verdict per section, and findings                       |
 | [`adversary`](adversary.md)             | the surface a change exposes            | security findings                                         |
-| [`benchmarker`](benchmarker.md)         | a stated cost concern                   | a benchmark and a recorded finding                        |
-| [`metric-nerd`](metric-nerd.md)         | a decision that needs evidence          | a baseline and a comparison                               |
-| [`bug-finder`](bug-finder.md)           | a failure report                        | a reproduction and a root-cause record                    |
-| [`bug-fixer`](bug-fixer.md)             | a diagnosed cause and a failing test    | the fix and its lesson                                    |
-| [`log-parser`](log-parser.md)           | a long log                              | the sequence and the decisive lines                       |
+| [`benchmarker`](benchmarker.md)         | a cost concern, or a decision           | a benchmark, or a baseline and a comparison               |
+| [`bug-finder`](bug-finder.md)           | a failure report and its logs           | a reproduction and a root-cause record                    |
 | [`yak-shaver`](yak-shaver.md)           | an incidental obstacle                  | the obstacle removed, and what was left alone             |
 | [`build`](build.md)                     | a broken or missing gate                | a reproducible build and gates that fail when they should |
 | [`release`](release.md)                 | an artifact that passed the gates       | a confirmed release with a rollback                       |
@@ -85,7 +81,6 @@ flowchart LR
     org[organizer]
     ar[architect]
     dom[domain]
-    cr[critic]
     bm[benchmarker]
     ux[ux]
     ui[ui]
@@ -95,60 +90,74 @@ flowchart LR
     adv[adversary]
     bd[build]
     rel[release]
-    mn[metric-nerd]
     au[auditor]
     bf[bug-finder]
-    lp[log-parser]
-    bx[bug-fixer]
-    pp[pair-programmer]
-    ys[yak-shaver]
     dw[document-writer]
+    subgraph byname [convened by name]
+        pp[pair-programmer]
+        ys[yak-shaver]
+    end
 
+    person -->|raw ask| an
+    person -->|decided need| sa
     an -->|decided need| sa
-    an -->|confirmed need| ux
     an -.->|separating question| person
+    an -->|confirmed need| ux
+    ux -->|decided interaction| sa
     sa -->|specification diff| sr
     sr -.->|section verdicts| sa
     sa -->|approved claims| org
-    sa -->|approved agreement| ar
     org -.->|breakdown to confirm| person
-    ys -.->|adjacent problems| org
+    org -->|groomed items| ar
     ar -.->|decision beyond the Feature| person
     ar -->|design boundary| dom
     dom -.->|unenforceable claim| ar
     dom -.->|unsettled rule| sa
-    ar -->|recorded design| cr
-    cr -.->|design findings| ar
     ar -->|stated cost| bm
     bm -.->|contradicting measurement| ar
     ar -->|design diff| sr
+    sr -.->|design findings| ar
     ar -->|"Ready design, stubs"| tw
     tw -.->|testability gaps| ar
     tw -->|failing tests| im
-    im -.->|design feedback| ar
+    tw -->|failing tests| ui
+    ux -->|decided interaction| ui
+    ui -.->|undrawn state| ux
     tw -->|suites to run| ts
     ts -.->|unexercisable claim| ar
     ts -.->|uncovered behaviour| sa
     ts -.->|reproduced failure| bf
-    ux -->|decided interaction| ui
-    ui -.->|undrawn state| ux
+    im -.->|design feedback| ar
     im -->|code diff| sr
+    ui -->|code diff| sr
     sr -.->|code findings| im
+    sr -->|diff touching a boundary| adv
     adv -.->|security findings| im
+    sr -->|approved diff| bd
     im -.->|broken gate| bd
     bd -->|gated artifact| rel
     bd -.->|exposed secret| person
-    rel -.->|"rollout confirmation, exposed secret"| person
-    mn -->|baseline and comparison| rel
-    au -.->|drift findings| rel
+    rel -->|change to compare| bm
+    bm -.->|baseline and comparison| rel
+    rel -.->|"rollout confirmation, rotation request"| person
+    person -->|cadence| au
+    au -.->|drift findings| org
+    au -.->|stale prose| dw
+    dw -.->|contradicted specification| sa
     bf -.->|record to accept| person
     bf -->|reproduction| tw
-    bf -->|accepted record| bx
-    lp -.->|decisive sequence| bf
-    lp -.->|logging gap| ar
+    bf -->|accepted record| im
+    bf -.->|logging gap| ar
+    person -->|by name| pp
     pp -.->|every step and fork| person
-    dw -.->|contradicted specification| sa
+    person -->|by name| ys
+    ys -.->|adjacent problems| org
 ```
+
+Every role has an edge in and an edge out. The shortest route to the diff pass
+on a specification is `analyst`, `spec-author`, `spec-reviewer`; a need already
+decided enters at `spec-author`. `ux` feeds the agreement rather than code, so
+an interaction reaches `ui` only behind a claim and a failing test.
 
 `pair-programmer` and `yak-shaver` are convened by no command; a host calls
 each by name. A role that finds its input missing or wrong escalates to the
@@ -164,9 +173,9 @@ The section no single role owns is declared in this file's frontmatter.
 Ownership is not restated in the role files — a second copy is a second thing to
 drift.
 
-The critic, the spec reviewer, the adversary and the auditor each review one
-unit of work, declared under `review_units` in this file's frontmatter and
-claimed by the role's `reviews`. Which pass reviews what, and in what order, is in
+The spec reviewer, the adversary and the auditor review the units of work
+declared under `review_units` in this file's frontmatter and claimed by each
+role's `reviews`. Which pass reviews what, and in what order, is in
 [`sdd-conventions` § Review passes](../skills/sdd-conventions/SKILL.md#review-passes).
 
 Each role also declares the persona it signs its prose with; the roster is
