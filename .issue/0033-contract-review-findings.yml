@@ -2,7 +2,7 @@ id: "0033"
 type: chore
 title: Close the contract review findings across roles, skills, commands and hosts
 
-status: in-progress
+status: done
 
 value: 4
 cost: 5
@@ -20,7 +20,7 @@ claims: []
 
 created: "2026-10-15"
 updated: "2026-10-15"
-closed: null
+closed: "2026-10-15"
 
 summary: |
   A review of the 24 roles, 7 skills, 12 commands and 2 host overlays found
