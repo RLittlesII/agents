@@ -205,7 +205,7 @@ retain their gates and commands only convene the applicable roles. — Ruth
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-14 -->
+<!-- last written by: architect, 2026-10-16 -->
 
 A role file is Markdown with YAML frontmatter. The keys and their checks are
 declared by `loadRole` in [`Projection.fsx`](../../scripts/Projection.fsx);
@@ -244,7 +244,13 @@ reviewing role), and `## Refuse`. A role may add a heading, such as `## Escalate
 the same bytes resolve from `agents/` and from a host's agents directory one
 level below the root.
 
-Readiness: **Ready for tests and implementation.**
+Baseline readiness: **Ready for tests and implementation for B-001–B-009.**
+The design above remains the recorded role-format design.
+
+Amendment readiness: **Not assessed for B-010–B-036.** Contract consolidation,
+specialist integration and reference migration need design by `architect`
+after the amended agreement is reviewed; the baseline verdict does not cover
+them. — Marcus
 
 ## 8. Testing Strategy
 
