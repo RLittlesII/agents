@@ -4,7 +4,7 @@ description: "Install this repository's roles, method skills and commands into a
 type: feature
 id: "F1"
 epic: "0038"
-spec_status: draft
+spec_status: approved
 status: in-progress
 priority: med
 value: 0
@@ -475,8 +475,15 @@ None.
 
 | Section | Status | Reviewer | Note |
 | --- | --- | --- | --- |
-| 1-5 | 🟢 | spec-reviewer | Stakeholder and Jessica approved the agreement, 2026-10-16. |
-| 6-12 | 🟡 | spec-reviewer | Design, testing and final review are recorded in subsequent commits. |
+| 1-5 | 🟢 | spec-reviewer | Jessica approved, 2026-10-16; stakeholder approved scope and defaults the same day. |
+| 6-7 | 🟢 | spec-reviewer | Jessica approved the recorded design with no findings, 2026-10-16. |
+| 8-9 | 🟢 | spec-reviewer | Jessica approved, 2026-10-16; 23 tests pass on macOS with Python 3.11 and 3.13; Windows/Linux CI pending. |
+| 10-12 | 🟢 | spec-reviewer | Jessica approved the recorded clarifications and review evidence, 2026-10-16. |
+
+Kyle approved the filesystem and subprocess surface pass without findings,
+2026-10-16. Full real-manager smoke verified identical consumer results for
+Skillfile 1.7.1 and Microsoft apm 0.33.0 on both hosts: 39 Claude files or 91
+Codex files, preserving consumer instructions. No Windows/Linux run is claimed.
 
 ## Tasks
 
