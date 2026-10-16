@@ -1,0 +1,43 @@
+id: "0036"
+type: chore
+title: Write back the maintainer's answers to Next work's open questions
+
+status: in-progress
+
+value: 4
+cost: 2
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-15"
+updated: "2026-10-15"
+closed: null
+
+summary: |
+  Next work (0001-F5). Release readiness for epic 0001 needs every Feature approved with no Missing
+  row in § 9. Next work's § 11 holds six open questions, OQ-1 to OQ-6, three
+  blocking claims and three hooked to claims not yet written. The maintainer
+  answered all six on 2026-10-15. Write the answers back as decision records,
+  claims, scenarios and skill text so the tests can follow.
+
+acceptance_criteria:
+  - "Each of OQ-1 to OQ-6 is resolved in § 11 and names its decision record."
+  - "Each ruling is a decision record naming the call, the rule it follows and the rejected option with its cost."
+  - "Each new claim has a § 3 row, a § 9 row and a scenario in next.feature."
+  - "skills/next/SKILL.md carries each ruling and names no role."
+  - "dotnet fsi scripts/project.fsx --check and dotnet specht --strict pass."
+
+decisions:
+  - "2026-10-15, repository maintainer: OQ-1 tracker only; OQ-2 review holds its lane; OQ-3 diagnose a duplicate id and withhold; OQ-4 an open question naming no claim leaves readiness unverified; OQ-5 finished and unranked; OQ-6 lanes from edits, starts capped at one per Feature by deliver-change rule 3. Rejected options are in decisions 0016 to 0021."
+
+out_of_scope:
+  - "Tests for the claims: a follow-up item; § 9 rows stay Missing here."
