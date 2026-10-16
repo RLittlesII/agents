@@ -368,7 +368,7 @@ Not applicable.
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-14 -->
+<!-- last written by: test-writer, 2026-10-15 -->
 
 | Claim ID | Scenario                                                    | Test    | Status  |
 | -------- | ----------------------------------------------------------- | ------- | ------- |
@@ -413,6 +413,11 @@ Not applicable.
 | B-039    | Expanding the report does not change its choices            | Missing | Missing |
 | B-040    | Asking what is next takes no work                           | Missing | Missing |
 | B-041    | A dependency cycle goes to grooming as a re-cut             | Missing | Missing |
+| B-042    | The tracker wins over a mirrored status                     | Missing | Missing |
+| B-043    | A duplicate id is named, not resolved                       | Missing | Missing |
+| B-044    | A question naming no claim leaves readiness unverified      | Missing | Missing |
+| B-045    | A finished Feature is not ranked                            | Missing | Missing |
+| B-046    | One start per Feature                                       | Missing | Missing |
 
 ## 10. Lessons / Spec Deltas
 
