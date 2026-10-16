@@ -743,6 +743,7 @@ Not applicable.
 | Date | Trigger | Delta |
 | --- | --- | --- |
 | 2026-10-16 | User requested simpler roles and handoffs | Add B-010–B-036 and § 2 grouping/routing; retire six standalone roles by folding their duties into retained roles or modes; include `database`, reversing § 5 row 5's earlier exclusion; record the choice and rejected alternatives in [decision 0001](decisions/0001-lead-and-specialist-collaboration.md). — Ruth |
+| 2026-10-16 | User requested the next part after committing the agreement | Record DR-1–DR-5, source/projection testability and independent design reviews; preserve baseline evidence and pending amendment coverage. — Ruth |
 
 ## 11. Open Questions
 
@@ -760,6 +761,8 @@ Not applicable.
 | ------- | ------ | ------------- | --------------------------------------------------------------- |
 | 1-12    | 🟡     | spec-reviewer | Baseline draft. Preserve B-004 review evidence: grep at scaffolding and second-wave roster (2026-10-14) found no product technology in role bodies. |
 | 1-5, 7-10, 12, scenarios, decision 0001 | 🟢 | spec-reviewer | Agreement-only amendment reviewed 2026-10-16; § 7 scopes baseline readiness, §§ 8–9 record pending coverage; implementation remains pending. |
+| 6-7 | 🟢 | critic | B-010–B-036 design critique, 2026-10-16; independent instance approved after B-030 recovery-path correction and re-review. |
+| 6-8, Tasks | 🟢 | spec-reviewer | Design-only amendment reviewed 2026-10-16; no findings, baseline evidence preserved, implementation and new executable coverage pending. |
 
 ## Tasks
 
