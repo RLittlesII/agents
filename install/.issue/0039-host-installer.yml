@@ -1,0 +1,34 @@
+id: "0039"
+type: task
+title: Install complete Claude or Codex hosts through Skillfile or Microsoft apm
+status: in-progress
+value: 4
+cost: 5
+risk: 3
+parent: "0038"
+children: []
+depends_on: []
+spikes: []
+spec: install/.spec/README.md
+claims: [B-001, B-002, B-003, B-004, B-005, B-006]
+created: "2026-10-16"
+updated: "2026-10-16"
+closed: null
+summary: |
+  Deliver the approved installation agreement as one script, its claim-named
+  tests and consumer documentation. All host/manager cases share the same
+  staging and promotion boundary and are verified together.
+acceptance_criteria:
+  - "B-001, B-002 — complete selected host"
+  - "B-003, B-004 — real selected manager invocation"
+  - "B-005 — portable interface"
+  - "B-006 — installed dependency references"
+  - "§ 9 names executable tests for every delivered claim."
+decisions:
+  - "2026-10-16, stakeholder: approved the scope and defaults in install/.spec/README.md and requested implementation."
+  - "2026-10-16, design review: Jessica approved the design and its revised apm package boundary; Kyle approved the filesystem/subprocess surface."
+  - "2026-10-16, verification: 23 installer tests pass on macOS with Python 3.11 and 3.13; all four real-manager combinations pass; Windows/Linux execution awaits CI."
+  - "2026-10-16, delivery: implementation is committed on codex/host-installer for pull-request review; status stays in-progress until merge under repository delivery rules."
+out_of_scope:
+  - "User scope and direct whole-repository manager installation: specification § 5 rows 1–2."
+  - "Host application and manager bootstrapping: specification § 5 row 5."
