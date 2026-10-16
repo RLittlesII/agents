@@ -763,9 +763,9 @@ Not applicable.
 
 ## Tasks
 
-None cut. The first six roles landed with the scaffolding change and the second
-wave of eighteen with the roster change; a new role or a contract change cuts
-its own work item.
+<!-- last written by: organizer, 2026-10-16 -->
+
+- [0036 — Record and design the role collaboration amendment](../.issue/0036-role-collaboration-design.yml).
 
 ## Scoring
 

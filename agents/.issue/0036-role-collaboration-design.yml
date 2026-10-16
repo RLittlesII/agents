@@ -57,6 +57,10 @@ acceptance_criteria:
 decisions:
   - "2026-10-16: user authorized committing the agreement in a worktree and starting the next part; the next unmet responsibility is design."
   - "2026-10-16: value 4 removes recurring coordination friction; cost 3 covers contract/reference design and critique; risk 2 is provisional pending architecture."
+  - "2026-10-16: architecture established risk 2 (medium): existing projection is reused; coordinated retirement and review-instance independence require verification."
+  - "2026-10-16: testability review is Ready for source/projection tests; actual agent-behavior evidence and executable coverage remain pending."
+  - "2026-10-16: independent design critique approved after the B-030 diagram was corrected to permit concurrent incident recovery and diagnosis."
+  - "2026-10-16: all three Mermaid views rendered and were visually inspected; design delivery remains in-progress pending merge."
 out_of_scope:
   - "Agent, command, host, projector and generated-output implementation is subsequent delivery work against this design."
   - "0001-F2 § 5 rows 5-7 exclude engine-specific tooling, a workflow engine and unrelated role or ownership changes."
