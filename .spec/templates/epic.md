@@ -3,7 +3,7 @@ title: "Epic {{id}}: {{name}}"
 description: "{{one sentence: the result the Features produce together}}"
 id: "{{id}}"
 type: epic
-status: needs-decomposition
+status: ready
 priority: med
 milestone: null
 children: []

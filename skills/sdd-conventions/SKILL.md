@@ -1,6 +1,6 @@
 ---
 name: sdd-conventions
-description: The shared facts of specification-driven development that hold in every consuming repository — the delivery workflow, which role owns which specification section, the id schemes, the spec layout and the checker, and the contract a project's own companion skill must satisfy. Use alongside any method skill; it names no repository, path or command of its own.
+description: The shared facts of specification-driven development that hold in every consuming repository — the delivery workflow, which role owns which specification section, the id schemes, the spec layout and the checker, and the contract a project's own companion skill must satisfy. Use alongside any method skill; what it names is the method's own — the checker, its layout, the entry files — never one repository's.
 ---
 
 # Specification-driven development conventions
@@ -26,6 +26,8 @@ repository's own companion skill, `<project>-conventions`, whose contract is
 - `AGENTS.md` — the entry point to owning guidance.
 - The Feature's specification, its `.feature` file, and its `lessons/`.
 - The repo-wide lessons in `.spec/lessons/`.
+- [`coding-conventions`](../coding-conventions/SKILL.md) § "Say it once, and
+  briefly" — how every report, finding and answer is written.
 
 ## Workflow
 
@@ -37,8 +39,7 @@ flowchart LR
     Ask[Raw ask] -->|/spec| Specification[Specification + scenarios]
     Specification -->|/groom| Grooming[Grooming]
     Grooming -->|/design| Architecture[Architecture]
-    Architecture --> Items[Work items]
-    Items --> Stubs[Interface stubs]
+    Architecture --> Stubs[Interface stubs]
     Stubs -->|/test| Tests[Tests]
     Tests -->|/implement| Implementation[Implementation]
     Implementation -->|/review| Review[Diff review]
@@ -48,7 +49,10 @@ flowchart LR
 
 An edge label names the command that runs the step; Claude Code invokes it as
 `/<name>`, Codex as `$<name>`. A step with no label is a continuation of the one
-before it.
+before it. Each step lands as a change, and the diff pass runs on every one: on
+a specification change it returns a verdict per authored section, the owner of
+§ 12 records it, and [`next`](../next/SKILL.md) § "Stage gates" reads it. Work
+items are cut from claims whose § 12 rows are approved, during grooming.
 
 The owner of § 7 reviews the groomed agreement and records design readiness
 before tests and implementation. Once the design is Ready, the owner of § 7
@@ -60,25 +64,13 @@ rules. Standalone spikes start at their work item, with the owner of § 7 taking
 the first pass at feasibility; written performance concerns go to the owner of
 § 8 › `### Performance` for measurement.
 
-## Lifecycle
+## Delivery state
 
-A work item's delivery state, with the condition for entering each. The
-companion names the field that carries it; this is the one statement of when it
-moves.
-
-| State                      | Entered when                                                       |
-| -------------------------- | ------------------------------------------------------------------ |
-| `needs-decomposition`      | an epic or Feature trips an oversize signal, or is not yet split   |
-| `ready-for-architecture`   | the Feature is split and §§ 1-5 are approved for the item's claims |
-| `ready-for-implementation` | the § 7 readiness verdict is Ready, with the item's risk set from it |
-| `ready`                    | a spike, bug or chore whose dependencies are delivered             |
-| `in-progress`              | someone signals they have taken it, before the branch              |
-| `in-review`                | its pull request is open                                           |
-| `blocked`                  | work bounced back; the reason is written in the item              |
-| `done`                     | its pull request merged with a test row for every claim it delivers |
-
-No child advances before its Feature is split. Waiting on an unfinished
-dependency is derived, never a state someone sets.
+Delivery state lives in the tracker; the companion names the field and its
+values. The method fixes three things only: an item is signalled taken before
+its branch ([`deliver-change`](../deliver-change/SKILL.md) § "The shape of
+it"), what each stage needs before it is offered ([`next`](../next/SKILL.md)
+§ "Stage gates"), and no child advances before its Feature is split.
 
 ## Section ownership
 
@@ -126,8 +118,8 @@ and the units declared in the roles index, so change those, not the table.
 | 4     | repository | the repository at rest                            | on a cadence, or before a release; never on a single diff                     | fix what it finds, or grade a judgment call as a violation                   | `auditor`       |
 <!-- END GENERATED: review-passes -->
 
-Every pass is read-only. A pass reports findings and never fixes what it finds;
-the finding goes to whoever owns the artifact. No pass reviews its own work.
+A pass edits nothing it reviews: it reports findings and a verdict, and each
+goes to whoever owns the artifact. No pass reviews its own work.
 
 **Order.** The design pass runs before implementation exists, because a design
 finding raised after the code is written costs the code. The diff pass runs
@@ -192,7 +184,8 @@ the item's delivery state once the item exists. Drift between the two is a
 review finding; the offline checker never calls the tracker. `priority` is authored in the
 specification and never mirrored. Derived fields — `rank`, `blocks` — are
 recomputed, never hand-edited. The companion names the tracker and the label or
-field that carries delivery state.
+field that carries delivery state. `spec_status` is the document's own maturity,
+set by the owner of § 12 from the diff pass's verdict and never mirrored.
 
 ## Spec layout
 
@@ -222,9 +215,10 @@ field that carries delivery state.
 ## Your companion
 
 Every consuming repository has exactly one companion skill, named
-`<project>-conventions`. It is **the only skill that names the repository, a
-path, a command, or a tool version.** Each method skill links to it by area, so
-it must answer for each of these:
+`<project>-conventions`. It is **the only skill that names the repository's own
+paths, commands or tool versions**; the method's — the checker, its layout and
+the entry files — are named here. Each method skill links to it by area, so it
+must answer for each of these:
 
 | Area         | The companion names                                                     |
 | ------------ | ----------------------------------------------------------------------- |

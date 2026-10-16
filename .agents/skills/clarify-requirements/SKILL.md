@@ -55,13 +55,13 @@ comes back, say whether it fully resolves the question before acting on it.
 
 "What if we…", "another thought…", a reference to how a previous project did it —
 these are substantive enough to change direction and carry none of the structure
-of a decision: no decision-required framing, no explicit choice, no rejected
-alternative. **Escalate before allocating work against one.** "This sounds like it
-could be a direction change — is it exploratory, or should it go through the
-decision protocol?" is a cheap question that prevents a day of wasted design.
+of a decision: no explicit choice and no rejected alternative. **Escalate
+before allocating work against one.** "This sounds like it could be a direction
+change — is it exploratory, or a decision to record?" is a cheap question that
+prevents a day of wasted design.
 
-A choice that moves a load-bearing boundary goes through an explicit decision
-gate, always.
+A choice that moves a load-bearing boundary is asked, always, whatever the
+table above says.
 
 ## A pullback scopes only what was withdrawn
 
@@ -72,8 +72,8 @@ evidence, so nobody checks it.
 
 **Before recording that something is undesigned, open the specification and read
 the section.** When a design genuinely is superseded, the honest move is an open
-question or a decision-required block **on the specification that owns it** —
-never a contradicting note in a third document that points at neither.
+question **on the specification that owns it** — never a contradicting note in a
+third document that points at neither.
 
 The incident behind both halves: a "what if we…" about a load-bearing boundary
 was relayed as a decision and design started toward it; the pullback that

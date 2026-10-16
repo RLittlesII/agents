@@ -39,14 +39,12 @@ id: "0003" # string, so leading zeros survive. Never reused.
 type: feature # epic | feature | task | test | bug | spike | chore | refactor
 title: Convene the implement step as a command
 
-# ready-for-architecture -> ready-for-implementation -> in-progress ->
-# in-review -> done, with needs-decomposition before an epic or feature is
-# split, ready once dependencies are resolved, and blocked at any point work
-# bounces back.
-#
-# in-progress is the ONLY signal an item is taken: never pick up an item that
-# already carries it, and set it before the worktree, the branch, or the first
-# edit.
+# ready | in-progress | blocked | done. in-progress is the only signal an item
+# is taken: never pick up an item that already carries it, and set it before
+# the worktree, the branch, or the first edit. blocked carries its reason in
+# `decisions`. done when the pull request merged. Whether an item is ready to
+# offer is read from its dependencies and its stage (skills/next § "Stage
+# gates"), never set by hand.
 status: ready
 
 # `value`, `cost` and `risk` are AUTHORED. NOTHING DERIVED IS STORED: an item
