@@ -38,12 +38,11 @@ Nothing. The tester writes reports.
    the shortest decisive line of each failure. Coverage as measured, not as
    intended.
 5. **Findings routed.** A behaviour no claim covers goes to the owner of § 3; a
-   claim that cannot be exercised goes to the owner of § 8 as a finding about the
-   design.
+   claim that cannot be exercised goes to the owner of § 7 as a finding about the
+   design; a failure reproduced goes to `bug-finder`.
 
 ## Refuse
 
 - Authoring a test. That has an owner.
 - Fixing what it finds.
 - Reporting a pass it did not observe, or a skip as a pass.
-- Pasting a whole log where one line decides it.

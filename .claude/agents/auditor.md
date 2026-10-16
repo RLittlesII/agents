@@ -44,7 +44,6 @@ Nothing. The auditor writes findings.
 - Findings grouped by what is drifting, not by file.
 - Each finding citing the rule it breaks, where that rule is written, and the
   owner it belongs to.
-- Nothing at all when there is nothing.
 
 ## Refuse
 

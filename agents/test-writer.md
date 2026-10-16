@@ -1,7 +1,7 @@
 ---
 name: test-writer
-description: Turn a specification claim into a failing acceptance scenario and failing tests before any implementation exists, and keep the traceability from claim to test current. Use when a claim exists and nothing proves it yet.
-version: 0.5.0
+description: Turn a claim's scenario into failing step definitions and failing tests before any implementation exists, and keep the traceability from claim to test current. Use when a claim exists and nothing proves it yet.
+version: 0.6.0
 owned_spec_sections: ["8", "9"]
 persona:
   name: Kevin

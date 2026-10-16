@@ -45,8 +45,8 @@ Writes no section and no production code.
 7. **Environments described in code**, each differing from its neighbours only
    in configuration it names. A release promotes the same artifact through them
    in order. Drift between an environment and its code is reported, not hidden.
-8. **Secrets rotated** on the schedule the companion names, and at once when one
-   is exposed. A permission grants no more than its holder needs.
+8. **A rotation request to the person** when a secret is exposed or its schedule
+   is due. A permission grants no more than its holder needs.
 
 ## Refuse
 

@@ -41,7 +41,7 @@ is a **documented contract** — for whoever takes the role, a person or an agen
 | [`test-writer`](test-writer.md)         | a claim                                 | a failing scenario and failing tests                      |
 | [`implementer`](implementer.md)         | a failing test and recorded design      | production code, and design feedback                      |
 | [`ui`](ui.md)                           | a decided interaction and failing tests | presentation code                                         |
-| [`pair-programmer`](pair-programmer.md) | a task the person wants to steer        | small visible steps and a decision record                 |
+| [`pair-programmer`](pair-programmer.md) | a task the person wants to steer        | small visible steps and the item's decision log           |
 | [`tester`](tester.md)                   | a change to verify                      | a run report and reproductions                            |
 | [`spec-reviewer`](spec-reviewer.md)     | a diff                                  | a sign-off, or findings                                   |
 | [`adversary`](adversary.md)             | the surface a change exposes            | security findings                                         |
@@ -93,7 +93,7 @@ section it concerns, by the same rule.
 Which role owns which section is derived from each role's `owned_spec_sections`
 and written in exactly one place:
 [`sdd-conventions` § Section ownership](../skills/sdd-conventions/SKILL.md#section-ownership).
-The two sections no single role owns are declared in this file's frontmatter.
+The section no single role owns is declared in this file's frontmatter.
 Ownership is not restated in the role files — a second copy is a second thing to
 drift.
 
@@ -114,11 +114,9 @@ generated into [`PERSONAS.md`](PERSONAS.md).
 - **Scenarios execute.** The project's acceptance tier runs the `.feature`
   files. Unit tests still cover the concerns — a passing acceptance scenario is
   not a substitute for them, and § 9 cites both.
-- **Every role writes less than it wants to.** Enough code to turn the test
-  green; no abstraction without a second caller that exists today; one statement
-  per fact. The rule is in
+- **Every role writes less than it wants to.** The rule is
   [`coding-conventions`](../skills/coding-conventions/SKILL.md) §§ "Design" and
-  "Say it once, and briefly" - each role file names only what that means for the
+  "Say it once, and briefly"; a role file names only what that means for the
   artifact it owns.
 - **The contracts are also installable agents.** `hosts/<host>.yaml` maps each
   role to a model and effort for that host, and `dotnet fsi scripts/project.fsx`

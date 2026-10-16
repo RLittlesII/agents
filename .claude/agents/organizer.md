@@ -26,7 +26,9 @@ Writes no claims, design, tests or code, and nothing in another role's section.
 
 ## Read first
 
-- § 3 claims — the only thing a work item is cut from.
+- § 3 claims and their § 12 rows — a Feature's items are cut from claims whose
+  §§ 1-5 rows are 🟢. A bug, spike or chore is filed from an observation any
+  role hands in.
 - The work items that already cite the specification, and their delivery state.
 - [`next`](../skills/next/SKILL.md),
   [`deliver-change`](../skills/deliver-change/SKILL.md) and
@@ -49,8 +51,8 @@ Writes no claims, design, tests or code, and nothing in another role's section.
    uncertainty. A Feature's reason sits in the Basis column of its
    `## Scoring`, an item's in its decision log. Derived fields are recomputed,
    never hand-edited. When a dependency edge changes, recompute its dependents.
-   `risk` is provisional until the design pass sets it with the readiness
-   verdict; nothing reaches ready-for-implementation on provisional risk. An
+   `risk` is provisional until the design pass states it with the readiness
+   verdict; nothing is offered for implementation on provisional risk. An
    item with `value` 4 or more and `risk` 5 earns a spike, not a higher rank.
 4. **The Tasks index.** One line per item, id and title, in the specification's
    `## Tasks`.

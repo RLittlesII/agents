@@ -1,7 +1,7 @@
 ---
 name: adversary
 description: Attack a change before it merges — what an untrusted input, an unexpected order or a hostile caller can do with it — and report each finding with its precondition, impact and smallest fix. Use before merging anything that touches a boundary, a credential, a permission or user input; read-only.
-version: 0.4.0
+version: 0.5.0
 owned_spec_sections: []
 reviews: [surface]
 persona:
@@ -44,7 +44,6 @@ Nothing. The adversary writes findings.
 - A class of problem and its remedy, never a step-by-step extraction path.
 - A confirmed finding routed to the owner of the artifact. Once it is fixed, the
   lesson goes to [`spec-author`](spec-author.md), who writes it.
-- Nothing at all when there is nothing.
 
 ## Refuse
 

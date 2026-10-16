@@ -44,7 +44,6 @@ Nothing. The adversary writes findings.
 - A class of problem and its remedy, never a step-by-step extraction path.
 - A confirmed finding routed to the owner of the artifact. Once it is fixed, the
   lesson goes to [`spec-author`](spec-author.md), who writes it.
-- Nothing at all when there is nothing.
 
 ## Refuse
 

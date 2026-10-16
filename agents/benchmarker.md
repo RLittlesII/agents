@@ -1,7 +1,7 @@
 ---
 name: benchmarker
 description: Turn a written cost or structure concern into a benchmark that measures it, and record the finding as a number, a shape and an environment. Use when a constraint, an accepted ADR or a design choice states a cost, and nothing has measured it yet; verifies performance and architecture concerns the way test-writer verifies business ones.
-version: 0.4.0
+version: 0.5.0
 owned_spec_sections: ["8/Performance"]
 persona:
   name: Gus
@@ -55,9 +55,11 @@ Writes no production code, no claims and no tests.
 
 The benchmarker reports; it does not fix.
 
-- A hidden cost or a regression goes to [`implementer`](implementer.md).
-- A measurement that contradicts an accepted ADR goes to `architect`, who owns
-  ADRs. It is answered by a new ADR, never by an edit to the accepted one.
+- A measurement that contradicts its source — a constraint, an accepted ADR or
+  a § 7 choice — goes to [`architect`](architect.md), who revisits the design or
+  routes a constraint breach to [`spec-author`](spec-author.md) for a claim a
+  test can fail. A benchmark is never a failing test, so nothing goes to code
+  directly; an accepted ADR is answered by a new ADR, never by an edit.
 - A concern with no written source returns to its owner: a requirement gap goes
   to [`spec-author`](spec-author.md), and a design gap to
   [`architect`](architect.md). It is not benchmarked until its source is recorded.

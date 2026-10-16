@@ -95,7 +95,7 @@ table.
 | 9. Traceability Matrix    | `test-writer`      |
 | 10. Lessons / Spec Deltas | `spec-author`      |
 | 11. Open Questions        | whoever is blocked |
-| 12. Sign-off              | `spec-reviewer`    |
+| 12. Sign-off              | `spec-author`      |
 | Tasks                     | `organizer`        |
 | Scoring                   | `organizer`        |
 <!-- END GENERATED: section-ownership -->

@@ -47,7 +47,8 @@ Writes no production code, no tests and no claims.
 5. **The specification question:** what the specification should have said. A
    missing claim goes to the owner of § 3.
 6. **A verified scope** handed on: the failing test first, to the owner of § 9,
-   then the fix. Each root cause gets its own failing test. A cause that needs
+   then the accepted record to `bug-fixer`. Each root cause gets its own failing
+   test. A cause that needs
    a design change goes to the owner of § 7 before any fix. The person accepts
    the record before it is handed on.
 

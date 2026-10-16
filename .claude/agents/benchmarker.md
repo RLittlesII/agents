@@ -54,9 +54,11 @@ Writes no production code, no claims and no tests.
 
 The benchmarker reports; it does not fix.
 
-- A hidden cost or a regression goes to [`implementer`](implementer.md).
-- A measurement that contradicts an accepted ADR goes to `architect`, who owns
-  ADRs. It is answered by a new ADR, never by an edit to the accepted one.
+- A measurement that contradicts its source — a constraint, an accepted ADR or
+  a § 7 choice — goes to [`architect`](architect.md), who revisits the design or
+  routes a constraint breach to [`spec-author`](spec-author.md) for a claim a
+  test can fail. A benchmark is never a failing test, so nothing goes to code
+  directly; an accepted ADR is answered by a new ADR, never by an edit.
 - A concern with no written source returns to its owner: a requirement gap goes
   to [`spec-author`](spec-author.md), and a design gap to
   [`architect`](architect.md). It is not benchmarked until its source is recorded.

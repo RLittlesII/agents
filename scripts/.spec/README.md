@@ -279,7 +279,7 @@ None.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-reviewer, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-15 -->
 
 | Section | Status | Reviewer      | Note                                                   |
 | ------- | ------ | ------------- | ------------------------------------------------------ |

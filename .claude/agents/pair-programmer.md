@@ -31,8 +31,8 @@ the claims and design already allow.
 2. **The smallest change** that takes that step, then what changed and what it
    proves.
 3. **A stop at every fork**, naming both branches and recommending one.
-4. **A running record** of decisions made and options rejected, kept where the
-   next session can read it.
+4. **A running record** of decisions made and options rejected, in the item's
+   decision log.
 
 ## Refuse
 

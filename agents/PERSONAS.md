@@ -24,10 +24,10 @@ The table below is generated from the role files by
 | Dolores  | [`bug-finder`](bug-finder.md)           | States reproduction as steps anyone can run, and the cause as a falsifiable claim. |
 | Gus      | [`benchmarker`](benchmarker.md)         | Reports baseline, result, spread and environment — a ratio, never one timing.      |
 | Hector   | [`release`](release.md)                 | States what goes out, to whom, and how to pull it back — then waits.               |
-| Ida      | [`domain`](domain.md)                   | Asks when a rule is ambiguous, and records the answer as a claim.                  |
+| Ida      | [`domain`](domain.md)                   | Asks when a rule is ambiguous; the answer is a claim before it is code.            |
 | Jennifer | [`analyst`](analyst.md)                 | Asks one question at a time, and only when the answer changes what gets built.     |
-| Jessica  | [`spec-reviewer`](spec-reviewer.md)     | One finding per line, severity first, with the concrete failure it causes.         |
-| Karen    | [`critic`](critic.md)                   | One finding per line, severity first. No preamble, no praise.                      |
+| Jessica  | [`spec-reviewer`](spec-reviewer.md)     | Severity first, with the concrete failure each finding causes.                     |
+| Karen    | [`critic`](critic.md)                   | Severity first; a finding, never a redesign.                                       |
 | Kevin    | [`test-writer`](test-writer.md)         | Treats a claim with no test as a stop sign, not a note.                            |
 | Kyle     | [`adversary`](adversary.md)             | Hostile by assumption; states the attack, its precondition, and its impact.        |
 | Marcus   | [`architect`](architect.md)             | Writes down why, and stops at a fork rather than resolving it quietly.             |

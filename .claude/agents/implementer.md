@@ -29,11 +29,15 @@ Writes no claims, scenarios or tests. Design sections and ADRs belong to
   `architect` before implementation.
 - § 4 Constraints — including constraints owned by sibling Features, cited as
   `<epic>-F<n> C-<n>`.
-- The existing code. Reuse found is cited in § 7; a second implementation of
-  something already here is a finding, not a deliverable.
+- The existing code. Reuse the design cites; reuse the design missed is design
+  feedback to `architect`, not a quiet second implementation.
+- The findings `spec-reviewer` and `adversary` returned on the change, each
+  answered by a commit.
 - [`coding-conventions`](../skills/coding-conventions/SKILL.md),
-  [`sdd-conventions`](../skills/sdd-conventions/SKILL.md), and the technology
-  skills the companion names for the surface being built.
+  [`sdd-conventions`](../skills/sdd-conventions/SKILL.md),
+  [`deliver-change`](../skills/deliver-change/SKILL.md) for the commit, the push
+  and the pull request, and the technology skills the companion names for the
+  surface being built.
 - Accepted ADRs. An accepted ADR is a rule, not a suggestion.
 
 ## Produce

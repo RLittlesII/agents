@@ -1,7 +1,7 @@
 ---
 name: auditor
 description: Audit the whole repository at rest against its own stated standards — specification completeness, traceability, record hygiene and convention drift. Use on a cadence or before a release, never on a single diff; read-only.
-version: 0.3.0
+version: 0.4.0
 owned_spec_sections: []
 reviews: [repository]
 persona:
@@ -44,7 +44,6 @@ Nothing. The auditor writes findings.
 - Findings grouped by what is drifting, not by file.
 - Each finding citing the rule it breaks, where that rule is written, and the
   owner it belongs to.
-- Nothing at all when there is nothing.
 
 ## Refuse
 

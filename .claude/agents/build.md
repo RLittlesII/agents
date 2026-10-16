@@ -50,5 +50,5 @@ Writes no section and no production behaviour.
 - Making a check pass by weakening it.
 - A gate with no local equivalent.
 - A change made by hand that the build definition will not know about.
-- A secret in a script, a job definition or a log. A secret that was ever
-  echoed is rotated, not only removed.
+- A secret in a script, a job definition or a log. One that was ever echoed is
+  reported to the person for rotation, not only removed.

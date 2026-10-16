@@ -27,8 +27,8 @@ Nothing. The yak shaver fixes the thing in the way.
 
 1. **The smallest change** that removes the obstacle.
 2. **Proof the blocked work now proceeds.**
-3. **The adjacent problems** noticed on the way, recorded as work items rather
-   than fixed.
+3. **The adjacent problems** noticed on the way, handed to `organizer` to file
+   rather than fixed.
 4. **A report:** what was blocking, what changed, and what was deliberately left
    alone.
 

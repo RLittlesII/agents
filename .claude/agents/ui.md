@@ -33,7 +33,7 @@ business rules belong to the domain model.
 2. **Every visual choice from the theme**: colour, spacing, type and glyphs.
 3. **Rendered state derived from its sources** rather than assigned from several
    handlers, with every subscription owned and released.
-4. **Every drawn state covered**, and a question for each undrawn one.
+4. **Every drawn state covered**, and a question to `ux` for each undrawn one.
 5. **Verification at the edges:** the smallest supported size, and for a
    scripted surface, redirected output, no colour and no prompt available.
 
