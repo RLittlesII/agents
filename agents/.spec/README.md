@@ -1,10 +1,10 @@
 ---
 title: "Specification: Role contract"
-description: "What every role file must declare and must not say, so that one host-free file is enough for every host."
+description: "Host-free role contracts organized around accountable leads, conditional specialists and artifact handoffs."
 type: feature
 id: "F2"
 epic: "0001"
-spec_status: draft
+spec_status: in-review
 status: ready
 priority: med
 value: 0
@@ -20,7 +20,7 @@ depends_on: []
 blocks: ["F3", "F4"]
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-14"
+updated: "2026-10-16"
 github_issue: null
 synced_at: null
 ---
@@ -29,23 +29,89 @@ synced_at: null
 
 ## 1. Business Goal
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
-A role file is a contract a consuming repository can adopt without editing: it
-says what the role owns, reads, produces and refuses, and it names no product
-technology, path or build tool. Without that contract a role either binds itself
-to one project and is forked per consumer, or leaves its section ownership
-implicit and two roles end up writing the same section.
+A consuming repository can identify who leads its work and which expertise the
+specification requires, using host-free contracts it can adopt without editing;
+this removes a peer-to-peer handoff graph whose overlapping roles obscure
+accountability and turn specialties into unnecessary workflow stops. — Ruth
 
 ## 2. User Needs
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
 | #   | Persona              | Need                                                           | Pain Point Today                                            |
 | --- | -------------------- | -------------------------------------------------------------- | ----------------------------------------------------------- |
 | 1   | Consuming repository | Adopt a role as-is and point it at a companion skill           | A role naming another project's paths must be rewritten     |
 | 2   | Projection           | Read a fixed set of keys from every role                       | N/A (internal dependency on [0001-F1](../../scripts/.spec/README.md)) |
 | 3   | Role author          | Know which keys a role may carry and which belong to a host    | Host knobs creep into role files and bind them to one host  |
+| 4   | Person starting work | Identify the lead and relevant specialists for the situation | A global handoff graph makes every specialty look mandatory |
+| 5   | Work lead | Integrate bounded contributions against the same claims | Peer handoffs leave nobody accountable for the complete result |
+| 6   | Persistence maintainer | Obtain database expertise across the affected lifecycle | Persistence duties are scattered across general contracts |
+
+### Collaboration glossary
+
+| Term | Meaning |
+| --- | --- |
+| State | The responsibility currently exercised; not an executable state machine or a required separate agent invocation. |
+| Lead | The role accountable for the current state's complete artifact and integration of assigned contributions. |
+| Specialist | A role assigned bounded work because affected claims, surfaces or evidence require its expertise. |
+| Mode | A bounded way a retained role works, without creating a separate role or changing its permissions. |
+| Artifact handoff | Passing the recorded agreement, design, failing test, change or finding that the receiving responsibility needs. |
+
+### State leads
+
+| State | Lead | Artifact or responsibility |
+| --- | --- | --- |
+| Specify | `spec-author` | Discovery followed by the decided agreement and scenarios |
+| Design | `architect` | Technical design and readiness |
+| Implement | `implementer` | Integration of production changes against the design and failing tests |
+| Verify | `spec-reviewer` | Independent design or diff findings and verdicts, with relevant verification evidence |
+| Release | `release` | Rollout, recovery and verification using the existing confirmation rules |
+| Investigate | `bug-finder` | Reproduction, classification, evidence and proven cause |
+
+### Specialist selection
+
+| Specialist | Trigger | Bounded contribution |
+| --- | --- | --- |
+| `domain` | Business invariants, rules or domain concepts need modeling or change | Domain model and enforceable rules |
+| `ux` | Interaction, accessibility, states or copy need deciding | Decided interaction before presentation implementation |
+| `ui` | The decided interaction requires presentation changes | Presentation code under the implementation lead |
+| `database` | Persistence design, implementation, failure investigation or rollout is affected | Stored data shape, keys, indexes, nullability, transactions, queries, migration/backfill, compatibility and recovery evidence |
+| `test-writer` | Agreed behavior lacks a failing test or traceability needs amendment | Tests and coverage records within existing section ownership |
+| `tester` | Changed behavior needs execution or exploration | Run evidence and reproductions |
+| `adversary` | A boundary, credential, permission or external input is affected | Independent hostile surface findings |
+| `benchmarker` | A recorded performance, cost or structural concern needs measurement | Benchmarks and measurements of that concern |
+| `metric-nerd` | An operational decision needs instrumentation, baselines or telemetry comparison | Signal requirements and operational evidence |
+| `build` | A gate, build configuration, tool or pipeline needs work | Reproducible build and gate changes |
+| `organizer` | Approved claims need work items or the queue needs maintenance | Decomposition and ranked work; no mandatory delivery stop |
+| `document-writer` | Substantial prose is missing or stale | Documentation checked against the relevant artifact |
+| `auditor` | A repository audit is requested, scheduled or required before release | Repository findings; no mandatory stop on every change |
+
+### Retired roles and retained responsibilities
+
+| Retired role | Destination | Retained responsibility |
+| --- | --- | --- |
+| `analyst` | `spec-author`, discovery mode | Identify requester, failure state, settled answers and material unknowns before writing a confirmed need as claims |
+| `bug-fixer` | `implementer`, correction mode | Accepted diagnosis and a regression test failing for the proven cause precede the bounded fix; preserve regression, systemic-site and lesson duties |
+| `yak-shaver` | Current lead with the relevant specialist | Remove the named obstruction, prove original work can resume and record adjacent work separately |
+| `pair-programmer` | Collaboration mode available to every retained role | Visible steps, explanation, a stop at decision forks and a recorded decision; retain the active role's write boundaries |
+| `log-parser` | `bug-finder`, log-analysis capability | Isolate the evidence window and correlation, reconstruct sequence, mark inference, protect secrets and report gaps; large evidence may be delegated as a bounded task |
+| `critic` | Independent `spec-reviewer`, design-review mode | Review the design against claims, constraints and decisions before implementation; report findings without rewriting |
+
+### Scenario routing
+
+| Situation | Route | Conditional involvement |
+| --- | --- | --- |
+| Bug report | Investigate the existing claim → accepted diagnosis and failing regression test → Implement correction → Verify → Release when shipping is required | `spec-author` for missing/disputed expected behavior; `architect` for a design gap; specialists for the affected concern |
+| New feature | Specify → Design → failing tests → Implement → Verify → Release | Only specialists whose trigger applies; `organizer` cuts work after agreement |
+| Technical obstacle | Current lead retains parent work → bounded investigation or obstruction removal → resume original work | `architect` for an unknown approach; `bug-finder` for unexpected behavior; `build` for tooling or a gate |
+| Pitched idea | Specify in discovery mode → agreement only when accepted | Bounded `architect` feasibility work if required to decide the idea; no speculative production implementation |
+| Production issue | `bug-finder` diagnoses while `release` coordinates any recovery under an existing procedure → correction route only if software must change | Log analysis when logs exist; `metric-nerd` for operational evidence; other specialists for the affected concern |
+| Changed shipped requirement | Amend the existing agreement → assess design, dependencies and compatibility → revised failing tests → Implement → Verify → Release | `database` for existing data or migration; `ux`/`domain` for changed interaction/rules; `metric-nerd` for rollout evaluation |
+
+The tables define responsibility and artifact dependencies; the method skills
+retain their gates and commands only convene the applicable roles. — Ruth
 
 ### Assumptions
 
@@ -56,7 +122,7 @@ implicit and two roles end up writing the same section.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
 | ID    | Claim                                                                                                                                                                     | Source                                                                         | Status |
 | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------ |
@@ -69,20 +135,50 @@ implicit and two roles end up writing the same section.
 | B-007 | Given a role declaring `persona`, it carries a one-line `name` and a one-line `voice`, and no other role declares the same persona name; the role name stays the file stem, the host agent name and every machine-read stamp. | Brief: personas | Active |
 | B-008 | Given a role declaring `reviews`, each entry is a review unit and the body carries `## Look for` and `## Report`; projection fails naming the role otherwise. | `sdd-conventions` § Review passes | Active |
 | B-009 | Given a review unit in the roles index, it declares what it reviews, when its pass runs and what the pass never does, and the registry shows all three; projection fails naming the unit and the missing key otherwise. | LTI review-pass registry | Active |
+| B-010 | Given work exercising a state, this Feature assigns it the accountable lead in § 2 State leads. | User brief: lead-and-specialist grouping | Active |
+| B-011 | Given a specialist assignment, this Feature requires a bounded contribution justified by an affected claim, surface or evidence under § 2 Specialist selection. | User brief: specialists do certain parts | Active |
+| B-012 | Given a specialist contribution, this Feature keeps the current lead accountable for integrating it into the state's complete artifact. | User brief: implementer collaboration | Active |
+| B-013 | Given an assignment by a lead, this Feature preserves the assigned role's existing artifact and specification-section write boundaries. | B-002; user brief: spec drives the software | Active |
+| B-014 | Given work whose earlier required artifacts and approvals remain valid for its affected claims, this Feature starts at the earliest unmet responsibility. | User brief: small changes need no repeated discovery | Active |
+| B-015 | Given an undecided need, this Feature assigns discovery to `spec-author` in the mode replacing `analyst` in § 2. | User brief: fold redundant roles; § 2 retirement mapping | Active |
+| B-016 | Given a software correction, this Feature assigns it to `implementer` in the mode replacing `bug-fixer` in § 2. | User brief: fold redundant roles; § 2 retirement mapping | Active |
+| B-017 | Given an incidental obstruction, this Feature assigns bounded removal to the current lead with relevant expertise in place of `yak-shaver`. | User brief: fold redundant roles; § 2 retirement mapping | Active |
+| B-018 | Given a request for work alongside the person, this Feature offers the § 2 collaboration mode within the active role in place of `pair-programmer`. | User brief: fold redundant roles; § 2 retirement mapping | Active |
+| B-019 | Given logs relevant to an investigation, this Feature assigns the § 2 log-analysis capability to `bug-finder` in place of `log-parser`. | User brief: fold redundant roles; § 2 retirement mapping | Active |
+| B-020 | Given a design ready for review, this Feature assigns the design-review mode replacing `critic` to a `spec-reviewer` instance that did not author that design. | User brief: fold redundant roles; § 2 retirement mapping | Active |
+| B-021 | Given a persistence concern, this Feature assigns `database` the bounded expertise in § 2 Specialist selection at the affected state. | User brief: add a database specialist | Active |
+| B-022 | Given database work, this Feature constrains its storage decisions to the agreed domain invariants and architect-owned design. | User brief: database specialist; B-002 | Active |
+| B-023 | Given a database migration or backfill, this Feature requires the database contribution to include compatibility and rollback or recovery verification. | User brief: database specialist; retained implementer/release migration duties | Active |
+| B-024 | Given a measurement request, this Feature selects `benchmarker` or `metric-nerd` by their distinct § 2 triggers. | User brief: retain performance and observability distinction | Active |
+| B-025 | Given required production instrumentation, this Feature assigns its code to the implementation lead or relevant implementation specialist. | User brief: specialists within implementation; existing benchmarker code boundary | Active |
+| B-026 | Given a bug report, this Feature follows the § 2 bug route against existing claimed behavior. | User brief: bug comes in | Active |
+| B-027 | Given an accepted new feature, this Feature follows the § 2 feature route with the stated artifact dependencies. | User brief: new feature starts | Active |
+| B-028 | Given a technical obstacle, this Feature follows the § 2 obstacle route according to the kind of uncertainty. | User brief: technical problem | Active |
+| B-029 | Given a pitched idea, this Feature follows the § 2 idea route without production implementation before acceptance. | User brief: new idea pitched | Active |
+| B-030 | Given a production issue, this Feature follows the § 2 production route according to whether recovery or a software correction is required. | User brief: issue in production | Active |
+| B-031 | Given unavailable incident telemetry, this Feature records the missing evidence as a gap without treating it as a proven cause. | User brief: production diagnosis depends on available observability | Active |
+| B-032 | Given changed shipped requirements, this Feature follows the § 2 amendment route while retaining permanent claim anchors. | User brief: requirements change in production; spec-and-traceability | Active |
+| B-033 | Given the resulting role roster, this Feature exposes exactly the six leads and thirteen specialists listed in § 2 as standalone roles. | User brief: consolidate six and add database | Active |
+| B-034 | Given the consolidated roster, this Feature makes active role, command, host and projected references resolve to retained roles and their applicable modes. | User brief: functional roles; 0001-F1 B-008/B-009; 0001-F3 B-003 | Active |
+| B-035 | Given historical records affected by role retirement, this Feature preserves their recorded identities and evidence. | spec-and-traceability § Claims and traceability / Records beside a specification | Active |
+| B-036 | Given the roles index handoff guidance, this Feature presents bounded state, specialist and scenario guidance in place of the global all-role graph. | User brief: handoffs too complicated | Active |
 
 ## 4. Constraints
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
 | ID  | Constraint                                                                        | Rules Out                                                             |
 | --- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | C-1 | A role names skills by relative link to `skills/<name>/SKILL.md` and nothing else. | A link into a host directory, an absolute path, a URL to another repo |
 | C-2 | A role's `name` equals its file stem.                                              | A display name that differs from the file, an alias                   |
 | C-3 | Ownership is declared on the role, never in a skill.                              | A hand-kept ownership table; a skill naming a role                    |
+| C-4 | Grouping preserves existing approval, test-first, traceability and independent-review requirements. | Skipping a required gate because one lead coordinates several specialties |
+| C-5 | State, specialist and mode guidance introduces no required agent invocation per responsibility. | Treating every specialist as a mandatory workflow stop or separate process |
+| C-6 | Commands convene roles within 0001-F3 C-1 and C-2. | Embedding transitions, gates or next-state tables in command bodies |
 
 ## 5. Out of Scope
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
 | #   | Item                                              | Exclusion Reason                                                        |
 | --- | ------------------------------------------------- | ----------------------------------------------------------------------- |
@@ -90,7 +186,9 @@ implicit and two roles end up writing the same section.
 | 2   | A role per technology or platform                 | A technology belongs in the consuming repository's companion skill (B-004) |
 | 3   | Persona traits beyond a name and a voice          | A name and one line of voice are what a reader acts on; a trait list is restated prose |
 | 4   | A role-level declaration of how scenarios execute, or an opt-out into documentation-only scenarios | How the runner executes scenarios is the companion's § "Testing"; a scenario alone is not coverage either way |
-| 5   | A database role                                   | Migration duties sit with `implementer`, storage shape with `domain`; the engine is the companion's (B-004) |
+| 5   | Database engines, persistence frameworks and engine-specific tooling | Replaces the database-role exclusion on 2026-10-16: host-free database expertise is included by B-021; engine knowledge remains the companion's (B-004) |
+| 6   | An executable workflow engine or new role frontmatter schema | Responsibility grouping uses existing contracts and review declarations; no runtime state machine is requested |
+| 7   | Unrelated role renames or changes to section ownership | The accepted scope retires the six § 2 roles and adds `database`; existing artifact boundaries remain |
 
 ## 6. Concern Separation
 
@@ -200,9 +298,11 @@ Not applicable.
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
-None.
+| Date | Trigger | Delta |
+| --- | --- | --- |
+| 2026-10-16 | User requested simpler roles and handoffs | Add B-010–B-036 and § 2 grouping/routing; retire six standalone roles by folding their duties into retained roles or modes; include `database`, reversing § 5 row 5's earlier exclusion; record the choice and rejected alternatives in [decision 0001](decisions/0001-lead-and-specialist-collaboration.md). — Ruth |
 
 ## 11. Open Questions
 
@@ -214,11 +314,12 @@ None.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-15 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
 | Section | Status | Reviewer      | Note                                                            |
 | ------- | ------ | ------------- | --------------------------------------------------------------- |
-| 1-12    | 🟡     | spec-reviewer | Draft. B-004 reviewed by grep at the scaffolding change and again for the second-wave roster (2026-10-14): no product technology in any role body. |
+| 1-12    | 🟡     | spec-reviewer | Baseline draft. Preserve B-004 review evidence: grep at scaffolding and second-wave roster (2026-10-14) found no product technology in role bodies. |
+| 1-5, 7-10, 12, scenarios, decision 0001 | 🟢 | spec-reviewer | Agreement-only amendment reviewed 2026-10-16; § 7 scopes baseline readiness, §§ 8–9 record pending coverage; implementation remains pending. |
 
 ## Tasks
 
