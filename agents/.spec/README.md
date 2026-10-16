@@ -748,7 +748,7 @@ the cited tests, with B-004 assessed manually as described below.
   a non-semver version, a multi-line description or a host key, so the test
   asserts the roster loads and that both host overlays map every role.
 - B-002: `ownershipRows` over the real roles, index and template; one row per
-  template section plus the subsection row.
+  template section plus the Performance and Observability subsection rows.
 - B-003: the `## ` headings of each loaded body.
 - B-005: every loaded body carrying `## Look for` also carries `## Report`.
 - B-006: `validateSkillLinks` over the real roles passes, and a synthetic role
@@ -774,14 +774,15 @@ the old twenty-role roster, absent database specialist and retired analyst
 command binding. After implementation, independent verification reported
 44 tests passing. All 37 baseline tests remain registered. — Kevin
 
-The seven additional tests in
-[`project.tests.fsx`](../../scripts/project.tests.fsx) exercise existing seams:
+The seven tests added for the initial amendment remain registered in
+[`project.tests.fsx`](../../scripts/project.tests.fsx), with current roster/profile
+expectations updated by B-037–B-039. They exercise existing seams:
 
 | Claim tag | Executed test | Verified guarantee |
 | --- | --- | --- |
 | [@B-033](roles.feature) | `F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts` | Exact nineteen-role membership and explicit mappings on both hosts. |
-| [@B-033](roles.feature) | `F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles` | Database and restored metric-nerd own no sections, use agreed host profiles and project their source bodies unchanged. |
-| [@B-034](roles.feature) | `F2_B034_FourReviewUnitsAndExistingSectionOwnersStayUnchanged` | Existing section owners and four ordered review units remain unchanged; spec-reviewer holds design and diff. |
+| [@B-033](roles.feature) | `F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles` | Database owns no sections; observability owns only `7/Observability`. Both use agreed host profiles and project their source bodies unchanged. |
+| [@B-034](roles.feature) | `F2_B034_FourReviewUnitsAndExistingSectionOwnersStayUnchanged` | Every existing section owner and all four ordered review units remain unchanged, with only `7/Observability` added; spec-reviewer holds design and diff. |
 | [@B-034](roles.feature) | `F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck` | Synthetic twenty-to-nineteen migration reports all six stale and four missing host files; check writes nothing, apply removes retirees and writes additions, then public check exits zero. |
 | [@B-034](roles.feature) | `F2_B034_RetiredBindingsFailBeforeWriting` | Commands and host mappings to all six absent retired identities fail planning before outputs; the public CLI rejects a retired command with exit two. |
 | [@B-034](roles.feature) | `F2_B034_ActiveConveningBindingsResolveToRetainedRoles` | Delivered command bindings, host bindings and contract links resolve without retired identities. |
@@ -803,7 +804,9 @@ agent obeys the instructions.
 ### Independent instruction-conformance walkthrough
 
 Priya, independent instance `/root/verify_role_migration`, reported the following
-manual walkthroughs on 2026-10-16. Each used invented prerequisite states from
+manual walkthroughs on 2026-10-16, before the metric-nerd rename. The names and
+observations below preserve that prior-scope evidence; the new amendment is
+verified separately below. Each used invented prerequisite states from
 all positive and negative scenarios bearing the cited tag in
 [`roles.feature`](roles.feature), then inspected the delivered instructions for
 the selected lead, contribution, gate/refusal and evidence boundary. All listed
@@ -864,43 +867,62 @@ the affected claim. Any deliberate unverified shipping requires the existing
 
 Not applicable.
 
-### Optional observability amendment testability
+### Optional observability amendment evidence
 
-Testability verdict for B-037–B-039: **Existing seams are sufficient; design readiness and independent critique
-are approved.** Six additional ownership/rename tests are registered before source
-implementation; the suite now discovers 50 tests. Final preimplementation execution reported **50 tests, 10 failed**, exit ten:
-five updated current-roster/owner/binding checks and five new checks reject the
-absent delivered observability contract. The former-binding rejection test and
-all unchanged baseline checks pass. No source implementation has started. The earlier 44-test evidence describes
-the metric-nerd roster before its rename; it does not cover the new claims. — Kevin
+Testability verdict for B-037–B-039: **Mechanical conformance verified;
+signal-declaration instructions manually assessed; live-agent behavior unverified.**
+Six added tests increased discovery from 44 to 50. Before source implementation,
+the suite reported **50 tests, 10 failed**, exit ten: five updated roster/owner/
+binding checks and five new checks rejected the absent delivered observability
+contract. After implementation and regeneration, Priya independently ran the
+suite: **50 tests, 0 failed**, exit zero. Projection check reported
+`up to date: 78 outputs`, exit zero; strict specifications reported zero errors
+and warnings. This extends rather than replaces the earlier dated evidence. — Kevin
 
-| Scenario tag | Planned evidence and limit |
+| Scenario tag | Executed tests and mechanical guarantees |
 | --- | --- |
-| [@B-037](roles.feature) | Real role ownership declaration plus synthetic `ownershipRows`/`validateStamps` cases: correct observability stamp accepted, absent subsection accepted without creation, architect stamp rejected before writes, sibling subsection retains architect and Performance retains benchmarker. |
-| [@B-038](roles.feature) | Independent manual instruction-conformance walkthroughs for ordered portable declarations, log-only severity, constant names, field names without runtime values, claim references, justified `None.`, invalid declarations, every emitted boundary signal declared and asserted in an affected test, declaration handoff to test-writer, and no observability test/production writes. No keyword assertion establishes agent compliance. |
-| [@B-039](roles.feature) | Exact nineteen-role source and host mappings, unchanged effective profiles and source-body projection; synthetic metric-nerd-to-observability migration checks stale/missing outputs, renamed command/host references, clean public CLI check, rejected former bindings without writes, and unchanged historical bytes/claim anchors. |
+| [@B-037](roles.feature) | `F2_B037_OptionalObservabilityAcceptsItsDeclaredOwnerStamp`: delivered ownership declaration accepts its correctly stamped optional subsection. |
+| [@B-037](roles.feature) | `F2_B037_AbsentObservabilityNeedsNoSubsectionOrTemplateEdit`: omission is valid, with specification and template bytes unchanged. |
+| [@B-037](roles.feature) | `F2_B037_ArchitectCannotStampObservabilityBeforeWrites`: architect's subsection stamp is rejected naming the actual owner before output writes. |
+| [@B-037](roles.feature) | `F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners`: sibling design retains architect and Performance retains benchmarker; observability stamps on either are rejected. |
+| [@B-039](roles.feature) | `F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory`: synthetic nineteen-to-nineteen rename reports two stale/two missing host files, checks without writes, migrates command/host bindings, applies and rechecks cleanly, preserving historical identity/claim bytes. |
+| [@B-039](roles.feature) | `F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs`: former command and host bindings fail planning, preserving existing output/history bytes. |
 
-Preserve existing owners while adding only `7/Observability`; parent § 7 and
-`8/Performance` remain unchanged. Update the existing roster/profile assertions
-and rename the ownership test and its current citations to clarify that existing
-owners remain unchanged. Preserve the original twenty-to-nineteen migration as
-historical fixture coverage; add the nineteen-to-nineteen rename separately.
-Six additional tests increase discovery from 44 to 50. The original
-twenty-to-nineteen fixture explicitly retains its historical metric-nerd roster.
+The B-033 current-roster/profile tests and
+`F2_B034_FourReviewUnitsAndExistingSectionOwnersStayUnchanged` also pass with
+observability replacing metric-nerd and only `7/Observability` added. The
+original twenty-to-nineteen fixture retains its historical metric-nerd roster
+and still passes. Ownership/stamp fixtures derive the optional declaration
+from the delivered role rather than introducing a substitute owner contract.
+No local or consumer template changed. Existing explicit filesystem roots and
+synthetic checkouts cover the library and CLI integration seams without new
+network, provider, clock, ambient-state, constructor or public-member seams.
+Runtime database/UI tiers and compiling interface stubs remain inapplicable.
 
-Projection already accepts declared optional subsections and resolves an
-undeclared sibling to its parent. Unit tests can exercise those decisions;
-integration tests use the existing synthetic checkouts and real
-`plan`/`differences`/`apply`/CLI seams. No local or consumer template edit is
-required. Existing filesystem roots isolate all writes; this instruction-only
-amendment adds no network, provider, clock, constructor side effect, ambient
-state or compiling-interface stub. Database/UI runtime tiers do not apply.
+Priya, independent instance `/root/verify_role_migration`, verified the following
+four [@B-038](roles.feature) cases on 2026-10-16 against the delivered role and
+§ 2/DR-6. Inputs were invented. All manual instruction-conformance assertions
+passed; none executes an agent, emits an application signal or tests real
+instrumentation. — Kevin
 
-Changed-line coverage remains unmeasured: README § Maintaining still supplies
-no threshold. B-038 remains Missing until independent evidence exists, and any
-manual walkthrough earns only Partial instruction conformance. Live-agent
-behavior remains unverified; ADR-0006 and the existing no-waiver limitation
-continue to apply. — Kevin
+| Scenario | Supplied prerequisite and observed instruction decision |
+| --- | --- |
+| Portable signal declarations identify the boundary and claim | Invented `work-item dispatch` boundary serving B-901 supplied log/span/metric rows with constant names and field names. Exact `Boundary \| Signal \| Level \| Template \| Fields \| Claim` order, claim references and log-only severity conform; reordered columns and span/metric severity do not. Illustrative `Info` is no prescribed severity taxonomy. |
+| A reason supports the absence of relevant signals | `None. No operational decision depends on a signal at this boundary.` conforms for a boundary needing no signal; unexplained `None.` is incomplete. An absent subsection remains valid. |
+| Runtime values do not replace portable signal requirements | Dynamic `dispatch-item-42`, fields `workItemId=42, outcome=accepted` and span severity require correction to constant `work-item.dispatch`, field names `workItemId, outcome` and empty span Level, preserving B-901 and column order. No captured traffic was used. |
+| Signal declarations preserve implementation and design boundaries | Invented emitted signals without assertions require every emitted boundary signal declared and asserted in affected tests, with declarations handed to test-writer. Observability writes neither tests nor production code; instrumentation goes to implementation, parent design to architect, performance to benchmarker and verdicts to independent review. |
+
+Priya also parsed actual new host files: Codex inherits `gpt-6.1-sol`/`medium`;
+Claude inherits `sonnet`/`medium`, preloads only `sdd-conventions` and has no
+tools override. Both retain the source-body suffix. Former source and host
+files are absent, and the inspected active binding surfaces contain no old
+identity. These observations establish mechanical and instruction conformance,
+not actual author/refusal enforcement.
+
+Changed-line coverage remains unmeasured because README § Maintaining supplies
+no threshold. B-038 earns only Partial manual instruction conformance.
+Live-agent behavior remains unverified; ADR-0006 and the existing no-waiver
+limitation continue to apply. — Kevin
 
 ## 9. Traceability Matrix
 
@@ -944,9 +966,9 @@ continue to apply. — Kevin
 | B-034 | [@B-034](roles.feature) Active references follow the consolidated roles | `F2_B034_FourReviewUnitsAndExistingSectionOwnersStayUnchanged`; `F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck`; `F2_B034_RetiredBindingsFailBeforeWriting`; `F2_B034_ActiveConveningBindingsResolveToRetainedRoles`; mechanical guarantees only (§ 8) | Covered |
 | B-035 | [@B-035](roles.feature) Historical evidence survives retirement | `F2_B035_HistoricalEvidenceAndExistingOutputsSurviveRejectedPlans`; mechanical guarantees only (§ 8) | Covered |
 | B-036 | [@B-036](roles.feature) Handoff guidance answers who is involved and when | Manual: Priya, @B-036 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
-| B-037 | [@B-037](roles.feature) Optional observability ownership and stamps | `F2_B037_OptionalObservabilityAcceptsItsDeclaredOwnerStamp`; `F2_B037_AbsentObservabilityNeedsNoSubsectionOrTemplateEdit`; `F2_B037_ArchitectCannotStampObservabilityBeforeWrites`; `F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners` (RED) | Missing |
-| B-038 | [@B-038](roles.feature) Portable signal declarations and write boundaries | Missing | Missing |
-| B-039 | [@B-039](roles.feature) Nineteen-to-nineteen observability rename preserves history | `F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory` (RED); `F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs` (passes); current roster/profile/binding checks (RED) | Missing |
+| B-037 | [@B-037](roles.feature) Optional observability ownership and stamps | `F2_B037_OptionalObservabilityAcceptsItsDeclaredOwnerStamp`; `F2_B037_AbsentObservabilityNeedsNoSubsectionOrTemplateEdit`; `F2_B037_ArchitectCannotStampObservabilityBeforeWrites`; `F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners`; mechanical guarantees only (§ 8) | Covered |
+| B-038 | [@B-038](roles.feature) Portable signal declarations and write boundaries | Manual: Priya, four @B-038 instruction-conformance cases (§ 8), 2026-10-16; live-agent behavior unverified | Partial |
+| B-039 | [@B-039](roles.feature) Nineteen-to-nineteen observability rename preserves history | `F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory`; `F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs`; `F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts`; `F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles`; `F2_B034_ActiveConveningBindingsResolveToRetainedRoles`; mechanical guarantees only (§ 8) | Covered |
 
 ## 10. Lessons / Spec Deltas
 
