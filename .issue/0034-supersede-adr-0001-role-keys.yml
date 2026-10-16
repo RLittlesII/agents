@@ -1,0 +1,45 @@
+id: "0034"
+type: chore
+title: Supersede ADR-0001 with a record of the keys a role file declares
+
+status: in-progress
+
+value: 2
+cost: 1
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-15"
+updated: "2026-10-15"
+closed: null
+
+summary: |
+  ADR-0001 § Decision says a role file declares name, description, version
+  and owned_spec_sections "only". ebecade (2026-10-14) added persona and
+  ab40120 (2026-10-14) added reviews; every role in agents/ carries a
+  persona and four carry reviews. agents/.spec/README.md § 7 and loadRole
+  in scripts/Projection.fsx already read six keys. The contract review
+  (0033) found the stale sentence and filed it as out of scope, because an
+  accepted ADR is immutable: only its status changes, and a new ADR
+  supersedes it (spec-and-traceability § Records beside a specification).
+
+acceptance_criteria:
+  - "A new ADR under .spec/adr/ is accepted, carries the host-free rule of ADR-0001 forward, and records the keys a role file declares today as agents/.spec/README.md § 7 and agents/*.md show them."
+  - "ADR-0001 § Status reads superseded by the new ADR; nothing else in ADR-0001 changes."
+  - "dotnet specht --strict and dotnet fsi scripts/project.fsx --check pass, and no file outside .spec/adr/ and .issue/ changes."
+
+decisions:
+  - "2026-10-15: supersede rather than amend. Rejected: editing ADR-0001 § Decision in place, which the ADR blank forbids for an accepted record; leaving ADR-0001 as it stands with 0001-F2 § 7 as the current list, which leaves an accepted record contradicting the roster."
+
+out_of_scope:
+  - "Re-pointing the Source cells that cite ADR-0001 (agents/.spec/README.md B-001; scripts/.spec/README.md B-001, B-002, B-009, B-010 and § 7) to the new ADR. The rule they cite is unchanged and carried forward; § 3 and § 7 belong to their owners, and this item changes no specification."
+  - "A 0001-F2 claim for any key beyond the six recorded; a new key is a specification delta, not a decision record."
