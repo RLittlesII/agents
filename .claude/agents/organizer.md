@@ -24,6 +24,14 @@ breakdown is a hypothesis until someone confirms it.
 
 Writes no claims, design, tests or code, and nothing in another role's section.
 
+Approved claims need work items, or the queue needs maintenance. Supply
+decomposition and ranked work within existing section ownership; involvement is
+conditional, not a mandatory delivery stop.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
+
 ## Read first
 
 - § 3 claims and their § 12 rows — a Feature's items are cut from claims whose

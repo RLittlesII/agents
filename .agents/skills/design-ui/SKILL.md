@@ -5,16 +5,16 @@ description: "Decide how a screen or flow behaves — need, interaction, every s
 
 Convene these roles as the body directs:
 
-- `analyst`, whose contract is `.codex/agents/analyst.toml`
+- `spec-author`, whose contract is `.codex/agents/spec-author.toml`
 - `ux`, whose contract is `.codex/agents/ux.toml`
 
 Read each role's contract before acting as it, and keep the boundaries it declares: a role that refuses a kind of work still refuses it here.
 
 Use these skills: `clarify-requirements` (`.agents/skills/clarify-requirements/SKILL.md`), `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`).
 
-The analyst confirms whose need the screen or flow serves and what failure it
-removes. The UX designer decides the flow, every state including each failure
-and empty state, accessibility and the copy, and records the decided
-interaction where the build will read it.
+The specification author confirms whose need the screen or flow serves and
+what failure it removes. The interaction designer decides the flow, every
+state including failure and empty states, accessibility and copy, and records
+the decided interaction where the build will read it.
 
 Work on: the request that invoked this skill

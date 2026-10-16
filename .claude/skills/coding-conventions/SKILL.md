@@ -139,6 +139,14 @@ a rule as a single prohibition; a second explanation of it may not. Where the
 ownership boundaries sit is written once, in the project's own instructions —
 its companion skill names the file.
 
+## Collaboration mode
+
+When the person requests paired work, agree on one next step, show its result,
+and stop at each decision fork with the options and a recommendation. Record
+the person's choice in the companion's working record. Continue within the
+active responsibility's artifact and write boundaries; this mode grants no
+additional authority.
+
 ## Regression check
 
 A green build does not prove nothing broke. Before calling a change done, read

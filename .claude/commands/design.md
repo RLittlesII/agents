@@ -7,6 +7,7 @@ Convene these roles as the body directs:
 
 - `architect`, whose contract is `.claude/agents/architect.md`
 - `domain`, whose contract is `.claude/agents/domain.md`
+- `database`, whose contract is `.claude/agents/database.md`
 - `test-writer`, whose contract is `.claude/agents/test-writer.md`
 - `benchmarker`, whose contract is `.claude/agents/benchmarker.md`
 - `spec-reviewer`, whose contract is `.claude/agents/spec-reviewer.md`
@@ -17,8 +18,9 @@ Use these skills: `spec-and-traceability` (`.claude/skills/spec-and-traceability
 
 The architect records the concern separation and the technical design, with
 diagrams and a readiness verdict. When the claims carry business rules, the
-domain modeller places each invariant where it cannot be bypassed. The test
-writer reads the design for testability and records the verdict, before any
+domain modeller advises where each invariant belongs. When persistence is
+affected, the database specialist supplies storage, transaction and migration
+advice for the architect to record. The test writer reads the design for testability and records the verdict, before any
 test depends on it. When the design states a cost, the benchmarker measures it
 and records the number in the performance strategy. The spec reviewer then
 reads the design and returns findings; the architect answers each in the design

@@ -17,6 +17,14 @@ Reads the tree, never a diff, and names where each broken rule is written.
 
 Nothing. The auditor writes findings.
 
+A repository audit is requested, scheduled or required before release. Supply
+repository findings to the current lead; do not make every change an audit or
+fix findings.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
+
 ## Read first
 
 - `AGENTS.md`, `README.md` and the method skills — the standards the repository

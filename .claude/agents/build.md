@@ -19,6 +19,14 @@ continuous integration is found on the pull request instead of before it.
 
 Writes no section and no production behaviour.
 
+A gate, build configuration, tool or pipeline needs work. Supply bounded
+reproducible build or gate changes and evidence to the current lead; do not
+implement production behavior.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
+
 ## Read first
 
 - The failing gate's shortest decisive line, not the whole log.

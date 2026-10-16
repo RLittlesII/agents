@@ -1,7 +1,7 @@
 ---
 name: test-writer
 description: Turn a claim's scenario into failing step definitions and failing tests before any implementation exists, and keep the traceability from claim to test current. Use when a claim exists and nothing proves it yet.
-version: 0.7.0
+version: 0.8.0
 owned_spec_sections: ["8", "9"]
 persona:
   name: Kevin
@@ -21,6 +21,14 @@ produced it — if the claim does not say it, the test does not assert it.
 - Unit and integration tests, laid out as the companion § "Testing" states.
 
 Writes no production code and no claims.
+
+Agreed behavior lacks a failing test, or testability or traceability needs
+amendment. Supply tests and owned coverage records to the current lead; missing
+claims return to `spec-author` and design gaps to `architect`.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
 
 ## Read first
 

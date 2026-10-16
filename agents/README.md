@@ -1,6 +1,6 @@
 ---
 title: Role contracts
-description: The documented role contracts that own the specification chain, and the rule that each role trusts only the artifact of the role before it
+description: Accountable leads, conditional specialists and bounded artifact handoffs for specification-driven development
 type: reference
 unowned_spec_sections:
   "11": whoever is blocked
@@ -25,176 +25,96 @@ review_units:
 
 # Role contracts
 
-A specification-driven repository treats the specification as the artifact of
-record; code is downstream of it. Twenty roles work that chain, and each
-is a **documented contract** — for whoever takes the role, a person or an agent.
+Nineteen host-free contracts provide six lead responsibilities and thirteen
+specialties. The lead owns the complete result for its current responsibility
+and integrates bounded contributions. The specification determines the work
+and the expertise it needs.
 
-| Role                                    | Turns                                   | Into                                                      |
-| --------------------------------------- | --------------------------------------- | --------------------------------------------------------- |
-| [`analyst`](analyst.md)                 | a raw ask                               | discovery notes and a decided need                        |
-| [`spec-author`](spec-author.md)         | a decided need                          | the agreement, and the `.feature` file                    |
-| [`organizer`](organizer.md)             | agreed claims                           | ranked work items and the Tasks index                     |
-| [`architect`](architect.md)             | the authored agreement and scenarios    | a technical design, diagrams and readiness findings       |
-| [`domain`](domain.md)                   | business rules in claims                | a domain model whose invariants cannot be bypassed        |
-| [`ux`](ux.md)                           | user needs and claims                   | a decided interaction: flows, states and copy             |
-| [`test-writer`](test-writer.md)         | a claim                                 | a failing scenario and failing tests                      |
-| [`implementer`](implementer.md)         | a failing test, or a diagnosed bug      | production code, design feedback and bug lessons          |
-| [`ui`](ui.md)                           | a decided interaction and failing tests | presentation code                                         |
-| [`pair-programmer`](pair-programmer.md) | a task the person wants to steer        | small visible steps and the item's decision log           |
-| [`tester`](tester.md)                   | a change to verify                      | a run report and reproductions                            |
-| [`spec-reviewer`](spec-reviewer.md)     | a design, or a diff                     | a verdict per section, and findings                       |
-| [`adversary`](adversary.md)             | the surface a change exposes            | security findings                                         |
-| [`benchmarker`](benchmarker.md)         | a cost concern, or a decision           | a benchmark, or a baseline and a comparison               |
-| [`bug-finder`](bug-finder.md)           | a failure report and its logs           | a reproduction and a root-cause record                    |
-| [`yak-shaver`](yak-shaver.md)           | an incidental obstacle                  | the obstacle removed, and what was left alone             |
-| [`build`](build.md)                     | a broken or missing gate                | a reproducible build and gates that fail when they should |
-| [`release`](release.md)                 | an artifact that passed the gates       | a confirmed release with a rollback                       |
-| [`document-writer`](document-writer.md) | stale or missing prose                  | documents checked against what exists                     |
-| [`auditor`](auditor.md)                 | the repository at rest                  | drift findings, grouped by rule                           |
+## Leads
 
-## Sequential trust
+| Responsibility | Lead | Complete result |
+| --- | --- | --- |
+| Specify | [spec-author](spec-author.md) | Confirmed need, agreement and scenarios |
+| Design | [architect](architect.md) | Technical design and readiness |
+| Implement | [implementer](implementer.md) | Integrated change against the design and failing tests |
+| Verify | [spec-reviewer](spec-reviewer.md) | Independent design or diff findings and verdict |
+| Release | [release](release.md) | Rollout or recovery and verification |
+| Investigate | [bug-finder](bug-finder.md) | Reproduction, evidence and proven cause |
 
-**Each role trusts only the artifact the preceding role produced — never a chat
-summary of it.** The architect reads the groomed agreement and its scenarios
-before tests and implementation begin. The test writer works from the claim and
-the recorded design. The implementer works from that design, the failing test
-and the claim it cites, not from a description of what the test is getting at. A
-conversational handoff leaves no artifact and does not survive to the next
-session or the next agent.
+## Specialists
 
-The authoritative sequence is
-[`sdd-conventions` § Workflow](../skills/sdd-conventions/SKILL.md#workflow).
+| Specialist | Joins when | Bounded contribution |
+| --- | --- | --- |
+| [domain](domain.md) | Business rules, invariants or concepts need modeling or change | Domain advice and model implementation |
+| [ux](ux.md) | Interaction, accessibility, states or copy need deciding | Decided interaction |
+| [ui](ui.md) | A decided interaction needs presentation changes | Components and presentation state |
+| [database](database.md) | Persistence design, implementation, diagnosis or rollout is affected | Storage, queries, transactions, migrations and recovery evidence |
+| [test-writer](test-writer.md) | Agreed behavior needs tests or traceability changes | Failing tests and coverage records |
+| [tester](tester.md) | Behavior needs execution or exploration | Run evidence and reproductions |
+| [adversary](adversary.md) | A boundary, credential, permission or external input changes | Independent security findings |
+| [benchmarker](benchmarker.md) | A written performance, cost or structural concern needs measurement | Benchmark and comparative finding |
+| [metric-nerd](metric-nerd.md) | An operational decision needs signals or comparison | Signal requirements, baselines and trends |
+| [build](build.md) | A build, gate, tool or pipeline needs work | Reproducible tooling and checks |
+| [organizer](organizer.md) | Approved claims need work items or the queue needs maintenance | Breakdown and ranked work |
+| [document-writer](document-writer.md) | Substantial documentation is missing or stale | Prose checked against its source |
+| [auditor](auditor.md) | A repository audit is requested, scheduled or required | Findings about the repository at rest |
 
 ## Handoffs
 
-A solid edge hands an artifact to the role that works from it. A dashed edge
-carries a finding or a question. Where no edge is drawn, a finding goes to the
-owner of the section it concerns. A role file names only the roles it hands
-to; who hands to it is read here.
+Start at the earliest responsibility whose required artifacts or approvals are
+missing. Reuse the agreement and design that remain valid for the affected
+claims. The authoritative ordering and gates are in
+[sdd-conventions § Workflow](../skills/sdd-conventions/SKILL.md#workflow).
 
-```mermaid
-flowchart LR
-    person((person))
-    an[analyst]
-    sa[spec-author]
-    sr[spec-reviewer]
-    org[organizer]
-    ar[architect]
-    dom[domain]
-    bm[benchmarker]
-    ux[ux]
-    ui[ui]
-    tw[test-writer]
-    ts[tester]
-    im[implementer]
-    adv[adversary]
-    bd[build]
-    rel[release]
-    au[auditor]
-    bf[bug-finder]
-    dw[document-writer]
-    subgraph byname [convened by name]
-        pp[pair-programmer]
-        ys[yak-shaver]
-    end
+An assignment names its affected claims or concern, allowed files or artifacts,
+and completion evidence. The specialist returns its contribution or a recorded
+gap to the lead. The lead integrates contributions and obtains any missing
+claim or design decision from its existing owner before dependent work resumes.
+The parent assignment remains with its lead during bounded obstruction removal;
+proof that the original work can resume completes that subtask. Adjacent work is
+recorded separately.
 
-    person -->|raw ask| an
-    person -->|decided need| sa
-    an -->|decided need| sa
-    an -.->|separating question| person
-    an -->|confirmed need| ux
-    ux -->|decided interaction| sa
-    sa -->|specification diff| sr
-    sr -.->|section verdicts| sa
-    sa -->|approved claims| org
-    org -.->|breakdown to confirm| person
-    org -->|groomed items| ar
-    ar -.->|decision beyond the Feature| person
-    ar -->|design boundary| dom
-    dom -.->|unenforceable claim| ar
-    dom -.->|unsettled rule| sa
-    ar -->|stated cost| bm
-    bm -.->|contradicting measurement| ar
-    ar -->|design diff| sr
-    sr -.->|design findings| ar
-    ar -->|"Ready design, stubs"| tw
-    tw -.->|testability gaps| ar
-    tw -->|failing tests| im
-    tw -->|failing tests| ui
-    ux -->|decided interaction| ui
-    ui -.->|undrawn state| ux
-    tw -->|suites to run| ts
-    ts -.->|unexercisable claim| ar
-    ts -.->|uncovered behaviour| sa
-    ts -.->|reproduced failure| bf
-    im -.->|design feedback| ar
-    im -->|code diff| sr
-    ui -->|code diff| sr
-    sr -.->|code findings| im
-    sr -->|diff touching a boundary| adv
-    adv -.->|security findings| im
-    sr -->|approved diff| bd
-    im -.->|broken gate| bd
-    bd -->|gated artifact| rel
-    bd -.->|exposed secret| person
-    rel -->|change to compare| bm
-    bm -.->|baseline and comparison| rel
-    rel -.->|"rollout confirmation, rotation request"| person
-    person -->|cadence| au
-    au -.->|drift findings| org
-    au -.->|stale prose| dw
-    dw -.->|contradicted specification| sa
-    bf -.->|record to accept| person
-    bf -->|reproduction| tw
-    bf -->|accepted record| im
-    bf -.->|logging gap| ar
-    person -->|by name| pp
-    pp -.->|every step and fork| person
-    person -->|by name| ys
-    ys -.->|adjacent problems| org
-```
+A responsibility can be exercised in the current session or delegated after its
+contract is read; it does not require a separate agent invocation. A reviewing
+instance must be different from the instance that authored its subject.
+Leadership and collaboration modes never expand a contract's write boundaries.
 
-Every role has an edge in and an edge out. The shortest route to the diff pass
-on a specification is `analyst`, `spec-author`, `spec-reviewer`; a need already
-decided enters at `spec-author`. `ux` feeds the agreement rather than code, so
-an interaction reaches `ui` only behind a claim and a failing test.
+| Situation | Lead path and required artifacts | Conditional expertise |
+| --- | --- | --- |
+| Bug report | Investigate → accepted diagnosis and failing regression test → Implement correction → Verify → Release when shipping | Agreement owner for missing or disputed behavior; design owner for a design gap; domain, UI or database for the affected concern |
+| New feature | Specify → Design → failing tests → Implement → Verify → Release | UX for interaction; domain for modeling; database for persistence; testing and measurement expertise for the claims |
+| Technical obstacle | Current lead retains the work → bounded assistance → evidence that the original work can resume | Architect for feasibility; bug-finder for unexpected behavior; build for tooling or a gate |
+| Pitched idea | Specify in discovery mode → agreement once the need is confirmed | UX for interaction; architect for bounded feasibility evidence; no speculative production implementation |
+| Production issue | Investigate while Release can coordinate an existing recovery procedure → correction route only if software must change | Correlated logs when available; metric-nerd for operational evidence; missing telemetry stays an evidence gap |
+| Changed shipped requirement | Amend the agreement with permanent claim anchors → assess design, dependencies and compatibility → revised failing tests → Implement → Verify → Release | UX/domain for changed interaction or rules; database for stored data or migrations; operational comparison for rollout |
 
-`pair-programmer` and `yak-shaver` are convened by no command; a host calls
-each by name. A role that finds its input missing or wrong escalates to the
-owning role and never supplies the gap: writing into someone else's section
-removes the only signal that the preceding stage is incomplete.
+Operational recovery follows its existing procedure and confirmation rules; it
+can start before diagnosis is complete and continue alongside a software fix.
+Recovery evidence does not establish that a later code correction is verified.
+Telemetry availability alone does not require a performance benchmark.
 
-## Where ownership is written
+## Modes
 
-Which role owns which section is derived from each role's `owned_spec_sections`
-and written in exactly one place:
-[`sdd-conventions` § Section ownership](../skills/sdd-conventions/SKILL.md#section-ownership).
-The section no single role owns is declared in this file's frontmatter.
-Ownership is not restated in the role files — a second copy is a second thing to
-drift.
+Discovery belongs to specification authoring; correction belongs to
+implementation; log analysis belongs to investigation; design review belongs to
+independent verification. For requested pairing, use
+[coding-conventions § Collaboration mode](../skills/coding-conventions/SKILL.md#collaboration-mode)
+within the active contract. These are retained capabilities, not additional
+workflow stops. The agreed consolidation and its history are recorded in
+[0001-F2](.spec/README.md).
 
-The spec reviewer, the adversary and the auditor review the units of work
-declared under `review_units` in this file's frontmatter and claimed by each
-role's `reviews`. Which pass reviews what, and in what order, is in
-[`sdd-conventions` § Review passes](../skills/sdd-conventions/SKILL.md#review-passes).
+## Artifact boundaries
 
-Each role also declares the persona it signs its prose with; the roster is
-generated into [`PERSONAS.md`](PERSONAS.md).
+Read the recorded artifact the responsibility needs, rather than a chat summary
+of it. Each specification section retains exactly one owner; the authoritative
+map is [sdd-conventions § Section ownership](../skills/sdd-conventions/SKILL.md#section-ownership).
+A lead requests another owner's revision rather than writing that section.
 
-## Standing notes
+The four review units are declared in this index's frontmatter and claimed by
+the relevant contracts. Their ordering, independence and findings belong to
+[sdd-conventions § Review passes](../skills/sdd-conventions/SKILL.md#review-passes).
+Reviewers report; artifact owners revise.
 
-- **Small changes can combine roles; the ordering is mandatory.** A new or
-  amended specification passes architecture review before tests and
-  implementation. A one-line fix does not need a separate agent for every role;
-  it still may not reach code before the claim it satisfies exists.
-- **Scenarios execute.** The project's acceptance tier runs the `.feature`
-  files. Unit tests still cover the concerns — a passing acceptance scenario is
-  not a substitute for them, and § 9 cites both.
-- **Every role writes less than it wants to.** The rule is
-  [`coding-conventions`](../skills/coding-conventions/SKILL.md) §§ "Design" and
-  "Say it once, and briefly"; a role file names only what that means for the
-  artifact it owns.
-- **The contracts are also installable agents.** `hosts/<host>.yaml` maps each
-  role to a model and effort for that host, and `dotnet fsi scripts/project.fsx`
-  writes the host-native files. Consumers pull the committed outputs with
-  `skillfile`; see the repository `README.md`.
+The generated [persona roster](PERSONAS.md) names how each contract signs its
+prose. Host models, effort and tools belong to the overlays. Installation and
+projection are described in [README](../README.md#consuming).

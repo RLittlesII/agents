@@ -6,7 +6,7 @@ type: overview
 
 # agents
 
-Twenty role contracts, seven method skills and twelve commands for
+Nineteen role contracts, seven method skills and twelve commands for
 specification-driven development, written once, host-free, and projected into
 the files each AI host reads. The repository carries no product technology and
 no tool-specific knowledge: a consuming repository adds a companion skill that
@@ -16,40 +16,19 @@ names its own paths, commands and stack.
 
 A Feature starts as a specification: twelve numbered sections plus Tasks and
 Scoring, with a companion `.feature` file whose scenarios carry the ids of the
-claims they document. Each section has exactly one owning role. Each role
-trusts only the artifact the preceding role produced. The
+claims they document. Each section has exactly one owning role. The current lead
+integrates bounded specialist contributions against the recorded artifacts. The
 [`specht`](https://github.com/RLittlesII/specht) tool checks the layout, the
 ids and the traceability matrix in CI. The shared facts are in
 [`sdd-conventions`](skills/sdd-conventions/SKILL.md).
 
 ## Roles
 
-| Role                                           | Turns                                   | Into                                                      |
-| ---------------------------------------------- | --------------------------------------- | --------------------------------------------------------- |
-| [`analyst`](agents/analyst.md)                 | a raw ask                               | discovery notes and a decided need                        |
-| [`spec-author`](agents/spec-author.md)         | a decided need                          | the agreement, and the `.feature` file                    |
-| [`organizer`](agents/organizer.md)             | agreed claims                           | ranked work items and the Tasks index                     |
-| [`architect`](agents/architect.md)             | the authored agreement and scenarios    | a technical design, diagrams and readiness findings       |
-| [`domain`](agents/domain.md)                   | business rules in claims                | a domain model whose invariants cannot be bypassed        |
-| [`ux`](agents/ux.md)                           | user needs and claims                   | a decided interaction: flows, states and copy             |
-| [`test-writer`](agents/test-writer.md)         | a claim                                 | a failing scenario and failing tests                      |
-| [`implementer`](agents/implementer.md)         | a failing test, or a diagnosed bug      | production code, design feedback and bug lessons          |
-| [`ui`](agents/ui.md)                           | a decided interaction and failing tests | presentation code                                         |
-| [`pair-programmer`](agents/pair-programmer.md) | a task the person wants to steer        | small visible steps and the item's decision log           |
-| [`tester`](agents/tester.md)                   | a change to verify                      | a run report and reproductions                            |
-| [`spec-reviewer`](agents/spec-reviewer.md)     | a design, or a diff                     | a verdict per section, and findings                       |
-| [`adversary`](agents/adversary.md)             | the surface a change exposes            | security findings                                         |
-| [`benchmarker`](agents/benchmarker.md)         | a cost concern, or a decision           | a benchmark, or a baseline and a comparison               |
-| [`bug-finder`](agents/bug-finder.md)           | a failure report and its logs           | a reproduction and a root-cause record                    |
-| [`yak-shaver`](agents/yak-shaver.md)           | an incidental obstacle                  | the obstacle removed, and what was left alone             |
-| [`build`](agents/build.md)                     | a broken or missing gate                | a reproducible build and gates that fail when they should |
-| [`release`](agents/release.md)                 | an artifact that passed the gates       | a confirmed release with a rollback                       |
-| [`document-writer`](agents/document-writer.md) | stale or missing prose                  | documents checked against what exists                     |
-| [`auditor`](agents/auditor.md)                 | the repository at rest                  | drift findings, grouped by rule                           |
-
-The handoff rules are in [`agents/README.md`](agents/README.md). Each role signs
-the prose it writes with a persona; the roster is in
-[`agents/PERSONAS.md`](agents/PERSONAS.md).
+The [role index](agents/README.md) names the six lead responsibilities, thirteen
+conditional specialists, and the routes for common work. A lead integrates the
+complete result while specialists work within their own artifact boundaries.
+Its [Handoffs section](agents/README.md#handoffs) answers who is involved and
+when; [PERSONAS.md](agents/PERSONAS.md) is the generated signing roster.
 
 ## Skills
 
@@ -71,15 +50,15 @@ roles' contracts decide what each does. Type `/<name>` in Claude Code or
 
 | Command                               | Convenes                                  | For                                                  |
 | ------------------------------------- | ----------------------------------------- | ---------------------------------------------------- |
-| [`spec`](commands/spec.md)            | analyst, spec-author                      | a raw ask taken to a written agreement               |
-| [`design`](commands/design.md)        | architect, domain, test-writer, benchmarker, spec-reviewer | a design, reviewed before anything is built on it |
-| [`design-ui`](commands/design-ui.md)  | analyst, ux                               | a screen or flow decided before it is built          |
+| [`spec`](commands/spec.md)            | spec-author                               | a raw ask taken to a written agreement               |
+| [`design`](commands/design.md)        | architect, domain, database, test-writer, benchmarker, spec-reviewer | a design, reviewed before anything is built on it |
+| [`design-ui`](commands/design-ui.md)  | spec-author, ux                           | a screen or flow decided before it is built          |
 | [`test`](commands/test.md)            | test-writer, tester                       | failing tests from claims, then a run report         |
-| [`implement`](commands/implement.md)  | domain, implementer, ui                   | failing tests made green inside the design           |
+| [`implement`](commands/implement.md)  | domain, implementer, ui, database         | failing tests made green inside the design           |
 | [`review`](commands/review.md)        | spec-reviewer, adversary                  | a diff judged against its claims                     |
 | [`pr`](commands/pr.md)                | spec-reviewer, implementer, build         | a pull request opened, then reviewed to merge        |
-| [`ship`](commands/ship.md)            | spec-reviewer, adversary, auditor, benchmarker, release | the final gate, then a confirmed release |
-| [`bug`](commands/bug.md)              | bug-finder, test-writer, implementer | a failure reproduced, pinned, fixed and learned from |
+| [`ship`](commands/ship.md)            | spec-reviewer, adversary, auditor, metric-nerd, database, benchmarker, release | the final gate, then a confirmed release |
+| [`bug`](commands/bug.md)              | bug-finder, test-writer, implementer, database | a failure reproduced, pinned, fixed and learned from |
 | [`groom`](commands/groom.md)          | organizer                                 | the queue ranked, an item filed, or its health       |
 | [`document`](commands/document.md)    | document-writer                           | documents repaired against the repository            |
 | [`cleanup`](commands/cleanup.md)      | auditor, organizer, document-writer       | a tidying pass, delivered as one change              |

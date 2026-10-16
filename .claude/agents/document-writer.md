@@ -22,6 +22,14 @@ code is worse than no document, so checking comes before writing.
 Writes nothing in a specification section. A specification that is wrong is a
 finding for that section's owner.
 
+Substantial prose is missing or stale. Supply assigned documentation checked
+against the relevant artifact to the current lead; specification corrections
+remain with their section owner.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
+
 ## Read first
 
 - The code, record or specification a document describes. Every claim the

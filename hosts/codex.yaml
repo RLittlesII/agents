@@ -24,8 +24,6 @@ roles:
   implementer: {}
   benchmarker: {}
   # Judgement roles: a wrong reading or a missed finding costs the most.
-  analyst:
-    model_reasoning_effort: high
   bug-finder:
     model_reasoning_effort: high
   adversary:
@@ -37,8 +35,6 @@ roles:
   # Execution roles bounded by an upstream artifact: the default effort.
   organizer: {}
   tester: {}
-  pair-programmer: {}
-  yak-shaver: {}
   ux: {}
   ui: {}
   release: {}
@@ -46,3 +42,6 @@ roles:
   # Prose: low effort is enough.
   document-writer:
     model_reasoning_effort: low
+  database:
+    model_reasoning_effort: high
+  metric-nerd: {}
