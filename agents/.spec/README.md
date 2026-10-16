@@ -254,12 +254,13 @@ them. — Marcus
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-14 -->
+<!-- last written by: test-writer, 2026-10-16 -->
 
 B-001 to B-003 run against the real checkout inside
 `dotnet fsi scripts/project.tests.fsx`, in the group prefixed `F2_`, so a role
-edit that breaks the contract fails the same command CI runs. The scenarios in
-[`roles.feature`](roles.feature) are executed by those tests.
+edit that breaks the contract fails the same command CI runs. The baseline
+scenarios for B-001–B-009 in [`roles.feature`](roles.feature) are checked by
+the cited tests, with B-004 assessed manually as described below.
 
 - B-001: `loadRoles` over `agents/`; the loader itself rejects a missing key,
   a non-semver version, a multi-line description or a host key, so the test
@@ -282,13 +283,21 @@ edit that breaks the contract fails the same command CI runs. The scenarios in
   the result in § 12. A lint over a word list was considered and rejected
   because the list would itself be technology-specific.
 
+### Collaboration amendment
+
+B-010–B-036 have tagged acceptance scenarios and no executable tests yet;
+their traceability rows remain `Missing`. The existing projector suite does
+not execute the new collaboration scenarios. Testability and the verification
+approach await the amendment's recorded design; no new runner or agent behavior
+is assumed by this agreement. — Kevin
+
 ### Performance
 
 Not applicable.
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-14 -->
+<!-- last written by: test-writer, 2026-10-16 -->
 
 | Claim ID | Scenario                                            | Test                                                     | Status  |
 | -------- | --------------------------------------------------- | -------------------------------------------------------- | ------- |
@@ -301,6 +310,33 @@ Not applicable.
 | B-007    | A persona carries a name and a voice and is unique  | `F2_B007_PersonaRequiresNameAndVoiceAndIsUnique`         | Covered |
 | B-008    | A reviewing role carries the reviewing headings     | `F2_B008_ReviewingRoleCarriesLookForAndReport`           | Covered |
 | B-009    | A review unit declares its trigger and refusal      | `F2_B009_ReviewUnitDeclaresTriggerAndRefusal`            | Covered |
+| B-010 | Each state has one accountable lead | Missing | Missing |
+| B-011 | Specialists join for bounded relevant work | Missing | Missing |
+| B-012 | The lead integrates specialist contributions | Missing | Missing |
+| B-013 | Lead accountability preserves section ownership | Missing | Missing |
+| B-014 | A bounded change reuses valid earlier artifacts | Missing | Missing |
+| B-015 | Discovery belongs to the specification author | Missing | Missing |
+| B-016 | The implementer owns a diagnosed correction | Missing | Missing |
+| B-017 | Obstruction removal returns to the blocked work | Missing | Missing |
+| B-018 | Pairing is a mode of the active role | Missing | Missing |
+| B-019 | Investigation includes correlated log analysis | Missing | Missing |
+| B-020 | A different reviewer performs design review | Missing | Missing |
+| B-021 | Database expertise joins an affected state | Missing | Missing |
+| B-022 | Database decisions follow agreed invariants | Missing | Missing |
+| B-023 | Changing existing data requires recovery evidence | Missing | Missing |
+| B-024 | Measurements follow their purpose | Missing | Missing |
+| B-025 | Production instrumentation follows implementation ownership | Missing | Missing |
+| B-026 | A bug follows the existing agreement | Missing | Missing |
+| B-027 | A new feature follows artifact dependencies | Missing | Missing |
+| B-028 | Technical obstacles select relevant investigation | Missing | Missing |
+| B-029 | An exploratory idea stays in discovery | Missing | Missing |
+| B-030 | A production incident uses available evidence and recovery | Missing | Missing |
+| B-031 | Missing telemetry remains an evidence gap | Missing | Missing |
+| B-032 | Changed shipped behavior amends the existing agreement | Missing | Missing |
+| B-033 | The simplified roster exposes nineteen roles | Missing | Missing |
+| B-034 | Active references follow the consolidated roles | Missing | Missing |
+| B-035 | Historical evidence survives retirement | Missing | Missing |
+| B-036 | Handoff guidance answers who is involved and when | Missing | Missing |
 
 ## 10. Lessons / Spec Deltas
 
