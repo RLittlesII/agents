@@ -240,6 +240,7 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | 10  | Contract, command and overlay reference migration | Technical |
 | 11  | Deterministic generation and stale-output removal | Technical |
 | 12  | Separating contract checks from evidence of role behavior | Both |
+| 13  | Optional signal declarations, subsection ownership and active role identity | Both |
 
 Lead accountability integrates contributions; it grants no additional write
 authority. The existing section owners and review units remain the boundaries.
@@ -302,7 +303,7 @@ The incumbent representation already supports empty section ownership and
 multiple review units per role. A new hierarchy or machine-readable state
 registry would duplicate the agreement without enforcing agent behavior.
 
-The implementation baseline is main `785de62`: twenty role contracts.
+The initial consolidation baseline was main `785de62`: twenty role contracts.
 Commit `5924065` already folded correction into `implementer`, log analysis
 into `bug-finder` and design review into `spec-reviewer`; preserve those duties
 and verify their agreement boundaries. It also folded operational comparison
@@ -311,6 +312,9 @@ distinct, so this amendment restores `metric-nerd`, adds `database` and retires
 the remaining `analyst`, `pair-programmer` and `yak-shaver`: twenty minus three
 plus two equals nineteen. The original twenty-four-role roster and its six
 retirement mappings remain historical context, not the current migration input.
+DR-1–DR-5 retain that initial migration's provenance and former operational-role
+name. DR-6 governs the subsequent nineteen-to-nineteen rename and optional
+subsection ownership; its active paths supersede the earlier migration paths.
 
 [`agents/README.md`](../README.md) becomes the operational entry point: state
 leads, conditional specialist triggers, retained modes and six short situation
@@ -337,7 +341,7 @@ The diagram shows existing projection components and the proposed source edits
 ```mermaid
 flowchart LR
     subgraph Sources["Tracked sources — proposed edits"]
-        Contracts["Retained contracts, restored metric-nerd and new database"]
+        Contracts["Retained contracts, operational specialist and database"]
         Index["Roles index: bounded guidance and existing review units"]
         Commands["Command frontmatter: applicable retained roles"]
         Hosts["Existing host overlays: nineteen role entries"]
@@ -419,7 +423,7 @@ path and potential loss assessment before release. Keep migrations as history.
 This contract does not introduce a database or prescribe an application's
 schema; each affected Feature must settle those details in its own design.
 
-Restore the currently absent `agents/metric-nerd.md` from its historical
+The initial consolidation restored `agents/metric-nerd.md` from its historical
 `ea553e9:agents/metric-nerd.md` contract, retaining persona Tess and empty section
 ownership; advance its historical `0.2.0` version to `0.3.0` for the clarified
 boundary. Its trigger is an operational decision requiring signal requirements,
@@ -573,10 +577,85 @@ Do not restore an individual retired output by hand. Existing consumers pinned
 to old refs keep those files; this repository does not uninstall files in a
 consumer or promise host-session reload (0001-F1 § 5). — Marcus
 
+### DR-6 — Optional signal ownership and operational-role rename
+
+For B-037–B-039, rename the existing source to `agents/observability.md`, with
+`name: observability`, version `0.4.0` and
+`owned_spec_sections: ["7/Observability"]`. Preserve Tess's persona, operational signal requirements,
+baseline/trend/comparison duties, missing-evidence reporting and production-code
+boundary. The roster remains nineteen roles; the old identity becomes history,
+not an alias or a second contract. This is the user-agreed amendment in § 2;
+it adds no runtime, schema, technology decision or imported consumer ADR.
+
+Reuse `ownershipRows` and `validateStamps` from
+[`Projection.fsx`](../../scripts/Projection.fsx) unchanged. Existing subsection
+support validates the parent `7`, generates the nested ownership row and does
+not require the subsection in a template or specification. When a consumer
+provides exactly `### Observability` under § 7, its owner note and author stamp
+name `observability`; a present architect stamp there is rejected. Without the
+subsection there is nothing to author or validate for it. Unrelated § 7
+subheadings retain the architect parent, and `8/Performance` retains its current
+owner. This amendment creates no local `### Observability` subsection and
+changes no `.specht` template or manifest.
+
+The role authors the portable subsection declaration in the § 2 column order:
+`Boundary | Signal | Level | Template | Fields | Claim`. Each row identifies
+the observed boundary, one `log`/`span`/`metric`, its constant message template,
+span name or instrument name, field names without runtime values or payloads,
+and the claims served. Only log rows declare a severity; span/metric Level
+cells are empty. If no relevant signal is required, write `None.` with its
+reason. Do not invent a logging-level taxonomy, serializer or executable
+signal-table validator. Independent review checks these content requirements;
+ownership/stamp checks establish authorship boundaries, not signal correctness.
+Production instrumentation and its tests remain with their implementation and
+test owners. Observability hands the declared emitted boundary-signal contract
+to test-writer so those signals are asserted in the affected tests; it writes
+neither the tests nor production instrumentation. Parent design questions return
+to architect, performance findings
+to benchmarker, and review verdicts remain independently owned.
+
+Rename active index rows, links and handoffs in `agents/README.md`, root
+`README.md` and retained role bodies, including `architect.md`'s optional
+subsection boundary. Replace the old mappings in both host overlays without
+changing their profiles: Claude inherits `sonnet`/`medium` with
+`skills: [sdd-conventions]`; Codex keeps its empty override and inherited model
+and `medium` effort. In `commands/design.md`, add observability to frontmatter
+and conditionally convene the signal owner when the optional subsection exists;
+absence does not force creating it or invoking an agent. In `commands/ship.md`,
+rename the operational contributor. Command bodies retain responsibility labels
+and acquire no transitions or gates.
+
+Regenerate both host agent files, affected commands/skills, the persona roster
+and ownership table. The table gains only the optional `7/Observability` row;
+do not hand-edit its generated block or add role names to portable skill prose.
+The generated Claude/Codex observability files replace the two metric-nerd
+files: `differences` reports old files stale and new files missing, check mode
+writes nothing, and `apply` removes/writes them. A stale host or command binding
+to the old identity fails planning before writes. Preserve historical decisions,
+reviews, source citations and the initial migration's identity/provenance.
+Rollback reverts the coherent source/output change and regenerates; partial
+generation uses DR-5's rerun-and-check recovery.
+
+Verification uses the existing temporary-checkout seams. For B-037, exercise
+absence, correctly stamped presence, an architect-stamped subsection rejected
+with the actual owner named, and unrelated headings returning to parent
+ownership while Performance stays unchanged. Extend the B-034 owner assertion
+to preserve every prior owner plus the one new nested row; do not replace it
+with a count or weaker subset check. Update the specialist/profile expectation
+for database's empty ownership versus observability's single nested ownership.
+For B-039, exercise a nineteen-to-nineteen rename, two stale/two missing host
+files, no-write drift checking, successful apply/recheck, invalid old bindings
+and byte-preserved historical evidence. For B-038, assess source instructions
+and synthetic declarations against the tagged positive/negative cases without
+claiming that projector success proves actual instrumentation or agent
+compliance. No new diagrams or compiling stubs apply: the change uses existing
+declarations and generation/stamp seams, with no new runtime interface or
+application data model. — Marcus
+
 ### Verification boundary and readiness
 
 Contract and projection checks can establish the nineteen-role set, host
-coverage, unchanged section ownership, complete review-unit assignment,
+coverage, preserved prior section owners plus DR-6's optional nested row, complete review-unit assignment,
 conditional contract wording, resolvable command references, byte-preserved
 contract projection and stale-file removal. Use existing synthetic checkout
 fixtures, `loadRoles`, `reviewRows`, `plan`, `differences` and `apply` in
@@ -638,6 +717,15 @@ visually inspected. No material decision or blocking OQ remains; the six
 retirements, database boundary and nineteen-role shape are already agreed.
 These amendment reviews do not reassess or replace the B-001–B-009 baseline
 readiness and evidence recorded above.
+
+Observability amendment readiness: **Ready for tests and implementation for
+B-037–B-039** within DR-6's source/projection and evidence boundaries, pending
+the existing testability and independent design-review passes. No blocking
+decision remains; the rename, optional ownership and signal-table shape are
+agreed. Risk **2 (medium)**: stale active identities and overly broad ownership
+assertions are the main failure paths; exact prior-plus-nested owner checks,
+rename lifecycle tests and independent content review address them. Earlier
+scoped review evidence remains unchanged. — Marcus
 
 Design risk: **2 (medium)** for this collaboration-design scope: the mechanism
 is reused, but active-reference retirement spans contracts, commands, overlays
