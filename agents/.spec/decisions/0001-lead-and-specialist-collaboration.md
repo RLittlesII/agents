@@ -53,3 +53,24 @@ commands, host overlays and projected outputs; the agreement and scenarios are
 authored first, and no such implementation is delivered by this amendment.
 No new frontmatter key is required to describe a retained role with several
 review units or modes. — Ruth
+
+## Baseline reconciliation — 2026-10-16
+
+Main commit `5924065` landed while this branch was being prepared: it already
+folds correction into implementation, design review into specification review,
+and log analysis into investigation, and also folds operational measurement
+into benchmarking. Its twenty-role roster retains discovery, pairing and
+obstruction roles.
+
+The user's later agreement in this record remains the target: preserve the
+three completed duty transfers, fold the remaining discovery, pairing and
+obstruction identities into the agreed roles or modes, restore operational
+observability as `metric-nerd` separate from `benchmarker`, and add `database`.
+The result remains the nineteen roles in § 2; this changes the migration
+baseline, not the agreed capability set.
+
+This agreement supersedes the earlier choice to retain the pairing/obstruction
+roles and combine operational measurement with benchmarking. Preserve that
+commit and its decision evidence as history. Restore the operational contract
+from source history and adjust its boundaries; regenerate host files rather
+than restoring generated copies. — Ruth
