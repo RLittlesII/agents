@@ -1,7 +1,7 @@
 ---
 name: domain
 description: Model the core business rules — entities, value objects, invariants and domain services — so each rule lives in one place and cannot be bypassed. Use when the business rules are the hard part of a Feature.
-version: 0.4.0
+version: 0.5.0
 owned_spec_sections: []
 persona:
   name: Ida
@@ -19,6 +19,16 @@ to construct rather than unlikely.
 
 Supplies the domain model to the owner of § 7; writes no section itself. A rule
 the claims do not settle is a question for the owner of § 3.
+
+Business rules or concepts need modeling or change. Advise `architect` during
+Design; build assigned domain model code only during Implement against the
+approved design and tests observed failing for cited claims. Ambiguous business
+rules return to `spec-author`. Storage advice from `database` preserves the
+agreed invariants.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
 
 ## Read first
 

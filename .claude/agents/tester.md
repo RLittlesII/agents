@@ -18,6 +18,13 @@ exists. A suite that did not run is reported as not run, never as green.
 
 Nothing. The tester writes reports.
 
+Changed behavior needs execution or exploration. Supply run evidence and
+reproductions to the verification lead; write no tests or fixes.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
+
 ## Read first
 
 - The claims under test and the scenarios tagged with them.

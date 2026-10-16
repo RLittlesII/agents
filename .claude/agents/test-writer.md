@@ -22,6 +22,14 @@ produced it — if the claim does not say it, the test does not assert it.
 
 Writes no production code and no claims.
 
+Agreed behavior lacks a failing test, or testability or traceability needs
+amendment. Supply tests and owned coverage records to the current lead; missing
+claims return to `spec-author` and design gaps to `architect`.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
+
 ## Read first
 
 - The cited `B-00n` rows in § 3 and their `@B-00n`-tagged scenarios.

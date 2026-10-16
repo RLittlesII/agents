@@ -8,6 +8,8 @@ Convene these roles as the body directs:
 - `spec-reviewer`, whose contract is `.claude/agents/spec-reviewer.md`
 - `adversary`, whose contract is `.claude/agents/adversary.md`
 - `auditor`, whose contract is `.claude/agents/auditor.md`
+- `observability`, whose contract is `.claude/agents/observability.md`
+- `database`, whose contract is `.claude/agents/database.md`
 - `benchmarker`, whose contract is `.claude/agents/benchmarker.md`
 - `release`, whose contract is `.claude/agents/release.md`
 
@@ -18,8 +20,11 @@ Use these skills: `deliver-change` (`.claude/skills/deliver-change/SKILL.md`), `
 The spec reviewer judges the diff against the claims it cites. The adversary
 joins when the release touches a trust boundary, a credential, a permission or
 input from outside; say which, or that it touches none. The auditor reads the
-repository at rest for drift. The benchmarker states the baseline and what to
-read after the rollout to tell whether it helped. The release engineer then
+repository at rest for drift. When an operational decision needs evidence, the
+observability specialist states signal requirements, the baseline and the
+comparison to read after rollout. When persistence is affected, the database specialist supplies
+compatibility and verified rollback or recovery evidence. The benchmarker joins
+only for a written performance, cost or structural concern. The release engineer then
 versions, writes the changelog and stages the rollout, with the rollback
 stated.
 

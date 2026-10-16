@@ -31,14 +31,9 @@ roles:
     effort: high
     tools: [Read, Grep, Glob]
     skills: [sdd-conventions, coding-conventions, spec-and-traceability]
-  # Cost benchmarks, and baselines and comparisons for a decision.
+  # Benchmarks for a written performance, cost or structural concern.
   benchmarker:
     skills: [sdd-conventions]
-  # Elicitation turns ambiguity into a decided need; a wrong reading costs a Feature.
-  analyst:
-    model: opus
-    effort: high
-    skills: [sdd-conventions, clarify-requirements, spec-and-traceability]
   # Queue work is bookkeeping against a fixed scoring model.
   organizer:
     skills: [sdd-conventions, next, deliver-change, spec-and-traceability]
@@ -58,12 +53,6 @@ roles:
     effort: high
     tools: [Read, Grep, Glob, Bash, Edit]
     skills: [sdd-conventions, spec-and-traceability, test-from-scenarios]
-  # Interactive small steps; latency matters more than depth.
-  pair-programmer:
-    skills: [sdd-conventions, coding-conventions, clarify-requirements]
-  # Bounded incidental fixes.
-  yak-shaver:
-    skills: [sdd-conventions, coding-conventions, deliver-change]
   # Hostile review needs depth; a missed finding ships; read-only.
   adversary:
     model: opus
@@ -93,3 +82,11 @@ roles:
   # Procedural; reproduce, change the script, see the gate fail.
   build:
     skills: [sdd-conventions, deliver-change, coding-conventions]
+  # Persistence expertise; writes only within its assigned boundary.
+  database:
+    model: opus
+    effort: high
+    skills: [sdd-conventions, coding-conventions, clarify-requirements]
+  # Operational baselines and comparisons.
+  observability:
+    skills: [sdd-conventions]

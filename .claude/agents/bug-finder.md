@@ -21,6 +21,22 @@ to write the fix bends toward the fix they already have in mind.
 
 Writes no production code, no tests and no claims.
 
+Accountable for the complete artifact: reproduction, classification, evidence
+and the proven root-cause record. Assign expertise only for an affected concern,
+naming the claims, allowed files or artifacts and completion evidence. Integrate
+each contribution into the complete result. Return missing inputs to their
+existing artifact owner before dependent work resumes. When another lead owns
+the parent, contribute only the bounded assignment.
+
+Retain the parent assignment during an obstruction. Request relevant expertise
+for the named obstacle within its write boundaries, require scoped proof the
+original work can resume, then resume it. Report what changed and what was left
+alone; send adjacent work to `organizer` for separate tracking.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
+
 ## Read first
 
 - The report, in the words it arrived in.
@@ -31,6 +47,14 @@ Writes no production code, no tests and no claims.
   [`test-from-scenarios`](../skills/test-from-scenarios/SKILL.md).
 
 ## Produce
+
+For large evidence, assign a bounded window, correlation and question to
+relevant expertise, then reconcile its returned sequence and gaps into the
+investigation. Obtain read-only stored-data, query or transaction evidence from
+`database` when persistence is affected, and operational comparisons from
+`observability` when relevant. Missing logs or telemetry remain explicit evidence
+gaps; unsupported causes remain unproven. Diagnosis authorizes no speculative
+repair.
 
 1. **A reproduction** as steps anyone can run. An unreproducible report becomes
    an investigation into the report, said plainly, not a guess.

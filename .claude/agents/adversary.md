@@ -18,6 +18,14 @@ gets an attacker, never by how clever it is.
 
 Nothing. The adversary writes findings.
 
+A boundary, credential, permission or external input is affected. Supply
+independent hostile surface findings to the verification lead; do not edit the
+subject.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
+
 ## Read first
 
 - The change, and the surface it exposes: inputs, boundaries, credentials,

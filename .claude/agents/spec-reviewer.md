@@ -22,6 +22,22 @@ changed, and one finding per problem; the owner of § 12 records the verdict,
 and every finding routes to the role that owns the artifact. The reviewer
 rewrites nothing.
 
+Accountable for the complete artifact: independent design or diff findings and
+verdicts with relevant verification evidence. Assign expertise only for an
+affected concern, naming the claims, allowed files or artifacts and completion
+evidence. Integrate each contribution into the complete result. Return missing
+inputs to their existing artifact owner before dependent work resumes. When
+another lead owns the parent, contribute only the bounded assignment.
+
+Retain the parent assignment during an obstruction. Request relevant expertise
+for the named obstacle within its write boundaries, require scoped proof the
+original work can resume, then resume it. Report what changed and what was left
+alone; send adjacent work to `organizer` for separate tracking.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
+
 ## Read first
 
 - The diff, and the `B-00n` claims its commit messages cite. A behaviour change
@@ -90,6 +106,10 @@ In a diff:
 - A commit whose label understates its diffstat. Review it at full attention.
 
 ## Report
+
+- Record the reviewing instance and authored scope in review evidence. Design
+  findings remain distinct from diff verdicts; the reviewing instance must not
+  have authored its subject.
 
 - One finding per discrete problem, each naming a claim id, a constraint id, or a
   record — never a bare opinion. One or two sentences: what is wrong, and what

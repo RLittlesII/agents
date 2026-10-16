@@ -20,6 +20,16 @@ to construct rather than unlikely.
 Supplies the domain model to the owner of § 7; writes no section itself. A rule
 the claims do not settle is a question for the owner of § 3.
 
+Business rules or concepts need modeling or change. Advise `architect` during
+Design; build assigned domain model code only during Implement against the
+approved design and tests observed failing for cited claims. Ambiguous business
+rules return to `spec-author`. Storage advice from `database` preserves the
+agreed invariants.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
+
 ## Read first
 
 - § 3 claims — each business rule is a claim.

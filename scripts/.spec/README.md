@@ -191,14 +191,16 @@ Readiness: **Ready for tests and implementation.**
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-14 -->
+<!-- last written by: test-writer, 2026-10-16 -->
 
-One tier: `dotnet fsi scripts/project.tests.fsx`, exit code equal to the number
-of failures. Each test builds a synthetic checkout under the temporary directory
-with two roles, both host overlays, one skill with a nested file, the companion
-with empty markers, and a feature template of three numbered sections plus Tasks
-and Scoring. Tests call the library, never the command line, so a failure names
-the function. The scenarios in [`projection.feature`](projection.feature) are
+Library and CLI integration checks run with
+`dotnet fsi scripts/project.tests.fsx`; its exit code equals the failure count.
+Baseline synthetic fixtures use two roles, both host overlays, one skill with a
+nested file, the companion with empty markers, and three numbered template
+sections plus Tasks and Scoring. Other checks load the real checkout or use
+twenty-role migration fixtures. Baseline tests call the library; migration tests
+also exercise the public CLI against explicit temporary roots. The scenarios in
+[`projection.feature`](projection.feature) are
 executed by those tests; there is no separate step-definition layer because the
 repository has no acceptance harness beyond `dotnet fsi`.
 
@@ -232,15 +234,21 @@ Mechanism per claim:
   fails naming the file, section and both roles when a non-owner signs.
 - C-3: two plans produce identical bytes, no byte-order mark, no absolute path.
 
-Anything the design makes hard to test: the command-line exit codes are a thin
-shell over `differences` and are exercised by CI running `--check`, not by a
-test.
+CLI integration is now exercised by
+`F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck` and
+`F2_B034_RetiredBindingsFailBeforeWriting` in the same suite. With
+`--root <synthetic-dir>`, `--check` exits one and reports missing/stale migration
+outputs without writing; after apply it exits zero. An invalid retired command
+exits two without creating output directories. Independent verification reported
+44 tests passing after implementation. — Kevin
 
 ### Performance
 
-Not measured. Eighty outputs from twenty roles, seven skills and twelve
-commands complete well inside the `dotnet fsi` start-up time; a concern appears only if
-the roster grows by an order of magnitude.
+<!-- last written by: benchmarker, 2026-10-16 -->
+
+Not measured. The nineteen-role source set projects to 78 outputs across both
+hosts. No latency measurement or performance target is established by this
+inventory count.
 
 ## 9. Traceability Matrix
 

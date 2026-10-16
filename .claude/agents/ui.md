@@ -20,6 +20,14 @@ those pieces render, and asks when a state is undrawn rather than inventing it.
 Writes no section. The interaction and copy belong to the interaction designer;
 business rules belong to the domain model.
 
+A decided interaction requires presentation changes. Supply assigned
+presentation code and verification evidence to `implementer`, against the
+approved design and failing tests; undrawn states return to `ux`.
+
+On request, use [collaboration
+mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
+contract's write boundaries.
+
 ## Read first
 
 - The decided interaction, its states and its copy.
