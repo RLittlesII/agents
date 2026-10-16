@@ -38,8 +38,8 @@ section owner or review pass instead. Projection fails on a role name under
 ## Roles
 
 [Role contracts and handoffs](agents/README.md). A role file is host-free; the
-model, effort and tools a host uses are in [`hosts/`](hosts/). The name each role
-signs its prose with is in [`agents/PERSONAS.md`](agents/PERSONAS.md).
+model, effort and tools a host uses are in [`hosts/`](hosts/). Each role’s voice and optional
+name for signing prose are in [`agents/PERSONAS.md`](agents/PERSONAS.md).
 
 ## Commands
 

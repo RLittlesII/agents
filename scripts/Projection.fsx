@@ -97,8 +97,8 @@ let splitFrontmatter (path: string) (text: string) =
 
 // ---------------------------------------------------------------- Roles
 
-/// 0001-F2 B-007: the name a role signs its prose with, and how that prose reads.
-type Persona = { Name: string; Voice: string }
+/// 0001-F2 B-040: how prose reads, and an optional name to sign it with.
+type Persona = { Name: string option; Voice: string }
 
 type Role =
     { Name: string
@@ -139,17 +139,18 @@ let loadRole (root: string) (path: string) : Role =
     for section in owned do
         if not (sectionKey.IsMatch section) then
             fail (sprintf "%s: owned section '%s' must be \"<n>\", \"Tasks\", \"Scoring\" or \"<n>/<Subsection>\"" source section)
-    // 0001-F2 B-007: a persona carries a name and a voice, one line each.
+    // 0001-F2 B-040: a voice is required; a supplied name is a nonblank line.
     let persona =
         match tryGet "persona" pairs with
         | None -> None
         | Some (Mapping keys) ->
             let text key =
                 match tryGet key keys with
-                | Some (Scalar s) when not (String.IsNullOrWhiteSpace s) && not (s.Contains "\n") -> s
+                | Some (Scalar s) when not (String.IsNullOrWhiteSpace s) && not (s.Contains "\n" || s.Contains "\r") -> s
                 | _ -> fail (sprintf "%s: persona.%s is required and must be a single line" source key)
-            Some { Name = text "name"; Voice = text "voice" }
-        | Some _ -> fail (sprintf "%s: persona must be a mapping of name and voice" source)
+            let name = tryGet "name" keys |> Option.map (fun _ -> text "name")
+            Some { Name = name; Voice = text "voice" }
+        | Some _ -> fail (sprintf "%s: persona must be a mapping with voice and optional name" source)
     // 0001-F2 B-008: a reviewing role states what it looks for and how it reports.
     let reviews =
         match tryGet "reviews" pairs with
@@ -457,8 +458,8 @@ let lintSkills (root: string) (roles: Role list) =
             if role.Name.Contains "-" then
                 yield role.Name, Regex(@"(?<![\w-])" + Regex.Escape role.Name + @"(?![\w-])")
                 yield role.Name, Regex(@"(?i)(?<![\w-])" + Regex.Escape(role.Name.Replace("-", " ")) + @"(?![\w-])")
-            match role.Persona with
-            | Some p -> yield role.Name, Regex(@"\b" + Regex.Escape p.Name + @"\b")
+            match role.Persona |> Option.bind (fun p -> p.Name) with
+            | Some name -> yield role.Name, Regex(@"\b" + Regex.Escape name + @"\b")
             | None -> () ]
     let findings =
         [ for file in filesUnder (Path.Combine(root, "skills")) do
@@ -478,10 +479,10 @@ let lintSkills (root: string) (roles: Role list) =
 
 // ---------------------------------------------------------------- Personas
 
-/// 0001-F2 B-007: a persona name belongs to one role.
+/// 0001-F2 B-040: a supplied persona name belongs to one role.
 let validatePersonas (roles: Role list) =
     roles
-    |> List.choose (fun r -> r.Persona |> Option.map (fun p -> p.Name, r.Name))
+    |> List.choose (fun r -> r.Persona |> Option.bind (fun p -> p.Name |> Option.map (fun name -> name, r.Name)))
     |> List.groupBy fst
     |> List.iter (fun (persona, holders) ->
         match holders with
@@ -489,20 +490,23 @@ let validatePersonas (roles: Role list) =
             fail (sprintf "persona '%s' is declared by both '%s' and '%s'; a persona signs for one role" persona first second)
         | _ -> ())
 
-/// B-011: the persona roster, one row per persona, sorted by persona name.
+/// B-017: named personas sort by name, then unnamed personas sort by role.
 let renderPersonaTable (roles: Role list) =
     roles
-    |> List.choose (fun r -> r.Persona |> Option.map (fun p -> [ p.Name; sprintf "[`%s`](%s.md)" r.Name r.Name; p.Voice ]))
-    |> List.sortBy List.head
+    |> List.choose (fun r -> r.Persona |> Option.map (fun p -> r, p))
+    |> List.sortBy (fun (r, p) -> match p.Name with Some name -> 0, name | None -> 1, r.Name)
+    |> List.map (fun (r, p) -> [ Option.defaultValue "—" p.Name; sprintf "[`%s`](%s.md)" r.Name r.Name; p.Voice ])
     |> renderTable [ "Persona"; "Role"; "Voice" ]
 
-/// B-012: the line that tells a role which name to sign with. Machine-read
-/// stamps keep the role name, so a tool never has to map one to the other.
+/// B-018: unnamed personas keep their voice; named personas retain signing.
 let personaLine (role: Role) =
     role.Persona
     |> Option.map (fun p ->
-        sprintf "Persona: **%s**. %s Sign the prose you write — reports, findings, notes — as %s; a stamp a tool reads, such as `last written by` or `author`, keeps the role name `%s`."
-            p.Name p.Voice p.Name role.Name)
+        match p.Name with
+        | None -> "Voice: " + p.Voice
+        | Some name ->
+            sprintf "Persona: **%s**. %s Sign the prose you write — reports, findings, notes — as %s; a stamp a tool reads, such as `last written by` or `author`, keeps the role name `%s`."
+                name p.Voice name role.Name)
 
 /// Put a lead paragraph ahead of a body, separated by one blank line whether or
 /// not the body opens with its own.
@@ -551,7 +555,7 @@ let tomlValue (value: Value) =
     | Mapping _ -> fail "a nested mapping cannot be emitted as an overlay key"
 
 /// B-001: Claude frontmatter is name, description, then the overlay; the body
-/// follows verbatim. B-012: a persona line, when the role has one, comes first.
+/// follows verbatim. B-018: a persona line, when the role has one, comes first.
 let renderClaude (host: Host) (role: Role) =
     let keys = overlay host role
     let body =
@@ -567,7 +571,7 @@ let renderClaude (host: Host) (role: Role) =
     |> fun front -> front + "\n" + body
 
 /// B-002: Codex TOML is name, description, developer_instructions, then the
-/// overlay. The instructions are the prefix, the persona line (B-012), one blank
+/// overlay. The instructions are the prefix, the persona line (B-018), one blank
 /// line, and the body verbatim; the body keeps the newline that follows the
 /// frontmatter, so the text after the lead is byte-equal to the role body.
 let renderCodex (host: Host) (role: Role) =

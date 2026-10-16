@@ -160,7 +160,7 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | B-004 | Given a role body, it names no product technology, library, repository path, package or build tool; the consuming repository's companion skill names those.               | Root README § Purpose                                                          | Active |
 | B-005 | Given a role body carrying `## Look for`, it also carries `## Report`, so every reviewing role states the form its findings take. | OQ-1 | Active |
 | B-006 | Given a role body linking `../skills/<name>/SKILL.md`, that skill exists in `skills/`; projection fails naming the role and the skill otherwise. | C-1 | Active |
-| B-007 | Given a role declaring `persona`, it carries a one-line `name` and a one-line `voice`, and no other role declares the same persona name; the role name stays the file stem, the host agent name and every machine-read stamp. | Brief: personas | Active |
+| B-007 | Given a role declaring `persona`, it carries a one-line `name` and a one-line `voice`, and no other role declares the same persona name; the role name stays the file stem, the host agent name and every machine-read stamp. | Brief: personas | Withdrawn |
 | B-008 | Given a role declaring `reviews`, each entry is a review unit and the body carries `## Look for` and `## Report`; projection fails naming the role otherwise. | `sdd-conventions` § Review passes | Active |
 | B-009 | Given a review unit in the roles index, it declares what it reviews, when its pass runs and what the pass never does, and the registry shows all three; projection fails naming the unit and the missing key otherwise. | LTI review-pass registry | Active |
 | B-010 | Given work exercising a state, this Feature assigns it the accountable lead in § 2 State leads. | User brief: lead-and-specialist grouping | Active |
@@ -193,6 +193,7 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | B-037 | Given a consuming specification with the optional § 7 Observability subsection, this Feature assigns that subsection's ownership and author stamp to `observability` without requiring its presence. | User amendment: optional observability ownership, 2026-10-16 | Active |
 | B-038 | Given an observability contribution, this Feature requires the portable declarations and write boundaries in § 2 Optional observability subsection contract. | User amendment: boundary-signal declarations, 2026-10-16 | Active |
 | B-039 | Given migration from `metric-nerd` to `observability`, this Feature replaces the active role identity within the nineteen-role roster while preserving historical identities and evidence. | User amendment: rename the actual role, 2026-10-16; B-035 | Active |
+| B-040 | Given a role declaring `persona`, it requires a nonblank single-line `voice` and permits an omitted `name`; a supplied name is nonblank, single-line and unique across roles, while role identifiers and machine-read stamps retain the role name. | Owner request: optional persona names | Active |
 
 ## 4. Constraints
 
@@ -261,11 +262,12 @@ that function is the authority, not this section.
 | `description`         | one line; the host's trigger text                         |
 | `version`             | semver, bumped when the contract changes                  |
 | `owned_spec_sections` | list of `"<n>"`, `"Tasks"`, `"Scoring"` or `"<n>/<Subsection>"`; empty is valid |
-| `persona`             | optional; `name` and `voice`, one line each; the name unique across roles |
+| `persona`             | optional; required one-line `voice`, optional nonblank one-line `name`; supplied names unique across roles |
 | `reviews`             | optional list of review units from the roles index; a reviewing body follows |
 
-A persona is how a role signs the prose it writes: reports, findings, review
-notes. Projection puts one generated line naming it ahead of the body and lists
+A persona declares the voice of reports, findings and review notes, and may
+optionally name their signer. Projection puts a voice line ahead of the body
+for unnamed personas, preserves the signing line for named personas, and lists
 every persona in [`PERSONAS.md`](../PERSONAS.md). A stamp a tool reads —
 `last written by`, `author`, the § 12 Reviewer column — keeps the role name, so
 no tool has to map a persona back to a role.
@@ -753,9 +755,9 @@ the cited tests, with B-004 assessed manually as described below.
 - B-005: every loaded body carrying `## Look for` also carries `## Report`.
 - B-006: `validateSkillLinks` over the real roles passes, and a synthetic role
   linking a missing skill makes `plan` fail before anything is written.
-- B-007: `loadRole` rejects a persona missing a key or not a mapping and
-  `validatePersonas` rejects a shared name; the test runs both on synthetic
-  roles and runs `validatePersonas` over the real roster.
+- B-040 (replaces B-007): unnamed personas load; `loadRole` rejects missing or
+  invalid voices, invalid supplied names and non-mappings; `validatePersonas`
+  rejects shared supplied names and accepts multiple unnamed personas.
 - B-008: the real roster declares exactly the four passes; a synthetic role
   declaring a unit on a body without the reviewing headings fails `plan`.
 - B-009: every real unit loads with all three keys; a synthetic unit missing
@@ -936,7 +938,7 @@ limitation continue to apply. — Kevin
 | B-004    | [@B-004](roles.feature) A role body names no product technology | Manual: review question in § 8                           | Partial |
 | B-005    | [@B-005](roles.feature) A reviewing role states its report | `F2_B005_LookForRoleCarriesReport`                       | Covered |
 | B-006    | [@B-006](roles.feature) A role links only skills that exist | `F2_B006_EverySkillLinkResolves`                         | Covered |
-| B-007    | [@B-007](roles.feature) A persona carries a name and a voice and is unique | `F2_B007_PersonaRequiresNameAndVoiceAndIsUnique`         | Covered |
+| B-007    | [@B-007](roles.feature) A persona carries a name and a voice and is unique | `F2_B007_PersonaRequiresNameAndVoiceAndIsUnique`         | Withdrawn |
 | B-008    | [@B-008](roles.feature) A reviewing role carries the reviewing headings | `F2_B008_ReviewingRoleCarriesLookForAndReport`           | Covered |
 | B-009    | [@B-009](roles.feature) A review unit declares its trigger and refusal | `F2_B009_ReviewUnitDeclaresTriggerAndRefusal`            | Covered |
 | B-010 | [@B-010](roles.feature) Each state has one accountable lead | Manual: Priya, @B-010 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
@@ -969,6 +971,7 @@ limitation continue to apply. — Kevin
 | B-037 | [@B-037](roles.feature) Optional observability ownership and stamps | `F2_B037_OptionalObservabilityAcceptsItsDeclaredOwnerStamp`; `F2_B037_AbsentObservabilityNeedsNoSubsectionOrTemplateEdit`; `F2_B037_ArchitectCannotStampObservabilityBeforeWrites`; `F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners`; mechanical guarantees only (§ 8) | Covered |
 | B-038 | [@B-038](roles.feature) Portable signal declarations and write boundaries | Manual: Priya, four @B-038 instruction-conformance cases (§ 8), 2026-10-16; live-agent behavior unverified | Partial |
 | B-039 | [@B-039](roles.feature) Nineteen-to-nineteen observability rename preserves history | `F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory`; `F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs`; `F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts`; `F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles`; `F2_B034_ActiveConveningBindingsResolveToRetainedRoles`; mechanical guarantees only (§ 8) | Covered |
+| B-040 | A persona requires a voice and permits an optional unique name | `F2_B040_PersonaRequiresVoiceAndOptionalUniqueName`, `F2_B040_InvalidSuppliedNameFails`, `F2_B040_InvalidVoiceFails` | Covered |
 
 ## 10. Lessons / Spec Deltas
 
@@ -981,6 +984,7 @@ limitation continue to apply. — Kevin
 | 2026-10-16 | Concurrent main commit `5924065` changed the active roster | Reconcile the design with three completed folds and the combined measurement role; preserve the agreed nineteen-role target and distinct observability capability; append provenance to decision 0001. — Ruth |
 | 2026-10-16 | User authorized failing tests followed by remaining role changes | Add seven registered conformance/migration tests, observe three failures before implementation, then implement the nineteen-role roster and regenerate both hosts. Record executable guarantees separately from independent manual instruction-conformance evidence; no live-agent behavior or coverage percentage is established. — Ruth |
 | 2026-10-16 | User requested the actual observability rename and supplied an optional signal declaration shape | Rename active `metric-nerd` identity references to `observability`; add B-037–B-039 for optional `7/Observability` ownership, portable declaration boundaries and the nineteen-to-nineteen migration; preserve prior review evidence and append the accepted scope to decision 0001. — Ruth |
+| 2026-10-16 | Owner requested clearing persona names, then rebasing on the simplified main roster | Withdraw B-007 and add B-040 for optional names with required voices. Retain all nineteen current roles and clear their names without changing their bodies or voices. The branch’s new B-010 was reassigned to B-040 because main already claimed B-010–B-039. |
 
 ## 11. Open Questions
 
@@ -1006,6 +1010,9 @@ limitation continue to apply. — Kevin
 | 2-5, 7-8, 10, 12, scenarios, decision 0001; B-037–B-039 | 🟢 | spec-reviewer | Jessica, independent `/root/review_role_implementation`, 2026-10-16: agreement and DR-6 design approved, Ready; no findings. Amendment tests and implementation remain pending; prior approval scopes and evidence preserved. |
 | 8-9; B-037–B-039 implementation and evidence | 🟢 | spec-reviewer | Jessica, independent `/root/review_role_implementation`, 2026-10-16: approved `0df178a` and final coverage records; no findings. 50 projector and 23 installer tests pass; 78 outputs current; strict check: zero errors/warnings. B-037/B-039 Covered mechanically; B-038 Partial, four manual instruction cases. Live-agent behavior, real instrumentation and coverage percentage unverified. |
 | B-037–B-039 ownership and implementation boundaries | 🟢 | adversary | Kyle, independent `/root/attack_role_boundaries`, 2026-10-16: no actionable findings in the amended observability boundary. |
+| 3, 7-10, 12 | 🟢 | spec-reviewer | Approved 2026-10-16: independent `/root/persona_diff_review` reviewed the optional-name rebase delta B-040 against main `e60dea1`; nineteen upstream bodies and voices preserved, 55 projector and 23 installer tests pass, 78 outputs current, strict checks clean. Earlier baseline and collaboration evidence retained. |
+
+| Optional-name input and projection boundary | 🟢 | adversary | Independent `/root/persona_surface_review`, 2026-10-16: no security regressions in the rebase delta; validation, escaped rendering and role permissions preserved. |
 
 ## Tasks
 

@@ -43,14 +43,14 @@ Feature: Role contract
     Then projection fails naming the role and the skill
     And no output directory exists
 
-  @B-007
-  Scenario: A persona carries a name and a voice
+  @B-040
+  Scenario: A persona requires a voice
     Given a role declaring a persona with a name and no voice
     When the checkout is projected
     Then projection fails naming the role and the missing voice
     And no output directory exists
 
-  @B-007
+  @B-040
   Scenario: Two roles sign with one name
     Given alpha and beta both declare the persona Abe
     When the checkout is projected
@@ -517,3 +517,40 @@ Feature: Role contract
     When its active role identity becomes observability
     Then the historical identity and evidence remain recorded
     And the existing claim identifiers keep their anchors
+
+  @B-040
+  Scenario: A persona name is optional
+    Given alpha and beta each declare a persona voice without a name
+    When the checkout is projected
+    Then both roles load with their voices
+    And the unnamed personas do not conflict
+
+  @B-040
+  Scenario Outline: A supplied persona name must be a nonblank single line
+    Given a role declaring a persona voice and a name that is <invalid>
+    When the checkout is projected
+    Then projection fails naming the role and persona.name
+    And no output directory exists
+
+    Examples:
+      | invalid         |
+      | empty           |
+      | whitespace only |
+      | multiline       |
+      | carriage return |
+      | a list          |
+
+  @B-040
+  Scenario Outline: A persona voice must be a nonblank single line
+    Given a role declaring a persona without a name and a voice that is <invalid>
+    When the checkout is projected
+    Then projection fails naming the role and persona.voice
+    And no output directory exists
+
+    Examples:
+      | invalid         |
+      | empty           |
+      | whitespace only |
+      | multiline       |
+      | carriage return |
+      | a list          |

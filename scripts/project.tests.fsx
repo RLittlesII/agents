@@ -1,6 +1,6 @@
 // Tests for the projector. Names cite the claims they cover:
-//   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B016_
-//   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B009_
+//   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B018_
+//   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B040_
 //   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B007_
 //   skills/.spec/README.md   (0001-F4 Skill boundary) F4_B001_..F4_B003_
 //
@@ -297,7 +297,7 @@ let B010_RoleFileCarriesHostKey_FailsNamingTheKey () =
         contains (sprintf "host key '%s'" name) message
         nothingWritten root
 
-let B011_Personas_WriteRosterBetweenMarkers () =
+let B017_Personas_WriteRosterBetweenMarkers () =
     let root = checkout ()
     write root "agents/alpha.md" (personaRole "alpha" "[\"1\", \"2\", \"Tasks\"]" "  name: Zed\n  voice: Terse." alphaBody)
     write root "agents/beta.md" (personaRole "beta" "[\"3\"]" "  name: Abe\n  voice: \"Asks first — then acts.\"" betaBody)
@@ -321,7 +321,7 @@ let B011_Personas_WriteRosterBetweenMarkers () =
     // The roster is not a role.
     equal [ "alpha"; "beta" ] (loadRoles root |> List.map (fun r -> r.Name))
 
-let B012_Persona_PrecedesVerbatimBodyOnBothHosts () =
+let B018_Persona_PrecedesVerbatimBodyOnBothHosts () =
     let root = checkout ()
     write root "agents/alpha.md" (personaRole "alpha" "[\"1\", \"2\", \"Tasks\"]" "  name: Zed\n  voice: Terse." alphaBody)
     apply root (plan root) |> ignore
@@ -334,6 +334,43 @@ let B012_Persona_PrecedesVerbatimBodyOnBothHosts () =
     equal (prefix + "\n\n" + line + "\n" + alphaBody) (decodeToml (instructions.Substring "developer_instructions = ".Length))
     // A role without a persona is unchanged: beta's body follows the frontmatter directly.
     contains ("---\n" + betaBody) (read root ".claude/agents/beta.md")
+
+let B017_MixedPersonas_SortNamedThenUnnamedRoles () =
+    let root = checkout ()
+    write root "agents/alpha.md" (personaRole "alpha" "[\"1\", \"2\", \"Tasks\"]" "  voice: Terse." alphaBody)
+    write root "agents/beta.md" (personaRole "beta" "[\"3\"]" "  voice: Calm." betaBody)
+    write root "agents/gamma.md" (personaRole "gamma" "[]" "  name: Zed\n  voice: Direct." betaBody)
+    write root "agents/delta.md" (personaRole "delta" "[]" "  name: Abe\n  voice: Brief." betaBody)
+    write root "agents/epsilon.md" (role "epsilon" "[]" betaBody)
+    apply root (plan root) |> ignore
+    let text = read root "agents/PERSONAS.md"
+    let expected =
+        String.concat "\n"
+            [ "<!-- BEGIN GENERATED: personas -->"
+              "| Persona | Role                | Voice   |"
+              "| ------- | ------------------- | ------- |"
+              "| Abe     | [`delta`](delta.md) | Brief.  |"
+              "| Zed     | [`gamma`](gamma.md) | Direct. |"
+              "| —       | [`alpha`](alpha.md) | Terse.  |"
+              "| —       | [`beta`](beta.md)   | Calm.   |"
+              "<!-- END GENERATED: personas -->" ]
+    contains expected text
+    equal text (Encoding.UTF8.GetString (plan root).Outputs.["agents/PERSONAS.md"])
+
+let B018_UnnamedPersona_PreservesVoiceOnBothHosts () =
+    let root = checkout ()
+    write root "agents/alpha.md" (personaRole "alpha" "[\"1\", \"2\", \"Tasks\"]" "  voice: Terse." alphaBody)
+    apply root (plan root) |> ignore
+    let claude = read root ".claude/agents/alpha.md"
+    equal ("---\nname: alpha\ndescription: \"Does alpha things.\"\nmodel: opus\neffort: high\nskills: [sdd-conventions]\n---\n\nVoice: Terse.\n" + alphaBody) claude
+    let instructions name =
+        let codex = read root (sprintf ".codex/agents/%s.toml" name)
+        let line = codex.Split('\n') |> Array.find (fun l -> l.StartsWith "developer_instructions = ")
+        decodeToml (line.Substring "developer_instructions = ".Length)
+    let prefix name = sprintf "Read AGENTS.md first. The authoritative role source is agents/%s.md. Resolve its relative links against that path in the repository." name
+    equal (prefix "alpha" + "\n\nVoice: Terse.\n" + alphaBody) (instructions "alpha")
+    equal ("---\nname: beta\ndescription: \"Does beta things.\"\nmodel: inherit\neffort: medium\n---\n" + betaBody) (read root ".claude/agents/beta.md")
+    equal (prefix "beta" + "\n" + betaBody) (instructions "beta")
 
 /// Two review units, each declaring what it reviews, when it runs and what it
 /// never does.
@@ -470,14 +507,16 @@ let F2_B006_EverySkillLinkResolves () =
     contains "agents/beta.md: links skill 'ghost'" message
     nothingWritten root
 
-let F2_B007_PersonaRequiresNameAndVoiceAndIsUnique () =
+let F2_B040_PersonaRequiresVoiceAndOptionalUniqueName () =
     // The real roster: every persona loads and no name is shared.
     let roles = loadRoles repoRoot
     validatePersonas roles
-    for r in roles do
-        match r.Persona with
-        | Some p when p.Name = r.Name -> failwithf "%s signs with its role name" r.Name
-        | _ -> ()
+    // Multiple unnamed personas are valid and retain their voices.
+    let unnamed = checkout ()
+    write unnamed "agents/alpha.md" (personaRole "alpha" "[\"1\", \"2\", \"Tasks\"]" "  voice: Terse." alphaBody)
+    write unnamed "agents/beta.md" (personaRole "beta" "[\"3\"]" "  voice: Calm." betaBody)
+    plan unnamed |> ignore
+    equal [ "Terse."; "Calm." ] (loadRoles unnamed |> List.choose (fun r -> r.Persona |> Option.map (fun p -> p.Voice)))
     // A persona without a voice fails naming the role and the key.
     let root = checkout ()
     write root "agents/beta.md" (personaRole "beta" "[\"3\"]" "  name: Abe" betaBody)
@@ -494,6 +533,20 @@ let F2_B007_PersonaRequiresNameAndVoiceAndIsUnique () =
     let message = expectFailure (fun () -> plan root3)
     contains "persona 'Abe' is declared by both 'alpha' and 'beta'" message
     nothingWritten root3
+
+let F2_B040_InvalidSuppliedNameFails () =
+    for name in [ ""; "\"   \""; "\"Two\\nLines\""; "\"Two\\rLines\""; "[Abe]" ] do
+        let root = checkout ()
+        write root "agents/beta.md" (personaRole "beta" "[\"3\"]" ("  name: " + name + "\n  voice: Calm.") betaBody)
+        contains "agents/beta.md: persona.name" (expectFailure (fun () -> plan root))
+        nothingWritten root
+
+let F2_B040_InvalidVoiceFails () =
+    for voice in [ ""; "\"   \""; "\"Two\\nLines\""; "\"Two\\rLines\""; "[Calm]" ] do
+        let root = checkout ()
+        write root "agents/beta.md" (personaRole "beta" "[\"3\"]" ("  voice: " + voice) betaBody)
+        contains "agents/beta.md: persona.voice" (expectFailure (fun () -> plan root))
+        nothingWritten root
 
 let F2_B008_ReviewingRoleCarriesLookForAndReport () =
     // The real roster: the four review passes on three reviewing bodies.
@@ -656,6 +709,15 @@ let F4_B001_SkillNamingRole_FailsNamingFileLineAndRole () =
     let root = lintCheckout ()
     write root "skills/other/SKILL.md" "---\nname: other\n---\n\nThe alpha release; a log-reader-like tool; .claude/agents/ holds agents; zed.\n"
     lintSkills root (loadRoles root)
+
+let F4_B001_UnnamedPersona_HasNoNamePattern () =
+    let root = lintCheckout ()
+    write root "agents/log-reader.md" (personaRole "log-reader" "[]" "  voice: Terse." "\n# Log reader\n")
+    write root "skills/other/SKILL.md" "---\nname: other\n---\n\nZed reports in a terse voice.\n"
+    plan root |> ignore
+    write root "skills/other/SKILL.md" "---\nname: other\n---\n\nAsk the log-reader.\n"
+    contains "names role 'log-reader'" (expectFailure (fun () -> plan root))
+    nothingWritten root
 
 let F4_B002_GeneratedBlockIsExempt () =
     let root = lintCheckout ()
@@ -937,19 +999,24 @@ let tests : (string * (unit -> unit)) list =
       nameof B009_OverlayNamesMissingRole_Fails, B009_OverlayNamesMissingRole_Fails
       nameof B009b_RoleNameDiffersFromFileName_Fails, B009b_RoleNameDiffersFromFileName_Fails
       nameof B010_RoleFileCarriesHostKey_FailsNamingTheKey, B010_RoleFileCarriesHostKey_FailsNamingTheKey
-      nameof B011_Personas_WriteRosterBetweenMarkers, B011_Personas_WriteRosterBetweenMarkers
-      nameof B012_Persona_PrecedesVerbatimBodyOnBothHosts, B012_Persona_PrecedesVerbatimBodyOnBothHosts
+      nameof B017_Personas_WriteRosterBetweenMarkers, B017_Personas_WriteRosterBetweenMarkers
+      nameof B018_Persona_PrecedesVerbatimBodyOnBothHosts, B018_Persona_PrecedesVerbatimBodyOnBothHosts
       nameof B013_ReviewUnits_WriteRegistryBetweenMarkers, B013_ReviewUnits_WriteRegistryBetweenMarkers
       nameof B014_TwoRolesReviewOneUnit_FailsNamingBoth, B014_TwoRolesReviewOneUnit_FailsNamingBoth
       nameof B015_UnreviewedOrUndeclaredUnit_FailsNamingIt, B015_UnreviewedOrUndeclaredUnit_FailsNamingIt
       nameof B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles, B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles
+      nameof B017_MixedPersonas_SortNamedThenUnnamedRoles, B017_MixedPersonas_SortNamedThenUnnamedRoles
+      nameof B018_UnnamedPersona_PreservesVoiceOnBothHosts, B018_UnnamedPersona_PreservesVoiceOnBothHosts
+      nameof F2_B040_InvalidSuppliedNameFails, F2_B040_InvalidSuppliedNameFails
+      nameof F2_B040_InvalidVoiceFails, F2_B040_InvalidVoiceFails
+      nameof F4_B001_UnnamedPersona_HasNoNamePattern, F4_B001_UnnamedPersona_HasNoNamePattern
       nameof C3_Outputs_AreDeterministicAcrossRuns, C3_Outputs_AreDeterministicAcrossRuns
       nameof F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey, F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey
       nameof F2_B002_EveryTemplateSectionHasExactlyOneOwner, F2_B002_EveryTemplateSectionHasExactlyOneOwner
       nameof F2_B003_EveryRoleBodyCarriesTheFourSections, F2_B003_EveryRoleBodyCarriesTheFourSections
       nameof F2_B005_LookForRoleCarriesReport, F2_B005_LookForRoleCarriesReport
       nameof F2_B006_EverySkillLinkResolves, F2_B006_EverySkillLinkResolves
-      nameof F2_B007_PersonaRequiresNameAndVoiceAndIsUnique, F2_B007_PersonaRequiresNameAndVoiceAndIsUnique
+      nameof F2_B040_PersonaRequiresVoiceAndOptionalUniqueName, F2_B040_PersonaRequiresVoiceAndOptionalUniqueName
       nameof F2_B008_ReviewingRoleCarriesLookForAndReport, F2_B008_ReviewingRoleCarriesLookForAndReport
       nameof F2_B009_ReviewUnitDeclaresTriggerAndRefusal, F2_B009_ReviewUnitDeclaresTriggerAndRefusal
       nameof F3_B001_CommandProjectsToClaudeCommandFile, F3_B001_CommandProjectsToClaudeCommandFile

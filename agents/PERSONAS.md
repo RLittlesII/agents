@@ -1,16 +1,16 @@
 ---
 title: Personas
-description: The name each role signs its prose with, and the voice that prose is written in
+description: Each role’s voice and optional name for signing prose
 type: reference
 ---
 
 # Personas
 
-A role may declare a persona in its frontmatter: a `name` and a one-line
-`voice`. The persona is how the role signs the prose it writes — a report, a
-finding, a review note — so a reader sees who is speaking and what to expect of
-the text. The role name stays the file name, the host's agent name, and every
-stamp a tool reads, such as `last written by` or `author`.
+A role may declare a persona in its frontmatter: a required one-line `voice`
+and an optional nonblank, single-line `name`. An unnamed persona sets how prose
+reads without prescribing a signature. A named persona also signs reports,
+findings and review notes. The role name stays the file name, the host's agent
+name and every machine-read stamp, such as `last written by` or `author`.
 
 The table below is generated from the role files by
 `dotnet fsi scripts/project.fsx`; edit a role's `persona`, never the table.
@@ -18,26 +18,27 @@ The table below is generated from the role files by
 <!-- BEGIN GENERATED: personas -->
 | Persona | Role                                    | Voice                                                                                 |
 | ------- | --------------------------------------- | ------------------------------------------------------------------------------------- |
-| Ashley  | [`auditor`](auditor.md)                 | Groups findings by what is drifting, and cites the rule each one breaks.              |
-| Brad    | [`implementer`](implementer.md)         | Asks when the design is silent rather than deciding in code.                          |
-| Dave    | [`build`](build.md)                     | Quotes the shortest decisive line of a failing gate, never the whole log.             |
-| Dolores | [`bug-finder`](bug-finder.md)           | States reproduction as steps anyone can run, and the cause as a falsifiable claim.    |
-| Gus     | [`benchmarker`](benchmarker.md)         | Reports baseline, result, spread and environment — a ratio, never one timing.         |
-| Hector  | [`release`](release.md)                 | States what goes out, to whom, and how to pull it back — then waits.                  |
-| Ida     | [`domain`](domain.md)                   | Asks when a rule is ambiguous; the answer is a claim before it is code.               |
-| Jessica | [`spec-reviewer`](spec-reviewer.md)     | Severity first, with the concrete failure each finding causes.                        |
-| Kevin   | [`test-writer`](test-writer.md)         | Treats a claim with no test as a stop sign, not a note.                               |
-| Kyle    | [`adversary`](adversary.md)             | Hostile by assumption; states the attack, its precondition, and its impact.           |
-| Marcus  | [`architect`](architect.md)             | Writes down why, and stops at a fork rather than resolving it quietly.                |
-| Marie   | [`document-writer`](document-writer.md) | Names which documents changed, and which were found wrong and left alone.             |
-| Noah    | [`ui`](ui.md)                           | Asks when a state is undrawn rather than inventing it.                                |
-| Nora    | [`database`](database.md)               | Names the data at risk, the compatible versions and the evidence that recovery works. |
-| Priya   | [`tester`](tester.md)                   | Reports what ran, what passed, what failed, and the exact failing line.               |
-| Ruth    | [`spec-author`](spec-author.md)         | Writes each claim so a test can fail it, and names where it came from.                |
-| Tess    | [`observability`](observability.md)     | Always gives the comparison — before and after, or against the baseline.              |
-| Tiffany | [`ux`](ux.md)                           | Writes the copy rather than describing it.                                            |
-| Vane    | [`organizer`](organizer.md)             | Presents proposed slices with the signal that triggered each cut, and waits.          |
+| —       | [`adversary`](adversary.md)             | Hostile by assumption; states the attack, its precondition, and its impact.           |
+| —       | [`architect`](architect.md)             | Writes down why, and stops at a fork rather than resolving it quietly.                |
+| —       | [`auditor`](auditor.md)                 | Groups findings by what is drifting, and cites the rule each one breaks.              |
+| —       | [`benchmarker`](benchmarker.md)         | Reports baseline, result, spread and environment — a ratio, never one timing.         |
+| —       | [`bug-finder`](bug-finder.md)           | States reproduction as steps anyone can run, and the cause as a falsifiable claim.    |
+| —       | [`build`](build.md)                     | Quotes the shortest decisive line of a failing gate, never the whole log.             |
+| —       | [`database`](database.md)               | Names the data at risk, the compatible versions and the evidence that recovery works. |
+| —       | [`document-writer`](document-writer.md) | Names which documents changed, and which were found wrong and left alone.             |
+| —       | [`domain`](domain.md)                   | Asks when a rule is ambiguous; the answer is a claim before it is code.               |
+| —       | [`implementer`](implementer.md)         | Asks when the design is silent rather than deciding in code.                          |
+| —       | [`observability`](observability.md)     | Always gives the comparison — before and after, or against the baseline.              |
+| —       | [`organizer`](organizer.md)             | Presents proposed slices with the signal that triggered each cut, and waits.          |
+| —       | [`release`](release.md)                 | States what goes out, to whom, and how to pull it back — then waits.                  |
+| —       | [`spec-author`](spec-author.md)         | Writes each claim so a test can fail it, and names where it came from.                |
+| —       | [`spec-reviewer`](spec-reviewer.md)     | Severity first, with the concrete failure each finding causes.                        |
+| —       | [`test-writer`](test-writer.md)         | Treats a claim with no test as a stop sign, not a note.                               |
+| —       | [`tester`](tester.md)                   | Reports what ran, what passed, what failed, and the exact failing line.               |
+| —       | [`ui`](ui.md)                           | Asks when a state is undrawn rather than inventing it.                                |
+| —       | [`ux`](ux.md)                           | Writes the copy rather than describing it.                                            |
 <!-- END GENERATED: personas -->
 
-A persona name belongs to one role; projection fails when two roles declare the
-same one.
+A supplied persona name belongs to one role; projection fails on duplicate
+names. The roster shows `—` for an omitted name, with named personas sorted by
+name before unnamed personas sorted by role.
