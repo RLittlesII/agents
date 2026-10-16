@@ -40,7 +40,9 @@ prerequisites still hold implementation.
   relies on the completion state being accurate.
 - Requiring the whole specification approved and every question resolved.
   Simpler to check, but stops independent progress; the chosen call needs
-  precise claim links (decision 0009) and blocking-question references (OQ-4).
+  precise claim links (decision 0009) and blocking-question references (OQ-4; a question naming no
+  claim leaves readiness unverified, added 2026-10-15,
+  [decision 0019](0019-an-unscoped-question-leaves-readiness-unverified.md)).
 
 ## Affects
 

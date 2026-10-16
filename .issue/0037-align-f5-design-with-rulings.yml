@@ -1,0 +1,48 @@
+id: "0037"
+type: chore
+title: Bring Next work's design in line with the resolved open questions
+
+status: in-progress
+
+value: 4
+cost: 2
+risk: 1
+
+parent: "0001"
+children: []
+
+depends_on: ["0036"]
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-15"
+updated: "2026-10-15"
+closed: null
+
+summary: |
+  Next work (0001-F5). 0036 wrote back the maintainer's rulings on OQ-1 to
+  OQ-6 as decisions 0016 to 0021 and claims B-042 to B-046. Its spec review
+  found §§ 6 and 7 stale: § 7 still treats OQ-1, OQ-5 and OQ-6 as open, its
+  readiness verdict still excepts B-011, B-013, B-015, B-017, B-033, B-034 and
+  B-035, and B-042 to B-046 sit in no concern row, design position or review
+  map row. §§ 6 and 7 are the architect's, so they were left out of 0036.
+  Depends on 0036, whose claims and decisions this design cites.
+
+acceptance_criteria:
+  - "§ 6 places B-042 to B-046 in a concern row."
+  - "§ 7 cites decisions 0016 to 0021 where it named OQ-1 to OQ-6, and maps B-042 to B-046 in the review map."
+  - "§ 7 records a readiness verdict for B-011, B-013, B-015, B-017, B-033 to B-035 and B-042 to B-046."
+  - "The § 6 and § 7 stamps are bumped; no other section changes."
+  - "dotnet fsi scripts/project.fsx --check and dotnet specht --strict pass."
+  - "A spec-reviewer pass approves §§ 6 and 7."
+
+decisions:
+  - "2026-10-15, architect: starts are capped per owning Feature after lanes are drawn, testing the Feature before the lane; a lane whose first item is capped offers its next. SKILL.md does not say so; finding 5 routes the wording to implementer and two B-046 examples to spec-author. Rejected: leaving that lane empty, which wastes a parallel lane delivery allows."
+  - "2026-10-15, spec review of 606e09a: request changes, the lane-head view tested the lane before the Feature. Fixed in 0ecdfe5; re-review approved §§ 6 and 7, with the unscored list and a prerequisite example taken up after approval."
+
+out_of_scope:
+  - "§§ 1-5, 8-12 of the specification: other owners' sections."
+  - "Tests for the claims: § 9 rows stay Missing here."

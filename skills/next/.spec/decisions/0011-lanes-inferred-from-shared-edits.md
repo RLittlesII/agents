@@ -17,8 +17,10 @@ parallel work; it does not promise a conflict-free merge. Taken work occupies it
 lane and stays visible with its state, and no new start is offered there. Items
 declare no write set for this.
 
-Not decided here: whether work in review holds its lane (OQ-2), and whether a
-Feature is one lane with one active item (OQ-6).
+Work in review holds its lane
+([decision 0017](0017-work-in-review-holds-its-lane.md), resolving OQ-2). A
+Feature is not one lane, but it is offered at most one start
+([decision 0021](0021-one-start-per-feature.md), resolving OQ-6; both added 2026-10-15).
 
 ## Why
 
@@ -33,7 +35,7 @@ unnecessarily (§ 5 row 5).
 
 ## Affects
 
-B-017, B-034, B-035, B-036, § 5 row 5, OQ-2, OQ-6.
+B-017, B-034, B-035, B-036, B-046, § 5 row 5, OQ-2, OQ-6.
 
 ## Reversal
 
