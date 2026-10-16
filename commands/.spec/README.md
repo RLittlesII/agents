@@ -190,7 +190,7 @@ None.
 
 ## Tasks
 
-None cut. The first eight commands land with this Feature; a new command is a
+None cut. The twelve commands land with this Feature; a new command is a
 new file and needs no work item of its own.
 
 ## Scoring
