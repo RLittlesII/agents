@@ -1004,6 +1004,8 @@ limitation continue to apply. — Kevin
 | 8-10, Tasks; implementation artifacts | 🟢 | spec-reviewer | Jessica, independent `/root/review_role_implementation`, 2026-10-16: no findings after `6867e83`; 44 tests pass. Mechanical guarantees Covered; manual instruction conformance Partial; live-agent behavior unverified. |
 | Implementation boundaries | 🟢 | adversary | Kyle, independent `/root/attack_role_boundaries`, 2026-10-16: no actionable findings; ownership, read-only investigation, review independence and release confirmation preserved as instruction boundaries. |
 | 2-5, 7-8, 10, 12, scenarios, decision 0001; B-037–B-039 | 🟢 | spec-reviewer | Jessica, independent `/root/review_role_implementation`, 2026-10-16: agreement and DR-6 design approved, Ready; no findings. Amendment tests and implementation remain pending; prior approval scopes and evidence preserved. |
+| 8-9; B-037–B-039 implementation and evidence | 🟢 | spec-reviewer | Jessica, independent `/root/review_role_implementation`, 2026-10-16: approved `0df178a` and final coverage records; no findings. 50 projector and 23 installer tests pass; 78 outputs current; strict check: zero errors/warnings. B-037/B-039 Covered mechanically; B-038 Partial, four manual instruction cases. Live-agent behavior, real instrumentation and coverage percentage unverified. |
+| B-037–B-039 ownership and implementation boundaries | 🟢 | adversary | Kyle, independent `/root/attack_role_boundaries`, 2026-10-16: no actionable findings in the amended observability boundary. |
 
 ## Tasks
 
