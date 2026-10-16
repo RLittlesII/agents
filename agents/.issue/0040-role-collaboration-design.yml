@@ -1,9 +1,9 @@
 id: "0040"
 type: task
-title: Record and design the role collaboration amendment
+title: Implement lead and specialist collaboration
 status: in-progress
 value: 4
-cost: 3
+cost: 5
 risk: 2
 parent: "0001"
 children: []
@@ -42,10 +42,10 @@ created: "2026-10-16"
 updated: "2026-10-16"
 closed: null
 summary: |
-  Preserve the reviewed 0001-F2 agreement in an isolated worktree, then
-  record the contract and reference migration design before tests and
-  implementation. This item authors design; it does not deliver the new
-  role behavior or convert its Missing coverage to Covered.
+  Continue the reviewed agreement and design with failing conformance and
+  migration tests, then implement the nineteen-role source/host/command
+  migration and regenerate outputs. Keep instruction conformance distinct
+  from actual agent-behavior evidence and preserve prior review scopes.
 acceptance_criteria:
   - "B-010, B-011, B-012, B-013, B-014 — state leads, bounded contributions and artifact boundaries."
   - "B-015, B-016, B-017, B-018, B-019, B-020 — consolidation and retained modes."
@@ -53,7 +53,7 @@ acceptance_criteria:
   - "B-026, B-027, B-028, B-029, B-030, B-031, B-032 — the six entry situations."
   - "B-033, B-034, B-035, B-036 — roster, reference migration and handoff guidance."
   - "A testability verdict and independent design critique support the recorded readiness verdict."
-  - "Existing traceability evidence is preserved and new coverage remains Missing until executable tests exist."
+  - "Existing evidence is preserved; new coverage cites executed checks or independent scenario evidence and states actual agent-behavior limits."
 decisions:
   - "2026-10-16: user authorized committing the agreement in a worktree and starting the next part; the next unmet responsibility is design."
   - "2026-10-16: value 4 removes recurring coordination friction; cost 3 covers contract/reference design and critique; risk 2 is provisional pending architecture."
@@ -63,6 +63,13 @@ decisions:
   - "2026-10-16: all three Mermaid views rendered and were visually inspected; design delivery remains in-progress pending merge."
   - "2026-10-16: rebase onto main 785de62 found existing item 0036; shared sequence had advanced to 0039. Reserve 0040 for this branch's new item, preserving all trunk identities and other reservations. Earlier branch-local 0036 citations identify this pre-reconciliation item."
   - "2026-10-16: refreshed testability and independent design/diff review approved reconciliation against main 785de62: preserve three completed folds, retire three remaining roles, restore operational measurement and add database; no findings. New coverage remains Missing."
+  - "2026-10-16: user explicitly authorized failing tests followed by remaining role implementation in this worktree; extend this same in-progress item rather than start a concurrent Feature item."
+  - "2026-10-16: replace the design-only summary/exclusion and coverage criterion for the authorized delivery scope; preserve prior decisions, claim IDs and design evidence. Cost increases from 3 to 5 for source/test/output migration; recorded migration risk remains 2."
+  - "2026-10-16: committed failing tests first in e463035; expanded suite discovered 44 tests and observed three failures before implementation (exact roster, absent database and retired command binding), preserving 37 baseline tests."
+  - "2026-10-16: implemented source/command/host migration in 6867e83; six leads and thirteen specialists project to 78 outputs. No production projector or schema changes."
+  - "2026-10-16: independent verification observed 44 tests passing, projector check current, strict specifications clean, actual Codex TOML and Claude YAML profiles parse, and no stale active retirement references."
+  - "2026-10-16: record executed mechanical guarantees as Covered and Priya independent instruction-conformance walkthroughs as Partial; live-agent compliance and coverage percentage remain unverified. Evidence is not a shipping waiver."
+  - "2026-10-16: independent diff review approved implementation and evidence after stale index description correction; independent security review found no actionable boundary findings. Item remains in-progress until merge under existing delivery rules."
 out_of_scope:
-  - "Agent, command, host, projector and generated-output implementation is subsequent delivery work against this design."
+  - "New runtime orchestration, schema fields and production projector behavior changes remain outside the recorded design."
   - "0001-F2 § 5 rows 5-7 exclude engine-specific tooling, a workflow engine and unrelated role or ownership changes."

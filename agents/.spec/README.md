@@ -824,7 +824,7 @@ Not applicable.
 
 <!-- last written by: organizer, 2026-10-16 -->
 
-- [0040 — Record and design the role collaboration amendment](../.issue/0040-role-collaboration-design.yml).
+- [0040 — Implement lead and specialist collaboration](../.issue/0040-role-collaboration-design.yml).
 
 ## Scoring
 
