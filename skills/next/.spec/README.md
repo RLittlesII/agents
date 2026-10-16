@@ -264,8 +264,9 @@ stage, such as grooming, or a section owner.
   is occupied (B-017); an item in a lane that already has a head waits behind
   it; and any other item becomes its lane's head. The tie order is total
   (B-027), so the pass is deterministic. Actionable unscored work is no lane
-  head and is not in the pass (B-037); where its Feature has a head or taken
-  work, it is listed as queued behind that Feature too.
+  head and is not in the pass: its list is shown apart and is not a start
+  offer, so the cap does not ration it (B-037). An item there whose Feature has
+  a head or taken work is still marked queued behind that Feature.
 
 ### The companion seam
 
@@ -414,7 +415,9 @@ Findings 1 to 4 were recorded 2026-10-14 and are resolved; rechecked
    above). Read alone, the skill admits two answers from the same inputs, one
    leaving that lane empty and one filling it. Correction: state both in that
    section (`implementer`), and a B-046 example where the queued item's lane
-   has a second startable item from another Feature (`spec-author`). The design
+   has a second startable item from another Feature, and one where a
+   prerequisite owned by another Feature is capped by its owner, not by the
+   selected Feature (`spec-author`). The design
    settles it, so no claim waits on it.
 
 No open question remains in § 11. Decisions 0016 to 0021 settle every claim

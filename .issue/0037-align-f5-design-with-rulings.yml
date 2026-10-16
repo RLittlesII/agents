@@ -39,7 +39,9 @@ acceptance_criteria:
   - "dotnet fsi scripts/project.fsx --check and dotnet specht --strict pass."
   - "A spec-reviewer pass approves §§ 6 and 7."
 
-decisions: []
+decisions:
+  - "2026-10-15, architect: starts are capped per owning Feature after lanes are drawn, testing the Feature before the lane; a lane whose first item is capped offers its next. SKILL.md does not say so; finding 5 routes the wording to implementer and two B-046 examples to spec-author. Rejected: leaving that lane empty, which wastes a parallel lane delivery allows."
+  - "2026-10-15, spec review of 606e09a: request changes, the lane-head view tested the lane before the Feature. Fixed in 0ecdfe5; re-review approved §§ 6 and 7, with the unscored list and a prerequisite example taken up after approval."
 
 out_of_scope:
   - "§§ 1-5, 8-12 of the specification: other owners' sections."
