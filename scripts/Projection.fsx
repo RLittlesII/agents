@@ -447,7 +447,8 @@ let private agentsPath = Regex(@"\.\./agents/|(?<![\w./-])agents/[\w-]+\.md")
 
 /// 0001-F4 B-001, B-002: no file under skills/ names a role outside a generated
 /// block. A role is named by its name in backticks, a hyphenated name as a whole
-/// word, its persona name as a whole word, or a path into agents/. A bare
+/// word with its hyphens or with spaces, its persona name as a whole word, or a
+/// path into agents/. A bare
 /// one-word role name is ordinary English and is left to review.
 let lintSkills (root: string) (roles: Role list) =
     let patterns =
@@ -455,6 +456,7 @@ let lintSkills (root: string) (roles: Role list) =
             yield role.Name, Regex(Regex.Escape("`" + role.Name + "`"))
             if role.Name.Contains "-" then
                 yield role.Name, Regex(@"(?<![\w-])" + Regex.Escape role.Name + @"(?![\w-])")
+                yield role.Name, Regex(@"(?i)(?<![\w-])" + Regex.Escape(role.Name.Replace("-", " ")) + @"(?![\w-])")
             match role.Persona with
             | Some p -> yield role.Name, Regex(@"\b" + Regex.Escape p.Name + @"\b")
             | None -> () ]

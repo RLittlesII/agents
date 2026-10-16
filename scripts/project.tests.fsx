@@ -643,6 +643,7 @@ let F4_B001_SkillNamingRole_FailsNamingFileLineAndRole () =
     let cases =
         [ "Ask `alpha` first.", "skills/other/SKILL.md:6: names role 'alpha'"
           "Hand it to the log-reader.", "skills/other/SKILL.md:6: names role 'log-reader'"
+          "Hand it to the Log reader.", "skills/other/SKILL.md:6: names role 'log-reader'"
           "Zed signs the report.", "skills/other/SKILL.md:6: names role 'log-reader'"
           "See [alpha](../agents/alpha.md).", "skills/other/SKILL.md:6: names a path into agents/"
           "Read agents/alpha.md first.", "skills/other/SKILL.md:6: names a path into agents/" ]
