@@ -1,4 +1,4 @@
-id: "0036"
+id: "0040"
 type: task
 title: Record and design the role collaboration amendment
 status: in-progress
@@ -61,6 +61,8 @@ decisions:
   - "2026-10-16: testability review is Ready for source/projection tests; actual agent-behavior evidence and executable coverage remain pending."
   - "2026-10-16: independent design critique approved after the B-030 diagram was corrected to permit concurrent incident recovery and diagnosis."
   - "2026-10-16: all three Mermaid views rendered and were visually inspected; design delivery remains in-progress pending merge."
+  - "2026-10-16: rebase onto main 785de62 found existing item 0036; shared sequence had advanced to 0039. Reserve 0040 for this branch's new item, preserving all trunk identities and other reservations. Earlier branch-local 0036 citations identify this pre-reconciliation item."
+  - "2026-10-16: refreshed testability and independent design/diff review approved reconciliation against main 785de62: preserve three completed folds, retire three remaining roles, restore operational measurement and add database; no findings. New coverage remains Missing."
 out_of_scope:
   - "Agent, command, host, projector and generated-output implementation is subsequent delivery work against this design."
   - "0001-F2 § 5 rows 5-7 exclude engine-specific tooling, a workflow engine and unrelated role or ownership changes."
