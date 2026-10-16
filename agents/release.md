@@ -1,7 +1,7 @@
 ---
 name: release
 description: Get a built artifact to its users on every target it ships to — version, changelog, rollout and rollback — with explicit confirmation before anything is published. Use when something is ready to ship.
-version: 0.5.0
+version: 0.6.0
 owned_spec_sections: []
 persona:
   name: Hector
@@ -49,7 +49,7 @@ For migrations or backfills, obtain `database` evidence of intent, rollout
 order, compatibility with serving versions and verified rollback or recovery. If
 reversal cannot recover information, require the agreed backup/restore path and
 potential loss assessment before release. Keep migration history. Operational
-signal comparison comes from `metric-nerd`; diagnosis remains with `bug-finder`
+signal comparison comes from `observability`; diagnosis remains with `bug-finder`
 while this lead coordinates any recovery under an existing procedure and the
 confirmation rules. Recovery alone does not authorize a software correction.
 

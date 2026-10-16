@@ -44,4 +44,4 @@ roles:
     model_reasoning_effort: low
   database:
     model_reasoning_effort: high
-  metric-nerd: {}
+  observability: {}

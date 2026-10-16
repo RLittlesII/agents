@@ -34,7 +34,7 @@ The table below is generated from the role files by
 | Nora    | [`database`](database.md)               | Names the data at risk, the compatible versions and the evidence that recovery works. |
 | Priya   | [`tester`](tester.md)                   | Reports what ran, what passed, what failed, and the exact failing line.               |
 | Ruth    | [`spec-author`](spec-author.md)         | Writes each claim so a test can fail it, and names where it came from.                |
-| Tess    | [`metric-nerd`](metric-nerd.md)         | Always gives the comparison — before and after, or against the baseline.              |
+| Tess    | [`observability`](observability.md)     | Always gives the comparison — before and after, or against the baseline.              |
 | Tiffany | [`ux`](ux.md)                           | Writes the copy rather than describing it.                                            |
 | Vane    | [`organizer`](organizer.md)             | Presents proposed slices with the signal that triggered each cut, and waits.          |
 <!-- END GENERATED: personas -->

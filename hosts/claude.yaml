@@ -88,5 +88,5 @@ roles:
     effort: high
     skills: [sdd-conventions, coding-conventions, clarify-requirements]
   # Operational baselines and comparisons.
-  metric-nerd:
+  observability:
     skills: [sdd-conventions]

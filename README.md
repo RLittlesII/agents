@@ -51,13 +51,13 @@ roles' contracts decide what each does. Type `/<name>` in Claude Code or
 | Command                               | Convenes                                  | For                                                  |
 | ------------------------------------- | ----------------------------------------- | ---------------------------------------------------- |
 | [`spec`](commands/spec.md)            | spec-author                               | a raw ask taken to a written agreement               |
-| [`design`](commands/design.md)        | architect, domain, database, test-writer, benchmarker, spec-reviewer | a design, reviewed before anything is built on it |
+| [`design`](commands/design.md)        | architect, domain, database, observability, test-writer, benchmarker, spec-reviewer | a design, reviewed before anything is built on it |
 | [`design-ui`](commands/design-ui.md)  | spec-author, ux                           | a screen or flow decided before it is built          |
 | [`test`](commands/test.md)            | test-writer, tester                       | failing tests from claims, then a run report         |
 | [`implement`](commands/implement.md)  | domain, implementer, ui, database         | failing tests made green inside the design           |
 | [`review`](commands/review.md)        | spec-reviewer, adversary                  | a diff judged against its claims                     |
 | [`pr`](commands/pr.md)                | spec-reviewer, implementer, build         | a pull request opened, then reviewed to merge        |
-| [`ship`](commands/ship.md)            | spec-reviewer, adversary, auditor, metric-nerd, database, benchmarker, release | the final gate, then a confirmed release |
+| [`ship`](commands/ship.md)            | spec-reviewer, adversary, auditor, observability, database, benchmarker, release | the final gate, then a confirmed release |
 | [`bug`](commands/bug.md)              | bug-finder, test-writer, implementer, database | a failure reproduced, pinned, fixed and learned from |
 | [`groom`](commands/groom.md)          | organizer                                 | the queue ranked, an item filed, or its health       |
 | [`document`](commands/document.md)    | document-writer                           | documents repaired against the repository            |

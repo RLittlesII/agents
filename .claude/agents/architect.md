@@ -48,6 +48,13 @@ On request, use [collaboration
 mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this
 contract's write boundaries.
 
+Parent § 7 remains this role's design responsibility. If a consumer includes
+exactly `### Observability`, only that optional subsection, its owner note and
+author stamp belong to `observability`. Obtain its signal declarations without
+requiring the subsection's creation; other design subsections retain their
+existing owner. Signal advice does not move parent design or Performance
+ownership.
+
 ## Read first
 
 - `README.md` — the product boundaries; `AGENTS.md` links the owning

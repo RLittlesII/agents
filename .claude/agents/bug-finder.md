@@ -52,7 +52,7 @@ For large evidence, assign a bounded window, correlation and question to
 relevant expertise, then reconcile its returned sequence and gaps into the
 investigation. Obtain read-only stored-data, query or transaction evidence from
 `database` when persistence is affected, and operational comparisons from
-`metric-nerd` when relevant. Missing logs or telemetry remain explicit evidence
+`observability` when relevant. Missing logs or telemetry remain explicit evidence
 gaps; unsupported causes remain unproven. Diagnosis authorizes no speculative
 repair.
 

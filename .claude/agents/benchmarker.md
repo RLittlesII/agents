@@ -26,7 +26,7 @@ Writes no production code, no claims and no tests.
 A recorded performance, cost or structural concern needs measurement. Supply
 benchmarks and measurements to the current lead within existing Performance
 ownership; operational signal requirements and telemetry comparison belong to
-`metric-nerd`.
+`observability`.
 
 On request, use [collaboration
 mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this

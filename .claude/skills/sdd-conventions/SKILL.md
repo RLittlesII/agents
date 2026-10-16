@@ -94,6 +94,7 @@ table.
 | 5. Out of Scope           | `spec-author`      |
 | 6. Concern Separation     | `architect`        |
 | 7. Technical Design       | `architect`        |
+| 7. › `### Observability`  | `observability`    |
 | 8. Testing Strategy       | `test-writer`      |
 | 8. › `### Performance`    | `benchmarker`      |
 | 9. Traceability Matrix    | `test-writer`      |

@@ -53,7 +53,7 @@ and the expertise it needs.
 | [tester](tester.md) | Behavior needs execution or exploration | Run evidence and reproductions |
 | [adversary](adversary.md) | A boundary, credential, permission or external input changes | Independent security findings |
 | [benchmarker](benchmarker.md) | A written performance, cost or structural concern needs measurement | Benchmark and comparative finding |
-| [metric-nerd](metric-nerd.md) | An operational decision needs signals or comparison | Signal requirements, baselines and trends |
+| [observability](observability.md) | An operational decision needs signals or comparison, or an existing Observability subsection needs authoring | Optional subsection declarations, signal requirements, baselines and trends |
 | [build](build.md) | A build, gate, tool or pipeline needs work | Reproducible tooling and checks |
 | [organizer](organizer.md) | Approved claims need work items or the queue needs maintenance | Breakdown and ranked work |
 | [document-writer](document-writer.md) | Substantial documentation is missing or stale | Prose checked against its source |
@@ -85,7 +85,7 @@ Leadership and collaboration modes never expand a contract's write boundaries.
 | New feature | Specify → Design → failing tests → Implement → Verify → Release | UX for interaction; domain for modeling; database for persistence; testing and measurement expertise for the claims |
 | Technical obstacle | Current lead retains the work → bounded assistance → evidence that the original work can resume | Architect for feasibility; bug-finder for unexpected behavior; build for tooling or a gate |
 | Pitched idea | Specify in discovery mode → agreement once the need is confirmed | UX for interaction; architect for bounded feasibility evidence; no speculative production implementation |
-| Production issue | Investigate while Release can coordinate an existing recovery procedure → correction route only if software must change | Correlated logs when available; metric-nerd for operational evidence; missing telemetry stays an evidence gap |
+| Production issue | Investigate while Release can coordinate an existing recovery procedure → correction route only if software must change | Correlated logs when available; observability for operational evidence; missing telemetry stays an evidence gap |
 | Changed shipped requirement | Amend the agreement with permanent claim anchors → assess design, dependencies and compatibility → revised failing tests → Implement → Verify → Release | UX/domain for changed interaction or rules; database for stored data or migrations; operational comparison for rollout |
 
 Operational recovery follows its existing procedure and confirmation rules; it
@@ -109,6 +109,11 @@ Read the recorded artifact the responsibility needs, rather than a chat summary
 of it. Each specification section retains exactly one owner; the authoritative
 map is [sdd-conventions § Section ownership](../skills/sdd-conventions/SKILL.md#section-ownership).
 A lead requests another owner's revision rather than writing that section.
+
+When present, `### Observability` under Technical Design (§ 7) belongs to
+[observability](observability.md), including its owner note and author stamp.
+Its absence is valid; the architect retains the parent design. The role contract
+names the signal declarations and handoff to the test writer.
 
 The four review units are declared in this index's frontmatter and claimed by
 the relevant contracts. Their ordering, independence and findings belong to

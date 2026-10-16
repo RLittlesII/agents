@@ -1,7 +1,7 @@
 ---
 name: benchmarker
 description: Turn a written cost or structure concern into a benchmark that measures it, and record the finding as a number, a shape and an environment. Use when a constraint, an accepted ADR or a design choice states a cost, and nothing has measured it yet; verifies performance and architecture concerns the way test-writer verifies business ones.
-version: 0.7.0
+version: 0.8.0
 owned_spec_sections: ["8/Performance"]
 persona:
   name: Gus
@@ -26,7 +26,7 @@ Writes no production code, no claims and no tests.
 A recorded performance, cost or structural concern needs measurement. Supply
 benchmarks and measurements to the current lead within existing Performance
 ownership; operational signal requirements and telemetry comparison belong to
-`metric-nerd`.
+`observability`.
 
 On request, use [collaboration
 mode](../skills/coding-conventions/SKILL.md#collaboration-mode) within this

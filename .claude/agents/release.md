@@ -49,7 +49,7 @@ For migrations or backfills, obtain `database` evidence of intent, rollout
 order, compatibility with serving versions and verified rollback or recovery. If
 reversal cannot recover information, require the agreed backup/restore path and
 potential loss assessment before release. Keep migration history. Operational
-signal comparison comes from `metric-nerd`; diagnosis remains with `bug-finder`
+signal comparison comes from `observability`; diagnosis remains with `bug-finder`
 while this lead coordinates any recovery under an existing procedure and the
 confirmation rules. Recovery alone does not authorize a software correction.
 
