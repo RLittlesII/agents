@@ -34,6 +34,10 @@ the ranking model below. Count shared
 prerequisites once within a Feature's remaining work and promote the work that
 unlocks the selected Features. Do not substitute stored derived fields or invent
 missing estimates, value assessments, claim assignments, or delivery state.
+Read delivery state from the tracker only. A mirrored status that disagrees with
+it is a diagnostic, and an unreadable tracker leaves the affected work with no
+start. Two records claiming one stable id are named as a duplicate; choose
+neither, and withhold the work that depends on either.
 
 Evaluate each stage separately. Specification, decomposition, design,
 investigation, and implementation can each be next when their own inputs permit
@@ -49,7 +53,9 @@ with reasons, not an empty success claim.
 
 Read approval from the § 12 rows by section, and open questions from § 11 by
 the claims they block. `spec_status` alone is not approval evidence, and an
-unrelated question blocks nothing.
+unrelated question blocks nothing. An open question whose row names no claim leaves its
+Feature's design and implementation readiness unverified: withhold both and name
+the gap. A row reading `None` names that it blocks nothing.
 
 | Stage            | Next step, and the evidence it needs                                      |
 | ---------------- | ------------------------------------------------------------------------- |
@@ -57,7 +63,7 @@ unrelated question blocks nothing.
 | Design           | §§ 1-5 approved for the linked claims, no open question blocking them    |
 | Implementation   | §§ 1-7 approved and the design Ready for the linked claims, no question blocking them, and every prerequisite delivered |
 | Spike            | a bounded question and a time box; the status alone authorizes nothing more |
-| Taken            | occupied: show it and reserve its lane; offer no new start there          |
+| Taken            | occupied, in review too: show it and reserve its lane until delivered; offer no new start there |
 
 Delivered means finished as completed. Work in review, closed as not planned or
 reopened does not satisfy a prerequisite. Design can proceed while
@@ -95,7 +101,9 @@ unscored. No derived tier, score or gate is written back to a record.
 
 ## Use lanes to support the choice
 
-Offer one ranked startable head per available lane. Check both dependencies and
+Offer one ranked startable head per available lane. Offer at most one start per
+Feature, since one item is in progress per Feature: its other startable items
+wait behind the head, and a Feature with taken work offers none. Check both dependencies and
 shared edits: independent tasks can still collide in a specification or generated
 output. Apply existing reservations before narrowing the displayed scope.
 
@@ -113,7 +121,8 @@ without recalculating different choices from the same inputs.
 The person chooses from the recommendations. Asking what is next does not claim
 an item or authorize starting it. Inspect both the agreement and delivery record
 before calling a Feature finished; a completed child list alone proves only that
-the known child work is complete.
+the known child work is complete. A Feature with no unfinished closure and every active
+claim delivered is finished: report it so and leave it out of ranking.
 
 ## Never add
 
