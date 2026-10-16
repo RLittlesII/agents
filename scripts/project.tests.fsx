@@ -424,7 +424,7 @@ let C3_Outputs_AreDeterministicAcrossRuns () =
 
 let roster =
     [ "adversary"; "architect"; "auditor"; "benchmarker"; "bug-finder"; "build"; "database"
-      "document-writer"; "domain"; "implementer"; "metric-nerd"; "organizer"; "release"
+      "document-writer"; "domain"; "implementer"; "observability"; "organizer"; "release"
       "spec-author"; "spec-reviewer"; "test-writer"; "tester"; "ui"; "ux" ]
 
 let F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey () =
@@ -444,7 +444,7 @@ let F2_B002_EveryTemplateSectionHasExactlyOneOwner () =
     let rows = ownershipRows (loadRoles repoRoot) (loadUnowned repoRoot) (loadTemplateSections repoRoot)
     let sections = loadTemplateSections repoRoot
     equal sections.Length (rows |> List.filter (fun (s, _) -> not (s.Contains "›")) |> List.length)
-    equal 15 rows.Length
+    equal 16 rows.Length
 
 let F2_B003_EveryRoleBodyCarriesTheFourSections () =
     for role in loadRoles repoRoot do
@@ -683,12 +683,12 @@ let F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts () =
 let F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles () =
     // Given new specialists; when planned; then source bytes and judgment profiles survive.
     let roles = loadRoles repoRoot
-    for name in [ "database"; "metric-nerd" ] do
+    for name in [ "database"; "observability" ] do
         if not (roles |> List.exists (fun r -> r.Name = name)) then failwithf "agreed specialist '%s' is absent" name
     let outputs = (plan repoRoot).Outputs
-    for name in [ "database"; "metric-nerd" ] do
+    for name in [ "database"; "observability" ] do
         let r = roles |> List.find (fun r -> r.Name = name)
-        equal [] r.OwnedSections
+        equal (if name = "database" then [] else [ "7/Observability" ]) r.OwnedSections
         let ch = overlay (loadHost repoRoot "claude") r |> Map.ofList
         let cx = overlay (loadHost repoRoot "codex") r |> Map.ofList
         equal (Scalar (if name = "database" then "opus" else "sonnet")) ch.["model"]
@@ -703,13 +703,13 @@ let F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles () =
         let decoded = decodeToml (line.Substring "developer_instructions = ".Length)
         if not (claude.EndsWith r.Body && decoded.EndsWith r.Body) then failwithf "%s body changed in projection" name
 
-let F2_B034_FourReviewUnitsAndSectionOwnersStayUnchanged () =
-    // Given retained declarations; when computed; then consolidation changes no artifact owner or review unit.
+let F2_B034_FourReviewUnitsAndExistingSectionOwnersStayUnchanged () =
+    // Given retained declarations; when computed; then consolidation preserves existing owners and adds only the optional nested owner.
     let roles = loadRoles repoRoot
     equal [ "design", "spec-reviewer"; "diff", "spec-reviewer"; "surface", "adversary"; "repository", "auditor" ]
         (reviewRows roles (loadReviewUnits repoRoot) |> List.map (fun (u, r) -> u.Unit, r))
     let expected = [ "1", "spec-author"; "2", "spec-author"; "3", "spec-author"; "4", "spec-author"; "5", "spec-author"
-                     "6", "architect"; "7", "architect"; "8", "test-writer"; "8/Performance", "benchmarker"
+                     "6", "architect"; "7", "architect"; "7/Observability", "observability"; "8", "test-writer"; "8/Performance", "benchmarker"
                      "9", "test-writer"; "10", "spec-author"; "12", "spec-author"; "Scoring", "organizer"; "Tasks", "organizer" ]
     equal (List.sort expected) (roles |> List.collect (fun r -> r.OwnedSections |> List.map (fun s -> s, r.Name)) |> List.sort)
     ownershipRows roles (loadUnowned repoRoot) (loadTemplateSections repoRoot) |> ignore
@@ -717,7 +717,7 @@ let F2_B034_FourReviewUnitsAndSectionOwnersStayUnchanged () =
 let F2_B034_ActiveConveningBindingsResolveToRetainedRoles () =
     // Given active contracts, commands and overlays; when resolved; then no retired identity remains bound.
     let roles = loadRoles repoRoot
-    let retired = set [ "analyst"; "pair-programmer"; "yak-shaver"; "bug-fixer"; "critic"; "log-parser" ]
+    let retired = set [ "analyst"; "pair-programmer"; "yak-shaver"; "bug-fixer"; "critic"; "log-parser"; "metric-nerd" ]
     for c in loadCommands repoRoot do
         for name in c.Roles do
             if retired.Contains name then failwithf "%s still convenes retired role '%s'" c.Source name
@@ -760,14 +760,15 @@ let runProject root check =
 let F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck () =
     // Given the projected twenty-role baseline, when migrated, then missing/stale diagnostics precede a clean apply.
     let retired = [ "analyst"; "pair-programmer"; "yak-shaver" ]
-    let root = rosterCheckout ((roster |> List.except [ "database"; "metric-nerd" ]) @ retired)
+    let historicalRoster = roster |> List.map (fun name -> if name = "observability" then "metric-nerd" else name)
+    let root = rosterCheckout ((historicalRoster |> List.except [ "database"; "metric-nerd" ]) @ retired)
     equal 20 (loadRoles root).Length
     apply root (plan root) |> ignore
     for name in retired do File.Delete(Path.Combine(root, "agents/" + name + ".md"))
     for name in [ "database"; "metric-nerd" ] do write root ("agents/" + name + ".md") (role name "[]" ("\n# " + name + "\n"))
     for id in [ "claude"; "codex" ] do
         let current = read root ("hosts/" + id + ".yaml")
-        write root ("hosts/" + id + ".yaml") (current.Substring(0, current.IndexOf "roles:") + "roles:\n" + (roster |> List.map (sprintf "  %s: {}\n") |> String.concat ""))
+        write root ("hosts/" + id + ".yaml") (current.Substring(0, current.IndexOf "roles:") + "roles:\n" + (historicalRoster |> List.map (sprintf "  %s: {}\n") |> String.concat ""))
     let expected =
         [ for prefix, ext in [ ".claude/agents/", ".md"; ".codex/agents/", ".toml" ] do
             for name in retired do yield Stale (prefix + name + ext)
@@ -814,6 +815,113 @@ let F2_B035_HistoricalEvidenceAndExistingOutputsSurviveRejectedPlans () =
     for rel, bytes in before do equal bytes (File.ReadAllBytes(Path.Combine(root, rel)))
     equal history (read root "agents/.spec/decisions/history.md")
 
+// ---------------------------------------------------------------- 0001-F2 Optional observability (Kevin)
+
+/// Reuse the delivered declaration so a missing/incorrect ownership cannot be hidden in the fixture.
+let observabilityCheckout () =
+    let specialist = loadRoles repoRoot |> List.tryFind (fun r -> r.Name = "observability")
+    let specialist = specialist |> Option.defaultWith (fun () -> failwith "agreed observability contract is absent from delivered roles")
+    let root = checkout ()
+    write root ".specht/templates/feature.md" (template + "\n## 7. Technical Design\n\n## 8. Testing Strategy\n")
+    write root "agents/architect.md" (role "architect" "[\"7\"]" "\n# Architect\n")
+    write root "agents/test-writer.md" (role "test-writer" "[\"8\"]" "\n# Test writer\n")
+    write root "agents/benchmarker.md" (role "benchmarker" "[\"8/Performance\"]" "\n# Benchmarker\n")
+    let owned = specialist.OwnedSections |> List.map (sprintf "\"%s\"") |> String.concat ", "
+    write root "agents/observability.md" (role specialist.Name ("[" + owned + "]") "\n# Observability\n")
+    root
+
+let F2_B037_OptionalObservabilityAcceptsItsDeclaredOwnerStamp () =
+    // Given a present subsection and its delivered ownership, when planned, then its stamp is accepted.
+    let root = observabilityCheckout ()
+    write root "area/.spec/README.md" "## 7. Technical Design\n<!-- last written by: architect, 2026-10-16 -->\n### Observability\n<!-- last written by: observability, 2026-10-16 -->\n"
+    let rows = ownershipRows (loadRoles root) (loadUnowned root) (loadTemplateSections root)
+    equal (Some ("7. › `### Observability`", "`observability`")) (rows |> List.tryFind (fun (h, _) -> h = "7. › `### Observability`"))
+    plan root |> ignore
+    nothingWritten root
+
+let F2_B037_AbsentObservabilityNeedsNoSubsectionOrTemplateEdit () =
+    // Given no subsection, when projected, then ownership remains valid and no subsection is created.
+    let root = observabilityCheckout ()
+    let spec = "## 7. Technical Design\n<!-- last written by: architect, 2026-10-16 -->\n"
+    write root "area/.spec/README.md" spec
+    let beforeTemplate = read root ".specht/templates/feature.md"
+    apply root (plan root) |> ignore
+    equal spec (read root "area/.spec/README.md")
+    equal beforeTemplate (read root ".specht/templates/feature.md")
+    equal [] (differences root (plan root))
+
+let F2_B037_ArchitectCannotStampObservabilityBeforeWrites () =
+    // Given the parent author's stamp on the specialist subsection, when planned, then validation names its real owner.
+    let root = observabilityCheckout ()
+    write root "area/.spec/README.md" "## 7. Technical Design\n### Observability\n<!-- last written by: architect, 2026-10-16 -->\n"
+    let message = expectFailure (fun () -> plan root)
+    contains "section '7. › `### Observability`' is stamped by 'architect', but 'observability' owns it" message
+    nothingWritten root
+
+let F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners () =
+    // Given a sibling design subsection and Performance, when stamps are checked, then parent/performance ownership still applies.
+    let root = observabilityCheckout ()
+    let spec = "## 7. Technical Design\n### Storage\n<!-- last written by: architect, 2026-10-16 -->\n## 8. Testing Strategy\n### Performance\n<!-- last written by: benchmarker, 2026-10-16 -->\n"
+    write root "area/.spec/README.md" spec
+    plan root |> ignore
+    write root "area/.spec/README.md" (spec.Replace("last written by: architect", "last written by: observability"))
+    contains "section '7. Technical Design' is stamped by 'observability', but 'architect' owns it" (expectFailure (fun () -> plan root))
+    nothingWritten root
+    write root "area/.spec/README.md" (spec.Replace("last written by: benchmarker", "last written by: observability"))
+    contains "section '8. › `### Performance`' is stamped by 'observability', but 'benchmarker' owns it" (expectFailure (fun () -> plan root))
+    nothingWritten root
+
+let F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory () =
+    // Given nineteen projected roles and recorded old identities, when renamed, then outputs/bindings migrate and history remains.
+    let root = observabilityCheckout ()
+    let specialist = loadRoles root |> List.find (fun r -> r.Name = "observability")
+    let baseline = roster |> List.map (fun name -> if name = "observability" then "metric-nerd" else name)
+    let root = rosterCheckout baseline
+    write root ".specht/templates/feature.md" (template + "\n## 7. Technical Design\n")
+    write root "agents/architect.md" (role "architect" "[\"3\", \"7\"]" "\n# Architect\n")
+    write root "commands/convene.md" (command "convene" "[metric-nerd]" "[]" commandBody)
+    let history = "---\ntitle: Historical review\n---\nmetric-nerd supplied B-024 and B-035 evidence.\r\n"
+    write root "agents/.spec/decisions/history.md" history
+    apply root (plan root) |> ignore
+    equal 19 (loadRoles root).Length
+    File.Delete(Path.Combine(root, "agents/metric-nerd.md"))
+    let owned = specialist.OwnedSections |> List.map (sprintf "\"%s\"") |> String.concat ", "
+    write root "agents/observability.md" (role "observability" ("[" + owned + "]") "\n# Observability\n")
+    write root "commands/convene.md" (command "convene" "[observability]" "[]" commandBody)
+    for id in [ "claude"; "codex" ] do write root ("hosts/" + id + ".yaml") ((read root ("hosts/" + id + ".yaml")).Replace("  metric-nerd:", "  observability:"))
+    let expected = [ Stale ".claude/agents/metric-nerd.md"; Stale ".codex/agents/metric-nerd.toml"; Missing ".claude/agents/observability.md"; Missing ".codex/agents/observability.toml" ] |> List.sort
+    let rolesOnly = differences root (plan root) |> List.filter (fun diff -> let rel = match diff with Changed p | Missing p | Stale p -> p in rel.StartsWith ".claude/agents/" || rel.StartsWith ".codex/agents/") |> List.sort
+    equal expected rolesOnly
+    let before = differences root (plan root)
+    let code, report = runProject root true
+    equal 1 code
+    for diff in expected do contains (describe diff) report
+    equal before (differences root (plan root))
+    apply root (plan root) |> ignore
+    equal 19 (loadRoles root).Length
+    for dir in [ ".claude/agents"; ".codex/agents" ] do equal 19 (Directory.GetFiles(Path.Combine(root, dir)).Length)
+    contains ".claude/agents/observability.md" (read root ".claude/commands/convene.md")
+    contains ".codex/agents/observability.toml" (read root ".agents/skills/convene/SKILL.md")
+    equal (Encoding.UTF8.GetBytes history) (File.ReadAllBytes(Path.Combine(root, "agents/.spec/decisions/history.md")))
+    equal [] (differences root (plan root))
+    equal 0 (fst (runProject root true))
+
+let F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs () =
+    // Given a current roster, when an old command or host binding returns, then rejection preserves output/history bytes.
+    let root = rosterCheckout roster
+    let history = "metric-nerd reviewed B-024.\r\n"
+    write root "agents/.spec/decisions/history.md" history
+    apply root (plan root) |> ignore
+    let before = (plan root).Outputs |> Map.toList |> List.map (fun (rel, _) -> rel, File.ReadAllBytes(Path.Combine(root, rel)))
+    write root "commands/convene.md" (command "convene" "[metric-nerd]" "[]" commandBody)
+    contains "names role 'metric-nerd'" (expectFailure (fun () -> plan root))
+    for rel, bytes in before do equal bytes (File.ReadAllBytes(Path.Combine(root, rel)))
+    write root "commands/convene.md" (command "convene" "[observability]" "[]" commandBody)
+    write root "hosts/codex.yaml" (read root "hosts/codex.yaml" + "  metric-nerd: {}\n")
+    contains "role 'metric-nerd' has no file" (expectFailure (fun () -> plan root))
+    for rel, bytes in before do equal bytes (File.ReadAllBytes(Path.Combine(root, rel)))
+    equal history (read root "agents/.spec/decisions/history.md")
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
@@ -856,11 +964,17 @@ let tests : (string * (unit -> unit)) list =
       nameof F4_B003_RepositorySkillsNameNoRole, F4_B003_RepositorySkillsNameNoRole
       nameof F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts, F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts
       nameof F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles, F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles
-      nameof F2_B034_FourReviewUnitsAndSectionOwnersStayUnchanged, F2_B034_FourReviewUnitsAndSectionOwnersStayUnchanged
+      nameof F2_B034_FourReviewUnitsAndExistingSectionOwnersStayUnchanged, F2_B034_FourReviewUnitsAndExistingSectionOwnersStayUnchanged
       nameof F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck, F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck
       nameof F2_B034_RetiredBindingsFailBeforeWriting, F2_B034_RetiredBindingsFailBeforeWriting
       nameof F2_B035_HistoricalEvidenceAndExistingOutputsSurviveRejectedPlans, F2_B035_HistoricalEvidenceAndExistingOutputsSurviveRejectedPlans
-      nameof F2_B034_ActiveConveningBindingsResolveToRetainedRoles, F2_B034_ActiveConveningBindingsResolveToRetainedRoles ]
+      nameof F2_B034_ActiveConveningBindingsResolveToRetainedRoles, F2_B034_ActiveConveningBindingsResolveToRetainedRoles
+      nameof F2_B037_OptionalObservabilityAcceptsItsDeclaredOwnerStamp, F2_B037_OptionalObservabilityAcceptsItsDeclaredOwnerStamp
+      nameof F2_B037_AbsentObservabilityNeedsNoSubsectionOrTemplateEdit, F2_B037_AbsentObservabilityNeedsNoSubsectionOrTemplateEdit
+      nameof F2_B037_ArchitectCannotStampObservabilityBeforeWrites, F2_B037_ArchitectCannotStampObservabilityBeforeWrites
+      nameof F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners, F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners
+      nameof F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory, F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory
+      nameof F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs, F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs ]
 
 let mutable failures = 0
 for name, test in tests do

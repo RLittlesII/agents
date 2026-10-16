@@ -781,7 +781,7 @@ The seven additional tests in
 | --- | --- | --- |
 | [@B-033](roles.feature) | `F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts` | Exact nineteen-role membership and explicit mappings on both hosts. |
 | [@B-033](roles.feature) | `F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles` | Database and restored metric-nerd own no sections, use agreed host profiles and project their source bodies unchanged. |
-| [@B-034](roles.feature) | `F2_B034_FourReviewUnitsAndSectionOwnersStayUnchanged` | Existing section owners and four ordered review units remain unchanged; spec-reviewer holds design and diff. |
+| [@B-034](roles.feature) | `F2_B034_FourReviewUnitsAndExistingSectionOwnersStayUnchanged` | Existing section owners and four ordered review units remain unchanged; spec-reviewer holds design and diff. |
 | [@B-034](roles.feature) | `F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck` | Synthetic twenty-to-nineteen migration reports all six stale and four missing host files; check writes nothing, apply removes retirees and writes additions, then public check exits zero. |
 | [@B-034](roles.feature) | `F2_B034_RetiredBindingsFailBeforeWriting` | Commands and host mappings to all six absent retired identities fail planning before outputs; the public CLI rejects a retired command with exit two. |
 | [@B-034](roles.feature) | `F2_B034_ActiveConveningBindingsResolveToRetainedRoles` | Delivered command bindings, host bindings and contract links resolve without retired identities. |
@@ -864,6 +864,44 @@ the affected claim. Any deliberate unverified shipping requires the existing
 
 Not applicable.
 
+### Optional observability amendment testability
+
+Testability verdict for B-037–B-039: **Existing seams are sufficient; design readiness and independent critique
+are approved.** Six additional ownership/rename tests are registered before source
+implementation; the suite now discovers 50 tests. Final preimplementation execution reported **50 tests, 10 failed**, exit ten:
+five updated current-roster/owner/binding checks and five new checks reject the
+absent delivered observability contract. The former-binding rejection test and
+all unchanged baseline checks pass. No source implementation has started. The earlier 44-test evidence describes
+the metric-nerd roster before its rename; it does not cover the new claims. — Kevin
+
+| Scenario tag | Planned evidence and limit |
+| --- | --- |
+| [@B-037](roles.feature) | Real role ownership declaration plus synthetic `ownershipRows`/`validateStamps` cases: correct observability stamp accepted, absent subsection accepted without creation, architect stamp rejected before writes, sibling subsection retains architect and Performance retains benchmarker. |
+| [@B-038](roles.feature) | Independent manual instruction-conformance walkthroughs for ordered portable declarations, log-only severity, constant names, field names without runtime values, claim references, justified `None.`, invalid declarations, every emitted boundary signal declared and asserted in an affected test, declaration handoff to test-writer, and no observability test/production writes. No keyword assertion establishes agent compliance. |
+| [@B-039](roles.feature) | Exact nineteen-role source and host mappings, unchanged effective profiles and source-body projection; synthetic metric-nerd-to-observability migration checks stale/missing outputs, renamed command/host references, clean public CLI check, rejected former bindings without writes, and unchanged historical bytes/claim anchors. |
+
+Preserve existing owners while adding only `7/Observability`; parent § 7 and
+`8/Performance` remain unchanged. Update the existing roster/profile assertions
+and rename the ownership test and its current citations to clarify that existing
+owners remain unchanged. Preserve the original twenty-to-nineteen migration as
+historical fixture coverage; add the nineteen-to-nineteen rename separately.
+Six additional tests increase discovery from 44 to 50. The original
+twenty-to-nineteen fixture explicitly retains its historical metric-nerd roster.
+
+Projection already accepts declared optional subsections and resolves an
+undeclared sibling to its parent. Unit tests can exercise those decisions;
+integration tests use the existing synthetic checkouts and real
+`plan`/`differences`/`apply`/CLI seams. No local or consumer template edit is
+required. Existing filesystem roots isolate all writes; this instruction-only
+amendment adds no network, provider, clock, constructor side effect, ambient
+state or compiling-interface stub. Database/UI runtime tiers do not apply.
+
+Changed-line coverage remains unmeasured: README § Maintaining still supplies
+no threshold. B-038 remains Missing until independent evidence exists, and any
+manual walkthrough earns only Partial instruction conformance. Live-agent
+behavior remains unverified; ADR-0006 and the existing no-waiver limitation
+continue to apply. — Kevin
+
 ## 9. Traceability Matrix
 
 <!-- last written by: test-writer, 2026-10-16 -->
@@ -903,9 +941,12 @@ Not applicable.
 | B-031 | [@B-031](roles.feature) Missing telemetry remains an evidence gap | Manual: Priya, @B-031 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
 | B-032 | [@B-032](roles.feature) Changed shipped behavior amends the existing agreement | Manual: Priya, @B-032 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
 | B-033 | [@B-033](roles.feature) The simplified roster exposes nineteen roles | `F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts`; `F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles`; mechanical guarantees only (§ 8) | Covered |
-| B-034 | [@B-034](roles.feature) Active references follow the consolidated roles | `F2_B034_FourReviewUnitsAndSectionOwnersStayUnchanged`; `F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck`; `F2_B034_RetiredBindingsFailBeforeWriting`; `F2_B034_ActiveConveningBindingsResolveToRetainedRoles`; mechanical guarantees only (§ 8) | Covered |
+| B-034 | [@B-034](roles.feature) Active references follow the consolidated roles | `F2_B034_FourReviewUnitsAndExistingSectionOwnersStayUnchanged`; `F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck`; `F2_B034_RetiredBindingsFailBeforeWriting`; `F2_B034_ActiveConveningBindingsResolveToRetainedRoles`; mechanical guarantees only (§ 8) | Covered |
 | B-035 | [@B-035](roles.feature) Historical evidence survives retirement | `F2_B035_HistoricalEvidenceAndExistingOutputsSurviveRejectedPlans`; mechanical guarantees only (§ 8) | Covered |
 | B-036 | [@B-036](roles.feature) Handoff guidance answers who is involved and when | Manual: Priya, @B-036 instruction-conformance walkthrough (§ 8); live-agent behavior unverified | Partial |
+| B-037 | [@B-037](roles.feature) Optional observability ownership and stamps | `F2_B037_OptionalObservabilityAcceptsItsDeclaredOwnerStamp`; `F2_B037_AbsentObservabilityNeedsNoSubsectionOrTemplateEdit`; `F2_B037_ArchitectCannotStampObservabilityBeforeWrites`; `F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners` (RED) | Missing |
+| B-038 | [@B-038](roles.feature) Portable signal declarations and write boundaries | Missing | Missing |
+| B-039 | [@B-039](roles.feature) Nineteen-to-nineteen observability rename preserves history | `F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory` (RED); `F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs` (passes); current roster/profile/binding checks (RED) | Missing |
 
 ## 10. Lessons / Spec Deltas
 
