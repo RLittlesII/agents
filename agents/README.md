@@ -69,24 +69,91 @@ session or the next agent.
 The authoritative sequence is
 [`sdd-conventions` § Workflow](../skills/sdd-conventions/SKILL.md#workflow).
 
-The architect records whether the design is ready for tests and implementation.
-Requirement gaps return to `spec-author`; design or testability gaps from tests,
-implementation or measurement return to `architect`. The architect reconciles
-the design and diagrams before work proceeds against the revised design. Final
-sign-off remains with `spec-reviewer`.
+## Handoffs
 
-The architect also takes the first pass at technical spikes and records
-performance concerns in the design; the benchmarker owns their measurements.
+A solid edge hands an artifact to the role that works from it. A dashed edge
+carries a finding or a question. Where no edge is drawn, a finding goes to the
+owner of the section it concerns. A role file names only the roles it hands
+to; who hands to it is read here.
 
-This is also why no role fills another's sections. Writing into someone else's
-section removes the only signal that the preceding stage is incomplete.
-A role that finds its input missing or wrong **escalates to the owning role**; it
-does not quietly supply the gap.
+```mermaid
+flowchart LR
+    person((person))
+    an[analyst]
+    sa[spec-author]
+    sr[spec-reviewer]
+    org[organizer]
+    ar[architect]
+    dom[domain]
+    cr[critic]
+    bm[benchmarker]
+    ux[ux]
+    ui[ui]
+    tw[test-writer]
+    ts[tester]
+    im[implementer]
+    adv[adversary]
+    bd[build]
+    rel[release]
+    mn[metric-nerd]
+    au[auditor]
+    bf[bug-finder]
+    lp[log-parser]
+    bx[bug-fixer]
+    pp[pair-programmer]
+    ys[yak-shaver]
+    dw[document-writer]
 
-Most roles own no section. The analyst works before the agreement exists; the
-critic, the adversary and the auditor review; the tester, the bug finder, the log
-parser and the metric nerd report. Each hands its artifact to the owner of the
-section it concerns, by the same rule.
+    an -->|decided need| sa
+    an -->|confirmed need| ux
+    an -.->|separating question| person
+    sa -->|specification diff| sr
+    sr -.->|section verdicts| sa
+    sa -->|approved claims| org
+    sa -->|approved agreement| ar
+    org -.->|breakdown to confirm| person
+    ys -.->|adjacent problems| org
+    ar -.->|decision beyond the Feature| person
+    ar -->|design boundary| dom
+    dom -.->|unenforceable claim| ar
+    dom -.->|unsettled rule| sa
+    ar -->|recorded design| cr
+    cr -.->|design findings| ar
+    ar -->|stated cost| bm
+    bm -.->|contradicting measurement| ar
+    ar -->|design diff| sr
+    ar -->|"Ready design, stubs"| tw
+    tw -.->|testability gaps| ar
+    tw -->|failing tests| im
+    im -.->|design feedback| ar
+    tw -->|suites to run| ts
+    ts -.->|unexercisable claim| ar
+    ts -.->|uncovered behaviour| sa
+    ts -.->|reproduced failure| bf
+    ux -->|decided interaction| ui
+    ui -.->|undrawn state| ux
+    im -->|code diff| sr
+    sr -.->|code findings| im
+    adv -.->|security findings| im
+    im -.->|broken gate| bd
+    bd -->|gated artifact| rel
+    bd -.->|exposed secret| person
+    rel -.->|"rollout confirmation, exposed secret"| person
+    mn -->|baseline and comparison| rel
+    au -.->|drift findings| rel
+    bf -.->|record to accept| person
+    bf -->|reproduction| tw
+    bf -->|accepted record| bx
+    lp -.->|decisive sequence| bf
+    lp -.->|logging gap| ar
+    pp -.->|every step and fork| person
+    dw -.->|contradicted specification| sa
+```
+
+`pair-programmer` and `yak-shaver` are convened by no command; a host calls
+each by name. A role that finds its input missing or wrong escalates to the
+owning role and never supplies the gap: writing into someone else's section
+removes the only signal that the preceding stage is incomplete.
 
 ## Where ownership is written
 
