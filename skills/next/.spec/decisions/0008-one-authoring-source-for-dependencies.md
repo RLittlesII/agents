@@ -14,8 +14,9 @@ type: decision
 An item's prerequisites are authored once, by stable id, in the one source the
 companion names. Each prerequisite's delivery state is read from the tracker
 (C-1). A relationship stored anywhere else, including a derived field such as a
-waiting status, is not an input. Which record wins when a mirrored status
-disagrees with the tracker is not decided here (OQ-1).
+waiting status, is not an input. The tracker wins when a mirrored status disagrees
+([decision 0016](0016-the-tracker-is-the-only-delivery-source.md), resolving
+OQ-1, added 2026-10-15).
 
 ## Why
 
@@ -33,7 +34,7 @@ reconciling competing graphs.
 
 ## Affects
 
-B-019, B-021, C-1, OQ-1.
+B-019, B-021, B-042, C-1, OQ-1.
 
 ## Reversal
 

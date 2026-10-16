@@ -20,7 +20,7 @@ depends_on: []
 blocks: []
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-14"
+updated: "2026-10-15"
 github_issue: null
 synced_at: null
 ---
@@ -59,7 +59,7 @@ missing estimate or an unreadable tracker as zero or as permission to start.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-15 -->
 
 Each source is a section of [`SKILL.md`](../SKILL.md).
 
@@ -79,9 +79,9 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 | B-012 | Given design work whose gate is met and an unfinished implementation prerequisite, this Feature offers the design as the next step.                                                                | § Stage gates                            | Active |
 | B-013 | Given implementation work, this Feature offers it only when §§ 1-7 are approved and the design is Ready for its linked claims, no open question blocks those claims and every prerequisite is delivered.                     | § Stage gates                            | Active |
 | B-014 | Given a `spec_status` or an item status that reads as approved or ready while the gating § 12 rows are not approved, this Feature treats the gate as unmet.                                         | § Stage gates; § Derive an evidenced next step | Active |
-| B-015 | Given an open question that blocks only claims the work does not link, this Feature does not withhold the work for it.                                                                             | § Stage gates                            | Active |
+| B-015 | Given an open question whose row names blocked claims, none of which the work links, this Feature does not withhold the work for it. | § Stage gates                            | Active |
 | B-016 | Given a spike, this Feature offers the investigation only when the spike states a bounded question and a time box.                                                                                 | § Stage gates                            | Active |
-| B-017 | Given taken work inside or outside the requested scope, this Feature shows it as occupied and offers no new start in its lane.                                                                     | § Stage gates; § Use lanes to support the choice | Active |
+| B-017 | Given taken work inside or outside the requested scope, including work in review, this Feature shows it as occupied until it is delivered and offers no new start in its lane. | § Stage gates; § Use lanes to support the choice | Active |
 | B-018 | Given a prerequisite, this Feature counts it as delivered only when it finished as completed, and not while it is in review, closed as not planned or reopened.                                    | § Stage gates                            | Active |
 | B-019 | Given an item whose dependencies or spikes are unfinished, this Feature treats it as waiting whatever its status says.                                                                            | § Stage gates                            | Active |
 | B-020 | Given a container with unfinished children, this Feature offers its children as candidates and never the container.                                                                               | § Stage gates                            | Active |
@@ -98,7 +98,7 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 | B-031 | Given an item whose claim assignment is missing or names no existing claim, this Feature treats it as unlinked rather than inferring a claim from its prose.                                      | § Derive an evidenced next step          | Active |
 | B-032 | Given a dependency cycle, a missing link, a decision hold or occupied work in scope, this Feature's report names it and the work it affects.                                                      | § Derive an evidenced next step; § Stage gates | Active |
 | B-033 | Given a Feature whose known children are all delivered and which has an active claim with neither planned work nor verified delivery, this Feature does not report it finished.                  | § Report without taking work; § The ranking model | Active |
-| B-034 | Given independent available lanes, this Feature offers one ranked startable head per lane.                                                                                                        | § Use lanes to support the choice        | Active |
+| B-034 | Given independent available lanes, this Feature offers one ranked startable head per lane, subject to one start per Feature (B-046). | § Use lanes to support the choice        | Active |
 | B-035 | Given two items with an evidenced shared edit, this Feature places them in one lane even when their dependencies are independent.                                                                 | § Use lanes to support the choice; § Never add | Active |
 | B-036 | Given an inferred lane conflict, this Feature states the evidence for it and its uncertainty.                                                                                                     | § Use lanes to support the choice        | Active |
 | B-037 | Given actionable work that lacks ranking inputs, this Feature lists it apart from the ranked lane heads and not as blocked.                                                                       | § Use lanes to support the choice        | Active |
@@ -106,6 +106,11 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 | B-039 | Given a request to expand detail on a report, this Feature shows the same choices from the same inputs.                                                                                           | § Report without taking work             | Active |
 | B-040 | Given a request for the next work, this Feature claims no item, edits no record, writes back no derived value, and starts no branch, worktree or dispatch.                                         | § Report without taking work; § The ranking model; § Never add | Active |
 | B-041 | Given a dependency cycle in scope, this Feature routes it to grooming as a re-cut and drops no edge to break it.                                                                              | § Stage gates                            | Active |
+| B-042 | Given a mirrored `status` that disagrees with the tracker, this Feature reads delivery state from the tracker and names the disagreement; an unreadable tracker is B-030. | § Derive an evidenced next step | Active |
+| B-043 | Given two records claiming one stable id, this Feature names the duplicate, chooses neither, and offers no start for the work that depends on either. | § Derive an evidenced next step | Active |
+| B-044 | Given an open question whose row names no blocked claim (a row reading `None` names that it blocks nothing), this Feature treats its Feature's design and implementation readiness as unverified, offers neither, and names the gap. | § Stage gates | Active |
+| B-045 | Given a Feature whose unfinished closure is empty and whose every active claim is delivered, this Feature reports it finished and leaves it out of ranking. | § Report without taking work; § The ranking model | Active |
+| B-046 | Given startable items in one Feature in separate lanes, this Feature offers at most one start for that Feature, shows the others queued behind it, and offers none while the Feature has taken work. | § Use lanes to support the choice | Active |
 
 ## 4. Constraints
 
@@ -411,7 +416,7 @@ Not applicable.
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-15 -->
 
 No lesson is recorded for this Feature.
 
@@ -482,18 +487,32 @@ record here, named in its row with the ids it governs.
 | Decision 0014 | [decisions/0014](decisions/0014-standalone-work-stays-visible.md): B-003, B-038 | Carried; the separate section is the companion's to direct                              |
 | Decision 0015 | [decisions/0015](decisions/0015-a-skill-not-an-executable.md): § 5 row 6, § 7, § 8 | Carried; Hooked's paths and its no-Feature placement rejected                         |
 
+### Decided here
+
+The maintainer resolved OQ-1 to OQ-6 on 2026-10-15. Each ruling is a decision
+record naming the rule it follows and the option it rejected.
+
+| Question | Decision | Claims |
+| -------- | -------- | ------ |
+| OQ-1 | [decisions/0016](decisions/0016-the-tracker-is-the-only-delivery-source.md): the tracker is the only delivery source | B-030, B-042 |
+| OQ-2 | [decisions/0017](decisions/0017-work-in-review-holds-its-lane.md): work in review holds its lane | B-017 reworded |
+| OQ-3 | [decisions/0018](decisions/0018-a-duplicate-id-is-diagnosed.md): a duplicate id is diagnosed | B-043 |
+| OQ-4 | [decisions/0019](decisions/0019-an-unscoped-question-leaves-readiness-unverified.md): an unscoped question leaves readiness unverified | B-044 |
+| OQ-5 | [decisions/0020](decisions/0020-a-finished-feature-is-not-ranked.md): a finished Feature is not ranked | B-045 |
+| OQ-6 | [decisions/0021](decisions/0021-one-start-per-feature.md): one start per Feature, lanes still from edits | B-034 reworded, B-046 |
+
 ## 11. Open Questions
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-15 -->
 
 | ID   | Question                                                                                                                                                                                         | Blocks                 | Resolution |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- | ---------- |
-| OQ-1 | Given a specification's mirrored `status` that disagrees with the tracker, or a tracker that cannot be read, does this Feature read delivery state only from the tracker? `SKILL.md` does not say. Hooked B-005, decisions 0008 and 0012. | A claim not yet written | Open       |
-| OQ-2 | Given work in review, is it taken and does it hold its lane until delivered? `SKILL.md` counts its cost and refuses it as a prerequisite but does not say whether it reserves. Hooked B-017, decision 0011. | B-017                  | Open       |
-| OQ-3 | Given two records claiming one stable id, does this Feature diagnose the duplicate rather than choose one, or is that wholly the companion's identity contract? Hooked B-031.                    | A claim not yet written | Open       |
-| OQ-4 | Given an open question whose § 11 row names no blocked claim, does it block every claim of the Feature, none, or leave the work's readiness unverified? Hooked B-009.                             | B-011, B-013, B-015    | Open       |
-| OQ-5 | Given a Feature whose closure is empty and whose claims are all delivered, is it reported as finished, and is it left out of ranking? `SKILL.md` says only when a score is never infinite. Hooked B-022. | B-033                  | Open       |
-| OQ-6 | Given two startable items in one Feature with no shared edit, are they two lanes, or is a Feature itself one lane with one active item? Hooked decision 0011.                                      | B-034, B-035           | Open       |
+| OQ-1 | Given a specification's mirrored `status` that disagrees with the tracker, or a tracker that cannot be read, does this Feature read delivery state only from the tracker? `SKILL.md` does not say. Hooked B-005, decisions 0008 and 0012. | B-042 | Resolved 2026-10-15: yes. A disagreeing mirror is a diagnostic and an unreadable tracker offers no start; [decision 0016](decisions/0016-the-tracker-is-the-only-delivery-source.md), B-042. |
+| OQ-2 | Given work in review, is it taken and does it hold its lane until delivered? `SKILL.md` counts its cost and refuses it as a prerequisite but does not say whether it reserves. Hooked B-017, decision 0011. | B-017                  | Resolved 2026-10-15: yes. Review is taken and holds its lane until delivered; [decision 0017](decisions/0017-work-in-review-holds-its-lane.md), B-017. |
+| OQ-3 | Given two records claiming one stable id, does this Feature diagnose the duplicate rather than choose one, or is that wholly the companion's identity contract? Hooked B-031.                    | B-043 | Resolved 2026-10-15: diagnose. The duplicate is named, neither record chosen, dependent starts withheld; [decision 0018](decisions/0018-a-duplicate-id-is-diagnosed.md), B-043. |
+| OQ-4 | Given an open question whose § 11 row names no blocked claim, does it block every claim of the Feature, none, or leave the work's readiness unverified? Hooked B-009.                             | B-011, B-013, B-015    | Resolved 2026-10-15: unverified. Design and implementation starts are withheld and the gap named; [decision 0019](decisions/0019-an-unscoped-question-leaves-readiness-unverified.md), B-044. |
+| OQ-5 | Given a Feature whose closure is empty and whose claims are all delivered, is it reported as finished, and is it left out of ranking? `SKILL.md` says only when a score is never infinite. Hooked B-022. | B-033                  | Resolved 2026-10-15: yes to both. Finished and left out of ranking; [decision 0020](decisions/0020-a-finished-feature-is-not-ranked.md), B-045. |
+| OQ-6 | Given two startable items in one Feature with no shared edit, are they two lanes, or is a Feature itself one lane with one active item? Hooked decision 0011.                                      | B-034, B-035           | Resolved 2026-10-15: two lanes, one start. Lanes come from edits, but the Feature gets at most one start; [decision 0021](decisions/0021-one-start-per-feature.md), B-046. |
 | OQ-7 | Should the Hooked calls carried here be recorded as decision records in this Feature's `decisions/`, so the alternatives they rejected can be reviewed beside the claims?                          | None                   | Resolved 2026-10-14: yes. Each carried or rewritten Hooked decision is a record in [`decisions/`](decisions/), 0001 to 0015, named in its § 10 row. |
 
 ## 12. Sign-off

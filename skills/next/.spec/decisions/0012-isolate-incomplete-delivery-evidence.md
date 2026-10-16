@@ -14,8 +14,9 @@ type: decision
 When a link or an item's delivery state is missing, ambiguous or cannot be read,
 the affected start is withheld and the gap is named. Verified independent work is
 still ranked and offered. When no delivery state can be read, the answer is
-diagnostics with no start. Whether a mirrored status may stand in for an
-unreadable tracker is not decided here (OQ-1).
+diagnostics with no start. A mirrored status does not stand in for an
+unreadable tracker ([decision 0016](0016-the-tracker-is-the-only-delivery-source.md),
+resolving OQ-1, added 2026-10-15).
 
 ## Why
 
@@ -29,7 +30,7 @@ verified choices; the chosen call gives an answer that is explicitly incomplete.
 
 ## Affects
 
-B-029, B-030, B-032, OQ-1.
+B-029, B-030, B-032, B-042, OQ-1.
 
 ## Reversal
 

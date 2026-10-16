@@ -87,10 +87,10 @@ Feature: Next work
     Then the design is <result>
 
     Examples:
-      | approval                               | question                        | result   |
-      | are approved for its linked claims     | blocks none of its claims       | offered  |
-      | are not approved for its linked claims | blocks none of its claims       | withheld |
-      | are approved for its linked claims     | blocks one of its linked claims | withheld |
+      | approval                               | question                           | result   |
+      | are approved for its linked claims     | names only claims it does not link | offered  |
+      | are not approved for its linked claims | names only claims it does not link | withheld |
+      | are approved for its linked claims     | names one of its linked claims     | withheld |
 
   @B-012
   Scenario: Design runs ahead of an unfinished prerequisite
@@ -124,7 +124,7 @@ Feature: Next work
   @B-015
   Scenario: An unrelated question blocks nothing
     Given design work whose agreement is approved for its linked claims
-    And an open question that blocks only a claim the work does not link
+    And an open question whose row names only a claim the work does not link
     When the person asks what is next
     Then the design is offered
 
@@ -143,15 +143,17 @@ Feature: Next work
   @B-017
   Scenario Outline: Taken work occupies its lane
     Given taken work <where> the requested scope
+    And the taken work is <stage>
     And selected work that needs the same lane
     When the person asks what is next
     Then the taken work is shown as occupied
     And no new start is offered in that lane
 
     Examples:
-      | where   |
-      | inside  |
-      | outside |
+      | where   | stage       |
+      | inside  | in progress |
+      | outside | in progress |
+      | inside  | in review   |
 
   @B-018
   Scenario Outline: Only work finished as completed is delivered
@@ -302,7 +304,7 @@ Feature: Next work
 
   @B-034
   Scenario: One head per available lane
-    Given two independent available lanes with several startable items each
+    Given two independent available lanes in different Features with several startable items each
     When the person asks what is next
     Then one ranked startable head is offered for each lane
 
@@ -353,3 +355,56 @@ Feature: Next work
     When the report is produced
     Then the cycle is routed to grooming as a re-cut
     And no dependency edge is dropped to break it
+
+  @B-042
+  Scenario Outline: The tracker wins over a mirrored status
+    Given work whose specification mirrors a status of <mirror>
+    And the tracker <tracker>
+    When the person asks what is next
+    Then <outcome>
+
+    Examples:
+      | mirror  | tracker                    | outcome                                                          |
+      | ready   | shows the work as taken    | the work is shown as occupied and the disagreement is named      |
+
+  @B-043
+  Scenario: A duplicate id is named, not resolved
+    Given two records that claim the same stable id
+    And independent work that depends on neither
+    When the report is produced
+    Then the duplicate is named as a diagnostic
+    And neither record is chosen
+    And no start is offered for work that depends on either record
+    And the independent work is still offered
+
+  @B-044
+  Scenario: A question naming no claim leaves readiness unverified
+    Given design work whose agreement is approved for its linked claims
+    And an open question in its Feature whose row names no blocked claim
+    When the person asks what is next
+    Then the design is not offered
+    And the report names the question as a gap in readiness
+
+  @B-045
+  Scenario: A finished Feature is not ranked
+    Given a Feature with no unfinished work in its closure
+    And every active claim of that Feature delivered
+    When the Features are compared
+    Then the Feature is reported as finished
+    And it is left out of the ranking
+
+  @B-046
+  Scenario: One start per Feature
+    Given two startable items in one Feature with no shared edit
+    When the person asks what is next
+    Then the items are placed in separate lanes
+    And only the higher-ranked item is offered as a start
+    And the other is shown queued behind it
+
+  @B-046
+  Scenario: A Feature with taken work offers no further start
+    Given a Feature with taken work
+    And another startable item in that Feature with no shared edit
+    When the person asks what is next
+    Then no start is offered for that Feature
+    And the startable item is shown queued
