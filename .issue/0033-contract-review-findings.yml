@@ -1,0 +1,62 @@
+id: "0033"
+type: chore
+title: Close the contract review findings across roles, skills, commands and hosts
+
+status: in-progress
+
+value: 4
+cost: 5
+risk: 2
+
+parent: "0001"
+children: []
+
+depends_on: []
+spikes: []
+
+spec: null
+
+claims: []
+
+created: "2026-10-15"
+updated: "2026-10-15"
+closed: null
+
+summary: |
+  A review of the 24 roles, 7 skills, 12 commands and 2 host overlays found
+  34 defects in five groups. Circular: §§ 1-5 cannot be approved before the
+  architect runs, because the only approver reads the design first; items are
+  placed before and after architecture in two tables. Dead ends: five roles no
+  command convenes and no role names; four handoffs with no recipient;
+  benchmarker hands implementer a finding implementer refuses. Contradictions:
+  spec-reviewer is read-only yet owns § 12; test-writer cuts scenarios the
+  spec-author owns; lessons have two owners. State machine: an eight-state
+  lifecycle in sdd-conventions and item.yml that no role sets, beside eight
+  other status vocabularies. Side effects and tools: commands carry no tool
+  list; only merge needs confirmation; six of 24 roles restricted on Claude,
+  none on Codex; preloaded skills drift from role bodies. Commands restate
+  role refusals as halts and the preamble promises an order three bodies
+  break. No numeric cap on any output; six roles carry no output guidance.
+
+acceptance_criteria:
+  - "sdd-conventions carries no lifecycle table; the two signals (taken, done) are stated in deliver-change and next."
+  - "spec-reviewer owns no section; spec-author owns § 12 and records the reported verdict."
+  - "benchmarker, log-parser and metric-nerd are convened by design, bug and ship; pair-programmer and yak-shaver are named as direct-invoke in agents/README.md."
+  - "coding-conventions states the one-line-per-finding cap once; role files cite it and carry no duplicate."
+  - "agents/README.md carries a Mermaid handoff diagram in place of the handoff prose."
+  - "No command carries a Preconditions and halts paragraph; the preamble reads 'as the body directs'."
+  - "hosts/claude.yaml tools match each role's Owns; preloaded skills match each role body's links."
+  - "dotnet fsi scripts/project.fsx --check, dotnet fsi scripts/project.tests.fsx and dotnet specht --strict pass."
+
+decisions:
+  - "2026-10-15, repository owner: delete the lifecycle table rather than reconcile it. Rejected: a two-row taken/done table, which deliver-change and next already state."
+  - "2026-10-15, repository owner: the diff pass's verdict is a report; § 12 moves to spec-author. Rejected: granting spec-reviewer Edit, which breaks 'every pass is read-only'."
+  - "2026-10-15, repository owner: wire the orphan roles into commands. Rejected: naming all five as direct-invoke only; deleting them."
+  - "2026-10-15, repository owner: hard caps on output, stated once. Rejected: principle-only wording."
+
+out_of_scope:
+  - ".specht/templates/feature.md stamps §§ 6-7 as implementer and speaks of GitHub labels; tool-owned (ADR-0004), reported upstream to specht."
+  - ".spec/adr/ADR-0001 says a role declares only four fields; accepted ADRs are immutable, so a superseding ADR is a separate item."
+  - "README.md § Roles duplicates agents/README.md § Roles; a separate tidying item."
+  - "Deriving the handoff diagram from a role frontmatter key; a new 0001-F2 claim."
+  - "Commands carry no allowed-tools; a host-level fix is a new 0001-F1 claim."
