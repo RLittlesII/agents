@@ -8,6 +8,7 @@ Convene these roles, in this order:
 - `spec-reviewer`, whose contract is `.codex/agents/spec-reviewer.toml`
 - `adversary`, whose contract is `.codex/agents/adversary.toml`
 - `auditor`, whose contract is `.codex/agents/auditor.toml`
+- `metric-nerd`, whose contract is `.codex/agents/metric-nerd.toml`
 - `release`, whose contract is `.codex/agents/release.toml`
 
 Read each role's contract before acting as it, and keep the boundaries it declares: a role that refuses a kind of work still refuses it here.
@@ -15,12 +16,11 @@ Read each role's contract before acting as it, and keep the boundaries it declar
 Use these skills: `deliver-change` (`.agents/skills/deliver-change/SKILL.md`), `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`).
 
 The spec reviewer judges the diff against the claims it cites. The adversary
-attacks what the release exposes. The auditor reads the repository at rest for
-drift. The release engineer then versions, writes the changelog and stages the
-rollout, with the rollback stated.
-
-**Preconditions and halts.** A blocking finding from any pass halts the release.
-A release is outward-facing and hard to undo: nothing publishes without a
-stated rollback and the person's explicit confirmation.
+joins when the release touches a trust boundary, a credential, a permission or
+input from outside; say which, or that it touches none. The auditor reads the
+repository at rest for drift. The metric nerd states the baseline and what to
+read after the rollout to tell whether it helped. The release engineer then
+versions, writes the changelog and stages the rollout, with the rollback
+stated.
 
 Work on: the request that invoked this skill

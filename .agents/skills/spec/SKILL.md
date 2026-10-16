@@ -14,11 +14,7 @@ Use these skills: `clarify-requirements` (`.agents/skills/clarify-requirements/S
 
 The analyst turns the ask into discovery notes: who wants it, what failure
 state it removes, and what is still unknown. The spec author starts only from a
-decided need and writes the agreement and its scenarios.
-
-**Preconditions and halts.** Halt while the need still has two readings that
-would build different systems; ask the one question that separates them. The
-output is a specification in the repository, not a conversation: a decision
-reached and not written did not happen.
+decided need and writes the agreement and its scenarios. The output is a
+specification in the repository, not a conversation.
 
 Work on: the request that invoked this skill

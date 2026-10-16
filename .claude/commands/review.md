@@ -17,8 +17,4 @@ accepted decision it touches. The adversary joins only when the diff changes a
 trust boundary, a credential, an input from outside, or a permission; say which
 of those it touches, or that it touches none.
 
-**Preconditions and halts.** Read-only: nothing under review is edited, and no
-one reviews their own implementation. A change whose claims cannot be located
-halts here and goes back to its author.
-
 Work on: $ARGUMENTS
