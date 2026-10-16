@@ -2,37 +2,36 @@
 # emits the result as frontmatter after `name` and `description`.
 # Accepted `model` values: sonnet, opus, haiku, fable, a full model id, inherit.
 # Accepted `effort` values: low, medium, high, xhigh, max.
+# `tools` is set only where the contract is read-only; a role without it has
+# every tool. A reviewing or reporting role gets no Bash: Bash writes.
 # `commands_output` is where a command lands; see ADR-0005.
 output: .claude/agents/{name}.md
 skills_output: .claude/skills
 commands_output: .claude/commands/{name}.md
 defaults:
-  model: inherit
+  model: sonnet
   effort: medium
 roles:
   spec-author:
     model: opus
     effort: high
-    skills: [sdd-conventions, spec-and-traceability, clarify-requirements]
+    skills: [sdd-conventions, spec-and-traceability, clarify-requirements, coding-conventions]
   architect:
     model: opus
     effort: xhigh
-    skills: [sdd-conventions, coding-conventions]
+    skills: [sdd-conventions, coding-conventions, spec-and-traceability, clarify-requirements]
   test-writer:
-    model: sonnet
-    effort: medium
     skills: [sdd-conventions, test-from-scenarios]
   implementer:
-    model: sonnet
-    effort: medium
-    skills: [sdd-conventions, coding-conventions]
+    skills: [sdd-conventions, coding-conventions, deliver-change]
+  # The diff pass reports a verdict and findings; it edits nothing.
   spec-reviewer:
     model: opus
     effort: high
-    tools: [Read, Grep, Glob, Bash]
+    tools: [Read, Grep, Glob]
+    skills: [sdd-conventions, spec-and-traceability]
   benchmarker:
-    model: sonnet
-    effort: medium
+    skills: [sdd-conventions]
   # Elicitation turns ambiguity into a decided need; a wrong reading costs a Feature.
   analyst:
     model: opus
@@ -42,66 +41,56 @@ roles:
   critic:
     model: opus
     effort: high
-    tools: [Read, Grep, Glob, Bash]
+    tools: [Read, Grep, Glob]
     skills: [sdd-conventions, coding-conventions, spec-and-traceability]
   # Queue work is bookkeeping against a fixed scoring model.
   organizer:
-    model: sonnet
-    effort: medium
     skills: [sdd-conventions, next, deliver-change, spec-and-traceability]
   # Prose checked against existing text; volume over depth.
   document-writer:
     model: haiku
     effort: low
     skills: [sdd-conventions, coding-conventions]
-  # Runs commands and reports verbatim.
+  # Runs the suites and reports verbatim; Bash to run, nothing to edit.
   tester:
-    model: sonnet
-    effort: medium
+    tools: [Read, Grep, Glob, Bash]
     skills: [sdd-conventions, test-from-scenarios]
-  # Root cause needs deep tracing before anyone edits; read-only on code.
+  # Root cause needs deep tracing before anyone edits. Read-only on code; Bash
+  # to reproduce, Edit for its own root-cause record in the work item.
   bug-finder:
     model: opus
     effort: high
-    tools: [Read, Grep, Glob, Bash]
+    tools: [Read, Grep, Glob, Bash, Edit]
     skills: [sdd-conventions, spec-and-traceability, test-from-scenarios]
   # The fix is small and bounded by a diagnosed cause and a red test.
   bug-fixer:
-    model: sonnet
-    effort: medium
     skills: [sdd-conventions, test-from-scenarios, coding-conventions, deliver-change]
   # Interactive small steps; latency matters more than depth.
   pair-programmer:
-    model: sonnet
-    effort: medium
     skills: [sdd-conventions, coding-conventions, clarify-requirements]
   # Bounded incidental fixes.
   yak-shaver:
-    model: sonnet
-    effort: medium
     skills: [sdd-conventions, coding-conventions, deliver-change]
   # Long input, mechanical reading; read-only.
   log-parser:
     model: haiku
     effort: low
-    tools: [Read, Grep, Glob, Bash]
+    tools: [Read, Grep, Glob]
     skills: [sdd-conventions]
   # Baselines and comparisons; arithmetic over judgement.
   metric-nerd:
-    model: sonnet
-    effort: medium
     skills: [sdd-conventions]
   # Hostile review needs depth; a missed finding ships; read-only.
   adversary:
     model: opus
     effort: high
-    tools: [Read, Grep, Glob, Bash]
+    tools: [Read, Grep, Glob]
     skills: [sdd-conventions, coding-conventions]
   # Whole-tree consistency across many records; read-only.
   auditor:
     model: opus
     effort: high
-    tools: [Read, Grep, Glob, Bash]
+    tools: [Read, Grep, Glob]
     skills: [sdd-conventions, spec-and-traceability]
   # Invariants are where business rules go wrong silently.
   domain:
@@ -110,21 +99,13 @@ roles:
     skills: [sdd-conventions, coding-conventions, clarify-requirements]
   # Flows and copy; judgement bounded by stated needs.
   ux:
-    model: sonnet
-    effort: medium
     skills: [sdd-conventions, clarify-requirements]
   # Implementation against a decided interaction.
   ui:
-    model: sonnet
-    effort: medium
     skills: [sdd-conventions, coding-conventions]
   # Procedural, confirmation-gated.
   release:
-    model: sonnet
-    effort: medium
     skills: [sdd-conventions, deliver-change]
   # Procedural; reproduce, change the script, see the gate fail.
   build:
-    model: sonnet
-    effort: medium
     skills: [sdd-conventions, deliver-change, coding-conventions]

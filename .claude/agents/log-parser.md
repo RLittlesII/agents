@@ -3,7 +3,7 @@ name: log-parser
 description: "Read logs and say what happened — the window, the sequence, the correlation, and the one line that matters — with inference marked as inference. Use when a failure left a trail and the trail is long."
 model: haiku
 effort: low
-tools: [Read, Grep, Glob, Bash]
+tools: [Read, Grep, Glob]
 skills: [sdd-conventions]
 ---
 

@@ -12,6 +12,7 @@ instructions_prefix: "Read AGENTS.md first. The authoritative role source is {so
 defaults:
   model: gpt-6.1-sol
   model_reasoning_effort: medium
+# Codex has no per-agent tool key; a role's read-only boundary is its contract.
 roles:
   spec-author:
     model_reasoning_effort: high

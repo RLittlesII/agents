@@ -3,6 +3,7 @@ name: tester
 description: "Execute and explore — run the suites, probe the behaviour no scenario covers, and report exactly what happened. Use when a change needs verifying or a feature needs exercising by hand; writes reports, not tests and not fixes."
 model: sonnet
 effort: medium
+tools: [Read, Grep, Glob, Bash]
 skills: [sdd-conventions, test-from-scenarios]
 ---
 

@@ -3,7 +3,7 @@ name: bug-finder
 description: "Reproduce, classify and root-cause a failure before anyone touches code, and hand on a verified scope. Use on any bug report, regression or unexpected behaviour; read-only, never writes the fix."
 model: opus
 effort: high
-tools: [Read, Grep, Glob, Bash]
+tools: [Read, Grep, Glob, Bash, Edit]
 skills: [sdd-conventions, spec-and-traceability, test-from-scenarios]
 ---
 

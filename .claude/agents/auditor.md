@@ -3,7 +3,7 @@ name: auditor
 description: "Audit the whole repository at rest against its own stated standards — specification completeness, traceability, record hygiene and convention drift. Use on a cadence or before a release, never on a single diff; read-only."
 model: opus
 effort: high
-tools: [Read, Grep, Glob, Bash]
+tools: [Read, Grep, Glob]
 skills: [sdd-conventions, spec-and-traceability]
 ---
 

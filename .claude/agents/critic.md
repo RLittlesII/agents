@@ -3,7 +3,7 @@ name: critic
 description: "Review a design before it is built, against the claims it must satisfy and the constraints it must not break, and return findings rather than a redesign. Use after a technical design is written and before tests and implementation start; read-only."
 model: opus
 effort: high
-tools: [Read, Grep, Glob, Bash]
+tools: [Read, Grep, Glob]
 skills: [sdd-conventions, coding-conventions, spec-and-traceability]
 ---
 

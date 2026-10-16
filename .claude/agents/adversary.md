@@ -3,7 +3,7 @@ name: adversary
 description: "Attack a change before it merges — what an untrusted input, an unexpected order or a hostile caller can do with it — and report each finding with its precondition, impact and smallest fix. Use before merging anything that touches a boundary, a credential, a permission or user input; read-only."
 model: opus
 effort: high
-tools: [Read, Grep, Glob, Bash]
+tools: [Read, Grep, Glob]
 skills: [sdd-conventions, coding-conventions]
 ---
 
