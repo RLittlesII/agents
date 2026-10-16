@@ -244,9 +244,11 @@ exits two without creating output directories. Independent verification reported
 
 ### Performance
 
-Not measured. Eighty outputs from twenty roles, seven skills and twelve
-commands complete well inside the `dotnet fsi` start-up time; a concern appears only if
-the roster grows by an order of magnitude.
+<!-- last written by: benchmarker, 2026-10-16 -->
+
+Not measured. The nineteen-role source set projects to 78 outputs across both
+hosts. No latency measurement or performance target is established by this
+inventory count.
 
 ## 9. Traceability Matrix
 
