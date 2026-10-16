@@ -104,11 +104,11 @@ that no longer exist, and two hosts drift into two versions of the same ritual.
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-14 -->
+<!-- last written by: architect, 2026-10-15 -->
 
 A command is `commands/<name>.md`: frontmatter `name`, `description`,
 `roles`, optional `skills` and `argument-hint`; a body that says how the
-convened roles divide the work and where it halts, ending with the request
+convened roles divide the work — a halt is a role's own — ending with the request
 placeholder `$ARGUMENTS`. `loadCommand`, `validateCommands`, `commandPreamble`
 and `renderCommand` in [`Projection.fsx`](../../scripts/Projection.fsx) are the
 authority; `plan` runs them after the roles and skills load, so a failure
@@ -118,8 +118,8 @@ writes nothing.
   agent output for that role (`.claude/agents/<role>.md`,
   `.codex/agents/<role>.toml`); a skill is the host's skills output. These paths
   exist wherever the outputs were pulled, which `agents/<role>.md` does not.
-  One role reads "Act as the `<role>` role"; several read "Convene these roles,
-  in this order" with one line each.
+  One role reads "Act as the `<role>` role"; several read "Convene these roles
+  as the body directs" with one line each.
 - **The output form follows the path.** A `commands_output` ending in
   `/SKILL.md` renders a skill; any other renders a command file. The decision
   and the Codex finding are in
