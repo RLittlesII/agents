@@ -8,7 +8,7 @@ type: adr
 
 ## Status
 
-accepted
+superseded by ADR-0008 - 2026-10-15, by the repository owner (item 0034).
 
 ## Context
 
