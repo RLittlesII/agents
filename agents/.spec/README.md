@@ -617,11 +617,77 @@ the cited tests, with B-004 assessed manually as described below.
 
 ### Collaboration amendment
 
-B-010–B-036 have tagged acceptance scenarios and no executable tests yet;
-their traceability rows remain `Missing`. The existing projector suite does
-not execute the new collaboration scenarios. Testability and the verification
-approach await the amendment's recorded design; no new runner or agent behavior
-is assumed by this agreement. — Kevin
+Testability verdict: **Ready to write source/projection conformance tests against
+DR-1–DR-5; agent-behavior coverage remains an explicit delivery gap.**
+B-010–B-036 have tagged scenarios but no executable tests or scenario execution
+evidence. The existing projector suite does not execute them; all amendment
+§ 9 rows remain `Missing`. This design-only assessment adds neither tests nor
+coverage. — Kevin
+
+| Claims | Proposed verification and limit |
+| --- | --- |
+| B-010–B-014 | Independently inspect supplied assignments and integrated artifacts against state leads, justified expertise, ownership and earliest unmet prerequisite. Include unchanged-model and missing-approval cases. |
+| B-015–B-020 | Exercise discovery, correction, obstruction, collaboration, log analysis and design review with synthetic scenario inputs; inspect decisions, refusals, evidence gaps and distinct author/reviewer identities. |
+| B-021–B-025 | Review persistence assignments, invariant conflicts, compatibility/recovery evidence and measurement/instrumentation ownership. This Feature tests the specialist contract, not an application's database migration. |
+| B-026–B-032 | Independently walk each tagged positive and negative situation case using supplied artifacts; record selected responsibility, unmet gates and supporting evidence. |
+| B-033 | Add a real-checkout test asserting the exact nineteen-role set and both host mappings. Count alone cannot detect a substituted role. |
+| B-034 | Add synthetic migration integration checks through `plan`, `differences` and `apply`; inspect projected instruction bytes, stale retirement outputs, command references and unchanged ownership. |
+| B-035–B-036 | Verify synthetic historical records survive projection byte-for-byte; independently classify real retirement-search hits and review bounded guidance for all six situations. |
+
+The first four rows require acceptance evidence against the actual assignments,
+contributions, approvals and findings when available. A synthetic artifact
+walkthrough assesses the instructions' routing and refusal guidance; it does
+not execute an agent or establish that an agent obeys them. Record the scenario
+tag, supplied prerequisites, observed artifact/decision, assertion result and
+independent reviewer in the existing companion-named evidence location.
+Review contract wording for transferred duties and boundaries, not a keyword
+whose presence is reported as behavioral coverage. Source checks can prove
+that instructions are present and preserved, never lead selection, secret
+protection, gate compliance or independence of an actual reviewing instance.
+
+Executable tiers reuse [`project.tests.fsx`](../../scripts/project.tests.fsx):
+unit tests exercise existing loading, ownership and review-unit decisions;
+integration tests exercise the real plan/write/check path on synthetic temporary
+checkouts. A single retained reviewer must own both design and diff while all
+four ordered units remain total; duplicate/missing holders must still fail.
+Existing deterministic-output and review-registry tests are reused, not replaced.
+Update the existing roster and reviewer expectations without weakening baseline
+checks. Register each added test in the explicit `tests` list and confirm the
+reported discovered count increases; a function definition alone never runs.
+
+For migration, first project a synthetic pre-retirement checkout, then change
+its source contracts, commands and overlays to the agreed retained roster.
+Check that `differences` reports retired host files as stale and database outputs
+as missing; `apply` must remove stale files and write the expected bytes; a new
+`plan` and check must report no differences. Exercise the public CLI's
+`--root <synthetic-dir>` and `--check` for exit status and drift reporting rather
+than imitating their decisions. Invalid retired command references, host mappings
+to absent source roles and invalid review assignments must fail planning before output writes.
+Preserve historical fixture bytes and existing outputs on rejected plans.
+No mutation of the working checkout's generated files belongs in these tests.
+
+Critical seams and remaining gaps:
+
+- B-013/B-020, C-3/C-4: ownership/registry checks prove declarations; independent evidence must establish actual write boundaries and distinct reviewing instances.
+- B-014/B-016/B-026–B-032, C-4: missing approvals, unproven causes and recovery-only cases need refusal evidence; a complete route table is insufficient.
+- B-034/B-035, C-6: classify active versus historical references independently; retirement removes live-roster lint patterns, so passing lint cannot prove migration completeness.
+- B-033/B-034, DR-5: absent overlay entries inherit defaults; real-roster tests check explicit mapping completeness, while dangling host references fail `plan`.
+- B-010–B-032, C-5: no agent-behavior runner is defined. Do not invent a workflow engine, schema, prompt simulator or model API harness.
+- § 8 coverage reporting: README § Maintaining omits the threshold/gate required by ADR-0007; report this gap and unmeasured coverage, never invent a percentage.
+
+The filesystem root is already explicit in projection entry points; synthetic
+temporary checkouts isolate writes. No new network, provider, clock, constructor,
+ambient-state or public-member seam is introduced. Network/provider tests, time
+cases, application database/UI tiers and compiling interface stubs are not
+applicable because this amendment introduces instructions, not runtime APIs or
+persisted data. Use no credentials, live traffic, sleeps or wall-clock assertions.
+
+Keep proposed evidence distinct from executed coverage. Neither walkthroughs nor
+projector checks justify marking behavioral rows `Covered`. Under
+[ADR-0006](../../.spec/adr/0006-a-missing-row-blocks-the-merge-not-approval.md),
+`Missing` does not block agreement or design approval, but blocks delivery of
+the affected claim. Any deliberate unverified shipping requires the existing
+§ 11 approval record; this assessment supplies no waiver. — Kevin
 
 ### Performance
 
