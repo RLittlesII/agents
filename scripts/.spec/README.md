@@ -4,7 +4,7 @@ description: "Host-free role contracts plus a per-host overlay become committed,
 type: feature
 id: "F1"
 epic: "0001"
-spec_status: draft
+spec_status: in-review
 status: ready
 priority: med
 value: 0
@@ -20,7 +20,7 @@ depends_on: []
 blocks: ["F3"]
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-14"
+updated: "2026-10-16"
 github_issue: null
 synced_at: null
 ---
@@ -58,11 +58,11 @@ this Feature removes both failure states.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
 | ID    | Claim                                                                                                                                                                                                                 | Source                                        | Status |
 | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------ |
-| B-001 | Given a role file and the Claude overlay, this Feature emits `.claude/agents/<name>.md` whose frontmatter carries the name, the description and the overlay keys in overlay order, and whose body is the role body verbatim, preceded only by the persona line of B-012. | [ADR-0001](../../.spec/adr/0001-roles-are-host-free-and-hosts-are-overlays.md) | Active |
+| B-001 | Given a role file and the Claude overlay, this Feature emits `.claude/agents/<name>.md` whose frontmatter carries the name, the description and the overlay keys in overlay order, and whose body is the role body verbatim, preceded only by the persona line of B-018. | [ADR-0001](../../.spec/adr/0001-roles-are-host-free-and-hosts-are-overlays.md) | Active |
 | B-002 | Given a role file and the Codex overlay, this Feature emits `.codex/agents/<name>.toml` carrying the name, the description, `developer_instructions` prefixed with the authoritative-source sentence, and the overlay keys. | ADR-0001                                      | Active |
 | B-003 | Given a role body containing quotes, backslashes, tabs, non-ASCII text and characters outside the Basic Multilingual Plane, the Codex file parses as TOML and the text after the prefix equals the role body.          | [ADR-0003](../../.spec/adr/0003-the-projector-is-an-fsharp-script.md) | Active |
 | B-004 | Given a directory under `skills/`, this Feature copies every file in it byte for byte to the Claude skills directory and to the Codex discovery directory.                                                            | A-1, A-2                                      | Active |
@@ -72,12 +72,14 @@ this Feature removes both failure states.
 | B-008 | Given outputs equal to what the sources produce, `--check` exits 0; given a changed, a missing or a stale output, `--check` exits 1 naming each path and writes nothing.                                               | [ADR-0002](../../.spec/adr/0002-generated-host-outputs-are-committed.md) | Active |
 | B-009 | Given an overlay naming a role with no file, or a role file whose `name` differs from its file name, this Feature fails naming the role.                                                                              | ADR-0001                                      | Active |
 | B-010 | Given a role file carrying `model`, `effort`, `tools` or `model_reasoning_effort`, this Feature fails naming the key.                                                                                                  | ADR-0001                                      | Active |
-| B-011 | Given the roles' personas, this Feature writes the persona roster into `agents/PERSONAS.md` between its generated markers, one row per persona sorted by persona name, carrying the persona, a link to the role and the voice. | [0001-F2](../../agents/.spec/README.md) B-007 | Active |
-| B-012 | Given a role with a persona, both host files carry one generated line naming the persona and its voice and saying machine-read stamps keep the role name, ahead of the role body, which follows verbatim; a role without a persona gets no line. | 0001-F2 B-007 | Active |
+| B-011 | Given the roles' personas, this Feature writes the persona roster into `agents/PERSONAS.md` between its generated markers, one row per persona sorted by persona name, carrying the persona, a link to the role and the voice. | [0001-F2](../../agents/.spec/README.md) B-007 | Withdrawn |
+| B-012 | Given a role with a persona, both host files carry one generated line naming the persona and its voice and saying machine-read stamps keep the role name, ahead of the role body, which follows verbatim; a role without a persona gets no line. | 0001-F2 B-007 | Withdrawn |
 | B-013 | Given the review units declared in the roles index and the roles' `reviews`, this Feature writes the review-pass registry into `sdd-conventions` between its generated markers, one row per unit in declared order. | LTI `generate-review-passes.sh` | Active |
 | B-014 | Given two roles reviewing one unit, this Feature fails naming the unit and both roles, and writes nothing. | LTI double-claim rule | Active |
 | B-015 | Given a declared unit no role reviews, or a role reviewing a unit the index does not declare, this Feature fails naming the unit, and writes nothing. | LTI totality rule | Active |
 | B-016 | Given a specification whose section carries a `last written by` stamp naming a role other than the section's owner in the ownership table, this Feature fails naming the file, the section and both roles, and writes nothing. A section with no single owning role and a stamp inside a fenced block are not checked. | LTI `validate-spec-ownership.sh` | Active |
+| B-017 | Given the roles' personas, projection writes one roster row per persona between the generated markers, carrying its name or `—`, its role link and its voice; named rows sort by persona name before unnamed rows sorted by role name. | 0001-F2 B-040 | Active |
+| B-018 | Given a persona with no name, both hosts prepend `Voice: <voice>` without a signing instruction; named personas retain their existing persona and signing line, absent personas get no line, and role bodies follow verbatim. | 0001-F2 B-040 | Active |
 
 ## 4. Constraints
 
@@ -118,7 +120,7 @@ this Feature removes both failure states.
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-14 -->
+<!-- last written by: architect, 2026-10-16 -->
 
 Two files. [`Projection.fsx`](../Projection.fsx) is a library with no top-level
 effects: it loads, validates, merges and renders, and returns a plan. It is the
@@ -221,11 +223,10 @@ Mechanism per claim:
   that no output directory exists afterwards.
 - B-008: `differences` and `apply`; one changed, one missing and one stale file
   planted, all three reported, none touched by the check, all repaired by apply.
-- B-011: `renderPersonaTable` through `plan`; exact table, sorted by persona,
-  idempotent, and a role without a persona has no row.
-- B-012: `personaLine` through `renderClaude` and `renderCodex`; whole Claude
-  file and decoded Codex instructions compared, and a persona-less role
-  unchanged.
+- B-017 (replaces B-011): exact named-only and mixed roster tables, names
+  before unnamed roles, idempotence, and no row for absent personas.
+- B-018 (replaces B-012): exact named and unnamed lines through both host
+  renderers, unchanged bodies, and no line for absent personas.
 - B-013, B-014, B-015: `reviewRows` and `renderReviewTable` through `plan` on a
   fixture with two units; exact registry, then a double claim, an unreviewed
   unit and an undeclared one, each failing before anything is written.
@@ -252,7 +253,7 @@ inventory count.
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-14 -->
+<!-- last written by: test-writer, 2026-10-16 -->
 
 | Claim ID | Scenario                                                   | Test                                                              | Status  |
 | -------- | ---------------------------------------------------------- | ----------------------------------------------------------------- | ------- |
@@ -266,18 +267,22 @@ inventory count.
 | B-008    | Check passes when current and names every drift            | `B008_Check_IsSilentWhenCurrentAndNamesEveryDrift`                | Covered |
 | B-009    | An overlay or a role name points at nothing                | `B009_OverlayNamesMissingRole_Fails`, `B009b_RoleNameDiffersFromFileName_Fails` | Covered |
 | B-010    | A role file carries a host key                             | `B010_RoleFileCarriesHostKey_FailsNamingTheKey`                   | Covered |
-| B-011    | Personas become the roster                                 | `B011_Personas_WriteRosterBetweenMarkers`                         | Covered |
-| B-012    | A persona line precedes the body on both hosts             | `B012_Persona_PrecedesVerbatimBodyOnBothHosts`                    | Covered |
+| B-011    | Personas become the roster                                 | `B011_Personas_WriteRosterBetweenMarkers`                         | Withdrawn |
+| B-012    | A persona line precedes the body on both hosts             | `B012_Persona_PrecedesVerbatimBodyOnBothHosts`                    | Withdrawn |
 | B-013    | Review units become the registry                           | `B013_ReviewUnits_WriteRegistryBetweenMarkers`                    | Covered |
 | B-014    | Two roles review one unit                                  | `B014_TwoRolesReviewOneUnit_FailsNamingBoth`                      | Covered |
 | B-015    | A unit no role reviews, or one nobody declared             | `B015_UnreviewedOrUndeclaredUnit_FailsNamingIt`                   | Covered |
 | B-016    | A section stamp names a role that does not own it          | `B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles`     | Covered |
+| B-017 | Named and unnamed personas become the roster | `B017_Personas_WriteRosterBetweenMarkers`, `B017_MixedPersonas_SortNamedThenUnnamedRoles` | Covered |
+| B-018 | Named or voice-only lines precede verbatim bodies | `B018_Persona_PrecedesVerbatimBodyOnBothHosts`, `B018_UnnamedPersona_PreservesVoiceOnBothHosts` | Covered |
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
-None.
+2026-10-16: Owner requested clearing persona names while preserving voices.
+B-011 and B-012 are withdrawn and replaced by B-017 and B-018: unnamed personas
+remain in the roster and project a voice line without signing instructions.
 
 ## 11. Open Questions
 
@@ -287,11 +292,13 @@ None.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-15 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
 | Section | Status | Reviewer      | Note                                                   |
 | ------- | ------ | ------------- | ------------------------------------------------------ |
-| 1-12    | 🟡     | spec-reviewer | Scaffold draft; claims and tests landed in one change. |
+| 1-12    | 🟡     | spec-reviewer | Draft baseline. Original scaffolding evidence retained; claims and tests landed together. |
+| 3, 7-10, 12 | 🟢 | spec-reviewer | Approved 2026-10-16: optional-name delta reviewed against 0001-F1 B-017 and B-018; source, scenarios, tests and projections agree. Baseline evidence retained. |
+| 3, 7-10, 12 | 🟢 | spec-reviewer | Rebase delta approved 2026-10-16 by independent `/root/persona_diff_review` against main `e60dea1`; no findings, earlier evidence retained. |
 
 ## Tasks
 

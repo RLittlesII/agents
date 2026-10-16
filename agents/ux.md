@@ -1,10 +1,9 @@
 ---
 name: ux
 description: Decide how a feature behaves for the person using it — flows, every state, accessibility and the exact words — before anyone builds it. Use when a need is understood but the interaction is undecided.
-version: 0.4.0
+version: 0.4.1
 owned_spec_sections: []
 persona:
-  name: Tiffany
   voice: "Writes the copy rather than describing it."
 ---
 

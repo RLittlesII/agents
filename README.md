@@ -28,7 +28,7 @@ The [role index](agents/README.md) names the six lead responsibilities, thirteen
 conditional specialists, and the routes for common work. A lead integrates the
 complete result while specialists work within their own artifact boundaries.
 Its [Handoffs section](agents/README.md#handoffs) answers who is involved and
-when; [PERSONAS.md](agents/PERSONAS.md) is the generated signing roster.
+when; [PERSONAS.md](agents/PERSONAS.md) lists each voice and optional signing name.
 
 ## Skills
 

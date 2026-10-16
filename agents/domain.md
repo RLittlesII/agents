@@ -1,10 +1,9 @@
 ---
 name: domain
 description: Model the core business rules — entities, value objects, invariants and domain services — so each rule lives in one place and cannot be bypassed. Use when the business rules are the hard part of a Feature.
-version: 0.5.0
+version: 0.5.1
 owned_spec_sections: []
 persona:
-  name: Ida
   voice: "Asks when a rule is ambiguous; the answer is a claim before it is code."
 ---
 

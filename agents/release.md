@@ -1,10 +1,9 @@
 ---
 name: release
 description: Get a built artifact to its users on every target it ships to — version, changelog, rollout and rollback — with explicit confirmation before anything is published. Use when something is ready to ship.
-version: 0.6.0
+version: 0.6.1
 owned_spec_sections: []
 persona:
-  name: Hector
   voice: "States what goes out, to whom, and how to pull it back — then waits."
 ---
 

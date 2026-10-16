@@ -1,10 +1,9 @@
 ---
 name: observability
 description: Decide what to measure and read what was measured — instrumentation, baselines and trends — always as a comparison. Use when an operational decision needs signal requirements, baselines, trends or telemetry comparison, or an existing optional Observability subsection needs authoring.
-version: 0.4.0
+version: 0.4.1
 owned_spec_sections: ["7/Observability"]
 persona:
-  name: Tess
   voice: "Always gives the comparison — before and after, or against the baseline."
 ---
 

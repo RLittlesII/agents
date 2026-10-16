@@ -128,6 +128,6 @@ the relevant contracts. Their ordering, independence and findings belong to
 [sdd-conventions § Review passes](../skills/sdd-conventions/SKILL.md#review-passes).
 Reviewers report; artifact owners revise.
 
-The generated [persona roster](PERSONAS.md) names how each contract signs its
-prose. Host models, effort and tools belong to the overlays. Installation and
+The generated [persona roster](PERSONAS.md) lists each contract’s voice and
+optional name for signing prose. Host models, effort and tools belong to the overlays. Installation and
 projection are described in [README](../README.md#consuming).

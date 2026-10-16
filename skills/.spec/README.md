@@ -20,7 +20,7 @@ depends_on: ["F2"]
 blocks: []
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-14"
+updated: "2026-10-16"
 github_issue: null
 synced_at: null
 ---
@@ -96,13 +96,13 @@ makes the rule a check instead of a convention.
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-14 -->
+<!-- last written by: architect, 2026-10-16 -->
 
 `lintSkills` in [`Projection.fsx`](../../scripts/Projection.fsx) is the
 authority. `plan` calls it after the roles load and before any output is
 built, so a violation writes nothing. It builds one pattern per form from the
-loaded roles — so a new role or persona is linted without a word list — reads
-every text file `filesUnder` returns for `skills/` (which excludes `.spec/`),
+loaded roles and supplied persona names; unnamed personas add no name pattern.
+It reads every text file `filesUnder` returns for `skills/` (which excludes `.spec/`),
 blanks each generated block while keeping its newlines, and reports every
 finding in one failure.
 
@@ -115,7 +115,7 @@ Readiness: **Ready for tests and implementation.**
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-14 -->
+<!-- last written by: test-writer, 2026-10-16 -->
 
 The `F4_` group in `dotnet fsi scripts/project.tests.fsx`, on the synthetic
 checkout of 0001-F1 plus a role `log-reader` signing as Zed. The scenarios in
@@ -123,7 +123,8 @@ checkout of 0001-F1 plus a role `log-reader` signing as Zed. The scenarios in
 
 - B-001: one case per form, each failing `plan` with the file, line and role
   and writing nothing; a negative case of a bare name, a longer hyphenated word,
-  a host directory and a lower-case word passes.
+  a host directory and a lower-case word passes. An unnamed persona adds no name
+  pattern, while its role name remains linted.
 - B-002: a generated block naming three roles passes; a violation after it is
   reported at its own line.
 - B-003: `lintSkills` over the real checkout.
@@ -136,11 +137,11 @@ Not applicable.
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-14 -->
+<!-- last written by: test-writer, 2026-10-16 -->
 
 | Claim ID | Scenario                                      | Test                                                    | Status  |
 | -------- | --------------------------------------------- | ------------------------------------------------------- | ------- |
-| B-001    | A skill names a role                          | `F4_B001_SkillNamingRole_FailsNamingFileLineAndRole`    | Covered |
+| B-001    | A skill names a role                          | `F4_B001_SkillNamingRole_FailsNamingFileLineAndRole`, `F4_B001_UnnamedPersona_HasNoNamePattern` | Covered |
 | B-002    | A generated block names roles                 | `F4_B002_GeneratedBlockIsExempt`                        | Covered |
 | B-003    | This repository's skills name no role         | `F4_B003_RepositorySkillsNameNoRole`                    | Covered |
 
@@ -158,11 +159,13 @@ None.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-15 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
 | Section | Status | Reviewer      | Note                                                                                       |
 | ------- | ------ | ------------- | ------------------------------------------------------------------------------------------ |
 | 1-12    | 🟡     | spec-reviewer | Draft. The five existing violations in `sdd-conventions` were rephrased by section owner and review pass. |
+| 7-9 | 🟢 | spec-reviewer | Approved 2026-10-16: optional-name lint design and coverage reviewed; 0001-F4 B-001 remains satisfied. Baseline evidence retained. |
+| 7-9, 12 | 🟢 | spec-reviewer | Rebase delta approved 2026-10-16 by independent `/root/persona_diff_review` against main `e60dea1`; no findings, earlier evidence retained. |
 
 ## Tasks
 

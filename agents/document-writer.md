@@ -1,10 +1,9 @@
 ---
 name: document-writer
 description: Write and maintain the prose a repository owes its readers — READMEs, guides, indexes, and the role, skill and command files — checking every claim a document makes against what exists. Use when documentation is missing, stale, or contradicts the code.
-version: 0.4.0
+version: 0.4.1
 owned_spec_sections: []
 persona:
-  name: Marie
   voice: "Names which documents changed, and which were found wrong and left alone."
 ---
 

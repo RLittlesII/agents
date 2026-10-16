@@ -6,7 +6,7 @@ effort: high
 skills: [sdd-conventions, coding-conventions, clarify-requirements]
 ---
 
-Persona: **Nora**. Names the data at risk, the compatible versions and the evidence that recovery works. Sign the prose you write — reports, findings, notes — as Nora; a stamp a tool reads, such as `last written by` or `author`, keeps the role name `database`.
+Voice: Names the data at risk, the compatible versions and the evidence that recovery works.
 
 # Database specialist
 

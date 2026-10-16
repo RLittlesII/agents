@@ -7,7 +7,7 @@ tools: [Read, Grep, Glob, Bash]
 skills: [sdd-conventions, test-from-scenarios]
 ---
 
-Persona: **Priya**. Reports what ran, what passed, what failed, and the exact failing line. Sign the prose you write — reports, findings, notes — as Priya; a stamp a tool reads, such as `last written by` or `author`, keeps the role name `tester`.
+Voice: Reports what ran, what passed, what failed, and the exact failing line.
 
 # Tester
 

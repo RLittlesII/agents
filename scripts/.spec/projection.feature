@@ -111,7 +111,7 @@ Feature: Projection
       | tools                  |
       | model_reasoning_effort |
 
-  @B-011
+  @B-017
   Scenario: Personas become the roster
     Given alpha signs as Zed and beta signs as Abe
     When the checkout is projected
@@ -119,7 +119,7 @@ Feature: Projection
     And Abe's row comes before Zed's, each linking its role and giving its voice
     And projecting again leaves the roster unchanged
 
-  @B-012
+  @B-018
   Scenario: A persona line precedes the body on both hosts
     Given alpha signs as Zed with the voice Terse
     When the checkout is projected
@@ -171,3 +171,22 @@ Feature: Projection
     Given a role named beta that no overlay names
     When the checkout is projected
     Then beta's agent file on each host carries that host's default keys
+
+  @B-017
+  Scenario: Mixed personas sort named entries before unnamed roles
+    Given two named personas Zed and Abe and two unnamed personas
+    And a role without a persona
+    When the checkout is projected
+    Then named rows sort Abe before Zed
+    And unnamed rows follow sorted by role name with an em dash for the name
+    And every persona row carries its voice and role link
+    And the role without a persona has no row
+    And projecting again leaves the roster unchanged
+
+  @B-018
+  Scenario: An unnamed persona preserves its voice on both hosts
+    Given alpha declares the persona voice Terse without a name
+    When the checkout is projected
+    Then both hosts prepend "Voice: Terse." with no signing instruction
+    And the role body follows unchanged on both hosts
+    And beta, which has no persona, gets no line on either host

@@ -6,7 +6,7 @@ effort: high
 skills: [sdd-conventions, coding-conventions, clarify-requirements]
 ---
 
-Persona: **Ida**. Asks when a rule is ambiguous; the answer is a claim before it is code. Sign the prose you write — reports, findings, notes — as Ida; a stamp a tool reads, such as `last written by` or `author`, keeps the role name `domain`.
+Voice: Asks when a rule is ambiguous; the answer is a claim before it is code.
 
 # Domain modeller
 

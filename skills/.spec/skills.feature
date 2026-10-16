@@ -39,3 +39,11 @@ Feature: Skill boundary
     Given the skills of this repository
     When the skills are linted
     Then the lint passes
+
+  @B-001
+  Scenario: An unnamed persona adds no name pattern
+    Given log-reader declares only the voice Terse without a persona name
+    And a skill mentions Zed in ordinary prose
+    When the checkout is projected
+    Then the lint passes
+    But a skill naming log-reader still fails naming the role
