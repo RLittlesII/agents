@@ -253,13 +253,19 @@ stage, such as grooming, or a section owner.
 - **Starts are capped per Feature after lanes are drawn.** Lanes say what could
   run in parallel; starts obey delivery's one item in progress per Feature
   ([`deliver-change`](../../deliver-change/SKILL.md) § "The shape of it",
-  rule 3). Heads are chosen in one pass over the startable items in ranking
-  order. An item becomes its lane's head when the lane is not occupied, has no
-  head yet, and its Feature has no taken work and no head yet. An item whose
-  Feature already has a head, or has taken work, is shown queued behind it, and
-  its lane goes on to the next startable item in ranking order (B-034, B-046,
-  decision 0021). The tie order is total (B-027), so the pass is deterministic.
-  A lane holding taken work is occupied and offers no start (B-017).
+  rule 3). An item counts against the Feature that owns it, so a prerequisite
+  another Feature owns takes that Feature's one start, not the start of the
+  selected Feature it advances (B-003). Heads are chosen in one pass over the
+  startable items in ranking order, and the Feature is tested first. An item
+  whose Feature already has a head, or has taken work, is startable but capped:
+  it is shown queued behind that Feature, whatever its lane, and its lane goes
+  on to the next startable item in ranking order (B-034, B-046, decision 0021).
+  Otherwise, an item in a lane holding taken work gets no start, since that lane
+  is occupied (B-017); an item in a lane that already has a head waits behind
+  it; and any other item becomes its lane's head. The tie order is total
+  (B-027), so the pass is deterministic. Actionable unscored work is no lane
+  head and is not in the pass (B-037); where its Feature has a head or taken
+  work, it is listed as queued behind that Feature too.
 
 ### The companion seam
 
@@ -277,8 +283,8 @@ stage, such as grooming, or a section owner.
 | Standalone work stays visible                            | Where the report shows it                                                                   |
 
 In this repository, [`.spec/templates/item.yml`](../../../.spec/templates/item.yml)
-names where each input is authored and leaves the arithmetic to `SKILL.md`; its
-cost mapping is finding 3.
+names where each input is authored and leaves the arithmetic to `SKILL.md`,
+with `cost` authored apart from `risk` (finding 3).
 
 ### Views
 
@@ -337,19 +343,19 @@ sequenceDiagram
     Agent-->>Person: same snapshot, same choices (B-039)
 ```
 
-Choosing lane heads under the one-start cap (B-017, B-034, B-046), for each
-startable item in ranking order.
+Choosing lane heads under the one-start cap (B-017, B-034, B-046; decisions
+0017 and 0021), for each startable item in ranking order.
 
 ```mermaid
 flowchart TD
-    Item{"Another startable item, in ranking order?"} -->|"no"| Done(["Lane heads and queued items reported"])
-    Item -->|"yes"| Occupied{"Its lane holds taken work?"}
-    Occupied -->|"yes"| NoStart["No start in this lane (B-017)"]
+    Item{"Another startable item, in ranking order?"} -->|"no"| Done(["Lane heads, occupied lanes and queued items reported"])
+    Item -->|"yes"| Feature{"Its owning Feature has taken work or a head?"}
+    Feature -->|"yes"| Queued["Startable but capped: shown queued behind its Feature (B-046)"]
+    Feature -->|"no"| Occupied{"Its lane holds taken work?"}
+    Occupied -->|"yes"| NoStart["No start: the lane is occupied (B-017)"]
     Occupied -->|"no"| LaneHead{"Its lane already has a head?"}
     LaneHead -->|"yes"| Behind["Not offered: behind its lane's head"]
-    LaneHead -->|"no"| Feature{"Its Feature has taken work or a head?"}
-    Feature -->|"yes"| Queued["Shown queued behind its Feature (B-046)"]
-    Feature -->|"no"| Head["Offered as its lane's head (B-034)"]
+    LaneHead -->|"no"| Head["Offered as its lane's head (B-034)"]
     Queued --> Item
     Behind --> Item
     NoStart --> Item
@@ -370,7 +376,7 @@ a reviewer checks:
 | § Derive an evidenced next step   | B-006, B-009, B-014, B-021, B-023, B-029 to B-032, B-042, B-043 | Every stage can be next; no default, stored derived value or inferred link; each gap named; the tracker only, a disagreeing mirror named; a duplicate id named, neither record chosen |
 | § Stage gates                     | B-010 to B-020, B-029, B-032, B-041, B-044        | Each gate's evidence; a question naming no claim withholds design and implementation, a `None` row nothing; delivered, taken (review included), waiting and container rules; a cycle routed, no edge dropped |
 | § The ranking model               | B-022 to B-028, B-033, B-040, B-045               | The key order; B-023's 4 ÷ 13; uncomputed is never zero or infinite; a finished Feature not ranked; nothing written back |
-| § Use lanes to support the choice | B-017, B-034 to B-038, B-046                      | One head per lane; at most one start per Feature, the rest queued; shared edits join lanes, with evidence; unscored and standalone placement |
+| § Use lanes to support the choice | B-017, B-034 to B-038, B-046                      | One head per lane; at most one start per owning Feature, the rest queued, and a lane whose first item is queued offers its next; shared edits join lanes, with evidence; unscored and standalone placement |
 | § Report without taking work      | B-001, B-003, B-033, B-039, B-040, B-045          | Features first; finished needs agreement and delivery, and leaves the ranking; detail changes no choice; no work taken |
 | § Never add                       | B-001, B-035, B-040                               | Each prohibition matches its claim                                                             |
 
@@ -401,13 +407,15 @@ Findings 1 to 4 were recorded 2026-10-14 and are resolved; rechecked
 5. **B-034 and B-046, `SKILL.md` § "Use lanes to support the choice".** It
    offers one head per lane and at most one start per Feature, but does not say
    what a lane offers when its first startable item is queued behind its
-   Feature's head in another lane. This design answers: that item is not
-   startable, so the lane offers its next startable item in ranking order (the
-   view above). Read alone, the skill lets one agent leave that lane empty and
-   another fill it, against C-3. Correction: state it in that section
-   (`implementer`), and a B-046 example where the queued item's lane has a second
-   startable item from another Feature (`spec-author`). The design settles it,
-   so no claim waits on it.
+   Feature's head in another lane, nor which Feature a prerequisite's start
+   counts against. This design answers: that item is startable but capped, so
+   the lane offers its next startable item in ranking order; and a start counts
+   against the Feature that owns the item (the starts position and the view
+   above). Read alone, the skill admits two answers from the same inputs, one
+   leaving that lane empty and one filling it. Correction: state both in that
+   section (`implementer`), and a B-046 example where the queued item's lane
+   has a second startable item from another Feature (`spec-author`). The design
+   settles it, so no claim waits on it.
 
 No open question remains in § 11. Decisions 0016 to 0021 settle every claim
 the 2026-10-14 verdict excepted, and B-042 to B-046, which follow from them:
