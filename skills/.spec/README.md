@@ -57,11 +57,11 @@ makes the rule a check instead of a convention.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-15 -->
 
 | ID    | Claim                                                                                                                                                                                                                       | Source                     | Status |
 | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ------ |
-| B-001 | Given a file under `skills/` that, outside a generated block, names a role — its name in backticks, a hyphenated name as a whole word, its persona name as a whole word, or a path into `agents/` — projection fails naming the file, the line and the role, and writes nothing. | 0001-F2 C-3 | Active |
+| B-001 | Given a file under `skills/` that, outside a generated block, names a role — its name in backticks, a hyphenated name as a whole word with its hyphens or with spaces, its persona name as a whole word, or a path into `agents/` — projection fails naming the file, the line and the role, and writes nothing. | 0001-F2 C-3 | Active |
 | B-002 | Given a role name between a `BEGIN GENERATED` marker and its matching `END GENERATED` marker, the file passes, and lines after the block are reported at their own line numbers.                                             | A-1                        | Active |
 | B-003 | Given this repository's `skills/`, the lint passes.                                                                                                                                                                         | Brief                      | Active |
 
