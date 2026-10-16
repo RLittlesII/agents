@@ -192,7 +192,7 @@ retain their gates and commands only convene the applicable roles. — Ruth
 
 ## 6. Concern Separation
 
-<!-- last written by: architect, 2026-10-14 -->
+<!-- last written by: architect, 2026-10-16 -->
 
 | #   | Concern                                           | Classification |
 | --- | ------------------------------------------------- | -------------- |
@@ -202,6 +202,17 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | 4   | Validating the keys                               | Technical      |
 | 5   | The name a role signs its prose with              | Business       |
 | 6   | Which unit of work a role reviews                 | Business       |
+| 7   | Accountable leads, conditional expertise and retained modes | Business |
+| 8   | Database contribution boundaries and recovery evidence | Business |
+| 9   | Artifact prerequisites and independent review | Business |
+| 10  | Contract, command and overlay reference migration | Technical |
+| 11  | Deterministic generation and stale-output removal | Technical |
+| 12  | Separating contract checks from evidence of role behavior | Both |
+
+Lead accountability integrates contributions; it grants no additional write
+authority. The existing section owners and review units remain the boundaries.
+The database specialist supplies persistence expertise within those boundaries,
+without owning a specification section. — Marcus
 
 ## 7. Technical Design
 
@@ -247,10 +258,331 @@ level below the root.
 Baseline readiness: **Ready for tests and implementation for B-001–B-009.**
 The design above remains the recorded role-format design.
 
-Amendment readiness: **Not assessed for B-010–B-036.** Contract consolidation,
-specialist integration and reference migration need design by `architect`
-after the amended agreement is reviewed; the baseline verdict does not cover
-them. — Marcus
+### DR-1 — Collaboration stays in contracts and artifacts
+
+For B-010–B-014 and B-026–B-036, revise the existing Markdown contracts and
+indexes; reuse the loaders, renderers and validation plan in
+[`Projection.fsx`](../../scripts/Projection.fsx). No workflow runtime, new
+frontmatter key or central list of role names is needed. This follows
+[decision 0001](decisions/0001-lead-and-specialist-collaboration.md) and accepted
+[ADR-0008](../../.spec/adr/0008-a-role-file-declares-its-contract-and-no-host-setting.md).
+The incumbent representation already supports empty section ownership and
+multiple review units per role. A new hierarchy or machine-readable state
+registry would duplicate the agreement without enforcing agent behavior.
+
+[`agents/README.md`](../README.md) becomes the operational entry point: state
+leads, conditional specialist triggers, retained modes and six short situation
+routes replace its global peer graph. Keep its existing `review_units` and
+`unowned_spec_sections` declarations. Its guidance links the authoritative
+workflow, ownership and review rules in `sdd-conventions`; it does not reproduce
+the gates. Root [`README.md`](../../README.md) updates its role count, role and
+command summaries and links to this entry point. § 2 records the agreed change;
+it is not a second active roster for future additions to maintain.
+
+Each lead contract states its accountable artifact, bounded-assignment inputs
+(affected claims, concern, allowed files/artifacts and completion evidence),
+integration duty and escalation to the existing artifact owner. Relevant
+specialist contracts state their trigger, contribution and limits. Use existing
+report/finding locations named by the companion; introduce no assignment schema
+or additional tracking artifact. If a contribution exposes a missing claim or
+design decision, the lead obtains that owner's revision before dependent work
+continues. Rendering an unchanged model does not require domain modeling;
+telemetry alone does not require benchmarking (B-011, B-024).
+
+The diagram shows existing projection components and the proposed source edits
+(DR-1, B-033–B-034, C-3, C-6).
+
+```mermaid
+flowchart LR
+    subgraph Sources["Tracked sources — proposed edits"]
+        Contracts["Retained role contracts and new database contract"]
+        Index["Roles index: bounded guidance and existing review units"]
+        Commands["Command frontmatter: applicable retained roles"]
+        Hosts["Existing host overlays: nineteen role entries"]
+        Skills["Portable skills: section owners and review passes"]
+    end
+    subgraph Existing["Existing projection — unchanged mechanism"]
+        Plan["plan: validate and render in memory"]
+        Check["differences: changed, missing, stale"]
+        Apply["apply: write expected files and delete stale files"]
+    end
+    Contracts & Index & Commands & Hosts & Skills --> Plan
+    Plan --> Check
+    Plan --> Apply
+    Apply --> Outputs["Host files, ownership/review tables and persona roster"]
+```
+
+### DR-2 — Retire identities after transferring their duties
+
+For B-015–B-020 and B-033–B-035, transfer the duties before removing the six
+source files and overlay entries. Preserve retained personas and machine-read
+role stamps; retired personas disappear only from the generated active roster.
+Bump the minor version of each changed role contract; start the new database
+contract at `0.1.0`. Modes remain prose within existing headings, with no
+independent persona, host setting or alias.
+
+| Source destination | Required integration |
+| --- | --- |
+| [`spec-author.md`](../spec-author.md) | Absorb `analyst.md` discovery inputs, settled-answer search, separating questions and confirmed-need artifact. Discovery cannot invent claims; agreement authoring follows confirmation. Its description covers both activities. |
+| [`implementer.md`](../implementer.md) | Absorb `bug-fixer.md` correction mode: accepted proven diagnosis, regression test observed failing for that cause, minimal correction, regression/systemic-site checks and a lesson when a gap is revealed. Preserve separate investigation and test ownership. |
+| [`bug-finder.md`](../bug-finder.md) | Absorb `log-parser.md` window, correlation, first anomaly, ordered evidence, inference, secret protection and gap reporting. A large evidence task returns a bounded account to this lead. Change its correction handoff to `implementer`. An unsupported cause remains unproven. |
+| [`spec-reviewer.md`](../spec-reviewer.md) | Absorb `critic.md` design review, including complexity, reuse, failure paths, diagram consistency and testability checks. Keep design findings separate from diff verdicts and preserve read-only behavior. |
+| All retained contracts | Offer the active role's collaboration mode by linking the portable rule below; the mode adds visible steps and recorded decisions, not authority to write another artifact. |
+| All six lead contracts | Retain the parent assignment during obstruction removal, request only relevant expertise, require proof the blocked work resumes and return adjacent work for separate tracking. |
+
+Put the shared collaboration-mode procedure once in the non-generated prose of
+[`coding-conventions`](../../skills/coding-conventions/SKILL.md): show the next
+step and its result, stop at a decision fork with options and a recommendation,
+record the person's decision in the companion's working record, and retain the
+active responsibility's write boundary. It names no role or persona. This
+replaces `pair-programmer.md` without copying its procedure into nineteen files.
+Bounded obstruction guidance replaces `yak-shaver.md`; it does not authorize
+an investigator or reviewer to make production changes. That work goes to the
+appropriate implementation assignment.
+
+Set `spec-reviewer`'s existing `reviews` to `[design, diff]` and remove
+`critic.md`. Keep the four review units and their order unchanged.
+[`reviewRows`](../../scripts/Projection.fsx) requires one role per unit, not one
+unit per role, so no projector change is needed. Amend the roles index's
+one-unit-per-reviewer wording. A design-review instance must not have authored
+the design; diff review likewise remains independent of its subject. Record
+the reviewing instance and authored scope in the review evidence. Combining
+contracts never permits self-review; projector totality proves assignment of
+units, not instance independence (B-020, C-4).
+
+### DR-3 — Database expertise follows existing ownership
+
+For B-021–B-025, add `agents/database.md` as a host-free specialist with
+`owned_spec_sections: []`, the standard headings and a unique optional persona
+under B-007. Its description covers persistence design advice, implementation,
+investigation and release compatibility/recovery. No database engine, framework
+or consuming-project path belongs in the contract; the companion supplies them.
+
+| Boundary | Database contribution and handoff |
+| --- | --- |
+| Design | Supply schema/column types, nullability/defaults, keys, uniqueness/indexes, foreign-key actions, query access paths, transaction/concurrency boundaries and ordered migration advice. `architect` records the design; unresolved storage choices return there. |
+| Domain | Storage follows agreed invariants and their domain model; `domain` retains rule modeling. An unsettled business rule returns to `spec-author`; storage convenience cannot redefine it. |
+| Implement | Change only assigned persistence code, queries, migrations or backfills against the approved design and failing tests. `implementer` integrates the result with other layers. `test-writer` retains tests and traceability. |
+| Investigate | Supply stored-data/query/transaction evidence to `bug-finder`; distinguish read-only diagnosis from a corrective write. No speculative repair or unredacted sensitive data in the evidence. |
+| Release | Supply compatibility evidence for affected serving versions, verified rollback or recovery, and backup/potential-loss information for destructive changes. `release` retains deployment and recovery coordination and existing confirmation requirements. |
+
+Update [`domain.md`](../domain.md), [`architect.md`](../architect.md),
+[`implementer.md`](../implementer.md), [`bug-finder.md`](../bug-finder.md) and
+[`release.md`](../release.md) to name these interfaces without moving their
+ownership. A migration contribution is incomplete until its intent, rollout
+order, compatible versions and recovery evidence are supplied; if reversal
+cannot recover the information, explicitly require the agreed backup/restore
+path and potential loss assessment before release. Keep migrations as history.
+This contract does not introduce a database or prescribe an application's
+schema; each affected Feature must settle those details in its own design.
+
+Clarify [`metric-nerd.md`](../metric-nerd.md) as operational signal requirements,
+baselines and comparisons, with missing telemetry recorded as missing evidence.
+It routes instrumentation code to `implementer` or the assigned implementation
+specialist. Preserve [`benchmarker.md`](../benchmarker.md)'s written performance,
+cost or structural concern trigger, measurement ownership and prohibition on
+production behavior. Neither instrumentation nor telemetry availability implies
+a performance benchmark.
+
+### DR-4 — Route from artifact gaps, not a mandatory chain of agents
+
+For B-014 and B-026–B-032, the roles index's six situation routes reference
+the § 2 agreement and the existing method gates. A bug uses its existing claim
+and applicable approved design; a disputed behavior returns to Specify and a
+design gap to Design. Tests still fail before corrections start, and the person
+still accepts the diagnosis. A new feature starts at the agreement. An idea
+stays in discovery until accepted; bounded feasibility returns evidence there.
+A technical obstacle returns its finding to the lead of the blocked work.
+Production diagnosis and operational recovery may proceed together, under
+their separate leads, without treating recovery as evidence for a code fix.
+A shipped amendment preserves withdrawn IDs and obtains replacement claims,
+compatibility assessment and revised failing tests before implementation.
+
+This responsibility-selection view is guidance, not a runtime algorithm
+(DR-4, B-014, B-026–B-032, C-4–C-5).
+
+```mermaid
+flowchart TD
+    Start["Reported need, failure or obstacle"] --> Kind{"Situation?"}
+    Kind -->|"Idea or changed requirement"| Specify["Specify: establish or amend agreement"]
+    Kind -->|"New accepted feature"| Specify
+    Kind -->|"Bug report"| Investigate["Investigate: prove cause and record gaps"]
+    Kind -->|"Production issue"| Production["Production: diagnosis and optional recovery proceed independently"]
+    Production --> Investigate
+    Production -.->|"Optional; existing procedure and required confirmation"| Recovery["Release: existing-procedure recovery and verification evidence"]
+    Kind -->|"Technical obstacle"| Obstacle["Current lead: bounded feasibility, diagnosis or build task"]
+    Specify --> Design["Design: resolve decisions and obtain independent design review"]
+    Obstacle --> Resume["Return evidence to blocked work"]
+    Investigate --> Need{"Software correction required?"}
+    Need -->|"No"| NoCorrection["Record diagnosis; no software correction required"]
+    Need -->|"Unproven"| Gap["Record evidence gap; continue investigation"]
+    Gap --> Investigate
+    Need -->|"Yes"| Agreement{"Expected behavior settled?"}
+    Agreement -->|"No"| Specify
+    Agreement -->|"Yes"| Approval{"Applicable design approved?"}
+    Approval -->|"No"| Design
+    Approval -->|"Yes"| Prerequisites["Obtain remaining approvals, diagnosis acceptance for corrections and failing tests"]
+    Design --> Prerequisites
+    Prerequisites --> Implement["Implement: bounded contributions and integration"]
+    Implement --> Verify["Verify independently; return findings to artifact owner"]
+    Verify --> Ship{"Shipping required and gates met?"}
+    Ship -->|"Yes"| Release["Release: confirmed rollout and verification"]
+    Ship -->|"No"| Hold["Record result or wait for unmet gate"]
+```
+
+The next view makes the missing-input and review-failure paths explicit;
+participants describe responsibilities, not additional roles or mandatory
+agent invocations (DR-1, DR-2, B-011–B-014, B-020, C-4–C-5).
+
+```mermaid
+sequenceDiagram
+    participant Lead as Current lead
+    participant Specialist as Relevant specialist
+    participant Owner as Artifact owner
+    participant Reviewer as Independent reviewer
+    Lead->>Specialist: Bounded assignment, claims and required evidence
+    alt Missing claim or design decision
+        Specialist-->>Lead: Gap and affected claim or constraint
+        Lead->>Owner: Request the missing decision or artifact
+        Owner-->>Lead: Recorded revision and required approval
+        Lead->>Specialist: Resume with valid prerequisite artifacts
+    end
+    Specialist-->>Lead: Contribution and verification evidence
+    Lead->>Lead: Integrate against the state's complete responsibility
+    Lead->>Reviewer: Recorded artifact and scope, with author identity
+    alt Finding blocks the artifact
+        Reviewer-->>Owner: Finding against claim, constraint or record
+        Owner-->>Reviewer: Revised artifact and response evidence
+        Reviewer-->>Lead: Re-review verdict
+    else No blocking finding
+        Reviewer-->>Lead: Independent verdict
+    end
+```
+
+### DR-5 — Migrate sources together and regenerate outputs
+
+For B-033–B-036, implement the consolidation as one coherent source-and-output
+change after the failing checks are recorded. The exact active surfaces are:
+
+| Surface | Migration |
+| --- | --- |
+| `agents/*.md` | Revise the retained contracts described above and specialist collaboration boundaries; add `database.md`; remove `analyst.md`, `bug-fixer.md`, `yak-shaver.md`, `pair-programmer.md`, `log-parser.md`, `critic.md` after duty transfer. Remove retired links, descriptions and handoffs in every retained body, including `architect.md`'s feedback sources. |
+| `agents/README.md`, root `README.md` | Replace the peer graph and twenty-four-role/count wording with the agreed six leads and thirteen specialists; update command summaries and discovery/review descriptions. Keep one active grouping authority in the roles index. |
+| `commands/spec.md`, `design-ui.md` | Replace analyst participation with `spec-author` discovery mode; deduplicate the role in `spec`. |
+| `commands/design.md` | Convene `spec-reviewer` for independent design review in place of critic; add conditional database design advice. Retain conditional domain, testability and benchmarking contributions. |
+| `commands/bug.md` | Convene `bug-finder`, `test-writer`, `implementer`; use integrated log analysis and correction mode. Add conditional database expertise for persistence failures. |
+| `commands/implement.md`, `ship.md` | Add conditional database implementation or compatibility/recovery participation. Implementer coordinates applicable contributions; no database assignment for unrelated changes. Other command role lists remain unchanged unless a stale reference is found. |
+| `hosts/claude.yaml`, `hosts/codex.yaml` | Remove six retired mappings and add database. Preserve retained model/effort settings and read-only tool limits. Database uses the domain specialist's existing judgment profile: Claude `opus`/`high`, unrestricted tools for assigned writes, preloads `sdd-conventions`, `coding-conventions`, `clarify-requirements`; Codex existing default model with `high` effort. Merge critic's `coding-conventions` preload into Claude spec-reviewer without expanding its read-only tools. |
+| `skills/coding-conventions/SKILL.md`, other active skill prose | Add the portable collaboration rule. Search outside generated markers for retired names/personas or role links and replace any with section-owner/review-pass language. Do not add role-name aliases to the linter. |
+| `scripts/project.tests.fsx` | Test writer revises the existing real-roster expectation and reviewer/unit expectation, preserving all baseline checks, then adds amendment coverage through existing fixture/library seams. No production projector change is planned. |
+
+Commands name roles and skills in frontmatter only; their bodies describe
+conditional contributions and modes using existing responsibility labels.
+They must not gain stage tables, transition logic or new gates
+([0001-F3 C-1/C-2](../../commands/.spec/README.md#4-constraints)). Skills remain
+role-free outside generated blocks
+([0001-F4](../../skills/.spec/README.md)); the current `lintSkills` derives names
+from the live roster, so removing a role would also remove its detection pattern.
+An explicit retirement search is therefore necessary even when lint passes.
+
+Run the projector to regenerate `.claude/agents/`, `.codex/agents/`, affected
+`.claude/commands/`, `.agents/skills/` and `.claude/skills/`, the generated review
+registry/ownership block and `agents/PERSONAS.md`. Existing `differences` detects
+each retired agent file as stale; existing `apply` removes it. The database
+host files are new planned outputs. Ownership rows must remain identical;
+the design reviewer changes to `spec-reviewer` while the four units retain
+their order. Never hand-edit generated files.
+
+Search all tracked files for the retired names, personas, twenty-four-role
+counts and old reviewer assumptions. Classify each hit: migrate active
+guidance, regenerate generated content, and preserve historical decisions,
+sign-offs, lesson evidence and claim Source citations (B-035). A historical
+link to a retired path can remain evidence; an active convening link cannot.
+The § 2 retirement mapping and decision 0001 intentionally retain the old names.
+Current sibling-spec descriptions of roster size or reviewer assignment are
+findings for their section owners; coordinate those edits rather than silently
+rewriting historical measurements or another owner's section.
+
+`plan` validates all source inputs before any output write. A dangling host mapping,
+retired command reference, duplicate/missing review-unit holder or ownership
+violation must stop projection without producing new output.
+An omitted per-role host mapping remains valid through existing host defaults;
+the real-roster check verifies the explicit nineteen-entry overlays planned here.
+Filesystem writes in `apply` are sequential, not a multi-file transaction:
+interruption can leave mixed outputs. Fix the source error or rerun projection from the same reviewed
+sources, then run `--check`; never treat a partial run as a deliverable. Revert
+the coherent source/output commit and regenerate to roll back this migration.
+Do not restore an individual retired output by hand. Existing consumers pinned
+to old refs keep those files; this repository does not uninstall files in a
+consumer or promise host-session reload (0001-F1 § 5). — Marcus
+
+### Verification boundary and readiness
+
+Contract and projection checks can establish the nineteen-role set, host
+coverage, unchanged section ownership, complete review-unit assignment,
+conditional contract wording, resolvable command references, byte-preserved
+contract projection and stale-file removal. Use existing synthetic checkout
+fixtures, `loadRoles`, `reviewRows`, `plan`, `differences` and `apply` in
+[`project.tests.fsx`](../../scripts/project.tests.fsx); include a fixture where
+one role reviews both design and diff and retirement leaves stale host files.
+These checks prove the shipped instructions and migration mechanism, not that
+an arbitrary agent will follow them. Avoid a test that merely searches for one
+word and reports the full behavioral scenario as executed.
+
+For the six situation routes and refusal/ownership boundaries, retain the
+tagged positive and negative scenarios as review cases. Testability review
+must identify which artifact checks are executable and which require recorded
+independent evidence against the actual assignments, contributions, approvals
+and findings. An independent walkthrough can verify routing from supplied
+artifacts and rejection of missing prerequisites; it is not live-agent
+behavior coverage. No model API call, prompt simulator or new runtime harness
+is part of this design. § 8 and § 9 remain the test writer's authority; do not
+promote a row to `Covered` from contract presence alone. Unverified behavior
+remains honestly `Missing` or `Partial` under the existing traceability rules;
+any shipping waiver requires the existing § 11 approval record. ADR-0006 still
+blocks delivery of a claim whose row is `Missing`, without blocking agreement
+or this design handoff.
+
+Run `dotnet specht --strict`, `dotnet fsi scripts/project.tests.fsx`, projection,
+then `dotnet fsi scripts/project.fsx --check`. Independently inspect the diff
+and classified retirement search, including both host files for database and
+spec-reviewer. Review evidence must distinguish the design author's identity
+from the reviewing instance and preserve the earlier scoped baseline evidence.
+
+Performance reasoning: the workload remains one small checkout processed
+offline. Removing six roles and adding one reduces role-rendering work from
+twenty-four to nineteen; validation/rendering still scales with source bytes
+and output count using the existing plan. This is a cost model, not a measured
+latency claim, and introduces no target or infrastructure cost. No application
+domain model or performance workload is present, so domain implementation and
+benchmark measurement are not required for this contract change. If later
+evidence identifies a written cost concern, route that measurement to
+`benchmarker` rather than inventing a benchmark here.
+
+Views not applicable: no database entity/column view because this change adds
+expertise, not persisted application data; no class view or compiling stubs
+because it declares no new runtime interface; no state-machine view because
+the responsibility states are guidance, not executable lifecycle state.
+The source/projection component, routing and collaboration sequence views
+above cover the applicable boundaries and failure paths.
+
+Amendment readiness: **Ready for tests and implementation for B-010–B-036**
+within the source/projection and evidence boundaries above. On 2026-10-16,
+testability review found the source/projection approach ready and retained
+unverified behavioral coverage as `Missing`; see § 8 Collaboration amendment.
+Independent design critique returned Ready with no outstanding findings after
+the B-030 recovery-path finding was resolved and re-reviewed. All three
+Mermaid views rendered and were visually inspected. No material decision or
+blocking OQ remains; the six retirements, database boundary and nineteen-role
+shape are already agreed. These amendment reviews do not reassess or replace
+the B-001–B-009 baseline readiness and evidence recorded above.
+
+Design risk: **2 (medium)** for this collaboration-design scope: the mechanism
+is reused, but active-reference retirement spans contracts, commands, overlays
+and generated files, and combining review identities could obscure instance
+independence. Coherent regeneration, ownership checks, the classified search
+and independent review evidence address those risks. This verdict does not
+change § 12 sign-off or assert that the amendment is implemented. — Marcus
 
 ## 8. Testing Strategy
 
