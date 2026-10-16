@@ -74,3 +74,32 @@ roles and combine operational measurement with benchmarking. Preserve that
 commit and its decision evidence as history. Restore the operational contract
 from source history and adjust its boundaries; regenerate host files rather
 than restoring generated copies. — Ruth
+
+
+## Observability scope amendment — 2026-10-16
+
+The user explicitly renamed the operational specialist from `metric-nerd` to
+`observability` and assigned it the optional `7/Observability` subsection when a
+consumer specification provides one. This reverses only the preceding identity
+choice: the roster remains nineteen roles and operational observability remains
+distinct from performance/cost benchmarking. — Ruth
+
+Adopt the user-supplied portable declaration contract in
+[0001-F2 § 2](../README.md#optional-observability-subsection-contract), claimed by
+B-037–B-039. The optional subsection's owner note and author stamp use
+`observability`; parent Technical Design stays architect-owned and Performance
+stays benchmarker-owned. Absence is valid and no mandatory local subsection,
+template edit, runtime/schema change or consumer ADR is imported. Production
+instrumentation remains an implementation assignment. — Ruth
+
+| Alternative | Disposition and cost |
+| --- | --- |
+| Retain metric-nerd as the active identity | Rejected: contradicts the requested specialist name and leaves active host references inconsistent with the agreement. |
+| Keep the architect as owner of a supplied Observability subsection | Rejected: its author stamp would disagree with the specialist responsibility the user assigned. |
+| Require Observability in every local feature template | Rejected: consumer-specific optional content becomes a mandatory local contract and requires unrequested tool-owned template changes. |
+| Combine operational observability and performance benchmarking | Rejected: measurement purpose and specification ownership cease to have separate boundaries. |
+
+The accepted cost is a coordinated identity migration and regenerated host
+outputs, plus subsection guidance and tests using the existing ownership
+mechanism. Preserve the preceding decision text, identifiers and prior review
+scope as history. — Ruth

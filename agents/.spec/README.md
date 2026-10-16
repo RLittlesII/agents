@@ -48,6 +48,7 @@ accountability and turn specialties into unnecessary workflow stops. — Ruth
 | 4   | Person starting work | Identify the lead and relevant specialists for the situation | A global handoff graph makes every specialty look mandatory |
 | 5   | Work lead | Integrate bounded contributions against the same claims | Peer handoffs leave nobody accountable for the complete result |
 | 6   | Persistence maintainer | Obtain database expertise across the affected lifecycle | Persistence duties are scattered across general contracts |
+| 7   | Consuming specification author | Name the specialist responsible for optional observability declarations | Operational signal requirements otherwise inherit an unrelated parent-section owner |
 
 ### Collaboration glossary
 
@@ -58,6 +59,8 @@ accountability and turn specialties into unnecessary workflow stops. — Ruth
 | Specialist | A role assigned bounded work because affected claims, surfaces or evidence require its expertise. |
 | Mode | A bounded way a retained role works, without creating a separate role or changing its permissions. |
 | Artifact handoff | Passing the recorded agreement, design, failing test, change or finding that the receiving responsibility needs. |
+| Boundary | A named seam or operation whose outcome an operational signal observes. |
+| Signal | A declared log, span or metric associated with a boundary and a claim. |
 
 ### State leads
 
@@ -82,11 +85,36 @@ accountability and turn specialties into unnecessary workflow stops. — Ruth
 | `tester` | Changed behavior needs execution or exploration | Run evidence and reproductions |
 | `adversary` | A boundary, credential, permission or external input is affected | Independent hostile surface findings |
 | `benchmarker` | A recorded performance, cost or structural concern needs measurement | Benchmarks and measurements of that concern |
-| `metric-nerd` | An operational decision needs instrumentation, baselines or telemetry comparison | Signal requirements and operational evidence |
+| `observability` | An operational decision needs instrumentation, baselines or telemetry comparison, or an existing optional observability subsection needs authoring | Signal requirements, operational evidence and the optional subsection contract below |
 | `build` | A gate, build configuration, tool or pipeline needs work | Reproducible build and gate changes |
 | `organizer` | Approved claims need work items or the queue needs maintenance | Decomposition and ranked work; no mandatory delivery stop |
 | `document-writer` | Substantial prose is missing or stale | Documentation checked against the relevant artifact |
 | `auditor` | A repository audit is requested, scheduled or required before release | Repository findings; no mandatory stop on every change |
+
+### Optional observability subsection contract
+
+A consuming specification may include `### Observability` under § 7;
+`observability` owns only `7/Observability`, and its owner note and
+`last written by` stamp name `observability`. Absence is valid; this repository
+adds no mandatory local subsection or template change. Parent § 7 remains
+architect-owned and § 8 Performance remains benchmarker-owned. — Ruth
+
+The declaration has the ordered columns `Boundary | Signal | Level | Template | Fields | Claim`. — Ruth
+
+| Column | Content |
+| --- | --- |
+| Boundary | The seam or operation observed |
+| Signal | `log`, `span` or `metric` |
+| Level | Severity for a log only; no severity for a span or metric |
+| Template | Constant message template, span name or instrument name |
+| Fields | Field names, without runtime values or payloads |
+| Claim | The claim references the signal serves |
+
+Where no relevant signal is required, the subsection states `None.` with a
+reason. Each emitted boundary signal is declared and asserted in a test;
+`observability` hands declarations to `test-writer` for those assertions.
+Signal declarations authorize neither test code nor production code,
+parent design edits, performance findings or review verdicts. — Ruth
 
 ### Retired roles and retained responsibilities
 
@@ -107,8 +135,8 @@ accountability and turn specialties into unnecessary workflow stops. — Ruth
 | New feature | Specify → Design → failing tests → Implement → Verify → Release | Only specialists whose trigger applies; `organizer` cuts work after agreement |
 | Technical obstacle | Current lead retains parent work → bounded investigation or obstruction removal → resume original work | `architect` for an unknown approach; `bug-finder` for unexpected behavior; `build` for tooling or a gate |
 | Pitched idea | Specify in discovery mode → agreement only when accepted | Bounded `architect` feasibility work if required to decide the idea; no speculative production implementation |
-| Production issue | `bug-finder` diagnoses while `release` coordinates any recovery under an existing procedure → correction route only if software must change | Log analysis when logs exist; `metric-nerd` for operational evidence; other specialists for the affected concern |
-| Changed shipped requirement | Amend the existing agreement → assess design, dependencies and compatibility → revised failing tests → Implement → Verify → Release | `database` for existing data or migration; `ux`/`domain` for changed interaction/rules; `metric-nerd` for rollout evaluation |
+| Production issue | `bug-finder` diagnoses while `release` coordinates any recovery under an existing procedure → correction route only if software must change | Log analysis when logs exist; `observability` for operational evidence; other specialists for the affected concern |
+| Changed shipped requirement | Amend the existing agreement → assess design, dependencies and compatibility → revised failing tests → Implement → Verify → Release | `database` for existing data or migration; `ux`/`domain` for changed interaction/rules; `observability` for rollout evaluation |
 
 The tables define responsibility and artifact dependencies; the method skills
 retain their gates and commands only convene the applicable roles. — Ruth
@@ -149,7 +177,7 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | B-021 | Given a persistence concern, this Feature assigns `database` the bounded expertise in § 2 Specialist selection at the affected state. | User brief: add a database specialist | Active |
 | B-022 | Given database work, this Feature constrains its storage decisions to the agreed domain invariants and architect-owned design. | User brief: database specialist; B-002 | Active |
 | B-023 | Given a database migration or backfill, this Feature requires the database contribution to include compatibility and rollback or recovery verification. | User brief: database specialist; retained implementer/release migration duties | Active |
-| B-024 | Given a measurement request, this Feature selects `benchmarker` or `metric-nerd` by their distinct § 2 triggers. | User brief: retain performance and observability distinction | Active |
+| B-024 | Given a measurement request, this Feature selects `benchmarker` or `observability` by their distinct § 2 triggers. | User brief: retain performance and observability distinction | Active |
 | B-025 | Given required production instrumentation, this Feature assigns its code to the implementation lead or relevant implementation specialist. | User brief: specialists within implementation; existing benchmarker code boundary | Active |
 | B-026 | Given a bug report, this Feature follows the § 2 bug route against existing claimed behavior. | User brief: bug comes in | Active |
 | B-027 | Given an accepted new feature, this Feature follows the § 2 feature route with the stated artifact dependencies. | User brief: new feature starts | Active |
@@ -162,6 +190,9 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | B-034 | Given the consolidated roster, this Feature makes active role, command, host and projected references resolve to retained roles and their applicable modes. | User brief: functional roles; 0001-F1 B-008/B-009; 0001-F3 B-003 | Active |
 | B-035 | Given historical records affected by role retirement, this Feature preserves their recorded identities and evidence. | spec-and-traceability § Claims and traceability / Records beside a specification | Active |
 | B-036 | Given the roles index handoff guidance, this Feature presents bounded state, specialist and scenario guidance in place of the global all-role graph. | User brief: handoffs too complicated | Active |
+| B-037 | Given a consuming specification with the optional § 7 Observability subsection, this Feature assigns that subsection's ownership and author stamp to `observability` without requiring its presence. | User amendment: optional observability ownership, 2026-10-16 | Active |
+| B-038 | Given an observability contribution, this Feature requires the portable declarations and write boundaries in § 2 Optional observability subsection contract. | User amendment: boundary-signal declarations, 2026-10-16 | Active |
+| B-039 | Given migration from `metric-nerd` to `observability`, this Feature replaces the active role identity within the nineteen-role roster while preserving historical identities and evidence. | User amendment: rename the actual role, 2026-10-16; B-035 | Active |
 
 ## 4. Constraints
 
@@ -188,7 +219,8 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | 4   | A role-level declaration of how scenarios execute, or an opt-out into documentation-only scenarios | How the runner executes scenarios is the companion's § "Testing"; a scenario alone is not coverage either way |
 | 5   | Database engines, persistence frameworks and engine-specific tooling | Replaces the database-role exclusion on 2026-10-16: host-free database expertise is included by B-021; engine knowledge remains the companion's (B-004) |
 | 6   | An executable workflow engine or new role frontmatter schema | Responsibility grouping uses existing contracts and review declarations; no runtime state machine is requested |
-| 7   | Unrelated role renames or changes to section ownership | The accepted scope retires the six § 2 roles and adds `database`; existing artifact boundaries remain |
+| 7   | Unrelated role renames or changes to section ownership | The accepted scope retires the six § 2 roles, adds `database` and explicitly renames `metric-nerd` to `observability` with optional `7/Observability` ownership; all other artifact boundaries remain |
+| 8   | Mandatory local observability subsections, template changes or new subsection runtime/schema | Consumers may supply the optional subsection using existing ownership support; no local `.specht` edit or executable signal validator is requested |
 
 ## 6. Concern Separation
 
@@ -797,6 +829,7 @@ Not applicable.
 | 2026-10-16 | User requested the next part after committing the agreement | Record DR-1–DR-5, source/projection testability and independent design reviews; preserve baseline evidence and pending amendment coverage. — Ruth |
 | 2026-10-16 | Concurrent main commit `5924065` changed the active roster | Reconcile the design with three completed folds and the combined measurement role; preserve the agreed nineteen-role target and distinct observability capability; append provenance to decision 0001. — Ruth |
 | 2026-10-16 | User authorized failing tests followed by remaining role changes | Add seven registered conformance/migration tests, observe three failures before implementation, then implement the nineteen-role roster and regenerate both hosts. Record executable guarantees separately from independent manual instruction-conformance evidence; no live-agent behavior or coverage percentage is established. — Ruth |
+| 2026-10-16 | User requested the actual observability rename and supplied an optional signal declaration shape | Rename active `metric-nerd` identity references to `observability`; add B-037–B-039 for optional `7/Observability` ownership, portable declaration boundaries and the nineteen-to-nineteen migration; preserve prior review evidence and append the accepted scope to decision 0001. — Ruth |
 
 ## 11. Open Questions
 
@@ -819,6 +852,7 @@ Not applicable.
 | 7-8, 10, Tasks, decision 0001 | 🟢 | spec-reviewer | Reconciliation against main `785de62` reviewed 2026-10-16; design Ready, no findings; earlier scope and pending behavioral coverage preserved. |
 | 8-10, Tasks; implementation artifacts | 🟢 | spec-reviewer | Jessica, independent `/root/review_role_implementation`, 2026-10-16: no findings after `6867e83`; 44 tests pass. Mechanical guarantees Covered; manual instruction conformance Partial; live-agent behavior unverified. |
 | Implementation boundaries | 🟢 | adversary | Kyle, independent `/root/attack_role_boundaries`, 2026-10-16: no actionable findings; ownership, read-only investigation, review independence and release confirmation preserved as instruction boundaries. |
+| 2-5, 7-8, 10, 12, scenarios, decision 0001; B-037–B-039 | 🟢 | spec-reviewer | Jessica, independent `/root/review_role_implementation`, 2026-10-16: agreement and DR-6 design approved, Ready; no findings. Amendment tests and implementation remain pending; prior approval scopes and evidence preserved. |
 
 ## Tasks
 

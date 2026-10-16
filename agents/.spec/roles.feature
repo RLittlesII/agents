@@ -262,7 +262,7 @@ Feature: Role contract
     Examples:
       | need                                               | specialist  |
       | measure a stated performance or cost concern        | benchmarker |
-      | compare operational signals for a rollout decision  | metric-nerd |
+      | compare operational signals for a rollout decision  | observability |
 
   @B-024
   Scenario: Existing telemetry does not require a benchmark
@@ -273,10 +273,10 @@ Feature: Role contract
 
   @B-025
   Scenario: Production instrumentation follows implementation ownership
-    Given metric-nerd identifies a signal required for an operational decision
+    Given observability identifies a signal required for an operational decision
     When production instrumentation must change
     Then implementer or its assigned implementation specialist changes the code
-    And metric-nerd supplies the signal requirement and comparison
+    And observability supplies the signal requirement and comparison
     And benchmarker does not change production code to make its measurement possible
 
   @B-026
@@ -356,7 +356,7 @@ Feature: Role contract
     And an existing recovery procedure applies
     When the incident is handled
     Then bug-finder coordinates diagnosis using the evidence
-    And metric-nerd compares the relevant operational signals
+    And observability compares the relevant operational signals
     And release coordinates recovery under the existing procedure and confirmation rules
     And diagnosis and recovery retain their separate responsibilities
 
@@ -427,3 +427,93 @@ Feature: Role contract
     When the reader consults the roles index
     Then bounded guidance identifies its lead, relevant expertise and artifact dependencies
     And the reader need not traverse a global peer-to-peer role graph
+
+
+  @B-037
+  Scenario: An optional observability subsection has its specialist owner
+    Given a consuming specification includes Observability under Technical Design
+    When its observability requirements are authored
+    Then observability owns that subsection
+    And its owner note and author stamp name observability
+
+  @B-037 @boundary
+  Scenario: A specification can omit the observability subsection
+    Given a consuming specification has no Observability subsection
+    When specification ownership is checked
+    Then that absence is valid
+    And the subsection is not created merely to satisfy ownership
+
+  @B-037
+  Scenario: A parent author cannot stamp the observability subsection
+    Given a consuming specification includes Observability under Technical Design
+    And that subsection is stamped as written by architect
+    When ownership stamps are checked
+    Then the incorrect owner stamp is rejected
+    And the discrepancy names the observability owner
+
+  @B-037 @boundary
+  Scenario: Optional ownership does not take over unrelated design
+    Given a consuming specification has another subsection under Technical Design
+    When that subsection's owner is resolved
+    Then architect remains its parent owner
+    And observability ownership is confined to Observability
+    And benchmarker retains Performance under Testing Strategy
+
+  @B-038
+  Scenario: Portable signal declarations identify the boundary and claim
+    Given an operational boundary needs an observable outcome
+    When observability authors its signal declaration
+    Then the declaration uses Boundary, Signal, Level, Template, Fields and Claim in that order
+    And each signal is a log, span or metric
+    And only a log carries a severity level
+    And each template is a constant message, span name or instrument name
+    And fields name the recorded information without providing runtime values
+    And each declaration cites the claims it serves
+
+  @B-038
+  Scenario: A reason supports the absence of relevant signals
+    Given no operational signal is required for the affected boundary
+    When observability records its contribution
+    Then the subsection states None with its reason
+    And an unexplained None is incomplete
+
+  @B-038
+  Scenario: Runtime values do not replace portable signal requirements
+    Given a proposed signal declaration contains captured runtime values
+    And its signal name changes with each observed event
+    When observability reviews the declaration
+    Then that declaration is returned for constant naming and field names only
+
+  @B-038
+  Scenario: Signal declarations preserve implementation and design boundaries
+    Given an observability contribution requires instrumentation
+    When observability completes the declaration
+    Then every emitted boundary signal is declared and asserted in a test
+    And observability hands its declarations to test-writer for those assertions
+    And observability writes neither test code nor production code
+    And production code remains assigned to implementer or its implementation specialist
+    And parent design questions return to architect
+    And performance measurements return to benchmarker
+    And observability writes no review verdict
+
+  @B-039
+  Scenario: The rename preserves the nineteen-role roster
+    Given the nineteen-role roster contains metric-nerd
+    When its operational specialist is renamed to observability
+    Then the roster still contains nineteen roles
+    And active contracts, commands and host references resolve to observability
+    And the regenerated outputs expose observability instead of metric-nerd
+
+  @B-039
+  Scenario: Stale outputs from the former identity fail the projection check
+    Given the active role identity is observability
+    And a projected standalone metric-nerd output remains
+    When projection drift is checked
+    Then the stale output is rejected
+
+  @B-039
+  Scenario: Renaming an active role preserves historical evidence
+    Given a recorded decision or review names metric-nerd
+    When its active role identity becomes observability
+    Then the historical identity and evidence remain recorded
+    And the existing claim identifiers keep their anchors
