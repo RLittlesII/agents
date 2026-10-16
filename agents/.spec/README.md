@@ -680,15 +680,24 @@ unit tests exercise existing loading, ownership and review-unit decisions;
 integration tests exercise the real plan/write/check path on synthetic temporary
 checkouts. A single retained reviewer must own both design and diff while all
 four ordered units remain total; duplicate/missing holders must still fail.
+The rebased baseline already combines design and diff review; preserve that
+assignment and the absorbed correction/log-analysis duties in retained contracts.
 Existing deterministic-output and review-registry tests are reused, not replaced.
-Update the existing roster and reviewer expectations without weakening baseline
-checks. Register each added test in the explicit `tests` list and confirm the
-reported discovered count increases; a function definition alone never runs.
+Update the existing roster expectation and preserve the current reviewer
+expectation without weakening baseline checks. Register each added test in the
+explicit `tests` list and confirm the reported discovered count increases;
+a function definition alone never runs.
 
-For migration, first project a synthetic pre-retirement checkout, then change
-its source contracts, commands and overlays to the agreed retained roster.
-Check that `differences` reports retired host files as stale and database outputs
-as missing; `apply` must remove stale files and write the expected bytes; a new
+For migration, first project a synthetic checkout representing the twenty-role
+rebased baseline recorded in decision 0001, then change its source contracts,
+commands and overlays to the agreed nineteen-role roster. Retire the remaining
+`analyst`, `pair-programmer` and `yak-shaver` identities; restore separate
+`metric-nerd` expertise from source history and add `database`. Review restored
+measurement boundaries against B-024/B-025 rather than undoing the already
+absorbed correction, log-analysis and independent-review duties.
+Check that `differences` reports the three retired roles' host files as stale
+and both restored metric-nerd and new database host files as missing;
+`apply` must remove stale files and write the expected bytes; a new
 `plan` and check must report no differences. Exercise the public CLI's
 `--root <synthetic-dir>` and `--check` for exit status and drift reporting rather
 than imitating their decisions. Invalid retired command references, host mappings
