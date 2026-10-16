@@ -26,8 +26,6 @@ roles:
   # Judgement roles: a wrong reading or a missed finding costs the most.
   analyst:
     model_reasoning_effort: high
-  critic:
-    model_reasoning_effort: high
   bug-finder:
     model_reasoning_effort: high
   adversary:
@@ -39,16 +37,12 @@ roles:
   # Execution roles bounded by an upstream artifact: the default effort.
   organizer: {}
   tester: {}
-  bug-fixer: {}
   pair-programmer: {}
   yak-shaver: {}
-  metric-nerd: {}
   ux: {}
   ui: {}
   release: {}
   build: {}
-  # Mechanical reading and prose: low effort is enough.
+  # Prose: low effort is enough.
   document-writer:
-    model_reasoning_effort: low
-  log-parser:
     model_reasoning_effort: low

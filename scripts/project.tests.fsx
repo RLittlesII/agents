@@ -423,8 +423,8 @@ let C3_Outputs_AreDeterministicAcrossRuns () =
 // ---------------------------------------------------------------- 0001-F2 Role contract
 
 let roster =
-    [ "adversary"; "analyst"; "architect"; "auditor"; "benchmarker"; "bug-finder"; "bug-fixer"; "build"
-      "critic"; "document-writer"; "domain"; "implementer"; "log-parser"; "metric-nerd"; "organizer"
+    [ "adversary"; "analyst"; "architect"; "auditor"; "benchmarker"; "bug-finder"; "build"
+      "document-writer"; "domain"; "implementer"; "organizer"
       "pair-programmer"; "release"; "spec-author"; "spec-reviewer"; "test-writer"; "tester"; "ui"; "ux"; "yak-shaver" ]
 
 let F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey () =
@@ -497,9 +497,9 @@ let F2_B007_PersonaRequiresNameAndVoiceAndIsUnique () =
     nothingWritten root3
 
 let F2_B008_ReviewingRoleCarriesLookForAndReport () =
-    // The real roster: exactly the four review passes, each on a reviewing body.
+    // The real roster: the four review passes on three reviewing bodies.
     let reviewing = loadRoles repoRoot |> List.filter (fun r -> not r.Reviews.IsEmpty) |> List.map (fun r -> r.Name, r.Reviews)
-    equal [ "adversary", [ "surface" ]; "auditor", [ "repository" ]; "critic", [ "design" ]; "spec-reviewer", [ "diff" ] ] reviewing
+    equal [ "adversary", [ "surface" ]; "auditor", [ "repository" ]; "spec-reviewer", [ "design"; "diff" ] ] reviewing
     // A role declaring a unit without the reviewing headings fails.
     let root = checkout ()
     write root "agents/beta.md" (role "beta" "[\"3\"]\nreviews: [diff]" betaBody)
