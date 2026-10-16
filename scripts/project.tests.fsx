@@ -423,15 +423,14 @@ let C3_Outputs_AreDeterministicAcrossRuns () =
 // ---------------------------------------------------------------- 0001-F2 Role contract
 
 let roster =
-    [ "adversary"; "analyst"; "architect"; "auditor"; "benchmarker"; "bug-finder"; "build"
-      "document-writer"; "domain"; "implementer"; "organizer"
-      "pair-programmer"; "release"; "spec-author"; "spec-reviewer"; "test-writer"; "tester"; "ui"; "ux"; "yak-shaver" ]
+    [ "adversary"; "architect"; "auditor"; "benchmarker"; "bug-finder"; "build"; "database"
+      "document-writer"; "domain"; "implementer"; "metric-nerd"; "organizer"; "release"
+      "spec-author"; "spec-reviewer"; "test-writer"; "tester"; "ui"; "ux" ]
 
 let F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey () =
     // loadRole itself rejects a missing key, a non-semver version, a multi-line
     // description and a host key.
     let roles = loadRoles repoRoot
-    equal roster (roles |> List.map (fun r -> r.Name))
     for role in roles do
         if String.IsNullOrWhiteSpace role.Description then failwithf "%s has no description" role.Name
     // Every role is mapped on both hosts.
@@ -673,6 +672,148 @@ let F4_B002_GeneratedBlockIsExempt () =
 let F4_B003_RepositorySkillsNameNoRole () =
     lintSkills repoRoot (loadRoles repoRoot)
 
+// ---------------------------------------------------------------- 0001-F2 Migration (Kevin)
+
+let F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts () =
+    // Given delivered sources; when loaded; then their exact roster and mappings agree.
+    equal roster (loadRoles repoRoot |> List.map (fun r -> r.Name))
+    for id in [ "claude"; "codex" ] do
+        equal roster ((loadHost repoRoot id).Roles |> List.map fst |> List.sort)
+
+let F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles () =
+    // Given new specialists; when planned; then source bytes and judgment profiles survive.
+    let roles = loadRoles repoRoot
+    for name in [ "database"; "metric-nerd" ] do
+        if not (roles |> List.exists (fun r -> r.Name = name)) then failwithf "agreed specialist '%s' is absent" name
+    let outputs = (plan repoRoot).Outputs
+    for name in [ "database"; "metric-nerd" ] do
+        let r = roles |> List.find (fun r -> r.Name = name)
+        equal [] r.OwnedSections
+        let ch = overlay (loadHost repoRoot "claude") r |> Map.ofList
+        let cx = overlay (loadHost repoRoot "codex") r |> Map.ofList
+        equal (Scalar (if name = "database" then "opus" else "sonnet")) ch.["model"]
+        equal (Scalar (if name = "database" then "high" else "medium")) ch.["effort"]
+        equal (if name = "database" then List ["sdd-conventions"; "coding-conventions"; "clarify-requirements"] else List ["sdd-conventions"]) ch.["skills"]
+        if Map.containsKey "tools" ch then failwithf "%s restricts assigned writes" name
+        equal ((loadHost repoRoot "codex").Defaults |> List.find (fun (k, _) -> k = "model") |> snd) cx.["model"]
+        equal (Scalar (if name = "database" then "high" else "medium")) cx.["model_reasoning_effort"]
+        let claude = Encoding.UTF8.GetString outputs.[sprintf ".claude/agents/%s.md" name]
+        let codex = Encoding.UTF8.GetString outputs.[sprintf ".codex/agents/%s.toml" name]
+        let line = codex.Split('\n') |> Array.find (fun l -> l.StartsWith "developer_instructions = ")
+        let decoded = decodeToml (line.Substring "developer_instructions = ".Length)
+        if not (claude.EndsWith r.Body && decoded.EndsWith r.Body) then failwithf "%s body changed in projection" name
+
+let F2_B034_FourReviewUnitsAndSectionOwnersStayUnchanged () =
+    // Given retained declarations; when computed; then consolidation changes no artifact owner or review unit.
+    let roles = loadRoles repoRoot
+    equal [ "design", "spec-reviewer"; "diff", "spec-reviewer"; "surface", "adversary"; "repository", "auditor" ]
+        (reviewRows roles (loadReviewUnits repoRoot) |> List.map (fun (u, r) -> u.Unit, r))
+    let expected = [ "1", "spec-author"; "2", "spec-author"; "3", "spec-author"; "4", "spec-author"; "5", "spec-author"
+                     "6", "architect"; "7", "architect"; "8", "test-writer"; "8/Performance", "benchmarker"
+                     "9", "test-writer"; "10", "spec-author"; "12", "spec-author"; "Scoring", "organizer"; "Tasks", "organizer" ]
+    equal (List.sort expected) (roles |> List.collect (fun r -> r.OwnedSections |> List.map (fun s -> s, r.Name)) |> List.sort)
+    ownershipRows roles (loadUnowned repoRoot) (loadTemplateSections repoRoot) |> ignore
+
+let F2_B034_ActiveConveningBindingsResolveToRetainedRoles () =
+    // Given active contracts, commands and overlays; when resolved; then no retired identity remains bound.
+    let roles = loadRoles repoRoot
+    let retired = set [ "analyst"; "pair-programmer"; "yak-shaver"; "bug-fixer"; "critic"; "log-parser" ]
+    for c in loadCommands repoRoot do
+        for name in c.Roles do
+            if retired.Contains name then failwithf "%s still convenes retired role '%s'" c.Source name
+    validateCommands roles (Directory.GetDirectories(Path.Combine(repoRoot, "skills")) |> Array.map Path.GetFileName |> List.ofArray) (loadCommands repoRoot)
+    for id in [ "claude"; "codex" ] do validateHostRoles (loadHost repoRoot id) roles
+    for r in roles do
+        for m in System.Text.RegularExpressions.Regex.Matches(r.Body, @"\]\((?:\.\./agents/|\./)?([a-z-]+)\.md(?:#[^)]*)?\)") do
+            let name = m.Groups.[1].Value
+            if retired.Contains name then failwithf "%s links retired contract '%s'" r.Source name
+
+/// Invented role contracts, shared by migration and rejected-plan cases.
+let rosterCheckout names =
+    let root = commandsCheckout ()
+    write root "skills/sdd-conventions/SKILL.md" (companion.Replace("The `.feature` file belongs to `spec-author`.", "The scenario file belongs to the agreement owner."))
+    for name in [ "alpha"; "beta" ] do File.Delete(Path.Combine(root, "agents/" + name + ".md"))
+    for name in names do
+        let owned = if name = "spec-author" then "[\"1\", \"2\", \"Tasks\"]" elif name = "architect" then "[\"3\"]" else "[]"
+        write root ("agents/" + name + ".md") (role name owned ("\n# " + name + "\n"))
+    for id, source in [ "claude", claudeHost; "codex", codexHost ] do
+        let head = source.Substring(0, source.IndexOf "roles:")
+        let commands = if id = "claude" then "commands_output: .claude/commands/{name}.md\n" else "commands_output: .agents/skills/{name}/SKILL.md\n"
+        write root ("hosts/" + id + ".yaml") (head + commands + "roles:\n" + (names |> List.map (sprintf "  %s: {}\n") |> String.concat ""))
+    write root "commands/convene.md" (command "convene" "[spec-author]" "[]" commandBody)
+    root
+
+let runProject root check =
+    let start = System.Diagnostics.ProcessStartInfo("dotnet")
+    start.WorkingDirectory <- repoRoot
+    start.UseShellExecute <- false
+    start.RedirectStandardOutput <- true
+    start.RedirectStandardError <- true
+    for arg in [ "fsi"; Path.Combine(repoRoot, "scripts/project.fsx"); "--root"; root ] do start.ArgumentList.Add arg
+    if check then start.ArgumentList.Add "--check"
+    use proc = System.Diagnostics.Process.Start start
+    let stdout = proc.StandardOutput.ReadToEndAsync()
+    let stderr = proc.StandardError.ReadToEndAsync()
+    proc.WaitForExit()
+    proc.ExitCode, stdout.Result + stderr.Result
+
+let F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck () =
+    // Given the projected twenty-role baseline, when migrated, then missing/stale diagnostics precede a clean apply.
+    let retired = [ "analyst"; "pair-programmer"; "yak-shaver" ]
+    let root = rosterCheckout ((roster |> List.except [ "database"; "metric-nerd" ]) @ retired)
+    equal 20 (loadRoles root).Length
+    apply root (plan root) |> ignore
+    for name in retired do File.Delete(Path.Combine(root, "agents/" + name + ".md"))
+    for name in [ "database"; "metric-nerd" ] do write root ("agents/" + name + ".md") (role name "[]" ("\n# " + name + "\n"))
+    for id in [ "claude"; "codex" ] do
+        let current = read root ("hosts/" + id + ".yaml")
+        write root ("hosts/" + id + ".yaml") (current.Substring(0, current.IndexOf "roles:") + "roles:\n" + (roster |> List.map (sprintf "  %s: {}\n") |> String.concat ""))
+    let expected =
+        [ for prefix, ext in [ ".claude/agents/", ".md"; ".codex/agents/", ".toml" ] do
+            for name in retired do yield Stale (prefix + name + ext)
+            for name in [ "database"; "metric-nerd" ] do yield Missing (prefix + name + ext) ] |> List.sort
+    equal expected (differences root (plan root) |> List.sort)
+    let code, report = runProject root true
+    equal 1 code
+    for diff in expected do contains (describe diff) report
+    equal expected (differences root (plan root) |> List.sort)
+    apply root (plan root) |> ignore
+    equal [] (differences root (plan root))
+    for dir in [ ".claude/agents"; ".codex/agents" ] do equal 19 (Directory.GetFiles(Path.Combine(root, dir)).Length)
+    equal 0 (fst (runProject root true))
+
+let F2_B034_RetiredBindingsFailBeforeWriting () =
+    // Given absent retired identities, when commands or overlays bind them, then validation rejects without output.
+    for name in [ "analyst"; "pair-programmer"; "yak-shaver"; "bug-fixer"; "critic"; "log-parser" ] do
+        let root = rosterCheckout roster
+        write root "commands/convene.md" (command "convene" ("[" + name + "]") "[]" commandBody)
+        contains ("names role '" + name + "'") (expectFailure (fun () -> plan root))
+        nothingWritten root
+        let root2 = rosterCheckout roster
+        write root2 "hosts/codex.yaml" (read root2 "hosts/codex.yaml" + "  " + name + ": {}\n")
+        contains ("role '" + name + "' has no file") (expectFailure (fun () -> plan root2))
+        nothingWritten root2
+    let root = rosterCheckout roster
+    write root "commands/convene.md" (command "convene" "[analyst]" "[]" commandBody)
+    let code, report = runProject root false
+    equal 2 code
+    contains "names role 'analyst'" report
+    nothingWritten root
+
+let F2_B035_HistoricalEvidenceAndExistingOutputsSurviveRejectedPlans () =
+    // Given invented old identities and claim anchors; when projected or rejected; then evidence bytes remain.
+    let root = rosterCheckout roster
+    let history = "---\ntitle: Historical evidence\n---\ncritic approved B-020; analyst recorded B-015.\r\n"
+    write root "agents/.spec/decisions/history.md" history
+    apply root (plan root) |> ignore
+    let before = (plan root).Outputs |> Map.toList |> List.map (fun (rel, _) -> rel, File.ReadAllBytes(Path.Combine(root, rel)))
+    apply root (plan root) |> ignore
+    equal (Encoding.UTF8.GetBytes history) (File.ReadAllBytes(Path.Combine(root, "agents/.spec/decisions/history.md")))
+    write root "commands/convene.md" (command "convene" "[critic]" "[]" commandBody)
+    expectFailure (fun () -> plan root) |> ignore
+    for rel, bytes in before do equal bytes (File.ReadAllBytes(Path.Combine(root, rel)))
+    equal history (read root "agents/.spec/decisions/history.md")
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
@@ -712,7 +853,14 @@ let tests : (string * (unit -> unit)) list =
       nameof F3_B007_CommandNamedLikeSkill_Fails, F3_B007_CommandNamedLikeSkill_Fails
       nameof F4_B001_SkillNamingRole_FailsNamingFileLineAndRole, F4_B001_SkillNamingRole_FailsNamingFileLineAndRole
       nameof F4_B002_GeneratedBlockIsExempt, F4_B002_GeneratedBlockIsExempt
-      nameof F4_B003_RepositorySkillsNameNoRole, F4_B003_RepositorySkillsNameNoRole ]
+      nameof F4_B003_RepositorySkillsNameNoRole, F4_B003_RepositorySkillsNameNoRole
+      nameof F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts, F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts
+      nameof F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles, F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles
+      nameof F2_B034_FourReviewUnitsAndSectionOwnersStayUnchanged, F2_B034_FourReviewUnitsAndSectionOwnersStayUnchanged
+      nameof F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck, F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck
+      nameof F2_B034_RetiredBindingsFailBeforeWriting, F2_B034_RetiredBindingsFailBeforeWriting
+      nameof F2_B035_HistoricalEvidenceAndExistingOutputsSurviveRejectedPlans, F2_B035_HistoricalEvidenceAndExistingOutputsSurviveRejectedPlans
+      nameof F2_B034_ActiveConveningBindingsResolveToRetainedRoles, F2_B034_ActiveConveningBindingsResolveToRetainedRoles ]
 
 let mutable failures = 0
 for name, test in tests do
