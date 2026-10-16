@@ -65,17 +65,27 @@ roles' contracts decide what each does. Type `/<name>` in Claude Code or
 
 ## Consuming
 
-Outputs are committed, so a consumer pulls a finished file by path at a tagged
-ref. With the [`skillfile`](https://github.com/eljulians/skillfile) CLI:
+Install the complete setup from a checkout at the version you want with
+Python 3.11+ and either Skillfile or Microsoft apm on PATH:
+
+```sh
+python3 /path/to/agents/install/install.py --host claude --manager skillfile --target /path/to/project
+python3 /path/to/agents/install/install.py --host codex --manager apm --target /path/to/project
+```
+
+Both managers work with both hosts. The [installation guide](install/README.md)
+covers Windows, installed paths, conflicts and updates. The consumer needs no
+.NET SDK; the installer uses committed projections.
+
+For individual Claude artifacts, use the
+[`skillfile`](https://github.com/eljulians/skillfile) CLI:
 
 ```sh
 skillfile add github agent rlittlesii/agents .claude/agents/architect.md v0.1.0 --name architect
 skillfile add github skill rlittlesii/agents skills/sdd-conventions/SKILL.md v0.1.0
 ```
 
-Pull a Codex agent from `.codex/agents/<role>.toml` the same way, and a command
-from `.claude/commands/<name>.md` or `.agents/skills/<name>/SKILL.md`; a command
-names its roles and skills at those same paths, so pull them with it. Then write
+Use the installer for Codex TOML agents and complete command dependencies. Write
 your repository's companion skill, `<project>-conventions`, covering the areas
 listed in [`sdd-conventions` § Your companion](skills/sdd-conventions/SKILL.md#your-companion).
 The role files name no path or command of yours; the companion does.
@@ -85,6 +95,7 @@ The role files name no path or command of yours; the companion does.
 | Kind       | Paths                                                                  | Rule                                        |
 | ---------- | ---------------------------------------------------------------------- | ------------------------------------------- |
 | Source     | `agents/*.md`, `skills/*/SKILL.md`, `commands/*.md`, `hosts/*.yaml`, `scripts/*.fsx` | edit here, in a pull request                |
+| Installation | `install/install.py`, `install/test_install.py`, `install/.spec/` | project-scoped consumer installer, offline tests and its agreement |
 | Generated  | `.claude/agents/`, `.claude/skills/`, `.claude/commands/`, `.codex/agents/`, `.agents/skills/`, the ownership table and review-pass registry in `sdd-conventions`, the roster in `agents/PERSONAS.md` | never hand-edit; run the projector |
 | Tool-owned | `.specht/`                                                              | written by `dotnet specht init`             |
 | Work items | `.issue/`, `<area>/.issue/`                                          | one `<id>-<slug>.yml` per item; schema in `.spec/templates/item.yml` |
@@ -92,7 +103,8 @@ The role files name no path or command of yours; the companion does.
 
 ## Maintaining
 
-The pinned .NET SDK in `global.json` is the only prerequisite. The `specht`
+Projection and specification checks require the pinned .NET SDK in `global.json`;
+installer tests also require Python 3.11+. The `specht`
 feed needs a GitHub Packages credential, exported as the environment variable
 the [specht setup guide](https://github.com/RLittlesII/specht/blob/main/docs/setup.md)
 names.
@@ -103,6 +115,7 @@ dotnet specht --strict                   # specification check
 dotnet fsi scripts/project.fsx           # regenerate every host output
 dotnet fsi scripts/project.fsx --check   # exit 1 on drift; what CI runs
 dotnet fsi scripts/project.tests.fsx     # claim-named tests
+python3 -m unittest discover -s install -p 'test_*.py' -v
 ```
 
 To add a role: write `agents/<name>.md` with the keys the
