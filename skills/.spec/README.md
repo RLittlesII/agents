@@ -5,7 +5,7 @@ type: feature
 id: "F4"
 epic: "0001"
 spec_status: approved
-status: ready
+status: in-progress
 priority: med
 value: 0
 risk: 0
@@ -20,7 +20,7 @@ depends_on: ["F2"]
 blocks: []
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-16"
+updated: "2026-10-17"
 github_issue: null
 synced_at: null
 ---
@@ -225,9 +225,11 @@ runtime bytes and existing ownership. See Decision 0002.
 
 ## Tasks
 
-<!-- last written by: organizer, 2026-10-16 -->
+<!-- last written by: organizer, 2026-10-17 -->
 
-- [0043 — Review Skill boundary baseline and reconcile delivery evidence](../../.issue/0043-skill-boundary-evidence.yml).
+- [0051 — Coordinate Skill boundary delivery](../.issue/0051-coordinate-skill-boundary.yml) — authoritative delivery-status source.
+
+Supporting maintenance history: [0043 — Review Skill boundary baseline and reconcile delivery evidence](../../.issue/0043-skill-boundary-evidence.yml). It retains its root scope.
 
 ## Scoring
 
