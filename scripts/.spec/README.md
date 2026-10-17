@@ -323,6 +323,15 @@ Markdown parsing (fences, comments and nested headings), schema mutations,
 malformed/missing source and schema files, and unchanged existing-output bytes.
 Each tests `plan` or the actual CLI, with no network or live provider.
 
+Tracker-metadata amendment: 71 projector tests passed; the three new metadata failure cases were observed red before implementation, and stale-output detection remained green.
+Testability: Ready, using the existing synthetic fixtures without network or a
+new dependency. Independent agreement/design approval preceded test authoring;
+see § 12.
+Fresh source-bound coverage against main `d4eac9c` passes 49/50 changed
+executable production lines (98%; required 80%). The unused missing-directory
+return in the source traversal is the one uncovered line. This measured gate
+does not establish additional platform, real-manager or live-agent execution.
+
 ### Performance
 
 <!-- last written by: benchmarker, 2026-10-16 -->
@@ -361,6 +370,7 @@ inventory count.
 | B-022 | [@B-022](projection.feature) Reject before writes | `B022_InvalidSchemasPreserveExistingOutputs` | Covered |
 | B-023 | [@B-023](projection.feature) Schema-driven rules | `B023_ChangedSchemaRulesTakeEffectOnNextPlan` | Covered |
 | B-024 | [@B-024](projection.feature) Host overlays remain authoritative | `B024_HostOverlaysRemainAuthoritative` | Covered |
+| B-025 | Tracker metadata scenarios in the companion `.feature` | `B025_TrackerDirectoryIsNotASkill`; `B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive`; `B008_B025_StaleTrackerOutputsAreReportedAndRemoved` | Covered |
 
 ## 10. Lessons / Spec Deltas
 

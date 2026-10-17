@@ -1147,10 +1147,53 @@ let B023_ChangedSchemaRulesTakeEffectOnNextPlan () =
     write root skill ((read root skill).Replace("## Never add", "## Guard"))
     plan root |> ignore
 
+let B025_TrackerDirectoryIsNotASkill () =
+    let root = checkout ()
+    let tracker = "id: synthetic\nstatus: ready\n"
+    write root "skills/.issue/synthetic.yml" tracker
+    let result = plan root
+    apply root result |> ignore
+    equal tracker (read root "skills/.issue/synthetic.yml")
+    for host in [ ".claude/skills"; ".agents/skills" ] do
+        equal false (Directory.Exists(Path.Combine(root, host, ".issue")))
+        equal true (exists root (host + "/sdd-conventions/SKILL.md"))
+
+let B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive () =
+    let root = checkout ()
+    let metadata = [ "skills/sdd-conventions/.issue/item.yml"; "skills/sdd-conventions/references/.issue/item.yml" ]
+    for path in metadata do write root path "id: synthetic\n"
+    write root "skills/sdd-conventions/.spec/README.md" "producer spec\n"
+    let runtime = [ ".runtime/payload.bin", "\000\001binary"; ".issue-notes.md", "runtime notes\n"; ".issue-data/payload.bin", "\000\255resource" ]
+    for rel,content in runtime do write root ("skills/sdd-conventions/" + rel) content
+    apply root (plan root) |> ignore
+    for host in [ ".claude/skills"; ".agents/skills" ] do
+        for rel in [ ".issue/item.yml"; "references/.issue/item.yml"; ".spec/README.md" ] do
+            equal false (exists root (host + "/sdd-conventions/" + rel))
+        for rel,_ in runtime do
+            equal (File.ReadAllBytes(Path.Combine(root, "skills/sdd-conventions", rel)))
+                  (File.ReadAllBytes(Path.Combine(root, host, "sdd-conventions", rel)))
+    for path in metadata do equal "id: synthetic\n" (read root path)
+
+let B008_B025_StaleTrackerOutputsAreReportedAndRemoved () =
+    let root = checkout ()
+    write root ".issue/source.yml" "source tracker\n"
+    apply root (plan root) |> ignore
+    let stale = [ ".claude/skills/sdd-conventions/.issue/old.yml"; ".agents/skills/.issue/old.yml" ]
+    for path in stale do write root path "old projected tracker\n"
+    let expected = stale |> List.map Stale |> List.sort
+    equal expected (differences root (plan root) |> List.sort)
+    for path in stale do equal "old projected tracker\n" (read root path)
+    apply root (plan root) |> ignore
+    for path in stale do equal false (exists root path)
+    equal "source tracker\n" (read root ".issue/source.yml")
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
-    [ nameof B019_LiteralDescriptionRoundTripsThroughBothHosts, B019_LiteralDescriptionRoundTripsThroughBothHosts
+    [ nameof B025_TrackerDirectoryIsNotASkill, B025_TrackerDirectoryIsNotASkill
+      nameof B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive, B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive
+      nameof B008_B025_StaleTrackerOutputsAreReportedAndRemoved, B008_B025_StaleTrackerOutputsAreReportedAndRemoved
+      nameof B019_LiteralDescriptionRoundTripsThroughBothHosts, B019_LiteralDescriptionRoundTripsThroughBothHosts
       nameof B019_PortableFrontmatterAcceptsUserExamples, B019_PortableFrontmatterAcceptsUserExamples
       nameof B019_AgentSchemaRejectsInvalidFrontmatter, B019_AgentSchemaRejectsInvalidFrontmatter
       nameof B020_SkillSchemaValidatesMetadataAndStructure, B020_SkillSchemaValidatesMetadataAndStructure
