@@ -597,7 +597,10 @@ does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 
-[0039 — Host installer](../.issue/0039-host-installer.yml), B-001–B-006.
+<!-- last written by: organizer, 2026-10-17 -->
+
+- [0054 — Coordinate Host installation delivery](../.issue/0054-coordinate-host-installation.yml) — authoritative delivery-status source.
+- [0039 — Install complete Claude or Codex hosts through Skillfile or Microsoft apm](../.issue/0039-host-installer.yml).
 
 ## Scoring
 
