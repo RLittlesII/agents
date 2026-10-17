@@ -1,0 +1,36 @@
+id: "0043"
+type: chore
+title: Review Skill boundary baseline and reconcile delivery evidence
+status: in-progress
+value: 3
+cost: 2
+risk: 1
+parent: "0001"
+children: []
+depends_on: []
+spikes: []
+spec: null
+claims: []
+created: "2026-10-16"
+updated: "2026-10-16"
+closed: null
+summary: |
+  Review the existing 0001-F4 agreement and record independently verified
+  approval and historical implementation evidence. This item starts from
+  missing baseline sign-off and tracker links, not new implementation scope.
+  Agreement review can proceed before prerequisite 0001-F2 is complete;
+  this item does not authorize prerequisite-dependent implementation.
+acceptance_criteria:
+  - "Record an independent baseline verdict with its scope; preserve earlier amendment approvals."
+  - "Record verified historical delivery evidence for the existing B-001, B-002 and B-003 claims without inventing tracker assignments."
+  - "Keep prerequisite and unresolved evidence gaps explicit; no unsupported Feature completion."
+  - "Strict specifications, projection check, projector tests and installer tests pass."
+decisions:
+  - "2026-10-16, user: deliver Skill boundary 0001-F4 through the deliver-change skill."
+  - "2026-10-16, planning: value 3 removes uncertainty about an existing portability guard; cost 2 covers bounded review and evidence reconciliation; risk 1 reflects documentation-only intent."
+  - "2026-10-16, reservation: 0042 is reserved by the user's uncommitted tracker reconciliation. No open PR reserves a later id; claim 0043 against fetched origin/main before branch/worktree creation."
+  - "2026-10-16, delivery placement exception: this standalone evidence-maintenance chore uses root .issue with spec null. The projector treats skills/.issue as a skill and requires its SKILL.md; placing this review-only record there breaks projection. Do not change F1 runtime behavior to host this record."
+
+out_of_scope:
+  - "New runtime lint behavior and unrelated Feature approval are outside this evidence slice."
+  - "0001-F4 section 5 rows 1-2 route role-to-skill and command references to 0001-F2 and 0001-F3."
