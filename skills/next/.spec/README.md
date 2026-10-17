@@ -5,7 +5,7 @@ type: feature
 id: "F5"
 epic: "0001"
 spec_status: draft
-status: ready
+status: in-progress
 priority: med
 value: 0
 risk: 0
@@ -675,7 +675,11 @@ does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 
-None cut.
+<!-- last written by: organizer, 2026-10-17 -->
+
+- [0052 — Coordinate Next work delivery](../.issue/0052-coordinate-next-work.yml) — authoritative delivery-status source.
+
+Supporting root history, retaining its existing parents: [0004 — Original agreement](../../../.issue/0004-next-skill-agreement.yml), [0030 — Specification authoring](../../../.issue/0030-next-skill-specification.yml), [0037 — Design alignment](../../../.issue/0037-align-f5-design-with-rulings.yml), and [0047 — Open-question rulings](../../../.issue/0047-resolve-f5-open-questions.yml).
 
 ## Scoring
 
