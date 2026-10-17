@@ -158,6 +158,41 @@ Feature: Projection
     Then projection fails naming the file, the Business Goal, beta and alpha
     And no output directory exists
 
+  @B-016
+  Scenario Outline: A template-style stamp names the wrong writer
+    Given a specification whose <section> belongs to <owner>
+    And its stamp names <writer>
+    When the checkout is projected
+    Then projection fails naming the file, the section and both roles
+    And no output directory exists
+
+    Examples:
+      | section            | owner | writer        |
+      | Concern Separation | alpha | implementer   |
+      | Technical Design   | alpha | implementer   |
+      | Sign-off           | beta  | spec-reviewer |
+
+  @B-016
+  Scenario Outline: A fenced example does not declare section ownership
+    Given a specification with a correctly owned section stamp
+    And a non-owner stamp appears only in a <fence> example
+    When the checkout is projected
+    Then projection succeeds without treating the example as a specification section
+
+    Examples:
+      | fence                                              |
+      | tilde-fenced                                       |
+      | four-backtick-fenced containing shorter backticks   |
+
+  @B-016
+  Scenario: A fenced example does not hide a later ownership violation
+    Given a four-backtick example containing shorter backticks
+    And a real Business Goal after the example is stamped by beta
+    And alpha owns the Business Goal
+    When the checkout is projected
+    Then projection fails naming the file, the Business Goal, beta and alpha
+    And no output directory exists
+
   @boundary
   Scenario: A role absent from an overlay receives the defaults
     Given a role named beta that no overlay names

@@ -326,7 +326,7 @@ inventory count.
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 2026-10-16: Owner requested clearing persona names while preserving voices.
 B-011 and B-012 are withdrawn and replaced by B-017 and B-018: unnamed personas
@@ -338,6 +338,9 @@ frontmatter and required structure; add B-019–B-023, retaining earlier evidenc
 The supplied host-native examples supersede the rejection in B-010 with B-024;
 portable schemas validate frontmatter directly and expose document structure separately.
 
+2026-10-17: [Lesson 0001](lessons/0001-parse-fences-with-the-markdown-parser.md)
+records the B-016 fence-parsing correction; the claim is unchanged.
+
 ## 11. Open Questions
 
 <!-- last written by: spec-author, 2026-10-14 -->
@@ -346,14 +349,21 @@ None.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | Section | Status | Reviewer      | Note                                                   |
 | ------- | ------ | ------------- | ------------------------------------------------------ |
+| Design: § 7 fence parsing | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
+| Diff: §§ 7–10; parser, tests and lesson | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
+| Surface: submitted amendment boundaries | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; no actionable findings, with R2/R3 applicability verified. |
 | 1-12    | 🟡     | spec-reviewer | Draft baseline. Original scaffolding evidence retained; claims and tests landed together. |
 | 3, 7-10, 12 | 🟢 | spec-reviewer | Approved 2026-10-16: optional-name delta reviewed against 0001-F1 B-017 and B-018; source, scenarios, tests and projections agree. Baseline evidence retained. |
 | 3, 7-10, 12 | 🟢 | spec-reviewer | Rebase delta approved 2026-10-16 by independent `/root/persona_diff_review` against main `e60dea1`; no findings, earlier evidence retained. |
 | B-019–B-024; schemas, projector and coverage | 🟢 | spec-reviewer | Independent `/root/final_schema_review`, 2026-10-16: approved after literal-description round-trip fix and ADR-0009 reconciliation; stale description row corrected. 62 projector and 23 installer tests pass; strict checks clean; 78 outputs current. |
+
+Current amendment verdicts apply to the identified reviewed snapshot. Earlier
+pending rows are retained for their earlier subjects; current review approval
+does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 
