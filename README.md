@@ -100,6 +100,8 @@ The role files name no path or command of yours; the companion does.
 | Generated  | `.claude/agents/`, `.claude/skills/`, `.claude/commands/`, `.codex/agents/`, `.agents/skills/`, the ownership table and review-pass registry in `sdd-conventions`, the roster in `agents/PERSONAS.md` | never hand-edit; run the projector |
 | Tool-owned | `.specht/`                                                              | written by `dotnet specht init`             |
 | Work items | `.issue/`, `<area>/.issue/`                                          | one `<id>-<slug>.yml` per item; schema in `.spec/templates/item.yml` |
+| Working notes | `.spec/working/` | topic-named discovery notes and confirmed needs before items; no duplicate specification |
+| Scratch | `.artifacts/scratch/` | ignored, topic-scoped experiments and generated logs; retain portable evidence in owned records |
 | Records    | `epics/`, `.spec/adr/`, `scripts/.spec/`, `agents/.spec/`, `commands/.spec/`, `skills/.spec/` | the method applied to this repository       |
 
 ## Maintaining
@@ -155,11 +157,58 @@ with the keys the [commands specification](commands/.spec/README.md) requires
 and run the projector. The decisions behind this shape are
 in [`.spec/adr/`](.spec/adr/).
 
+### Working records and release guidance
+
+Before work items exist, record discovery notes and the confirmed need in a
+topic-named Markdown file under `.spec/working/`, with the documentation
+frontmatter. Once an agreement is written, link it from the note; claims and
+material decisions live in their owning specification records. After an item
+exists, its `decisions` log holds ongoing working and ownership evidence.
+
+Bounded experiments and generated logs go under ignored `.artifacts/scratch/`
+with a topic-specific directory. Retain portable conclusions in the owned
+specification or item before removing that scratch directory when the experiment
+ends. Scratch output is not a delivered artifact or a recorded approval.
+
+This repository has no established release or recovery automation. Committed
+projections and the chosen Git ref supply installation bytes. A release
+assignment must first identify its version, changelog location, targets and
+publish/recovery procedure; missing procedure is a named gap, not an invented
+command. The existing explicit confirmation requirement still governs publishing.
+
+### Delivery status
+
 Work is tracked in local `.issue/` items, not GitHub issues. An item that
 delivers a Feature sits in that Feature's `<area>/.issue/`; any other sits in
 the root `.issue/`. Ids share one number space with `epics/`, and
 `.issue/.sequence` holds the last id claimed: take the next and write it back in
 the same commit. The fields, the status vocabulary and the rank definition are in
 [`.spec/templates/item.yml`](.spec/templates/item.yml). Set `status: in-progress`
-before the branch; `done` and `closed:` land when the pull request that delivers
-the item merges.
+before the branch for delivery work; its `done` and `closed:` land when the
+pull request that delivers the item merges. A Feature coordination record
+closes after its required child delivery and active-claim completion are
+verified; it is not an additional implementation item or occupied child lane.
+
+Ownership is recorded as dated, append-only events in each item's `decisions`
+log. A claim names the human or agent session (with a durable session reference),
+branch and checkout; a release names its recorded owner; a reassignment names the
+authorizing person or delegated authority and both owners. Each handoff records
+completed work, remaining work and verification evidence or gaps. Apply
+[`deliver-change` § Resume, release and reassignment](skills/deliver-change/SKILL.md#resume-release-and-reassignment)
+before continuation. Existing taken items without that evidence need an explicit
+ownership reconciliation; status alone identifies no owner. A release records the
+resulting `ready` or `blocked` state with its reason; a reassignment retains the
+occupied state. These edits do not set `done`.
+
+The Feature coordination item is the unique `type: feature` record whose `spec`
+names that specification's repository-relative path. Child task, test, bug and
+refactor records never supply the Feature's mirrored `status`. Missing or
+multiple coordination records are diagnostics; existing tasks are not silently
+retyped or adopted as the source.
+
+During tracker maintenance, update the coordination item's `status` first and
+copy that exact value into its specification's `status` in the same change.
+This is synchronization, not a separately authored delivery decision. Validate
+the specification afterwards; `spec_status` retains its separate owner. Queue
+recommendations perform no synchronization. The portable contract is in
+[`sdd-conventions` § The spec / work-item split](skills/sdd-conventions/SKILL.md#the-spec--work-item-split).

@@ -106,7 +106,8 @@ specification never names an item** beyond the Tasks list it cuts, because a
 specification outlives any number of items.
 
 Where one field is genuinely needed in both places, exactly one of them is the
-source and the other is **mirrored** — never hand-edited on the mirror side.
+source and the other is **mirrored** — copied from that source, never
+independently authored on the mirror side.
 [`sdd-conventions`](../sdd-conventions/SKILL.md) § "The spec / work-item split"
 says which fields those are; the companion names where they land.
 
@@ -133,10 +134,9 @@ guaranteed to go stale and will be believed anyway.
 ## Claims and traceability
 
 - A **claim** is one falsifiable statement, numbered, scoped to its Feature.
-- Claim ids are **permanent**. Never reused, never renumbered — not to close a
-  gap, not to tidy a sequence, and not during a migration between layouts.
-  Renumbering breaks every citation in every past commit, review, issue and
-  sibling specification.
+- Claim IDs follow [`sdd-conventions`](../sdd-conventions/SKILL.md) § "ID schemes":
+  publication makes them permanent. A private draft is not proof that an ID has
+  never been cited outside its authoring branch.
 - A withdrawn claim is **marked** withdrawn, not deleted. Its number stays
   retired.
 - Each scenario carries the tag of the claim it documents. The tag is the anchor;
@@ -169,8 +169,9 @@ rather than an edit:
 2. A changed behaviour is a claim with a **new** id; the old one is withdrawn.
    A behaviour that is not a claim cannot be traced, tested or signed off.
 3. Add its § 9 row as `Missing`.
-4. Set `spec_status` back to in review and reset the affected § 12 rows to
-   draft. An amended specification is no longer approved.
+4. Return `spec_status` to an unapproved review state accepted by the project's
+   specification schema. Add pending § 12 coverage for the changed scope and
+   revision under § "Approval applicability", preserving earlier verdicts.
 5. A reworded claim that items already cite changes their brief: name those
    items in the change.
 
@@ -203,12 +204,36 @@ removes the only signal that the preceding stage is incomplete. The ownership ma
 is written in one place — [`sdd-conventions`](../sdd-conventions/SKILL.md)
 § "Section ownership" — and nowhere else.
 
-A bounded review adds to recorded approval coverage; it does not replace an
-approved baseline with a delta-only verdict. Preserve the earlier review's scope
-and evidence alongside the new verdict. Revoke approval only with an explicit
-reason and affected scope. When reconciling a narrower sign-off, inspect its
-history before declaring baseline approval absent; distinguish a recorded
-specification review, human approval, and delivered executable coverage.
+### Approval applicability
+
+A verdict identifies its review unit, scope and subject revision: a commit or an
+identified working snapshot sufficient to recover what was reviewed. The owner
+of § 12 records the returned verdict and evidence without supplying an approval
+of its own.
+
+A substantive agreement or design edit requires review of the changed scope
+against its new revision. Include dependencies whose change affects what the
+verdict established; unchanged text alone does not prove unchanged scope.
+Earlier approval cannot authorize a changed subject while awaiting revocation.
+Unchanged scope retains its applicable baseline approval. A non-substantive edit
+may carry approval forward when the record explains why the reviewed meaning
+and dependencies remain unchanged.
+
+A bounded verdict adds approval coverage for its identified subject; preserve
+baseline scope and evidence rather than replacing them with a delta-only row.
+Record which current scope the new verdict covers and which earlier evidence
+still applies. The approval table carries current coverage; preserve superseded
+verdicts in a separately labeled history block or linked record, not as current
+approval rows. Earlier verdicts remain historical evidence; explicit revocations
+retain their reason and affected scope. The current required scope must have
+applicable approval before its gate is met. Historical pending or blocked rows
+for superseded subjects do not veto a subsequently approved current subject.
+
+When reconciling sign-off, inspect its history before declaring approval absent
+or applicable. Missing subject evidence, unclear scope or conflicting applicable
+verdicts returns as an approval gap for clarification, not a favorable row chosen
+by the recorder. Distinguish specification review, human consent and executable
+coverage; none substitutes for another.
 
 ## Records beside a specification
 
@@ -232,16 +257,17 @@ later reader cannot rediscover the rejected option as a gap to fill.
 
 ## Identifiers are claimed after rebasing
 
-Claim an id against trunk, not against your branch. Two branches that both take
-"the next number" collide on merge, and the loser must renumber — which is the one
-thing ids may never do. If a collision does land, the newer change renumbers its
-own **new** ids; an id already cited anywhere stays.
+Allocate against current trunk and shared reservations, not your branch alone.
+Apply [`sdd-conventions`](../sdd-conventions/SKILL.md) § "ID schemes" to any
+collision: only unpublished new IDs can change, with all local references updated.
+Check publication evidence before choosing that path; a collision involving
+permanent IDs is not resolved by calling one branch newer.
 
 ## Never add
 
 - Template guidance, or a `{{placeholder}}`, left in a copy.
 - A placeholder row in a coverage or traceability table.
-- A renumbered or reused claim, constraint, question or task id.
+- A reused or renumbered permanent ID, or an unpublished ID changed without all local references.
 - A second copy of a derived answer, or a section mirroring another.
 - A signature restated in prose after the code exists.
 - A green coverage signal for a test that does not exist.

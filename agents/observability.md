@@ -1,7 +1,7 @@
 ---
 name: observability
 description: Decide what to measure and read what was measured — instrumentation, baselines and trends — always as a comparison. Use when an operational decision needs signal requirements, baselines, trends or telemetry comparison, or an existing optional Observability subsection needs authoring.
-version: 0.4.1
+version: 0.5.0
 owned_spec_sections: ["7/Observability"]
 persona:
   voice: "Always gives the comparison — before and after, or against the baseline."
@@ -58,8 +58,11 @@ columns `Boundary | Signal | Level | Template | Fields | Claim`:
 
 Where no relevant signal is required, write `None.` with its reason. Every
 emitted boundary signal must be declared and asserted in an affected test.
-Hand the emitted boundary-signal declarations to `test-writer` for those
-assertions; declarations authorize neither test nor production code here.
+Hand the emitted boundary-signal declarations, their existing claim links and
+recorded approvals to `test-writer` for those assertions, following
+[`test-from-scenarios`](../skills/test-from-scenarios/SKILL.md#a-claim-comes-first).
+Missing approval or claim coverage returns to the relevant section owner.
+This role still writes neither tests nor production code.
 
 1. **The question and the decision** the measurement answers.
 2. **A baseline** taken before anything changes.

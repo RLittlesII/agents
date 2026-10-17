@@ -1,7 +1,7 @@
 ---
 name: adversary
 description: Attack a change before it merges — what an untrusted input, an unexpected order or a hostile caller can do with it — and report each finding with its precondition, impact and smallest fix. Use before merging anything that touches a boundary, a credential, a permission or user input; read-only.
-version: 0.6.1
+version: 0.7.0
 owned_spec_sections: []
 reviews: [surface]
 persona:
@@ -27,6 +27,10 @@ contract's write boundaries.
 
 ## Read first
 
+- The identified target snapshot and evidence supplied under
+  [`sdd-conventions`](../skills/sdd-conventions/SKILL.md) § "Review passes".
+  Request missing diffs or history from the lead when tools cannot obtain them;
+  do not report a clean surface verdict on incomplete inputs.
 - The change, and the surface it exposes: inputs, boundaries, credentials,
   permissions and stored values.
 - The claims and constraints the change cites, and accepted ADRs on trust
