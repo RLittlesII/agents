@@ -1,0 +1,26 @@
+<Project>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <IncludeTestAssembly>true</IncludeTestAssembly>
+    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4" PrivateAssets="all" />
+  </ItemGroup>
+  <Target Name="RunCovered" DependsOnTargets="Build;InstrumentModules">
+    <PropertyGroup>
+      <CoverageRunnerCommand Condition="'$(CoverageKind)' == 'unit'">dotnet &quot;$(TargetPath)&quot;</CoverageRunnerCommand>
+      <CoverageRunnerCommand Condition="'$(CoverageKind)' == 'cli'">&quot;$(PythonExecutable)&quot; &quot;$(CliDriver)&quot; --dll &quot;$(TargetPath)&quot; --repo &quot;$(RepositoryRoot)&quot;</CoverageRunnerCommand>
+      <CoverageRunnerCommand Condition="'$(CoverageKind)' == ''">$(RunnerCommand)</CoverageRunnerCommand>
+    </PropertyGroup>
+    <Error Condition="'$(CoverageRunnerCommand)' == ''" Text="No coverage runner command was supplied." />
+    <Exec Command="$(CoverageRunnerCommand)" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="RunnerExitCode" />
+    </Exec>
+    <CallTarget Targets="GenerateCoverageResult" />
+    <Error Condition="'$(RunnerExitCode)' != '0'" Text="Coverage runner failed ($(RunnerExitCode)); reproduce with python3 .github/coverage/run.py --base &lt;base&gt;." />
+  </Target>
+</Project>

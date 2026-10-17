@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      base:
+        description: Explicit Git comparison base
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -31,10 +36,20 @@ jobs:
       NuGetPackageSourceCredentials_specht: "Username=${{ vars.SPECHT_PACKAGES_USER }};Password=${{ secrets.SPECHT_PACKAGES_TOKEN }};ValidAuthenticationTypes=Basic"
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pinned coverage collector
+        run: python3 -m pip install -r .github/coverage/requirements.txt
 
       - name: Restore tools
         run: dotnet tool restore
@@ -47,3 +62,17 @@ jobs:
 
       - name: Test the projector
         run: dotnet fsi scripts/project.tests.fsx
+
+      - name: Enforce changed-line coverage with the local gate
+        env:
+          COVERAGE_BASE: ${{ github.event.pull_request.base.sha || github.event.before || inputs.base }}
+        run: python3 .github/coverage/run.py --base "$COVERAGE_BASE"
+
+      - name: Retain coverage diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-diagnostics
+          path: .artifacts/coverage/
+          include-hidden-files: true
+          if-no-files-found: ignore

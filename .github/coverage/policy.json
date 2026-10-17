@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "threshold_percent": 80,
+  "include": ["**/*.py", "**/*.fsx", "**/*.fs"],
+  "exclude": ["**/test_*.py", "**/*.tests.fsx", ".artifacts/**", ".agents/**", ".claude/**", ".codex/**", ".github/coverage/fsharp/FsiArguments.fs"]
+}
