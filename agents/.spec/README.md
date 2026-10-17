@@ -5,7 +5,7 @@ type: feature
 id: "F2"
 epic: "0001"
 spec_status: in-review
-status: ready
+status: in-progress
 priority: med
 value: 0
 risk: 0
@@ -1261,8 +1261,10 @@ does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 
-<!-- last written by: organizer, 2026-10-16 -->
+<!-- last written by: organizer, 2026-10-17 -->
 
+- [0049 — Coordinate Role contract delivery](../.issue/0049-coordinate-role-contract.yml) — authoritative delivery-status source.
+- [0028 — Restore registry triggers and settle two role-contract exclusions](../.issue/0028-registry-triggers.yml).
 - [0040 — Implement lead and specialist collaboration](../.issue/0040-role-collaboration-design.yml).
 
 ## Scoring

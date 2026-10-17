@@ -7,7 +7,7 @@ status: done
 value: 2
 risk: 2
 
-parent: "0001"
+parent: "0049"
 children: []
 
 depends_on: []
@@ -19,7 +19,7 @@ claims:
   - B-009
 
 created: "2026-10-14"
-updated: "2026-10-14"
+updated: "2026-10-17"
 closed: "2026-10-14"
 
 summary: |
@@ -44,4 +44,5 @@ decisions:
   - "2026-10-14: the trigger and refusal are declared per unit in the roles index, beside what the unit reviews, rather than per role as LTI did; a unit is the thing with one trigger."
   - "2026-10-14: runner mode and a database role are excluded in 0001-F2 § 5 rows 4 and 5."
 
+  - "2026-10-17, user-authorized legacy coordination migration: parent changes from 0001 to 0049, the explicit 0001-F2 coordination source. Keep this delivered item’s identity, type, state, acceptance criteria, prior decisions and merge evidence; the coordinator lists 0028 reciprocally."
 out_of_scope: []
