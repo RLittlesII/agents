@@ -870,7 +870,77 @@ contract entry path rather than inheriting the claim gate for changed behavior.
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
+
+Local B-042 instruction-conformance walkthrough, 2026-10-17: inspect the
+retained contracts against `deliver-change` § Behavior-preserving refactors.
+This is authored static evidence, not an independent review or live-agent run.
+
+| Case | Recorded instruction outcome |
+| --- | --- |
+| Adequate passing baseline, preserved constraints and valid applicable design | The implementation lead and assigned specialists use refactor evidence without requiring new claims or red tests. |
+| A gap in affected behavior coverage | The owner of § 9 adds characterization before production changes; implementation roles retain their test-write prohibition. |
+| A failing baseline | Investigation precedes refactoring; the exception does not authorize a speculative repair. |
+| A changed behavior or public contract | The exception ends; agreement, design and failing-test requirements apply. |
+
+Local B-043 instruction-conformance cases use a coordination item marked
+`in-progress` and child items marked `ready` or `done`: only the coordination
+value is copied. A missing or duplicate source leaves the mirror unchanged and
+reports the gap. During recommendation no mirror is written. These are static
+walkthroughs; independent content review is recorded in § 12; live-agent evaluation remains pending.
+
+Local B-044 instruction-conformance walkthrough, 2026-10-17: inspect the
+three role contracts against `test-from-scenarios` § A claim comes first.
+
+| Case | Recorded instruction outcome |
+| --- | --- |
+| Approved constraint, design detail or signal declaration cites an existing claim | Assertions may use it; test evidence cites the claim, source and recorded approval. |
+| Detail is draft, lacks approval or lacks a claim link | Tests do not depend on it; missing evidence returns to its section owner. |
+| Design introduces new user-visible behavior | Agreement amendment precedes the assertion. |
+| A review requests a supporting-detail assertion | The same authority applies; literal absence from claim text alone is not a refusal. |
+
+This is authored static evidence. Independent content review is recorded in § 12; live-agent evaluation
+remains pending; existing projection tests verify mechanical preservation only.
+
+Local B-045/B-046 instruction-conformance walkthrough, 2026-10-17, using invented
+owners A/B and unpublished/published IDs:
+
+| Case | Recorded instruction outcome |
+| --- | --- |
+| A remains the recorded owner after interruption | A may resume after checking current ownership, scope and stage evidence. |
+| B sees inactivity without a release | B cannot take over; the lane remains occupied. |
+| A explicitly releases, or an authorized reassignment names B | Ownership is recorded before B edits; release is not completion and transfer preserves the reservation. |
+| Ownership is missing, stale or conflicting | Report the gap; obtain authoritative evidence rather than infer an owner. |
+| A new unpublished ID collides after rebase | Replace it and all local references before publication. |
+| An ID is merged or cited by a shared review or work item | Preserve it even when its authoring branch is still unmerged. |
+| Both colliding IDs are permanent, or publication cannot be verified | Return the identity conflict for an explicit decision; do not renumber automatically. |
+
+These are authored static walkthroughs, not independent or live-agent evidence.
+Projection checks prove preservation of the instructions, not ownership exclusion
+or identity reconciliation at runtime.
+
+Local static handoff checks, 2026-10-17, against existing B-012/B-013/B-014/B-020:
+command bindings include the independent reviewer and sign-off recorder; Ready
+without recorded approval cannot authorize stubs or dependent tests; testability
+feedback remains possible before approval. A read-only reviewer missing its diff
+or required history returns the gap to its requester rather than a clean verdict.
+These checks establish authored instruction consistency only; independent content review is recorded in § 12;
+live-agent evaluation remains pending.
+
+Local B-047 instruction-conformance walkthrough, 2026-10-17, with invented
+revisions R1/R2 and scopes A/B:
+
+| Case | Recorded instruction outcome |
+| --- | --- |
+| R1 approves A/B; R2 substantively changes only A | A needs review of R2; unchanged B retains applicable R1 approval. |
+| R2 changes an agreement dependency relied on by a design verdict | The affected design scope requires review; a textually unchanged design is not automatically approved. |
+| R2 has no verdict, or its changed scope is Blocked | R1 approval cannot authorize that changed scope; unrelated valid scope remains usable. |
+| A new bounded verdict covers A at R2 | Record its unit, scope and identified revision; preserve B's baseline and R1's historical evidence. |
+| Old evidence lacks an identifiable subject, or applicable verdicts conflict | Report the approval gap and obtain clarification; do not select a favorable row or declare approval. |
+
+This is authored static evidence; independent content review is recorded in § 12.
+Live-agent evaluation remains pending. Existing projector tests prove preservation, not approval
+applicability in an executing session.
 
 B-001 to B-003 run against the real checkout inside
 `dotnet fsi scripts/project.tests.fsx`, in the group prefixed `F2_`, so a role
@@ -1061,7 +1131,7 @@ limitation continue to apply. — Kevin
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 | Claim ID | Scenario                                            | Test                                                     | Status  |
 | -------- | --------------------------------------------------- | -------------------------------------------------------- | ------- |
@@ -1106,6 +1176,12 @@ limitation continue to apply. — Kevin
 | B-038 | [@B-038](roles.feature) Portable signal declarations and write boundaries | Manual: Priya, four @B-038 instruction-conformance cases (§ 8), 2026-10-16; live-agent behavior unverified | Partial |
 | B-039 | [@B-039](roles.feature) Nineteen-to-nineteen observability rename preserves history | `F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory`; `F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs`; `F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts`; `F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles`; `F2_B034_ActiveConveningBindingsResolveToRetainedRoles`; mechanical guarantees only (§ 8) | Covered |
 | B-040 | A persona requires a voice and permits an optional unique name | `F2_B040_PersonaRequiresVoiceAndOptionalUniqueName`, `F2_B040_InvalidSuppliedNameFails`, `F2_B040_InvalidVoiceFails` | Covered |
+| B-042 | [@B-042](roles.feature) Refactors use preserved contracts and adequate tests | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
+| B-043 | [@B-043](roles.feature) Feature status has one coordination source | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
+| B-044 | [@B-044](roles.feature) Approved supporting details authorize claim-traceable assertions | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
+| B-045 | [@B-045](roles.feature) Taken work retains explicit ownership | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
+| B-046 | [@B-046](roles.feature) Publication makes identifiers permanent | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
+| B-047 | [@B-047](roles.feature) Approval follows the reviewed revision and scope | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
 
 ## 10. Lessons / Spec Deltas
 
