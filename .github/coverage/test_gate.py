@@ -245,6 +245,27 @@ class EvidenceTests(unittest.TestCase):
 
 
 class SourceTests(unittest.TestCase):
+    def test_B002_non_lf_source_separators_are_rejected_before_diff(self):
+        # Given separator bytes whose splitlines identities differ from Git LF hunks.
+        separators = {"lone CR": "\r", "VT": "\v", "FF": "\f", "FS": "\x1c",
+                      "GS": "\x1d", "RS": "\x1e", "NEL": "\x85", "LS": "\u2028", "PS": "\u2029"}
+        for label, separator in separators.items():
+            with self.subTest(separator=label):
+                repo, base = checkout(self)
+                (repo / "tool.py").write_bytes(("first = 1" + separator + "second = 9\n").encode("utf-8"))
+                sources = {"tool.py": hashlib.sha256((repo / "tool.py").read_bytes()).hexdigest()}
+                # When source identities are validated, then no ambiguous diff can pass.
+                with self.assertRaises(ValueError):
+                    gate.changed_lines(repo, base, sources)
+
+    def test_B001_crlf_source_retains_git_lf_line_identity(self):
+        # Given a new source with ordinary CRLF endings and two executable lines.
+        repo, base = checkout(self)
+        (repo / "new.py").write_bytes(b"first = 1\r\nsecond = 2\r\n")
+        sources = {"new.py": hashlib.sha256((repo / "new.py").read_bytes()).hexdigest()}
+        # When its added lines are measured, then both LF-delimited identities survive.
+        self.assertEqual(gate.changed_lines(repo, base, sources), {"new.py": {1, 2}})
+
     def test_B004_inventory_preserves_carriage_return_in_literal_git_filename(self):
         # Given an invented valid local filename containing a carriage return.
         repo, _ = checkout(self)
