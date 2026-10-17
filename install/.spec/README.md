@@ -63,10 +63,11 @@ None. Stakeholder-approved defaults are recorded in § 11.
 | B-005 | Given the documented prerequisites on Windows, macOS or Linux, this Feature accepts the same script arguments and produces the selected host's installation. | User request for a cross-platform scripting language | Active |
 | B-006 | Given an installed role or command, this Feature supplies the repository-owned contracts and skills that its instructions reference at their installed locations. | Complete installation in B-001 and B-002 | Active |
 | B-007 | Given a Codex installation, its planned private bundle supplies selected runtime role contracts, method skills and runtime resources with a consumer-facing index, excluding maintainer specifications. | User decision 0002, 2026-10-17 | Active |
+| B-008 | Given `.issue` tracker entries in native skill projections or private method sources, installation excludes them at every depth for both hosts and managers while preserving other runtime files. | Decision 0003, 2026-10-17 | Active |
 
 ## 4. Constraints
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID | Constraint | Rules Out |
 | --- | --- | --- |
@@ -518,6 +519,10 @@ projections or publication safeguards. The incident and regression evidence are
 recorded in [lesson 0001](lessons/0001-runtime-bundles-exclude-producer-records.md).
 Independent amendment review is recorded in § 12.
 
+2026-10-17: User selected consistent tracker metadata exclusion. Add B-008;
+source traversal and installation omit reserved tracker entries, preserving
+runtime bytes and existing ownership. See Decision 0003.
+
 ## 11. Open Questions
 
 <!-- last written by: spec-author, 2026-10-17 -->
@@ -544,6 +549,10 @@ Independent amendment review is recorded in § 12.
 | 6-7 | 🟢 | spec-reviewer | Jessica approved the recorded design with no findings, 2026-10-16. |
 | 8-9 | 🟢 | spec-reviewer | Jessica approved, 2026-10-16; 23 tests pass on macOS with Python 3.11 and 3.13; Windows/Linux CI pending. |
 | 10-12 | 🟢 | spec-reviewer | Jessica approved the recorded clarifications and review evidence, 2026-10-16. |
+| Agreement: B-008 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; scenarios and decisions included. |
+| Design: § 7 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; planned strategy is testable. |
+| Diff: B-008 tracker metadata and executed tests | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; 71 projector and 30 installer tests pass, with test-first evidence. |
+| Surface: tracker metadata boundary | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; native/private traversal and existing publication safeguards verified. |
 
 Kyle approved the filesystem and subprocess surface pass without findings,
 2026-10-16. Full real-manager smoke verified identical consumer results for

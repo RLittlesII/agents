@@ -116,3 +116,12 @@ Feature: Host installation
     Given a selected role refers to a missing private contract
     When Codex installation is planned
     Then installation fails before manager execution or consumer writes
+
+  @B-008
+  Scenario: Tracker metadata is absent from native and private installations
+    Given native skill projections and private method sources contain tracker entries at several depths
+    When either host is installed through either manager
+    Then no tracker entry is staged or installed
+    And ordinary hidden and similarly named runtime resources preserve their bytes
+    And excluded linked tracker entries are not traversed
+    And source files remain unchanged
