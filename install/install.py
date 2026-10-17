@@ -46,7 +46,7 @@ def read_tree(root: Path, directory: Path, exclude_specs: bool = False) -> dict[
 
     def visit(folder: Path) -> None:
         for path in sorted(folder.iterdir()):
-            if exclude_specs and path.name == ".spec":
+            if path.name == ".issue" or (exclude_specs and path.name == ".spec"):
                 continue
             checked_path(root, path)
             if path.is_dir():
