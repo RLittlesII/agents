@@ -469,12 +469,17 @@ let specificationFiles (root: string) =
 let validateStamps (root: string) (rows: (string * string) list) =
     let owner heading = rows |> List.tryFind (fun (h, _) -> h = heading) |> Option.map snd
     for rel in specificationFiles root do
-        let mutable fenced = false
+        let text = readText (Path.Combine(root, rel))
+        let fences =
+            Markdown.Parse(text).Descendants<FencedCodeBlock>()
+            |> Seq.map (fun block -> block.Span)
+            |> Seq.toArray
+        let mutable offset = 0
         let mutable section : string option = None
         let mutable parent : string option = None
-        for line in (readText (Path.Combine(root, rel))).Split('\n') do
-            if line.TrimStart().StartsWith "```" then fenced <- not fenced
-            elif not fenced then
+        for line in text.Split('\n') do
+            let fenced = fences |> Array.exists (fun span -> offset <= span.End && offset + line.Length >= span.Start)
+            if not fenced then
                 let h = sectionHeading.Match line
                 if h.Success && h.Groups.[1].Value = "##" then
                     section <- Some h.Groups.[2].Value
@@ -493,6 +498,7 @@ let validateStamps (root: string) (rows: (string * string) list) =
                         if actual <> expected then
                             fail (sprintf "%s: section '%s' is stamped by '%s', but '%s' owns it" rel section.Value actual expected)
                     | _ -> ()
+            offset <- offset + line.Length + 1
 
 /// B-013, B-014, B-015: one reviewer per unit, every unit reviewed, no role
 /// reviewing a unit the vocabulary lacks. Rows follow the vocabulary's order.
