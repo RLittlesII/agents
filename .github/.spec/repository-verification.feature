@@ -25,6 +25,7 @@ Feature: Repository verification
       | malformed |
       | stale after source bytes change |
       | mapped outside the measured checkout |
+      | mismapped by source separators other than LF or CRLF |
       | missing a newly added production file |
       | produced by a failed collector or test command |
 
