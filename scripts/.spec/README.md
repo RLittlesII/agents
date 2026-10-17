@@ -231,6 +231,21 @@ Durable choices are recorded in [ADR-0001](../../.spec/adr/0001-roles-are-host-f
 
 Readiness: **Ready for tests and implementation.**
 
+### Tracker metadata boundary
+
+User decision [0001](decisions/0001-exclude-tracker-metadata.md) adds B-025.
+Skill discovery excludes the exact immediate names `.spec` and `.issue`.
+A source-only `runtimeFilesUnder` traversal skips entries with those exact
+names before descending or opening them, at every depth. Skill copying and
+0001-F4 lint share this traversal; normal hidden runtime resources remain in
+scope. Existing `filesUnder` output comparison remains unchanged, so stale
+`.issue` outputs remain observable and removable under B-008.
+
+No new dependency or general ignore mechanism is needed. Existing entry points,
+plan-before-write behavior and deterministic byte copying remain. Test fixtures
+distinguish root discovery, nested copying, role-bearing metadata, ordinary
+runtime names and stale output reconciliation. Readiness: Ready; independent agreement/design approval is recorded in § 12.
+
 ## 8. Testing Strategy
 
 <!-- last written by: test-writer, 2026-10-17 -->
