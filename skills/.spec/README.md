@@ -130,7 +130,7 @@ active. Readiness: Ready; independent agreement/design approval is recorded in ย
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 The `F4_` group in `dotnet fsi scripts/project.tests.fsx`, on the synthetic
 checkout of 0001-F1 plus a role `log-reader` signing as Zed. The scenarios in
@@ -157,19 +157,29 @@ The synthetic filesystem and pure lint seam require no clock, network or live
 provider. Linux CI execution of the shared gate remains pending; local evidence
 does not substitute for that result.
 
+Tracker-metadata amendment: 71 projector tests passed. The new tracker/runtime lint control was observed red before implementation and passes with source metadata pruning.
+Testability: Ready, using the existing synthetic fixtures without network or a
+new dependency. Independent agreement/design approval preceded test authoring;
+see ยง 12.
+Fresh source-bound coverage against main `d4eac9c` passes 49/50 changed
+executable production lines (98%; required 80%). The unused missing-directory
+return in the source traversal is the one uncovered line. This measured gate
+does not establish additional platform, real-manager or live-agent execution.
+
 ### Performance
 
 Not applicable.
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 | Claim ID | Scenario                                      | Test                                                    | Status  |
 | -------- | --------------------------------------------- | ------------------------------------------------------- | ------- |
 | B-001    | A skill names a role                          | `F4_B001_SkillNamingRole_FailsNamingFileLineAndRole`, `F4_B001_UnnamedPersona_HasNoNamePattern` | Covered |
 | B-002    | A generated block names roles                 | `F4_B002_GeneratedBlockIsExempt`                        | Covered |
 | B-003    | This repository's skills name no role         | `F4_B003_RepositorySkillsNameNoRole`                    | Covered |
+| B-004 | Tracker metadata scenarios in the companion `.feature` | `F4_B004_TrackerRecordsAreIgnoredButRuntimeStillFailsLint` | Covered |
 
 ## 10. Lessons / Spec Deltas
 

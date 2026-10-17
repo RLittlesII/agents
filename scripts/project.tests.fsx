@@ -1187,12 +1187,24 @@ let B008_B025_StaleTrackerOutputsAreReportedAndRemoved () =
     for path in stale do equal false (exists root path)
     equal "source tracker\n" (read root ".issue/source.yml")
 
+let F4_B004_TrackerRecordsAreIgnoredButRuntimeStillFailsLint () =
+    let root = checkout ()
+    let records = [ "skills/.issue/item.yml"; "skills/sdd-conventions/.issue/item.yml"; "skills/sdd-conventions/references/.issue/item.yml" ]
+    for path in records do write root path "Ask `alpha`.\n"
+    lintSkills root (loadRoles root)
+    write root "skills/sdd-conventions/.runtime/guide.md" "Ask `alpha`.\n"
+    let message = expectFailure (fun () -> lintSkills root (loadRoles root))
+    contains "skills/sdd-conventions/.runtime/guide.md:1: names role 'alpha'" message
+    for path in records do
+        if message.Contains path then failwithf "tracker was linted: %s" path
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
     [ nameof B025_TrackerDirectoryIsNotASkill, B025_TrackerDirectoryIsNotASkill
       nameof B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive, B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive
       nameof B008_B025_StaleTrackerOutputsAreReportedAndRemoved, B008_B025_StaleTrackerOutputsAreReportedAndRemoved
+      nameof F4_B004_TrackerRecordsAreIgnoredButRuntimeStillFailsLint, F4_B004_TrackerRecordsAreIgnoredButRuntimeStillFailsLint
       nameof B019_LiteralDescriptionRoundTripsThroughBothHosts, B019_LiteralDescriptionRoundTripsThroughBothHosts
       nameof B019_PortableFrontmatterAcceptsUserExamples, B019_PortableFrontmatterAcceptsUserExamples
       nameof B019_AgentSchemaRejectsInvalidFrontmatter, B019_AgentSchemaRejectsInvalidFrontmatter
