@@ -504,6 +504,15 @@ runs to pass, with a foreign fixture preserved. Reports remain ignored.
 
 Written by Kevin.
 
+Tracker-metadata amendment: 30 installer tests passed. All three added cases were observed red before implementation; both hosts and managers pass offline, including excluded source links on macOS. Other OS execution and live manager reruns remain unclaimed.
+Testability: Ready, using the existing synthetic fixtures without network or a
+new dependency. Independent agreement/design approval preceded test authoring;
+see § 12.
+Fresh source-bound coverage against main `d4eac9c` passes 49/50 changed
+executable production lines (98%; required 80%). The unused missing-directory
+return in the source traversal is the one uncovered line. This measured gate
+does not establish additional platform, real-manager or live-agent execution.
+
 ## 9. Traceability Matrix
 
 <!-- last written by: test-writer, 2026-10-17 -->
@@ -517,12 +526,11 @@ Written by Kevin.
 | B-005 | [@B-005](install.feature#L47) | `test_B005_cli_accepts_host_manager_target_and_force`; `test_B005_cli_help_invalid_arguments_and_failure_exit`; all four complete-installation tests on the three-OS CI matrix | Covered |
 | B-006 | [@B-006](install.feature#L60) | `test_B006_codex_rebases_only_source_prefix_and_supplies_dependencies`; `test_B001_B003_claude_skillfile_complete_installation`; `test_B006_unexpected_codex_source_prefix_is_rejected`; `test_B006_missing_authoritative_role_is_rejected`; `test_B006_missing_referenced_private_method_is_rejected` | Covered |
 | B-007 | [@B-007](install.feature) Runtime bundle and consumer index | `test_B007_consumer_index_uses_selected_runtime_inventory_with_both_managers`; `test_B007_private_specs_are_excluded_at_every_depth_and_runtime_bytes_survive`; `test_B007_native_role_cannot_overwrite_the_consumer_index`; `test_B007_checkout_runtime_bundle_is_closed_over_private_file_links` | Covered |
+| B-008 | Tracker metadata scenarios in the companion `.feature` | `test_B008_root_tracker_is_not_a_skill_for_either_host_or_manager`; `test_B008_nested_native_and_private_tracker_records_are_omitted`; `test_B008_linked_tracker_is_skipped_before_source_validation` | Covered |
 
 B-005 has executable acceptance and argument-mechanism coverage; actual
 Windows/Linux CI execution remains pending. Local macOS results do not assert
 execution on those platforms. Written by Kevin.
-
-
 
 ## 10. Lessons / Spec Deltas
 

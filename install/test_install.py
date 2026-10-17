@@ -96,11 +96,12 @@ class InstallerTests(unittest.TestCase):
         else:
             inputs = cwd / "package/skills"
             projected_skills = self.source / (".claude/skills" if self.host == "claude" else ".agents/skills")
-            paths = [f"./package/skills/{path.name}" for path in sorted(projected_skills.iterdir())]
+            paths = [f"./package/skills/{path.name}" for path in sorted(projected_skills.iterdir()) if path.name != ".issue"]
             self.assertEqual(args[1:], ["install", *paths, "--target", self.host, "--only", "apm"])
             fields = dict(line.split(":", 1) for line in (cwd / "apm.yml").read_text().splitlines() if line.strip())
             self.assertEqual(fields, {"name": " sdd-install", "version": " 1.0.0"})
             output = cwd / (".claude/skills" if self.host == "claude" else ".agents/skills")
+        self.assertFalse(any(".issue" in path.relative_to(inputs).parts for path in inputs.rglob("*")))
         shutil.copytree(inputs, output, dirs_exist_ok=True)
         write(cwd, "AGENTS.md", b"manager-generated instructions")
         if self.output_mode == "changed":
@@ -253,6 +254,68 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual((private / "skills/method/.runtime/payload.bin").read_bytes(), BINARY)
         self.assertEqual((private / "skills/method/data/nested.bin").read_bytes(), BINARY)
         self.assertEqual(snapshot(self.source), before)
+
+    def test_B008_root_tracker_is_not_a_skill_for_either_host_or_manager(self):
+        # Given old projections with root metadata; When installed; Then only skills reach either manager.
+        for native in (".claude", ".agents"):
+            write(self.source, f"{native}/skills/.issue/item.yml", b"id: synthetic\n")
+            write(self.source, f"{native}/skills/method/.runtime/payload.bin", BINARY)
+            write(self.source, f"{native}/skills/method/.issue-notes.md", b"runtime notes\n")
+        before = snapshot(self.source)
+        for host in ("claude", "codex"):
+            for manager in ("skillfile", "apm"):
+                with self.subTest(host=host, manager=manager):
+                    self.host, self.manager = host, manager
+                    self.target = self.root / f"consumer-{host}-{manager}"
+                    self.target.mkdir()
+                    self.calls.clear()
+                    self.assertEqual(self.run_install(), 0)
+                    native = ".claude" if host == "claude" else ".agents"
+                    self.assertFalse((self.target / native / "skills/.issue").exists())
+                    self.assertEqual((self.target / native / "skills/method/.runtime/payload.bin").read_bytes(), BINARY)
+                    self.assertEqual((self.target / native / "skills/method/.issue-notes.md").read_bytes(), b"runtime notes\n")
+                    self.assertTrue(self.calls)
+        self.assertEqual(snapshot(self.source), before)
+
+    def test_B008_nested_native_and_private_tracker_records_are_omitted(self):
+        # Given nested native/private records; When installed; Then preserve runtime bytes without tracker paths.
+        for base in (".claude/skills/method", ".agents/skills/method", "skills/method"):
+            for relative in (".issue/item.yml", "references/.issue/item.yml"):
+                write(self.source, f"{base}/{relative}", b"id: synthetic\n")
+            write(self.source, f"{base}/.issue-data/payload.bin", BINARY)
+        before = snapshot(self.source)
+        for host in ("claude", "codex"):
+            for manager in ("skillfile", "apm"):
+                with self.subTest(host=host, manager=manager):
+                    self.host, self.manager = host, manager
+                    self.target = self.root / f"consumer-{host}-{manager}"
+                    self.target.mkdir()
+                    self.calls.clear()
+                    self.assertEqual(self.run_install(), 0)
+                    self.assertFalse(any(".issue" in path.relative_to(self.target).parts for path in self.target.rglob("*")))
+                    native = ".claude" if host == "claude" else ".agents"
+                    self.assertEqual((self.target / native / "skills/method/.issue-data/payload.bin").read_bytes(), BINARY)
+                    if host == "codex":
+                        self.assertEqual((self.target / ".sdd/skills/method/.issue-data/payload.bin").read_bytes(), BINARY)
+        self.assertEqual(snapshot(self.source), before)
+
+    def test_B008_linked_tracker_is_skipped_before_source_validation(self):
+        # Given a tracker link outside the checkout; When planned; Then do not open excluded metadata.
+        self.host = "codex"
+        outside = self.root / "external-metadata"
+        outside.mkdir()
+        write(outside, "item.yml", b"external tracker\n")
+        for relative in (".agents/skills/.issue", ".agents/skills/method/.issue", "skills/method/references/.issue"):
+            link = self.source / relative
+            link.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                link.symlink_to(outside, target_is_directory=True)
+            except OSError as error:
+                self.skipTest(f"Symlink creation unavailable: {error}")
+        before = snapshot(outside)
+        self.assertEqual(self.run_install(), 0)
+        self.assertFalse(any(".issue" in path.relative_to(self.target).parts for path in self.target.rglob("*")))
+        self.assertEqual(snapshot(outside), before)
 
     def test_B007_native_role_cannot_overwrite_the_consumer_index(self):
         # Given a native contract using the reserved index path; Then reject before effects.
