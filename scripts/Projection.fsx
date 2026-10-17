@@ -7,12 +7,22 @@
 // Agreement: scripts/.spec/README.md. Claims are cited as B-00n in comments.
 
 #r "nuget: YamlDotNet, 16.3.0"
+#r "nuget: JsonSchema.Net, 9.4.0"
+#r "nuget: Markdig, 0.31.0"
 
 open System
 open System.IO
 open System.Text
 open System.Text.RegularExpressions
+open System.Text.Json
+open System.Text.Json.Nodes
+open System.Collections
+open global.Json.Schema
+open Markdig
+open Markdig.Syntax
+open Markdig.Syntax.Inlines
 open YamlDotNet.RepresentationModel
+open YamlDotNet.Serialization
 
 exception ProjectionError of string
 
@@ -71,10 +81,96 @@ let readText (path: string) = File.ReadAllText(path, Encoding.UTF8) |> normalize
 
 let utf8 = UTF8Encoding(false)
 
-let bytes (text: string) = utf8.GetBytes text
-
 let relative (root: string) (path: string) =
     Path.GetRelativePath(root, path).Replace('\\', '/')
+
+let rec private toJsonValue depth (value: obj) =
+    if depth > 64 then fail "YAML nesting exceeds 64 levels"
+    match value with
+    | null -> null
+    | :? IDictionary as mapping ->
+        let result = JsonObject()
+        for key in mapping.Keys do
+            match key with
+            | :? string as name -> result.Add(name, toJsonValue (depth + 1) mapping.[key])
+            | _ -> fail "YAML mapping keys must be strings"
+        result :> JsonNode
+    | :? IEnumerable as sequence when not (value :? string) ->
+        let result = JsonArray()
+        for item in sequence do result.Add(toJsonValue (depth + 1) item)
+        result :> JsonNode
+    | _ -> JsonSerializer.SerializeToNode value
+
+let rec private inlineText (inlineNode: Inline) =
+    match inlineNode with
+    | :? LiteralInline as literal -> literal.Content.ToString()
+    | :? LineBreakInline -> " "
+    | :? ContainerInline as container ->
+        let builder = StringBuilder()
+        let mutable child = container.FirstChild
+        while not (isNull child) do
+            builder.Append(inlineText child) |> ignore
+            child <- child.NextSibling
+        builder.ToString()
+    | _ -> ""
+
+let private headings (markdown: string) =
+    let document = Markdown.Parse(markdown)
+    [ for block in document do
+          match block with
+          | :? HeadingBlock as heading ->
+              let text = if isNull heading.Inline then "" else inlineText heading.Inline
+              if heading.Level = 1 then yield "titles", text
+              elif heading.Level = 2 then yield "sections", text
+          | _ -> () ]
+
+let private loadSchema (root: string) (schemaName: string) =
+    let schemaPath = Path.Combine(root, "schemas", schemaName + ".schema.json")
+    if not (File.Exists schemaPath) then fail (sprintf "%s: required schema %s is missing" (relative root schemaPath) (relative root schemaPath))
+    let schema =
+        try
+            let definition = JsonNode.Parse(File.ReadAllText schemaPath)
+            definition.["$ref"] <- JsonValue.Create("#/$defs/document")
+            JsonSchema.Build(JsonSerializer.SerializeToElement(definition), BuildOptions(SchemaRegistry = SchemaRegistry()))
+        with ex -> fail (sprintf "%s: invalid schema %s: %s" (relative root schemaPath) (relative root schemaPath) ex.Message)
+    schema
+
+let private validateDocument (root: string) (schemaName: string) (schema: JsonSchema) (source: string) (text: string) =
+    let schemaPath = Path.Combine(root, "schemas", schemaName + ".schema.json")
+    if not (text.StartsWith "---\n") then fail (sprintf "%s: missing frontmatter" source)
+    let close = text.IndexOf("\n---\n", 4)
+    if close < 0 then fail (sprintf "%s: unterminated frontmatter" source)
+    let yaml = text.Substring(4, close - 4)
+    let body = text.Substring(close + 5)
+    let frontmatter =
+        try
+            let deserializer = DeserializerBuilder().WithDuplicateKeyChecking().WithAttemptingUnquotedStringTypeDeserialization().Build()
+            let parsed = deserializer.Deserialize<obj>(yaml)
+            toJsonValue 0 parsed
+        with ex -> fail (sprintf "%s: invalid YAML frontmatter: %s" source ex.Message)
+    let instance = JsonObject()
+    instance.Add("frontmatter", frontmatter)
+    let titleValues, sectionValues = headings body |> List.partition (fun (kind, _) -> kind = "titles")
+    let asArray (pairs: (string * string) list) = JsonArray(pairs |> List.map (fun (_, value) -> JsonValue.Create(value) :> JsonNode) |> List.toArray)
+    instance.Add("titles", asArray titleValues)
+    instance.Add("sections", asArray sectionValues)
+    use document = JsonDocument.Parse(instance.ToJsonString())
+    let options = EvaluationOptions(OutputFormat = OutputFormat.List)
+    let result = schema.Evaluate(document.RootElement, options)
+    if not result.IsValid then
+        let errors =
+            (if isNull result.Details then Seq.empty else result.Details :> seq<_>)
+            |> Seq.collect (fun item ->
+                (if isNull item.Errors then Seq.empty else item.Errors :> seq<_>)
+                |> Seq.map (fun error -> sprintf "%O %s" item.InstanceLocation error.Key))
+        fail (sprintf "%s: %s schema validation failed: %s" source (relative root schemaPath) (String.concat "; " errors))
+    let props =
+        match frontmatter with
+        | :? JsonObject as obj -> obj
+        | _ -> fail (sprintf "%s: frontmatter must be an object" source)
+    props
+
+let bytes (text: string) = utf8.GetBytes text
 
 let filesUnder (directory: string) =
     if Directory.Exists directory then
@@ -111,24 +207,17 @@ type Role =
       Body: string
       Source: string }
 
-let hostKeys = [ "model"; "effort"; "tools"; "model_reasoning_effort" ]
-
 let private sectionKey = Regex(@"^(\d+|Tasks|Scoring|\d+/[A-Za-z][A-Za-z ]*)$")
 let private semver = Regex(@"^\d+\.\d+\.\d+$")
 
 let loadRole (root: string) (path: string) : Role =
     let source = relative root path
     let pairs, body = splitFrontmatter source (readText path)
-    // B-010: a role file carries no host key.
-    for key in hostKeys do
-        if (tryGet key pairs).IsSome then
-            fail (sprintf "%s: host key '%s' belongs in hosts/<host>.yaml, not in a role file" source key)
     let name = getScalar "name" pairs
     // B-009: the name matches the file name.
     let stem = Path.GetFileNameWithoutExtension path
     if name <> stem then fail (sprintf "%s: name '%s' does not match the file name '%s'" source name stem)
     let description = getScalar "description" pairs
-    if description.Contains "\n" then fail (sprintf "%s: description must be a single line" source)
     let version = getScalar "version" pairs
     if not (semver.IsMatch version) then fail (sprintf "%s: version '%s' is not semver" source version)
     let owned =
@@ -564,7 +653,7 @@ let renderClaude (host: Host) (role: Role) =
         | None -> role.Body
     [ yield "---"
       yield "name: " + yamlScalar role.Name
-      yield "description: " + "\"" + role.Description.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\""
+      yield "description: " + tomlString role.Description
       for key, value in keys do yield key + ": " + yamlValue value
       yield "---" ]
     |> String.concat "\n"
@@ -719,6 +808,11 @@ let outputRoots (hosts: Host list) =
 let plan (root: string) : Plan =
     let roles = loadRoles root
     if roles.IsEmpty then fail "agents/ holds no role files"
+    let agentSchema = loadSchema root "agent"
+    let skillSchema = loadSchema root "skill"
+    for role in roles do
+        let path = Path.Combine(root, role.Source)
+        validateDocument root "agent" agentSchema role.Source (readText path) |> ignore
     validateSkillLinks root roles
     validatePersonas roles
     lintSkills root roles
@@ -745,6 +839,11 @@ let plan (root: string) : Plan =
         |> Seq.filter (fun d -> Path.GetFileName d <> ".spec")
         |> Seq.sort
         |> List.ofSeq
+    for skill in skills do
+        let path = Path.Combine(skill, "SKILL.md")
+        let source = relative root path
+        if not (File.Exists path) then fail (sprintf "%s: required skill document is missing" source)
+        validateDocument root "skill" skillSchema source (readText path) |> ignore
     let commands = loadCommands root
     validateCommands roles (skills |> List.map Path.GetFileName) commands
     let outputs =

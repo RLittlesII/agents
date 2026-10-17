@@ -7,14 +7,15 @@ Feature: Role contract
     And the roles index agents/README.md
     And the specification template under .specht/templates/
 
-  @B-001
+  @B-041
   Scenario: Every role declares the contract keys
     When the role files are loaded
     Then each declares a name equal to its file name
-    And each declares a one-line description
+    And each declares a nonblank description
     And each declares a semver version
     And each declares its owned specification sections
-    And none carries a model, an effort, a tool list or a reasoning effort
+    And optional metadata and host fields pass schema validation
+    And host overlays remain authoritative for rendered settings
 
   @B-002
   Scenario: Every template section has exactly one owner

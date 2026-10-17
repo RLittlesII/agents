@@ -8,7 +8,8 @@ type: adr
 
 ## Status
 
-accepted - 2026-10-15, by the repository owner (item 0034). Supersedes ADR-0001.
+superseded - 2026-10-16 by [ADR-0009](0009-portable-frontmatter-and-overlay-authority.md).
+Previously accepted 2026-10-15 by the repository owner (item 0034); superseded ADR-0001.
 
 ## Context
 

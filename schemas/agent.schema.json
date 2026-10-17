@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agent frontmatter",
+  "$ref": "#/$defs/frontmatter",
+  "$defs": {
+    "nonblankLine": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S",
+      "allOf": [
+        {
+          "not": {
+            "pattern": "[\\r\\n]"
+          }
+        }
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string",
+          "minLength": 1
+        },
+        "technology": {
+          "type": "string",
+          "minLength": 1
+        },
+        "complexity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "domain": {
+          "type": "string",
+          "minLength": 1
+        },
+        "triggers": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "persona": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "output-format": {
+          "type": "string",
+          "minLength": 1
+        },
+        "related-skills": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "frontmatter": {
+      "type": "object",
+      "required": [
+        "name",
+        "description"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/nonblankLine",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "model": {
+          "$ref": "#/$defs/nonblankLine"
+        },
+        "effort": {
+          "$ref": "#/$defs/nonblankLine"
+        },
+        "model_reasoning_effort": {
+          "$ref": "#/$defs/nonblankLine"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonblankLine"
+          }
+        },
+        "metadata": {
+          "$ref": "#/$defs/metadata"
+        },
+        "owned_spec_sections": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^(?:[0-9]+|Tasks|Scoring|[0-9]+/[A-Za-z][A-Za-z ]*)$"
+          }
+        },
+        "persona": {
+          "type": "object",
+          "required": [
+            "voice"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "$ref": "#/$defs/nonblankLine"
+            },
+            "voice": {
+              "$ref": "#/$defs/nonblankLine"
+            }
+          }
+        },
+        "reviews": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonblankLine"
+          }
+        }
+      }
+    },
+    "document": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Agent document",
+      "type": "object",
+      "required": [
+        "frontmatter",
+        "titles",
+        "sections"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "frontmatter": {
+          "$ref": "#/$defs/frontmatter"
+        },
+        "titles": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonblankLine"
+          }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "allOf": [
+            {
+              "contains": {
+                "const": "Owns"
+              }
+            },
+            {
+              "contains": {
+                "const": "Read first"
+              }
+            },
+            {
+              "contains": {
+                "const": "Refuse"
+              }
+            },
+            {
+              "anyOf": [
+                {
+                  "contains": {
+                    "const": "Produce"
+                  }
+                },
+                {
+                  "contains": {
+                    "const": "Look for"
+                  }
+                }
+              ]
+            },
+            {
+              "if": {
+                "contains": {
+                  "const": "Look for"
+                }
+              },
+              "then": {
+                "contains": {
+                  "const": "Report"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "frontmatter": {
+                "required": [
+                  "reviews"
+                ],
+                "properties": {
+                  "reviews": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sections": {
+                "allOf": [
+                  {
+                    "contains": {
+                      "const": "Look for"
+                    }
+                  },
+                  {
+                    "contains": {
+                      "const": "Report"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -47,7 +47,10 @@ roles:
 
 let companion = """---
 name: sdd-conventions
+description: Synthetic skill fixture.
 ---
+
+# SDD conventions
 
 ## Section ownership
 
@@ -60,6 +63,10 @@ The `.feature` file belongs to `spec-author`.
 
 <!-- BEGIN GENERATED: review-passes -->
 <!-- END GENERATED: review-passes -->
+
+## Never add
+
+- An invalid example.
 """
 
 let readme = """---
@@ -77,15 +84,22 @@ title: Personas
 <!-- END GENERATED: personas -->
 """
 
+let completeRoleBody (body: string) =
+    let required = [ "Owns"; "Read first"; "Refuse" ]
+    let missing = required |> List.filter (fun heading -> not (body.Contains ("## " + heading)))
+    if missing.IsEmpty && (body.Contains "## Produce" || body.Contains "## Look for") then body
+    else body + (missing |> List.map (fun heading -> "\n## " + heading + "\n\nFixture section.\n") |> String.concat "") +
+         (if body.Contains "## Produce" || body.Contains "## Look for" then "" else "\n## Produce\n\nFixture section.\n")
+
 let role name (owned: string) (body: string) =
-    sprintf "---\nname: %s\ndescription: Does %s things.\nversion: 0.1.0\nowned_spec_sections: %s\n---\n%s" name name owned body
+    sprintf "---\nname: %s\ndescription: Does %s things.\nversion: 0.1.0\nowned_spec_sections: %s\n---\n%s" name name owned (completeRoleBody body)
 
 /// A role with a persona block; `persona` is the YAML under `persona:`.
 let personaRole name (owned: string) (persona: string) (body: string) =
-    sprintf "---\nname: %s\ndescription: Does %s things.\nversion: 0.1.0\nowned_spec_sections: %s\npersona:\n%s\n---\n%s" name name owned persona body
+    sprintf "---\nname: %s\ndescription: Does %s things.\nversion: 0.1.0\nowned_spec_sections: %s\npersona:\n%s\n---\n%s" name name owned persona (completeRoleBody body)
 
-let alphaBody = "\n# Alpha\n\nReads [`sdd-conventions`](../skills/sdd-conventions/SKILL.md).\n"
-let betaBody = "\n# Beta\n\nOwns nothing.\n"
+let alphaBody = completeRoleBody "\n# Alpha\n\nReads [`sdd-conventions`](../skills/sdd-conventions/SKILL.md).\n"
+let betaBody = completeRoleBody "\n# Beta\n\nOwns nothing.\n"
 
 let write (root: string) (rel: string) (text: string) =
     let path = Path.Combine(root, rel)
@@ -98,6 +112,9 @@ let write (root: string) (rel: string) (text: string) =
 let checkout () =
     let root = Path.Combine(Path.GetTempPath(), "projection-tests", Guid.NewGuid().ToString("N"))
     Directory.CreateDirectory root |> ignore
+    for schema in [ "agent"; "skill" ] do
+        let source = Path.Combine(repoRoot, "schemas", schema + ".schema.json")
+        write root ("schemas/" + schema + ".schema.json") (File.ReadAllText source)
     write root ".specht/templates/feature.md" template
     write root "hosts/claude.yaml" claudeHost
     write root "hosts/codex.yaml" codexHost
@@ -184,7 +201,7 @@ let decodeToml (literal: string) =
 
 let B003_HostileBody_RoundTripsThroughToml () =
     let root = checkout ()
-    let body = "\n# Alpha\n\nQuotes \"here\", a back\\slash, a tab\there, § and émoji 🟡 🟢.\n\n```\nraw \"\"\" triple\n```\n"
+    let body = completeRoleBody "\n# Alpha\n\nQuotes \"here\", a back\\slash, a tab\there, § and émoji 🟡 🟢.\n\n```\nraw \"\"\" triple\n```\n"
     write root "agents/alpha.md" (role "alpha" "[\"1\", \"2\", \"Tasks\"]" body)
     apply root (plan root) |> ignore
     let text = read root ".codex/agents/alpha.toml"
@@ -196,7 +213,7 @@ let B003_HostileBody_RoundTripsThroughToml () =
 
 let B004_SkillDirectory_CopiedByteForByteToBothHosts () =
     let root = checkout ()
-    write root "skills/other/SKILL.md" "---\nname: other\n---\n\nOther ✓\r\nwith CRLF kept\n"
+    write root "skills/other/SKILL.md" "---\nname: other\ndescription: Synthetic skill.\n---\n\n# Other ✓\r\nwith CRLF kept\n\n## Never add\n\n- Invalid input.\n"
     write root "skills/other/assets/blob.bin" "\000\001binary"
     apply root (plan root) |> ignore
     for host in [ ".claude/skills"; ".agents/skills" ] do
@@ -288,13 +305,14 @@ let B009b_RoleNameDiffersFromFileName_Fails () =
     contains "agents/beta.md: name 'gamma' does not match the file name 'beta'" message
     nothingWritten root
 
-let B010_RoleFileCarriesHostKey_FailsNamingTheKey () =
+let B024_HostOverlaysRemainAuthoritative () =
     for key in [ "model: opus"; "effort: high"; "tools: [Read]"; "model_reasoning_effort: high" ] do
         let root = checkout ()
-        let name = key.Substring(0, key.IndexOf ':')
         write root "agents/beta.md" (sprintf "---\nname: beta\ndescription: Beta.\nversion: 0.1.0\nowned_spec_sections: [\"3\"]\n%s\n---\n%s" key betaBody)
-        let message = expectFailure (fun () -> plan root)
-        contains (sprintf "host key '%s'" name) message
+        let outputs = (plan root).Outputs
+        let generated = Encoding.UTF8.GetString outputs.[".claude/agents/beta.md"]
+        contains "model: inherit" generated
+        contains "effort: medium" generated
         nothingWritten root
 
 let B017_Personas_WriteRosterBetweenMarkers () =
@@ -464,9 +482,9 @@ let roster =
       "document-writer"; "domain"; "implementer"; "observability"; "organizer"; "release"
       "spec-author"; "spec-reviewer"; "test-writer"; "tester"; "ui"; "ux" ]
 
-let F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey () =
-    // loadRole itself rejects a missing key, a non-semver version, a multi-line
-    // description and a host key.
+let F2_B041_EverySourceRoleDeclaresRepositoryKeys () =
+    // The loader requires the repository role keys and numeric version.
+    // Portable description and optional-host-setting validation is schema-owned.
     let roles = loadRoles repoRoot
     for role in roles do
         if String.IsNullOrWhiteSpace role.Description then failwithf "%s has no description" role.Name
@@ -713,7 +731,7 @@ let F4_B001_SkillNamingRole_FailsNamingFileLineAndRole () =
 let F4_B001_UnnamedPersona_HasNoNamePattern () =
     let root = lintCheckout ()
     write root "agents/log-reader.md" (personaRole "log-reader" "[]" "  voice: Terse." "\n# Log reader\n")
-    write root "skills/other/SKILL.md" "---\nname: other\n---\n\nZed reports in a terse voice.\n"
+    write root "skills/other/SKILL.md" "---\nname: other\ndescription: Synthetic skill.\n---\n\n# Other\n\nZed reports in a terse voice.\n\n## Never add\n\n- Invalid input.\n"
     plan root |> ignore
     write root "skills/other/SKILL.md" "---\nname: other\n---\n\nAsk the log-reader.\n"
     contains "names role 'log-reader'" (expectFailure (fun () -> plan root))
@@ -984,10 +1002,104 @@ let F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs () =
     for rel, bytes in before do equal bytes (File.ReadAllBytes(Path.Combine(root, rel)))
     equal history (read root "agents/.spec/decisions/history.md")
 
+
+// ---------------------------------------------------------------- Schema enforcement
+
+let B019_AgentSchemaRejectsInvalidFrontmatter () =
+    let root = checkout ()
+    let original = read root "agents/beta.md"
+    for extra in ["metadata:\n  author: false\n"; "unexpected: value\n"] do
+        write root "agents/beta.md" (original.Replace("version: 0.1.0\n", "version: 0.1.0\n" + extra))
+        let error = expectFailure (fun () -> plan root)
+        contains "agents/beta.md" error
+        contains "schema validation failed" error
+        nothingWritten root
+    write root "agents/beta.md" (original.Replace("description: Does beta things.", "description: >\n  Folded description\n  on two lines."))
+    plan root |> ignore
+
+let B019_PortableFrontmatterAcceptsUserExamples () =
+    for kind, json in [ "agent", """{"name":"mr-anderson","description":"Senior implementation specialist.","model":"claude-sonnet-5","effort":"low","metadata":{"author":"https://github.com/rlittlesii","technology":"infrastructure","complexity":"senior","version":"1.2.0","triggers":"skill-invocation"}}"""; "skill", """{"name":"adapter","description":"Adapter guidance.\nWrap an incompatible interface.","metadata":{"author":"https://github.com/rlittlesii","technology":"cross-platform","complexity":"mid","version":"1.0.0","domain":"engineering","triggers":"skill-invocation","role":"specialist","scope":"implementation","output-format":"markdown","related-skills":"design-laws, taxonomy"}}""" ] do
+        use schemaDocument = System.Text.Json.JsonDocument.Parse(read repoRoot ("schemas/" + kind + ".schema.json"))
+        let schema = global.Json.Schema.JsonSchema.Build(schemaDocument.RootElement, global.Json.Schema.BuildOptions(SchemaRegistry = global.Json.Schema.SchemaRegistry()))
+        use instance = System.Text.Json.JsonDocument.Parse(json)
+        equal true (schema.Evaluate(instance.RootElement).IsValid)
+
+let B019_LiteralDescriptionRoundTripsThroughBothHosts () =
+    let root = checkout ()
+    let path = "agents/beta.md"
+    write root path ((read root path).Replace("description: Does beta things.", "description: |\n  First line.\n  Second line."))
+    let expected = (loadRoles root |> List.find (fun role -> role.Name = "beta")).Description
+    let outputs = (plan root).Outputs
+    let claude = Encoding.UTF8.GetString outputs.[".claude/agents/beta.md"]
+    let pairs, _ = splitFrontmatter "projected beta" claude
+    equal expected (getScalar "description" pairs)
+    let codex = Encoding.UTF8.GetString outputs.[".codex/agents/beta.toml"]
+    let line = codex.Split('\n') |> Array.find (fun line -> line.StartsWith "description = ")
+    equal expected (decodeToml (line.Substring "description = ".Length))
+
+let B020_SkillSchemaValidatesMetadataAndStructure () =
+    let root = checkout ()
+    let path = "skills/other/SKILL.md"
+    let valid = "---\nname: other\ndescription: >\n  Synthetic folded description\n  for schema validation.\nmetadata:\n  author: https://example.com/synthetic\n  version: \"1.0.0\"\n  role: specialist\n  persona: synthetic\n  related-skills: first, second\n  custom-field: extension\n---\n\n# Other\n\n## Never add\n\n- Invalid input.\n"
+    write root path valid
+    plan root |> ignore
+    for invalid in [ valid.Replace("description: >\n  Synthetic folded description\n  for schema validation.\n", ""); valid.Replace("## Never add", "## Other"); valid.Replace("author: https://example.com/synthetic", "author: false") ] do
+        write root path invalid
+        let error = expectFailure (fun () -> plan root)
+        contains path error
+        contains "schema validation failed" error
+        nothingWritten root
+    File.Delete(Path.Combine(root, path))
+    contains "required skill document is missing" (expectFailure (fun () -> plan root))
+
+let B021_ExamplesCannotSatisfyRequiredHeadings () =
+    let root = checkout ()
+    let original = read root "agents/beta.md"
+    for example in [ "\n```markdown\n## Refuse\n```\n"; "\n<!--\n## Refuse\n-->\n"; "\n> ## Refuse\n" ] do
+        write root "agents/beta.md" (original.Replace("## Refuse", "## Other") + example)
+        let error = expectFailure (fun () -> plan root)
+        contains "agents/beta.md" error
+        contains "/sections" error
+        nothingWritten root
+
+let B022_InvalidSchemasPreserveExistingOutputs () =
+    let root = checkout ()
+    let output = plan root
+    apply root output |> ignore
+    let snapshot = output.Outputs |> Map.toList |> List.map (fun (path, _) -> path, File.ReadAllBytes(Path.Combine(root, path)))
+    let schema = "schemas/agent.schema.json"
+    let original = read root schema
+    for invalid in [ "{"; "{\"type\":123}" ] do
+        write root schema invalid
+        contains schema (expectFailure (fun () -> plan root))
+        for path, bytes in snapshot do equal bytes (File.ReadAllBytes(Path.Combine(root, path)))
+    File.Delete(Path.Combine(root, schema))
+    contains schema (expectFailure (fun () -> plan root))
+    for path, bytes in snapshot do equal bytes (File.ReadAllBytes(Path.Combine(root, path)))
+    write root schema original
+    equal [] (differences root (plan root))
+
+let B023_ChangedSchemaRulesTakeEffectOnNextPlan () =
+    let root = checkout ()
+    plan root |> ignore
+    let schema = "schemas/skill.schema.json"
+    write root schema ((read root schema).Replace("Never add", "Guard"))
+    contains "schema validation failed" (expectFailure (fun () -> plan root))
+    let skill = "skills/sdd-conventions/SKILL.md"
+    write root skill ((read root skill).Replace("## Never add", "## Guard"))
+    plan root |> ignore
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
-    [ nameof B001_RoleAndClaudeOverlay_EmitsFrontmatterAndVerbatimBody, B001_RoleAndClaudeOverlay_EmitsFrontmatterAndVerbatimBody
+    [ nameof B019_LiteralDescriptionRoundTripsThroughBothHosts, B019_LiteralDescriptionRoundTripsThroughBothHosts
+      nameof B019_PortableFrontmatterAcceptsUserExamples, B019_PortableFrontmatterAcceptsUserExamples
+      nameof B019_AgentSchemaRejectsInvalidFrontmatter, B019_AgentSchemaRejectsInvalidFrontmatter
+      nameof B020_SkillSchemaValidatesMetadataAndStructure, B020_SkillSchemaValidatesMetadataAndStructure
+      nameof B021_ExamplesCannotSatisfyRequiredHeadings, B021_ExamplesCannotSatisfyRequiredHeadings
+      nameof B022_InvalidSchemasPreserveExistingOutputs, B022_InvalidSchemasPreserveExistingOutputs
+      nameof B023_ChangedSchemaRulesTakeEffectOnNextPlan, B023_ChangedSchemaRulesTakeEffectOnNextPlan
+      nameof B001_RoleAndClaudeOverlay_EmitsFrontmatterAndVerbatimBody, B001_RoleAndClaudeOverlay_EmitsFrontmatterAndVerbatimBody
       nameof B002_RoleAndCodexOverlay_EmitsTomlWithPrefixedInstructions, B002_RoleAndCodexOverlay_EmitsTomlWithPrefixedInstructions
       nameof B003_HostileBody_RoundTripsThroughToml, B003_HostileBody_RoundTripsThroughToml
       nameof B004_SkillDirectory_CopiedByteForByteToBothHosts, B004_SkillDirectory_CopiedByteForByteToBothHosts
@@ -998,7 +1110,7 @@ let tests : (string * (unit -> unit)) list =
       nameof B008_Check_IsSilentWhenCurrentAndNamesEveryDrift, B008_Check_IsSilentWhenCurrentAndNamesEveryDrift
       nameof B009_OverlayNamesMissingRole_Fails, B009_OverlayNamesMissingRole_Fails
       nameof B009b_RoleNameDiffersFromFileName_Fails, B009b_RoleNameDiffersFromFileName_Fails
-      nameof B010_RoleFileCarriesHostKey_FailsNamingTheKey, B010_RoleFileCarriesHostKey_FailsNamingTheKey
+      nameof B024_HostOverlaysRemainAuthoritative, B024_HostOverlaysRemainAuthoritative
       nameof B017_Personas_WriteRosterBetweenMarkers, B017_Personas_WriteRosterBetweenMarkers
       nameof B018_Persona_PrecedesVerbatimBodyOnBothHosts, B018_Persona_PrecedesVerbatimBodyOnBothHosts
       nameof B013_ReviewUnits_WriteRegistryBetweenMarkers, B013_ReviewUnits_WriteRegistryBetweenMarkers
@@ -1011,7 +1123,7 @@ let tests : (string * (unit -> unit)) list =
       nameof F2_B040_InvalidVoiceFails, F2_B040_InvalidVoiceFails
       nameof F4_B001_UnnamedPersona_HasNoNamePattern, F4_B001_UnnamedPersona_HasNoNamePattern
       nameof C3_Outputs_AreDeterministicAcrossRuns, C3_Outputs_AreDeterministicAcrossRuns
-      nameof F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey, F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey
+      nameof F2_B041_EverySourceRoleDeclaresRepositoryKeys, F2_B041_EverySourceRoleDeclaresRepositoryKeys
       nameof F2_B002_EveryTemplateSectionHasExactlyOneOwner, F2_B002_EveryTemplateSectionHasExactlyOneOwner
       nameof F2_B003_EveryRoleBodyCarriesTheFourSections, F2_B003_EveryRoleBodyCarriesTheFourSections
       nameof F2_B005_LookForRoleCarriesReport, F2_B005_LookForRoleCarriesReport
