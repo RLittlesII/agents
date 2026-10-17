@@ -140,6 +140,9 @@ assemblies linked to original scripts and Python coverage from offline suites;
 production entrypoints stay unchanged. Missing, stale or mismapped evidence
 fails before evaluation. A valid zero denominator reports N/A, never 100%.
 Reports and build outputs stay under ignored `.artifacts/coverage/`.
+The F# build adapter validates checkout, output and Python interpreter paths
+before invoking its shell-based build target; [the gate](.github/coverage/run.py)
+defines the supported path characters. Unsupported paths fail before collection.
 
 To add a role: write `agents/<name>.md` with the keys the
 [role contract](agents/.spec/README.md) requires, add it to each host overlay
