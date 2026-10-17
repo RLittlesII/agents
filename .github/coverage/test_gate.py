@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
+import xml.etree.ElementTree as ET
 
 
 _SPEC = importlib.util.spec_from_file_location("repository_coverage", Path(__file__).with_name("run.py"))
@@ -231,8 +232,50 @@ class EvidenceTests(unittest.TestCase):
         hits = self.read(repo, snapshot, manifest)
         self.assertEqual(hits.get("tool.py"), {1: True, 2: True})
 
+    def test_B002_source_with_only_empty_classes_is_rejected(self):
+        # Given an inventoried executable source with no validated line evidence.
+        repo, snapshot, manifest = self.evidence()
+        report = snapshot["run_dir"] / manifest["reports"][0]["path"]
+        xml = ET.fromstring(report.read_text())
+        xml.find(".//class/lines").clear()
+        self.rewrite_report(snapshot, manifest, ET.tostring(xml, encoding="unicode"))
+        # When evidence is checked, then an empty class cannot create a false N/A.
+        with self.assertRaises(ValueError):
+            self.read(repo, snapshot, manifest)
+
 
 class SourceTests(unittest.TestCase):
+    def test_B004_inventory_preserves_carriage_return_in_literal_git_filename(self):
+        # Given an invented valid local filename containing a carriage return.
+        repo, _ = checkout(self)
+        name = "literal\rsource.py"
+        (repo / name).write_text("value = 1\n")
+        # When NUL-delimited Git output is decoded without newline translation.
+        sources = gate.inventory(repo, POLICY)
+        # Then its exact bytes identity is inventoried rather than silently dropped.
+        self.assertEqual(sources.get(name), hashlib.sha256((repo / name).read_bytes()).hexdigest())
+
+    def test_B001_diff_treats_git_pathspec_magic_filename_literally(self):
+        # Given a tracked source whose literal name resembles Git pathspec syntax.
+        repo, _ = checkout(self)
+        name = ":(literal)tool.py"
+        (repo / name).write_text("first = 1\nsecond = 2\n")
+        git(repo, "--literal-pathspecs", "add", "--", name)
+        git(repo, "commit", "--quiet", "-m", "Synthetic literal filename")
+        base = git(repo, "rev-parse", "HEAD")
+        (repo / name).write_text("first = 1\nsecond = 9\n")
+        sources = {name: hashlib.sha256((repo / name).read_bytes()).hexdigest()}
+        # When its diff is measured, then Git must compare that exact source.
+        self.assertEqual(gate.changed_lines(repo, base, sources), {name: {2}})
+
+    def test_B001_binary_marker_in_added_source_text_remains_a_text_diff(self):
+        # Given an ordinary source string containing words used by Git binary headers.
+        repo, base = checkout(self)
+        (repo / "tool.py").write_text('first = 1\nsecond = "Binary files are text here"\n')
+        sources = {"tool.py": hashlib.sha256((repo / "tool.py").read_bytes()).hexdigest()}
+        # When the diff is parsed, then source text remains a changed text line.
+        self.assertEqual(gate.changed_lines(repo, base, sources), {"tool.py": {2}})
+
     def test_B004_inventory_includes_gate_and_excludes_test_generated_sources(self):
         # Given tracked source and new gate, test, generated and F# shim files.
         repo, _ = checkout(self)
@@ -328,6 +371,102 @@ class GateAcceptanceTests(unittest.TestCase):
         self.assertEqual(local[1], ci[1])
         self.assertIn(local[2], local[1])
         self.assertRegex(local[1], r"1\s*/\s*1|covered\D+1.*changed\D+1")
+
+
+class CollectionTests(unittest.TestCase):
+    def test_B002_unsupported_shell_path_is_rejected_before_any_process(self):
+        # Given an inert literal dollar sign in a proposed runtime directory.
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary) / "literal$dollar"
+            output = repo / ".artifacts" / "coverage" / "synthetic"
+            snapshot = {"run_dir": output}
+            # When collection checks its shell-bound paths, then no process starts.
+            with patch("subprocess.run") as child, self.assertRaises(ValueError):
+                gate.collect(repo, snapshot, output)
+            child.assert_not_called()
+
+    def collection(self):
+        # Child execution is faked; use a supported synthetic executable path.
+        interpreter = patch.object(gate.sys, "executable", "/synthetic/python")
+        interpreter.start()
+        self.addCleanup(interpreter.stop)
+        repo, base = checkout(self)
+        directory = repo / ".github" / "coverage"
+        (directory / "fsharp").mkdir(parents=True)
+        real = Path(__file__).parent
+        (directory / "requirements.txt").write_bytes((real / "requirements.txt").read_bytes())
+        (directory / "fsharp" / "Coverage.props").write_bytes((real / "fsharp" / "Coverage.props").read_bytes())
+        (repo / "scripts").mkdir()
+        (repo / "scripts" / "Projection.fsx").write_text('#r "nuget: Synthetic.Dependency, 1.2.3"\nlet value = 1\n')
+        (repo / "scripts" / "project.fsx").write_text("let entry = 1\n")
+        output = repo / ".artifacts" / "coverage" / "synthetic"
+        output.mkdir(parents=True)
+        snapshot = {"requested_base_sha": base, "comparison_base_sha": base, "head_sha": base,
+                    "policy_sha256": "3" * 64, "sources": gate.inventory(repo, POLICY),
+                    "policy": copy.deepcopy(POLICY), "tools": {}, "run_dir": output}
+        original_run = subprocess.run
+        required = (directory / "requirements.txt").read_text().strip().split("==")[1]
+
+        def child(command, **kwargs):
+            if command[0] == "git":
+                return original_run(command, **kwargs)
+            if command[-1] == "--version":
+                text = f"Coverage.py, version {required} synthetic\n" if "coverage" in command else "10.0.401\n"
+                return subprocess.CompletedProcess(command, 0, text, "")
+            if "xml" in command:
+                Path(command[command.index("-o") + 1]).write_text("<coverage/>\n")
+            if "msbuild" in command:
+                project = ET.parse(command[2])
+                Path(project.find(".//CoverletOutput").text).write_text("<coverage/>\n")
+            return subprocess.CompletedProcess(command, 0, "", "")
+
+        return repo, snapshot, output, child
+
+    def test_B002_collection_publishes_complete_source_bound_manifest(self):
+        # Given synthetic successful child processes and authoritative #r declarations.
+        repo, snapshot, output, child = self.collection()
+        # When actual orchestration collects fresh evidence through subprocess seams.
+        with patch("subprocess.run", side_effect=child):
+            manifest = gate.collect(repo, snapshot, output)
+        # Then complete required evidence is bound to the snapshot and atomically published.
+        self.assertEqual(manifest["sources"], snapshot["sources"])
+        self.assertEqual({item["name"] for item in manifest["process_results"]}, set(PROCESSES))
+        self.assertTrue(all(item["exit_code"] == 0 for item in manifest["process_results"]))
+        self.assertEqual({item["collector"] for item in manifest["reports"]}, {"python", "fsharp-unit", "fsharp-cli"})
+        self.assertEqual(json.loads((output / "manifest.json").read_text()), manifest)
+        self.assertFalse((output / "manifest.tmp").exists())
+        # Runtime versions come from the production declaration, preserving C-3.
+        references = ET.parse(output / "RuntimePackages.props").findall(".//PackageReference")
+        self.assertEqual([(item.attrib["Include"], item.attrib["Version"]) for item in references], [("Synthetic.Dependency", "1.2.3")])
+
+    def test_B002_failed_child_cannot_publish_manifest(self):
+        # Given a child test/collector failing before fresh evidence completes.
+        repo, snapshot, output, child = self.collection()
+
+        def failure(command, **kwargs):
+            if "discover" in command:
+                return subprocess.CompletedProcess(command, 7, "", "")
+            return child(command, **kwargs)
+
+        # When orchestration encounters failure, then it cannot publish passing evidence.
+        with patch("subprocess.run", side_effect=failure), self.assertRaises(ValueError):
+            gate.collect(repo, snapshot, output)
+        self.assertFalse((output / "manifest.json").exists())
+
+    def test_B002_source_mutation_during_collection_cannot_publish_manifest(self):
+        # Given source bytes changing after the pre-collection snapshot.
+        repo, snapshot, output, child = self.collection()
+
+        def mutation(command, **kwargs):
+            result = child(command, **kwargs)
+            if "msbuild" in command:
+                (repo / "tool.py").write_text("mutated = 1\n")
+            return result
+
+        # When actual orchestration rechecks source identity, then stale evidence fails.
+        with patch("subprocess.run", side_effect=mutation), self.assertRaises(ValueError):
+            gate.collect(repo, snapshot, output)
+        self.assertFalse((output / "manifest.json").exists())
 
 
 if __name__ == "__main__":

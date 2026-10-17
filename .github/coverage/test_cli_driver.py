@@ -28,14 +28,14 @@ def main(argv=None):
         # Given valid inputs at an explicit root, when writing, then output is produced there.
         written = invoke(0, "--root", str(root))
         assert "outputs" in written
-        assert (root / ".codex" / "config.toml").exists()
+        assert (root / ".codex" / "agents" / "architect.toml").exists()
 
         # Given those outputs, when checking, then the original entrypoint reports current.
         current = invoke(0, "--root", str(root), "--check")
         assert "up to date:" in current
 
         # Given synthetic drift, when checking, then the original entrypoint reports a mismatch.
-        output = root / ".codex" / "config.toml"
+        output = root / ".codex" / "agents" / "architect.toml"
         output.write_bytes(output.read_bytes() + b"\n# invented drift\n")
         drift = invoke(1, "--root", str(root), "--check")
         assert "outputs differ" in drift
