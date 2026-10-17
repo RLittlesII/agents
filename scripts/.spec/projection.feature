@@ -249,3 +249,16 @@ Feature: Projection
     Given a tracked schema adds a required document section
     When the checkout is projected
     Then the document fails until it includes that section
+
+  @B-025
+  Scenario: Tracker entries do not become skills or skill resources
+    Given tracker entries beside skill directories and nested among runtime resources
+    When the checkout is projected
+    Then tracker entries produce no host skill or resource
+    And ordinary hidden and similarly named runtime resources retain their bytes
+
+  @B-008 @B-025
+  Scenario: Previously projected tracker records are stale outputs
+    Given a host output contains a tracker record absent from the runtime plan
+    When projection differences are checked
+    Then the tracker record is reported as stale without changing the source tracker

@@ -58,14 +58,14 @@ this Feature removes both failure states.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID    | Claim                                                                                                                                                                                                                 | Source                                        | Status |
 | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------ |
 | B-001 | Given a role file and the Claude overlay, this Feature emits `.claude/agents/<name>.md` whose frontmatter carries the name, the description and the overlay keys in overlay order, and whose body is the role body verbatim, preceded only by the persona line of B-018. | [ADR-0001](../../.spec/adr/0001-roles-are-host-free-and-hosts-are-overlays.md) | Active |
 | B-002 | Given a role file and the Codex overlay, this Feature emits `.codex/agents/<name>.toml` carrying the name, the description, `developer_instructions` prefixed with the authoritative-source sentence, and the overlay keys. | ADR-0001                                      | Active |
 | B-003 | Given a role body containing quotes, backslashes, tabs, non-ASCII text and characters outside the Basic Multilingual Plane, the Codex file parses as TOML and the text after the prefix equals the role body.          | [ADR-0003](../../.spec/adr/0003-the-projector-is-an-fsharp-script.md) | Active |
-| B-004 | Given a directory under `skills/`, this Feature copies every file in it byte for byte to the Claude skills directory and to the Codex discovery directory.                                                            | A-1, A-2                                      | Active |
+| B-004 | Given a runtime skill directory under `skills/`, this Feature copies its files byte for byte to both hosts, excluding reserved `.spec` and `.issue` metadata entries.                                                            | A-1, A-2                                      | Active |
 | B-005 | Given the roles' `owned_spec_sections` and the unowned declarations, this Feature writes the section-ownership table into `sdd-conventions` between its generated markers, one row per template section in template order. | LTI `generate-spec-ownership.sh`              | Active |
 | B-006 | Given two roles claiming one section, this Feature fails naming the section and both roles, and writes nothing.                                                                                                       | LTI double-claim rule                         | Active |
 | B-007 | Given a template section no role or unowned declaration claims, or a claim naming a section the template lacks, this Feature fails naming the section and writes nothing.                                            | LTI totality rule                             | Active |
@@ -86,10 +86,11 @@ this Feature removes both failure states.
 | B-022 | Given invalid source documents or missing or malformed schemas, projection fails with the source or schema path and the violated field or structure before writing any output. | Owner request: enforcement | Active |
 | B-023 | Given a changed tracked schema, the next projection uses that schema's rules without a projector code change. | Owner request: explicit schemas | Active |
 | B-024 | Given optional host settings in role frontmatter, projection accepts the document while host overlays remain authoritative for rendered host settings. | Owner examples: proper agent frontmatter | Active |
+| B-025 | Given reserved `.issue` tracker entries under `skills/`, projection excludes them from skill discovery and copied skill resources at every depth while preserving other runtime files byte for byte. | Decision 0001, 2026-10-17 | Active |
 
 ## 4. Constraints
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID  | Constraint                                                                  | Rules Out                                                                    |
 | --- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
@@ -363,6 +364,10 @@ portable schemas validate frontmatter directly and expose document structure sep
 2026-10-17: [Lesson 0001](lessons/0001-parse-fences-with-the-markdown-parser.md)
 records the B-016 fence-parsing correction; the claim is unchanged.
 
+2026-10-17: User selected consistent tracker metadata exclusion. Add B-025;
+source traversal and installation omit reserved tracker entries, preserving
+runtime bytes and existing ownership. See Decision 0001.
+
 ## 11. Open Questions
 
 <!-- last written by: spec-author, 2026-10-14 -->
@@ -382,6 +387,10 @@ None.
 | 3, 7-10, 12 | 🟢 | spec-reviewer | Approved 2026-10-16: optional-name delta reviewed against 0001-F1 B-017 and B-018; source, scenarios, tests and projections agree. Baseline evidence retained. |
 | 3, 7-10, 12 | 🟢 | spec-reviewer | Rebase delta approved 2026-10-16 by independent `/root/persona_diff_review` against main `e60dea1`; no findings, earlier evidence retained. |
 | B-019–B-024; schemas, projector and coverage | 🟢 | spec-reviewer | Independent `/root/final_schema_review`, 2026-10-16: approved after literal-description round-trip fix and ADR-0009 reconciliation; stale description row corrected. 62 projector and 23 installer tests pass; strict checks clean; 78 outputs current. |
+| Agreement: B-025 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; scenarios and decisions included. |
+| Design: § 7 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; planned strategy is testable. |
+| Diff: B-025 tracker metadata and executed tests | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; 71 projector and 30 installer tests pass, with test-first evidence. |
+| Surface: tracker metadata boundary | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; native/private traversal and existing publication safeguards verified. |
 
 Current amendment verdicts apply to the identified reviewed snapshot. Earlier
 pending rows are retained for their earlier subjects; current review approval
