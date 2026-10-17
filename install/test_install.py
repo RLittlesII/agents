@@ -6,6 +6,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import stat
 import subprocess
@@ -212,6 +213,69 @@ class InstallerTests(unittest.TestCase):
         write(self.source, "skills/another/SKILL.md", b"# Another method\n")
         self.assert_rejected()
         self.assertFalse(self.calls)
+
+    def test_B007_consumer_index_uses_selected_runtime_inventory_with_both_managers(self):
+        # Given producer-only docs; When installed; Then index links runtime artifacts only.
+        self.host = "codex"
+        write(self.source, "agents/README.md", b"# Maintainer index\n[Spec](.spec/README.md)\n")
+        write(self.source, "agents/producer-notes.md", b"# Producer-only notes\n")
+        before = snapshot(self.source)
+        for manager in ("skillfile", "apm"):
+            with self.subTest(manager=manager):
+                self.manager = manager
+                self.calls.clear()
+                self.assertEqual(self.run_install(), 0)
+                index = self.target / ".sdd/agents/README.md"
+                links = re.findall(r"\]\(([^)]+)\)", index.read_text())
+                self.assertEqual(set(links), {"alpha.md", "beta.md", "../skills/method/SKILL.md"})
+                for link in links:
+                    self.assertTrue((index.parent / link).is_file(), link)
+                self.assertNotIn("Maintainer index", index.read_text())
+                self.assertFalse((self.target / ".sdd/agents/producer-notes.md").exists())
+                self.assertEqual((self.target / ".sdd/agents/alpha.md").read_bytes(), ROLE)
+                self.assertEqual(snapshot(self.source), before)
+                for relative, content in self.original.items():
+                    self.assertEqual((self.target / relative).read_bytes(), content)
+
+    def test_B007_private_specs_are_excluded_at_every_depth_and_runtime_bytes_survive(self):
+        # Given mixed metadata/resources; When installed; Then only reserved metadata is omitted.
+        self.host = "codex"
+        for path in ("skills/.spec/README.md", "skills/method/.spec/README.md", "skills/method/references/.spec/README.md"):
+            write(self.source, path, b"# Producer specification\n")
+        guide = b"# Runtime guide\n[Method](../SKILL.md)\n"
+        write(self.source, "skills/method/references/guide.md", guide)
+        write(self.source, "skills/method/.runtime/payload.bin", BINARY)
+        before = snapshot(self.source)
+        self.assertEqual(self.run_install(), 0)
+        private = self.target / ".sdd"
+        self.assertFalse(any(".spec" in path.parts for path in private.rglob("*")))
+        self.assertEqual((private / "skills/method/references/guide.md").read_bytes(), guide)
+        self.assertEqual((private / "skills/method/.runtime/payload.bin").read_bytes(), BINARY)
+        self.assertEqual((private / "skills/method/data/nested.bin").read_bytes(), BINARY)
+        self.assertEqual(snapshot(self.source), before)
+
+    def test_B007_native_role_cannot_overwrite_the_consumer_index(self):
+        # Given a native contract using the reserved index path; Then reject before effects.
+        self.host = "codex"
+        write(self.source, "agents/README.md", b"# Conflicting role\n")
+        instructions = INSTRUCTIONS.replace("agents/alpha.md.", "agents/README.md.")
+        write(self.source, ".codex/agents/README.toml", f'name = "README"\ndeveloper_instructions = {json.dumps(instructions)}\n'.encode())
+        self.assert_rejected()
+        self.assertFalse(self.calls)
+
+    def test_B007_checkout_runtime_bundle_is_closed_over_private_file_links(self):
+        # Given this pool; When installed offline; Then its private runtime links resolve.
+        self.host = "codex"
+        self.source = Path(__file__).resolve().parent.parent
+        self.assertEqual(self.run_install(), 0)
+        private = self.target / ".sdd"
+        self.assertFalse(any(".spec" in path.parts for path in private.rglob("*")))
+        for document in private.rglob("*.md"):
+            for link in re.findall(r"\]\(([^)\s#]+)(?:#[^)]*)?\)", document.read_text()):
+                if ":" not in link:
+                    destination = (document.parent / link).resolve()
+                    self.assertTrue(destination.is_relative_to(private.resolve()), f"{document}: {link}")
+                    self.assertTrue(destination.is_file(), f"{document}: {link}")
 
     def test_C5_missing_manager_leaves_consumer_unchanged(self):
         with patch("shutil.which", return_value=None), self.assertRaises((ValueError, OSError, RuntimeError)) as caught:

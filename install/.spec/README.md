@@ -418,9 +418,9 @@ Written by Marcus.
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
-`python3 -m unittest discover -s install -p 'test_*.py' -v` discovers 23
+`python3 -m unittest discover -s install -p 'test_*.py' -v` discovers 27
 public-entry tests in `install/test_install.py`; discovery previously had zero
 installer tests. The `.feature` scenarios are documentary; named unittest cases
 execute their acceptance behaviors through `install` and `main`.
@@ -453,16 +453,42 @@ Linux. Local macOS execution cannot substantiate Windows/Linux claims; those
 runs remain pending CI. Real-manager compatibility smoke is separate feasibility
 evidence in § 7, not an offline acceptance substitute.
 
-README § Maintaining defines no changed-line coverage percentage or gate;
-therefore no numeric threshold is asserted. Behavioral test discovery and the
-full existing repository checks are required. No numeric coverage claim or
-threshold is asserted; generated coverage reports are not committed.
+README § Maintaining › Testing now declares the 80% pooled changed executable
+production-line floor under ADR-0007. Run the shared gate against the comparison
+base for this amendment; generated reports remain ignored. Earlier no-threshold
+statements described the original implementation and are superseded by that
+repository policy.
+
+B-007 regression cases use synthetic maintainer indexes and nested `.spec`
+metadata alongside binary and Markdown runtime resources. They install through
+the public entry point with both managers, require a consumer index whose links
+resolve inside the private bundle, and verify preserved runtime bytes and source
+checkout bytes. Selected native roles determine the contract inventory; a
+producer-only Markdown file cannot become an installed contract. The real
+checkout's dry plan is also inspected for `.spec` metadata and unresolved private
+links.
+
+2026-10-17 amendment evidence: four new tests were discovered against the prior
+installer. All failed for the intended packaging assertions (five failure reports
+because the index case exercises both managers); the existing 23 cases passed.
+After the bounded fix, all 27 cases pass. The new real-checkout offline install
+contains no private `.spec` path and every observed private Markdown file link
+resolves inside `.sdd`. The dry plan has 39 Claude files and 68 Codex files;
+there are no private specification files or unresolved relative file links.
+These file counts describe this checkout, not a fixed compatibility promise.
+No new real-manager, Windows or Linux execution is claimed.
+The shared gate against `main` at `d4eac9c975718756f0d97d150ddced6f90044648`
+passes 37/37 changed executable production lines (100%; required 80%) across
+this change and the projector fence fix. The first concurrent attempt failed
+because the standalone F# suite removed the instrumented run's shared fixtures;
+a serial rerun passed. Per-run F# scratch isolation then allows both overlapping
+runs to pass, with a foreign fixture preserved. Reports remain ignored.
 
 Written by Kevin.
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 | Claim ID | Scenario | Test | Status |
 | --- | --- | --- | --- |
@@ -472,6 +498,7 @@ Written by Kevin.
 | B-004 | [@B-004](install.feature#L35) | `test_B001_B004_claude_apm_complete_installation`; `test_B002_B004_codex_apm_complete_installation` | Covered |
 | B-005 | [@B-005](install.feature#L47) | `test_B005_cli_accepts_host_manager_target_and_force`; `test_B005_cli_help_invalid_arguments_and_failure_exit`; all four complete-installation tests on the three-OS CI matrix | Covered |
 | B-006 | [@B-006](install.feature#L60) | `test_B006_codex_rebases_only_source_prefix_and_supplies_dependencies`; `test_B001_B003_claude_skillfile_complete_installation`; `test_B006_unexpected_codex_source_prefix_is_rejected`; `test_B006_missing_authoritative_role_is_rejected`; `test_B006_missing_referenced_private_method_is_rejected` | Covered |
+| B-007 | [@B-007](install.feature) Runtime bundle and consumer index | `test_B007_consumer_index_uses_selected_runtime_inventory_with_both_managers`; `test_B007_private_specs_are_excluded_at_every_depth_and_runtime_bytes_survive`; `test_B007_native_role_cannot_overwrite_the_consumer_index`; `test_B007_checkout_runtime_bundle_is_closed_over_private_file_links` | Covered |
 
 B-005 has executable acceptance and argument-mechanism coverage; actual
 Windows/Linux CI execution remains pending. Local macOS results do not assert
