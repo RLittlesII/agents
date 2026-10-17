@@ -134,9 +134,13 @@ The unit-runner project links original `scripts/Projection.fsx` and `scripts/pro
 
 Each project exposes a coverage target using Coverlet's pinned MSBuild instrumentation and result targets: Build → InstrumentModules → execute runner → GenerateCoverageResult. Capture runner exit status, produce diagnostics and restore binaries, then fail when the runner failed. Never let IgnoreExitCode turn failure into successful validation. Run CLI behavior cases sequentially against the instrumented compiled CLI: valid `--root`, check-current, check-drift, write, unknown argument and ProjectionError. The driver asserts expected exit codes and outputs; a deliberately invalid CLI case is a successful test only when its expected failure is asserted.
 
+The MSBuild Exec adapter validates checkout, artifact-directory and interpreter paths before launching collector subprocesses. Unsupported runtime path characters fail explicitly; [run.py](../coverage/run.py) declares the supported character set.
+
 The existing tests' real FSI subprocess checks remain. The compiled CLI coverage driver adds actual entrypoint execution; it does not replace the production FSI checks or turn spike evidence into claim coverage. Collect unit and CLI reports separately; evaluation unions production line identity across them. Compiling scripts for coverage introduces a test-only build step, not a packaged projector or second production implementation.
 
 ### DR-2a: Python source coverage and suite discovery
+
+Normal F# dependency restore and instrumented unit/CLI collection precede the Python suites. This bootstraps clean package caches before the Python gate suite runs its synthetic collector smoke tests offline.
 
 Run installer and gate suites with the same pinned interpreter environment:
 
