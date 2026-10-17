@@ -574,7 +574,7 @@ let lintSkills (root: string) (roles: Role list) =
             | Some name -> yield role.Name, Regex(@"\b" + Regex.Escape name + @"\b")
             | None -> () ]
     let findings =
-        [ for file in filesUnder (Path.Combine(root, "skills")) do
+        [ for file in runtimeFilesUnder (Path.Combine(root, "skills")) do
             let raw = File.ReadAllBytes file
             if not (Array.contains 0uy raw) then
                 // Blank each generated block but keep its newlines, so line numbers hold.
