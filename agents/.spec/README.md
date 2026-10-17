@@ -275,7 +275,7 @@ without owning a specification section. — Marcus
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-16 -->
+<!-- last written by: architect, 2026-10-17 -->
 
 A role file is Markdown with YAML frontmatter. The portable keys and structure
 are declared by [the agent schema](../../schemas/agent.schema.json); repository
@@ -769,6 +769,104 @@ metadata and host fields, permit multiline descriptions, and expose portable
 frontmatter independently of this repository's version/ownership requirements.
 Host overlays remain authoritative. Earlier design and review evidence is
 historical; B-041 governs the amended source contract.
+
+### Refactor entry evidence
+
+B-042 changes the instructions in the retained implementation contracts;
+there is no new role, frontmatter key or executable workflow. `deliver-change`
+owns the portable evidence rule. `implementer`, `domain`, `database`, `ui` and
+`test-writer` select that rule for assigned refactors and retain the normal
+failing-test entry for behavior changes. `commands/implement.md` convenes the
+same implementation roles for either path. Existing ownership declarations,
+models and host overlays remain unchanged.
+
+`commands/pr.md` routes corrections to artifact owners while the implementation
+lead integrates the result, preserving B-012–B-013. This does not grant that
+lead authority to edit tests, design, agreement or documentation it does not own.
+
+The projector's existing body-preservation, role-binding and skill-link checks
+verify regeneration. Instruction-conformance scenarios cover the behavioral
+rule; independent content review is recorded in § 12; live-agent evaluation remains pending. No new
+runtime diagram or interface stub applies to this prose-only amendment.
+
+Adjacent audit corrections restore existing contracts: PR revisions keep their
+artifact owners; domain code returns to the implementation lead; present test
+substitutions retain the coding-conventions exception; unresolved reports stay
+with investigation; measurements without code retain the existing unmeasured
+finding. Sequential dependencies and scoped approval reuse follow the method's
+existing stage gates and approval records. Cleanup keeps documentation edits
+with its documentation owner and tracks work outside the convened owners'
+boundaries for the appropriate artifact owner. Delivery defers blocking material
+questions to the existing clarification rule rather than permitting an assumption
+record to bypass it.
+
+B-043 adds a source-only frontmatter synchronization responsibility to the
+work-item owner; numbered section ownership is unchanged. The companion names
+the coordination identity and maintenance operation, and `next` diagnoses
+missing or ambiguous mirror sources while keeping verified child state usable.
+No automatic synchronization program, aggregate state or queue migration is
+introduced. The coordination record consumes no child delivery lane. Completion
+evidence and a lagging tracker state are reported separately until the record's
+owner performs the required maintenance.
+
+### Assertion authority
+
+B-044 resolves the literal-claim restriction against the signal assertion
+handoff. `test-from-scenarios` owns the portable authority rule; `test-writer`
+and `spec-reviewer` apply it, and `observability` supplies declarations with
+claim links and approval evidence. Readiness alone is not approval. A missing
+claim or new user-visible behavior returns to the agreement owner; missing
+supporting detail or approval returns to its section owner. No section ownership,
+production interface, parser or executable validation changes.
+
+### Ownership continuation and ID publication
+
+B-045 is declared in `deliver-change`; the companion identifies the ownership
+record and its maintenance. `organizer` preserves that evidence during queue
+maintenance, and `next` reports occupied work without claiming, resuming or
+transferring it. A release clears the reservation only through recorded tracker
+maintenance; reassignment retains it under the new owner. Neither is delivery.
+The local mapping uses append-only ownership events in the item's existing
+`decisions` log, so there is no tracker migration or new field.
+
+B-046 is declared in `sdd-conventions` § ID schemes. Agreement authoring and
+review use that publication boundary; `spec-and-traceability` links it from ID
+allocation guidance. Shared review or tracker citations count as publication.
+Unknown publication evidence is not treated as permission to renumber. Neither
+amendment changes executable interfaces, host permissions or section ownership.
+
+### Review completion and inputs
+
+Existing B-012/B-013/B-014/B-020 responsibilities require a complete handoff
+without transferring write authority. `commands/spec.md` convenes the agreement
+reviewer as well as its author; `commands/design.md` includes the sign-off owner
+to record the returned independent verdict. Readiness is an author assessment;
+applicable recorded design approval precedes stubs and dependent tests.
+Testability feedback still precedes approval when needed. The shared workflow
+and retained role contracts state that ordering without a new approval owner.
+
+The review requester supplies the identified baseline/target and complete diff
+or unavailable history needed by a read-only pass. The pass reports missing
+inputs rather than approving an incomplete subject. No host tool mapping changes;
+the current read-only review profiles remain in force.
+
+### Approval applicability
+
+B-047 is declared in `spec-and-traceability` § Approval applicability. The
+review report identifies its unit, scope and subject revision; the sign-off
+owner records the returned verdict with that evidence. A substantive edit
+requires new review for the changed scope, including dependencies whose change
+affects what the verdict established. Unchanged scope retains its applicable
+baseline approval. Historical rows stay historical, not blanket authority for
+the current subject. `next` reads this applicability without editing records.
+No mandatory columns, checker behavior or tool permissions change.
+
+The companion contract now names working records, scratch evidence and release
+procedures already referenced by the retained contracts. The local README maps
+discovery notes before an item, ongoing item records and ignored experiments;
+it explicitly identifies missing release automation instead of inventing a
+publishing or recovery command. Refactor characterization retains its preserved-
+contract entry path rather than inheriting the claim gate for changed behavior.
 
 ## 8. Testing Strategy
 
