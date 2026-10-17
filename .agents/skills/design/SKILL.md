@@ -12,6 +12,7 @@ Convene these roles as the body directs:
 - `test-writer`, whose contract is `.codex/agents/test-writer.toml`
 - `benchmarker`, whose contract is `.codex/agents/benchmarker.toml`
 - `spec-reviewer`, whose contract is `.codex/agents/spec-reviewer.toml`
+- `spec-author`, whose contract is `.codex/agents/spec-author.toml`
 
 Read each role's contract before acting as it, and keep the boundaries it declares: a role that refuses a kind of work still refuses it here.
 
@@ -24,9 +25,12 @@ affected, the database specialist supplies storage, transaction and migration
 advice for the architect to record. When the optional observability subsection
 exists, the signal owner authors its declarations; absence does not require
 creating it or invoking a specialist. The test writer reads the design for
-testability and records the verdict, before any test depends on it. When the design states a cost, the benchmarker measures it
-and records the number in the performance strategy. The spec reviewer then
+testability and records the verdict, before any test depends on it. When the
+design states a cost, the benchmarker measures the available code or records
+why it is not yet measurable in the performance strategy. The spec reviewer then
 reads the design and returns findings; the architect answers each in the design
-or records why not, and the reviewer re-reads what changed.
+or records why not, and the reviewer re-reads what changed. The specification
+author records the returned verdict in sign-off; interface scaffolding stays
+with the architect.
 
 Work on: the request that invoked this skill

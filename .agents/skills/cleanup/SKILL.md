@@ -14,9 +14,10 @@ Read each role's contract before acting as it, and keep the boundaries it declar
 Use these skills: `coding-conventions` (`.agents/skills/coding-conventions/SKILL.md`), `deliver-change` (`.agents/skills/deliver-change/SKILL.md`).
 
 The auditor reads the repository at rest and reports drift, grouped by rule.
-The organizer files an item for each finding that needs a behaviour change, and
-puts right the queue's own drift: what is misfiled, orphaned, or done in fact.
-The document writer applies the rest as one reviewable change inside the given
-scope.
+The organizer files findings needing behavior changes or edits outside the
+queue and documentation owners' boundaries for their existing artifact owners,
+and puts right the queue's own drift: what is misfiled, orphaned, or done in fact.
+The document writer applies documentation corrections as one reviewable change
+inside the given scope.
 
 Work on: the request that invoked this skill

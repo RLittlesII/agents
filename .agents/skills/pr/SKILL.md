@@ -7,14 +7,20 @@ Convene these roles as the body directs:
 
 - `spec-reviewer`, whose contract is `.codex/agents/spec-reviewer.toml`
 - `implementer`, whose contract is `.codex/agents/implementer.toml`
+- `spec-author`, whose contract is `.codex/agents/spec-author.toml`
+- `architect`, whose contract is `.codex/agents/architect.toml`
+- `test-writer`, whose contract is `.codex/agents/test-writer.toml`
+- `document-writer`, whose contract is `.codex/agents/document-writer.toml`
 - `build`, whose contract is `.codex/agents/build.toml`
 
 Read each role's contract before acting as it, and keep the boundaries it declares: a role that refuses a kind of work still refuses it here.
 
 Use these skills: `deliver-change` (`.agents/skills/deliver-change/SKILL.md`), `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`).
 
-The spec reviewer runs the diff pass; the implementer answers each finding with
-a commit, and the reviewer re-reads until the list is empty. The implementer
+The spec reviewer runs the diff pass and routes findings to their artifact
+owners. Relevant owners make the bounded corrections; the implementation lead
+coordinates the response and integrates their returned revisions. The reviewer
+re-reads each correction. The implementation lead
 then runs the local gates, pushes, opens the pull request citing the claims the
 commits satisfy, and works each round of review feedback: a commit per thread,
 each thread resolved with a reply naming only that commit, a disputed finding

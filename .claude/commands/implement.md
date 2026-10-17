@@ -1,5 +1,5 @@
 ---
-description: "Make failing tests green inside the boundary the recorded design drew, model first, then service, then presentation — nothing more."
+description: "Implement claimed behavior behind failing tests, or carry out a behavior-preserving refactor using the recorded entry evidence, with bounded specialist contributions."
 argument-hint: "<item id or concern path>"
 ---
 
@@ -15,13 +15,14 @@ Read each role's contract before acting as it, and keep the boundaries it declar
 Use these skills: `coding-conventions` (`.claude/skills/coding-conventions/SKILL.md`), `test-from-scenarios` (`.claude/skills/test-from-scenarios/SKILL.md`), `deliver-change` (`.claude/skills/deliver-change/SKILL.md`).
 
 The implementation lead integrates the change against the recorded design and
-failing tests, filling service and integration code behind the declared interface
-stubs. When business rules change, the domain modeller builds assigned
+behavior-change or refactor evidence. Behavior changes fill service and
+integration code behind the declared interface stubs. When the domain model is
+affected, the domain modeller builds assigned
 entities and invariants; when persistence is affected, the database specialist
 supplies assigned queries, storage code, migrations or backfills and evidence.
 The presentation engineer builds the decided interaction when presentation is
-affected. Each contribution stays bounded by its claims and design, with suites
+affected. Each contribution stays bounded by its item and design, with suites
 and regression checks run before handoff. Each contributor commits citing the
-claim it satisfies.
+claim it satisfies or the constraints its refactor preserves.
 
 Work on: $ARGUMENTS
