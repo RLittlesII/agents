@@ -20,7 +20,7 @@ depends_on: ["F1", "F2"]
 blocks: []
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-14"
+updated: "2026-10-17"
 github_issue: null
 synced_at: null
 ---
@@ -170,9 +170,16 @@ Not applicable.
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
-None.
+2026-10-17: Reconcile command division of work with existing artifact authority
+under C-1. PR corrections return to their owners; cleanup applies documentation
+corrections and tracks findings outside the convened owners' boundaries. Bug
+investigation retains unattributed reports; design permits an unmeasured finding
+when no code is available. Implementation selects the agreed refactor evidence
+under 0001-F2 B-042. The spec command includes independent agreement review;
+design includes the sign-off owner to record its returned verdict before the
+design owner supplies stubs. Projection format and host mappings remain unchanged.
 
 ## 11. Open Questions
 
@@ -182,11 +189,23 @@ None.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-15 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | Section | Status | Reviewer      | Note                                                                    |
 | ------- | ------ | ------------- | ----------------------------------------------------------------------- |
+| Diff: §§ 10, 12 and command corrections | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
 | 1-12    | 🟡     | spec-reviewer | Draft. The twelve commands read for C-1 and C-3: no transitions, no technology. |
+
+### Superseded amendment review history
+
+These pending records predate the current independent verdicts. They retain
+their original notes; current live-agent evidence limits remain in § 8.
+
+- Command routing corrections, 2026-10-17 — 🟡 — spec-reviewer — Authored static conformance check only; independent review pending.
+
+Current amendment verdicts apply to the identified reviewed snapshot. Earlier
+pending rows are retained for their earlier subjects; current review approval
+does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 
