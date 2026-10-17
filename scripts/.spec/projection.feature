@@ -97,19 +97,11 @@ Feature: Projection
     Then projection fails naming both names
     And no output directory exists
 
-  @B-010
-  Scenario Outline: A role file carries a host key
-    Given a role file carrying the key <key>
+  @B-024
+  Scenario: Source host settings preserve overlay authority
+    Given role frontmatter includes optional host settings
     When the checkout is projected
-    Then projection fails naming <key> and the hosts directory
-    And no output directory exists
-
-    Examples:
-      | key                    |
-      | model                  |
-      | effort                 |
-      | tools                  |
-      | model_reasoning_effort |
+    Then the agent uses its host overlay settings
 
   @B-017
   Scenario: Personas become the roster
@@ -190,3 +182,35 @@ Feature: Projection
     Then both hosts prepend "Voice: Terse." with no signing instruction
     And the role body follows unchanged on both hosts
     And beta, which has no persona, gets no line on either host
+
+  @B-019
+  Scenario: An invalid agent document is rejected
+    Given an agent with invalid frontmatter or missing contract sections
+    When the checkout is projected
+    Then projection fails identifying the document and schema rule
+
+  @B-020
+  Scenario: An invalid or missing skill document is rejected
+    Given a skill directory with missing or invalid skill instructions
+    When the checkout is projected
+    Then projection fails identifying the skill and schema rule
+
+  @B-021
+  Scenario: Examples cannot supply required sections
+    Given required headings appear only in examples, comments or nested blocks
+    When the checkout is projected
+    Then projection rejects the missing document sections
+
+  @B-022
+  Scenario: Rejection preserves existing outputs
+    Given the checkout has existing projected outputs
+    And a source document or its schema is invalid or missing
+    When the checkout is projected or checked
+    Then projection fails with a path and field or structure diagnostic
+    And every existing output remains unchanged
+
+  @B-023
+  Scenario: A tracked schema change takes effect
+    Given a tracked schema adds a required document section
+    When the checkout is projected
+    Then the document fails until it includes that section

@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Skill frontmatter",
+  "$ref": "#/$defs/frontmatter",
+  "$defs": {
+    "frontmatter": {
+      "type": "object",
+      "required": [
+        "name",
+        "description"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "author": {
+              "type": "string",
+              "minLength": 1
+            },
+            "technology": {
+              "type": "string",
+              "minLength": 1
+            },
+            "complexity": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "domain": {
+              "type": "string",
+              "minLength": 1
+            },
+            "triggers": {
+              "type": [
+                "string",
+                "array"
+              ],
+              "items": {
+                "type": "string"
+              }
+            },
+            "role": {
+              "type": "string",
+              "minLength": 1
+            },
+            "persona": {
+              "type": "string",
+              "minLength": 1
+            },
+            "scope": {
+              "type": "string",
+              "minLength": 1
+            },
+            "output-format": {
+              "type": "string",
+              "minLength": 1
+            },
+            "related-skills": {
+              "type": [
+                "string",
+                "array"
+              ],
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      }
+    },
+    "document": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Skill document",
+      "type": "object",
+      "required": [
+        "frontmatter",
+        "titles",
+        "sections"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "frontmatter": {
+          "$ref": "#/$defs/frontmatter"
+        },
+        "titles": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "contains": {
+            "const": "Never add"
+          }
+        }
+      }
+    }
+  }
+}

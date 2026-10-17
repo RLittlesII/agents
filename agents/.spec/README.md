@@ -154,7 +154,7 @@ retain their gates and commands only convene the applicable roles. — Ruth
 
 | ID    | Claim                                                                                                                                                                     | Source                                                                         | Status |
 | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------ |
-| B-001 | Given the role files, each declares `name`, a one-line `description`, a semver `version` and `owned_spec_sections`, and none carries a host key.                          | [ADR-0001](../../.spec/adr/0001-roles-are-host-free-and-hosts-are-overlays.md) | Active |
+| B-001 | Given the role files, each declares `name`, a one-line `description`, a semver `version` and `owned_spec_sections`, and none carries a host key.                          | [ADR-0001](../../.spec/adr/0001-roles-are-host-free-and-hosts-are-overlays.md) | Withdrawn |
 | B-002 | Given the roles and the unowned declarations in the roles index, every section of the specification template has exactly one owner.                                      | `sdd-conventions` § Section ownership                                          | Active |
 | B-003 | Given a role body, it carries the headings Owns, Read first, Produce or Look for, and Refuse.                                                                              | Hooked role contracts                                                          | Active |
 | B-004 | Given a role body, it names no product technology, library, repository path, package or build tool; the consuming repository's companion skill names those.               | Root README § Purpose                                                          | Active |
@@ -194,6 +194,7 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | B-038 | Given an observability contribution, this Feature requires the portable declarations and write boundaries in § 2 Optional observability subsection contract. | User amendment: boundary-signal declarations, 2026-10-16 | Active |
 | B-039 | Given migration from `metric-nerd` to `observability`, this Feature replaces the active role identity within the nineteen-role roster while preserving historical identities and evidence. | User amendment: rename the actual role, 2026-10-16; B-035 | Active |
 | B-040 | Given a role declaring `persona`, it requires a nonblank single-line `voice` and permits an omitted `name`; a supplied name is nonblank, single-line and unique across roles, while role identifiers and machine-read stamps retain the role name. | Owner request: optional persona names | Active |
+| B-041 | Given a source role, it declares name, nonblank description, numeric version and owned_spec_sections; optional schema metadata and host fields are accepted, and rendered settings remain overlay-owned. | Owner examples; ADR-0009 | Active |
 
 ## 4. Constraints
 
@@ -252,14 +253,15 @@ without owning a specification section. — Marcus
 
 <!-- last written by: architect, 2026-10-16 -->
 
-A role file is Markdown with YAML frontmatter. The keys and their checks are
-declared by `loadRole` in [`Projection.fsx`](../../scripts/Projection.fsx);
-that function is the authority, not this section.
+A role file is Markdown with YAML frontmatter. The portable keys and structure
+are declared by [the agent schema](../../schemas/agent.schema.json); repository
+version, ownership and name checks additionally live in `loadRole` in
+[`Projection.fsx`](../../scripts/Projection.fsx).
 
 | Key                   | Form                                                      |
 | --------------------- | --------------------------------------------------------- |
 | `name`                | equals the file stem                                      |
-| `description`         | one line; the host's trigger text                         |
+| `description`         | nonblank host trigger text; folded or literal multiline YAML is permitted |
 | `version`             | semver, bumped when the contract changes                  |
 | `owned_spec_sections` | list of `"<n>"`, `"Tasks"`, `"Scoring"` or `"<n>/<Subsection>"`; empty is valid |
 | `persona`             | optional; required one-line `voice`, optional nonblank one-line `name`; supplied names unique across roles |
@@ -736,6 +738,14 @@ independence. Coherent regeneration, ownership checks, the classified search
 and independent review evidence address those risks. This verdict does not
 change § 12 sign-off or assert that the amendment is implemented. — Marcus
 
+### Portable frontmatter amendment
+
+ADR-0009 supersedes the baseline key restriction. The schemas own optional
+metadata and host fields, permit multiline descriptions, and expose portable
+frontmatter independently of this repository's version/ownership requirements.
+Host overlays remain authoritative. Earlier design and review evidence is
+historical; B-041 governs the amended source contract.
+
 ## 8. Testing Strategy
 
 <!-- last written by: test-writer, 2026-10-16 -->
@@ -746,9 +756,10 @@ edit that breaks the contract fails the same command CI runs. The baseline
 scenarios for B-001–B-009 in [`roles.feature`](roles.feature) are checked by
 the cited tests, with B-004 assessed manually as described below.
 
-- B-001: `loadRoles` over `agents/`; the loader itself rejects a missing key,
-  a non-semver version, a multi-line description or a host key, so the test
-  asserts the roster loads and that both host overlays map every role.
+- B-041: `loadRoles` over the real checkout verifies repository keys; projection
+  tests verify portable metadata, optional host fields, folded/literal descriptions
+  and unchanged overlay authority under ADR-0009. B-001 is withdrawn.
+
 - B-002: `ownershipRows` over the real roles, index and template; one row per
   template section plus the Performance and Observability subsection rows.
 - B-003: the `## ` headings of each loaded body.
@@ -932,7 +943,8 @@ limitation continue to apply. — Kevin
 
 | Claim ID | Scenario                                            | Test                                                     | Status  |
 | -------- | --------------------------------------------------- | -------------------------------------------------------- | ------- |
-| B-001    | [@B-001](roles.feature) Every role declares the contract keys | `F2_B001_EveryRoleDeclaresTheContractKeysAndNoHostKey`   | Covered |
+| B-001 | Every role declares the original contract keys | Superseded by B-041 | Withdrawn |
+| B-041 | [@B-041](roles.feature) Source role keys and portable fields | `F2_B041_EverySourceRoleDeclaresRepositoryKeys`, `B019_AgentSchemaRejectsInvalidFrontmatter`, `B024_HostOverlaysRemainAuthoritative`, `B019_LiteralDescriptionRoundTripsThroughBothHosts` | Covered |
 | B-002    | [@B-002](roles.feature) Every template section has exactly one owner | `F2_B002_EveryTemplateSectionHasExactlyOneOwner`         | Covered |
 | B-003    | [@B-003](roles.feature) Every role body carries the four headings | `F2_B003_EveryRoleBodyCarriesTheFourSections`            | Covered |
 | B-004    | [@B-004](roles.feature) A role body names no product technology | Manual: review question in § 8                           | Partial |
@@ -986,6 +998,9 @@ limitation continue to apply. — Kevin
 | 2026-10-16 | User requested the actual observability rename and supplied an optional signal declaration shape | Rename active `metric-nerd` identity references to `observability`; add B-037–B-039 for optional `7/Observability` ownership, portable declaration boundaries and the nineteen-to-nineteen migration; preserve prior review evidence and append the accepted scope to decision 0001. — Ruth |
 | 2026-10-16 | Owner requested clearing persona names, then rebasing on the simplified main roster | Withdraw B-007 and add B-040 for optional names with required voices. Retain all nineteen current roles and clear their names without changing their bodies or voices. The branch’s new B-010 was reassigned to B-040 because main already claimed B-010–B-039. |
 
+2026-10-16: Owner supplied proper portable frontmatter examples. Withdraw B-001,
+add B-041 and adopt ADR-0009; preserve prior baseline evidence and roster bodies.
+
 ## 11. Open Questions
 
 <!-- last written by: spec-author, 2026-10-14 -->
@@ -1013,6 +1028,7 @@ limitation continue to apply. — Kevin
 | 3, 7-10, 12 | 🟢 | spec-reviewer | Approved 2026-10-16: independent `/root/persona_diff_review` reviewed the optional-name rebase delta B-040 against main `e60dea1`; nineteen upstream bodies and voices preserved, 55 projector and 23 installer tests pass, 78 outputs current, strict checks clean. Earlier baseline and collaboration evidence retained. |
 
 | Optional-name input and projection boundary | 🟢 | adversary | Independent `/root/persona_surface_review`, 2026-10-16: no security regressions in the rebase delta; validation, escaped rendering and role permissions preserved. |
+| B-041; amended agreement, design and coverage | 🟢 | spec-reviewer | Independent `/root/final_schema_review`, 2026-10-16: approved after literal-description round-trip fix and ADR-0009 reconciliation; stale description row corrected. 62 projector and 23 installer tests pass; strict checks clean; 78 outputs current. |
 
 ## Tasks
 

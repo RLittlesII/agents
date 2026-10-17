@@ -71,7 +71,7 @@ this Feature removes both failure states.
 | B-007 | Given a template section no role or unowned declaration claims, or a claim naming a section the template lacks, this Feature fails naming the section and writes nothing.                                            | LTI totality rule                             | Active |
 | B-008 | Given outputs equal to what the sources produce, `--check` exits 0; given a changed, a missing or a stale output, `--check` exits 1 naming each path and writes nothing.                                               | [ADR-0002](../../.spec/adr/0002-generated-host-outputs-are-committed.md) | Active |
 | B-009 | Given an overlay naming a role with no file, or a role file whose `name` differs from its file name, this Feature fails naming the role.                                                                              | ADR-0001                                      | Active |
-| B-010 | Given a role file carrying `model`, `effort`, `tools` or `model_reasoning_effort`, this Feature fails naming the key.                                                                                                  | ADR-0001                                      | Active |
+| B-010 | Given a role file carrying a host key, projection rejects it. | ADR-0001 | Withdrawn |
 | B-011 | Given the roles' personas, this Feature writes the persona roster into `agents/PERSONAS.md` between its generated markers, one row per persona sorted by persona name, carrying the persona, a link to the role and the voice. | [0001-F2](../../agents/.spec/README.md) B-007 | Withdrawn |
 | B-012 | Given a role with a persona, both host files carry one generated line naming the persona and its voice and saying machine-read stamps keep the role name, ahead of the role body, which follows verbatim; a role without a persona gets no line. | 0001-F2 B-007 | Withdrawn |
 | B-013 | Given the review units declared in the roles index and the roles' `reviews`, this Feature writes the review-pass registry into `sdd-conventions` between its generated markers, one row per unit in declared order. | LTI `generate-review-passes.sh` | Active |
@@ -80,6 +80,12 @@ this Feature removes both failure states.
 | B-016 | Given a specification whose section carries a `last written by` stamp naming a role other than the section's owner in the ownership table, this Feature fails naming the file, the section and both roles, and writes nothing. A section with no single owning role and a stamp inside a fenced block are not checked. | LTI `validate-spec-ownership.sh` | Active |
 | B-017 | Given the roles' personas, projection writes one roster row per persona between the generated markers, carrying its name or `—`, its role link and its voice; named rows sort by persona name before unnamed rows sorted by role name. | 0001-F2 B-040 | Active |
 | B-018 | Given a persona with no name, both hosts prepend `Voice: <voice>` without a signing instruction; named personas retain their existing persona and signing line, absent personas get no line, and role bodies follow verbatim. | 0001-F2 B-040 | Active |
+| B-019 | Given a role file, projection validates its frontmatter and required body structure against the tracked agent JSON Schema. | Owner request: schemas | Active |
+| B-020 | Given a skill directory, projection requires SKILL.md and validates its frontmatter and required body structure against the tracked skill JSON Schema. | Owner request: schemas | Active |
+| B-021 | Given Markdown examples or comments containing headings, only actual top-level Markdown headings satisfy required structure. | Owner request: required structure | Active |
+| B-022 | Given invalid source documents or missing or malformed schemas, projection fails with the source or schema path and the violated field or structure before writing any output. | Owner request: enforcement | Active |
+| B-023 | Given a changed tracked schema, the next projection uses that schema's rules without a projector code change. | Owner request: explicit schemas | Active |
+| B-024 | Given optional host settings in role frontmatter, projection accepts the document while host overlays remain authoritative for rendered host settings. | Owner examples: proper agent frontmatter | Active |
 
 ## 4. Constraints
 
@@ -87,7 +93,7 @@ this Feature removes both failure states.
 
 | ID  | Constraint                                                                  | Rules Out                                                                    |
 | --- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| C-1 | A role is defined once, in `agents/<name>.md`, and carries no host key.     | A model, effort or tool list in a role file; a second role copy per host     |
+| C-1 | A role is defined once, in `agents/<name>.md`; host overlays are authoritative for rendered host settings. | A second role copy per host |
 | C-2 | A role body projects verbatim.                                              | Per-host wording, link rewriting, or any transform of the body text          |
 | C-3 | Outputs are committed and byte-deterministic.                               | Timestamps, absolute paths, CRLF, a byte-order mark, machine-dependent order |
 | C-4 | Projection reads only the checkout.                                         | A network call, a package feed lookup, or an environment variable at run time |
@@ -185,6 +191,37 @@ Design positions:
   roles index. The persona line is the one text projection adds to a role: it
   goes before the body, never into it, so C-2 holds for every byte of the body.
 
+### Document schemas
+
+`schemas/agent.schema.json` and `schemas/skill.schema.json` are self-contained
+Draft 2020-12 schemas for parsed YAML frontmatter, usable by other projects.
+Their `$defs/document` subschemas additionally validate `{frontmatter, titles,
+sections}`. The projector selects that document subschema, parses typed YAML
+with YamlDotNet and extracts top-level H1/H2 text from Markdig inline nodes.
+Headings in code fences, comments, blockquotes or lists do not count.
+
+Both portable schemas require name and a nonblank description, accept folded or
+literal descriptions and extensible metadata, including role and persona. The
+agent schema accepts optional host settings and the existing role persona
+mapping; metadata.version is distinct from an optional top-level version. This
+repository's loader additionally requires version and owned_spec_sections for
+its source role contracts. Host overlays determine rendered settings.
+
+Document structure requires one nonblank title; agents require Owns, Read first,
+Produce or Look for, and Refuse. Look for requires Report; nonempty reviews
+require both Look for and Report. Skills require Never add, with other headings
+free. Meaning and portability of prose remain review concerns.
+
+`loadSchema` builds each schema once per plan with an isolated registry and an
+owned JSON element, preventing duplicate registrations and disposed-document
+errors. `validateDocument` checks before any output is built or written. Errors
+include the document, schema and failing instance location without values.
+Schema changes take effect on the next plan. Schema files are tooling sources
+and are not projected into host directories. Existing role name, ownership,
+persona uniqueness and skill-link checks remain in force.
+
+Readiness: **Ready for tests and implementation.**
+
 Durable choices are recorded in [ADR-0001](../../.spec/adr/0001-roles-are-host-free-and-hosts-are-overlays.md),
 [ADR-0002](../../.spec/adr/0002-generated-host-outputs-are-committed.md) and
 [ADR-0003](../../.spec/adr/0003-the-projector-is-an-fsharp-script.md).
@@ -243,6 +280,11 @@ outputs without writing; after apply it exits zero. An invalid retired command
 exits two without creating output directories. Independent verification reported
 44 tests passing after implementation. — Kevin
 
+Schema coverage: B-019–B-023 use negative frontmatter and heading cases, real
+Markdown parsing (fences, comments and nested headings), schema mutations,
+malformed/missing source and schema files, and unchanged existing-output bytes.
+Each tests `plan` or the actual CLI, with no network or live provider.
+
 ### Performance
 
 <!-- last written by: benchmarker, 2026-10-16 -->
@@ -266,7 +308,7 @@ inventory count.
 | B-007    | A template section has no owner                            | `B007_UnownedTemplateSection_FailsNamingIt`                       | Covered |
 | B-008    | Check passes when current and names every drift            | `B008_Check_IsSilentWhenCurrentAndNamesEveryDrift`                | Covered |
 | B-009    | An overlay or a role name points at nothing                | `B009_OverlayNamesMissingRole_Fails`, `B009b_RoleNameDiffersFromFileName_Fails` | Covered |
-| B-010    | A role file carries a host key                             | `B010_RoleFileCarriesHostKey_FailsNamingTheKey`                   | Covered |
+| B-010 | A role file carries a host key | Superseded by B-024 | Withdrawn |
 | B-011    | Personas become the roster                                 | `B011_Personas_WriteRosterBetweenMarkers`                         | Withdrawn |
 | B-012    | A persona line precedes the body on both hosts             | `B012_Persona_PrecedesVerbatimBodyOnBothHosts`                    | Withdrawn |
 | B-013    | Review units become the registry                           | `B013_ReviewUnits_WriteRegistryBetweenMarkers`                    | Covered |
@@ -275,6 +317,12 @@ inventory count.
 | B-016    | A section stamp names a role that does not own it          | `B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles`     | Covered |
 | B-017 | Named and unnamed personas become the roster | `B017_Personas_WriteRosterBetweenMarkers`, `B017_MixedPersonas_SortNamedThenUnnamedRoles` | Covered |
 | B-018 | Named or voice-only lines precede verbatim bodies | `B018_Persona_PrecedesVerbatimBodyOnBothHosts`, `B018_UnnamedPersona_PreservesVoiceOnBothHosts` | Covered |
+| B-019 | [@B-019](projection.feature) Agent document schema | `B019_AgentSchemaRejectsInvalidFrontmatter`, `B019_PortableFrontmatterAcceptsUserExamples`, `B019_LiteralDescriptionRoundTripsThroughBothHosts` | Covered |
+| B-020 | [@B-020](projection.feature) Skill document schema | `B020_SkillSchemaValidatesMetadataAndStructure` | Covered |
+| B-021 | [@B-021](projection.feature) Parsed document structure | `B021_ExamplesCannotSatisfyRequiredHeadings` | Covered |
+| B-022 | [@B-022](projection.feature) Reject before writes | `B022_InvalidSchemasPreserveExistingOutputs` | Covered |
+| B-023 | [@B-023](projection.feature) Schema-driven rules | `B023_ChangedSchemaRulesTakeEffectOnNextPlan` | Covered |
+| B-024 | [@B-024](projection.feature) Host overlays remain authoritative | `B024_HostOverlaysRemainAuthoritative` | Covered |
 
 ## 10. Lessons / Spec Deltas
 
@@ -283,6 +331,12 @@ inventory count.
 2026-10-16: Owner requested clearing persona names while preserving voices.
 B-011 and B-012 are withdrawn and replaced by B-017 and B-018: unnamed personas
 remain in the roster and project a voice line without signing instructions.
+
+2026-10-16: Owner requested schemas and projector enforcement for role and skill
+frontmatter and required structure; add B-019–B-023, retaining earlier evidence.
+[ADR-0009](../../.spec/adr/0009-portable-frontmatter-and-overlay-authority.md) records the schema boundary.
+The supplied host-native examples supersede the rejection in B-010 with B-024;
+portable schemas validate frontmatter directly and expose document structure separately.
 
 ## 11. Open Questions
 
@@ -299,11 +353,11 @@ None.
 | 1-12    | 🟡     | spec-reviewer | Draft baseline. Original scaffolding evidence retained; claims and tests landed together. |
 | 3, 7-10, 12 | 🟢 | spec-reviewer | Approved 2026-10-16: optional-name delta reviewed against 0001-F1 B-017 and B-018; source, scenarios, tests and projections agree. Baseline evidence retained. |
 | 3, 7-10, 12 | 🟢 | spec-reviewer | Rebase delta approved 2026-10-16 by independent `/root/persona_diff_review` against main `e60dea1`; no findings, earlier evidence retained. |
+| B-019–B-024; schemas, projector and coverage | 🟢 | spec-reviewer | Independent `/root/final_schema_review`, 2026-10-16: approved after literal-description round-trip fix and ADR-0009 reconciliation; stale description row corrected. 62 projector and 23 installer tests pass; strict checks clean; 78 outputs current. |
 
 ## Tasks
 
-None cut. This is a tooling agreement delivered in the scaffolding change; a
-later change to a claim cuts its own work item.
+- [0041 — Agent and skill schemas](../.issue/0041-agent-skill-schemas.yml).
 
 ## Scoring
 
