@@ -302,19 +302,22 @@ verification command. Evidence validation precedes zero-denominator N/A.
 Discovery uses unittest `test_*.py` files and test-prefixed methods. The initial
 red run discovered 24 tests, up from zero: 23 assertion failures, zero errors,
 one deletion-only diff case passing against empty behavior stubs. Tests carry
-Given/When/Then blocks and B-00n names. Final discovery runs 34 gate tests,
+Given/When/Then blocks and B-00n names. Final discovery runs 36 gate tests,
 including two real collector regressions; all pass.
 
 The [repository Testing policy](../../README.md#testing) names the 80% pooled
 changed executable production-line floor and shared local/CI command. Fresh run
-`b9a269b572274089a3ad5b6e2b6561b2`, compared with
+`4b09202932144842998f626f876e5615`, compared with
 `c890c826dc439cd617349a417ef396748eab2439` at HEAD
-`51acf997c2b294686886d1e39bc04ed7c1f1ee7f`, passes **217/242 (89.67%)**.
+`36e2efec7a41012c60a13b5c3fef9f3ba64e550e`, passes **220/245 (89.80%)**.
 Independent manifest/report/source validation and reevaluation reproduce those
 exact counts. All six required process records exit zero: 62 original-linked
-F# tests, six instrumented compiled CLI cases, 23 installer tests, 34 gate tests,
-and Python combine/report steps. The collection began with an isolated empty
-NuGet cache; real F# collection bootstrapped the later offline smoke tests.
+F# tests, six instrumented compiled CLI cases, 23 installer tests, 36 gate tests,
+and Python combine/report steps. This final collection uses a populated cache.
+Historical run `b9a269b572274089a3ad5b6e2b6561b2` passed 217/242 (89.67%)
+from an isolated initially empty NuGet cache; real F# collection bootstrapped
+the later offline smoke tests. The new line-identity regression recorded nine
+assertion failures before the fix; rejection and CRLF acceptance pass afterward.
 
 Historical negative run `735ffab129854761aa932d4b8ff2eab7` fails **210/335**:
 its real report includes 100 deliberately unimported executable lines with zero
@@ -330,8 +333,8 @@ pending; local verification does not claim its outcome.
 
 | Claim ID | Scenario | Test | Status |
 | --- | --- | --- | --- |
-| B-001 | [@B-001](repository-verification.feature#B-001) | `EvaluationTests.test_B001_exact_floor_pools_languages_by_line_count`, `test_B001_below_floor_does_not_round_up`, `test_B001_only_changed_executable_lines_enter_denominator`; `SourceTests.test_B001_diff_includes_modified_current_lines_and_all_new_file_lines`, `test_B001_diff_treats_git_pathspec_magic_filename_literally`; `GateAcceptanceTests.test_B001_gate_exit_and_counts_observe_exact_floor` | Covered |
-| B-002 | [@B-002](repository-verification.feature#B-002) | `EvidenceTests.test_B002_missing_report_is_rejected`, `test_B002_malformed_report_is_rejected`, `test_B002_stale_source_bytes_are_rejected_despite_same_mtime`, `test_B002_mismapped_source_is_rejected`, `test_B002_new_production_source_absent_from_reports_is_rejected`, `test_B002_failed_test_process_is_rejected`; `CollectionTests.test_B002_failed_child_cannot_publish_manifest`, `test_B002_source_mutation_during_collection_cannot_publish_manifest`; `CollectorIntegrationTests.test_B002_python_collector_reports_missed_branch_and_unimported_new_source`, `test_B002_fsharp_collector_reports_real_missed_branch_and_unused_new_source` | Covered |
+| B-001 | [@B-001](repository-verification.feature#B-001) | `EvaluationTests.test_B001_exact_floor_pools_languages_by_line_count`, `test_B001_below_floor_does_not_round_up`, `test_B001_only_changed_executable_lines_enter_denominator`; `SourceTests.test_B001_diff_includes_modified_current_lines_and_all_new_file_lines`, `test_B001_diff_treats_git_pathspec_magic_filename_literally`, `test_B001_crlf_source_retains_git_lf_line_identity`; `GateAcceptanceTests.test_B001_gate_exit_and_counts_observe_exact_floor` | Covered |
+| B-002 | [@B-002](repository-verification.feature#B-002) | `EvidenceTests.test_B002_missing_report_is_rejected`, `test_B002_malformed_report_is_rejected`, `test_B002_stale_source_bytes_are_rejected_despite_same_mtime`, `test_B002_mismapped_source_is_rejected`, `test_B002_new_production_source_absent_from_reports_is_rejected`, `test_B002_failed_test_process_is_rejected`; `SourceTests.test_B002_non_lf_source_separators_are_rejected_before_diff`; `CollectionTests.test_B002_failed_child_cannot_publish_manifest`, `test_B002_source_mutation_during_collection_cannot_publish_manifest`; `CollectorIntegrationTests.test_B002_python_collector_reports_missed_branch_and_unimported_new_source`, `test_B002_fsharp_collector_reports_real_missed_branch_and_unused_new_source` | Covered |
 | B-003 | [@B-003](repository-verification.feature#B-003) | `EvaluationTests.test_B003_no_changed_executable_lines_is_not_applicable`; `GateAcceptanceTests.test_B003_gate_reports_zero_denominator_without_percentage` | Covered |
 | B-004 | [@B-004](repository-verification.feature#B-004) | `SourceTests.test_B004_inventory_includes_gate_and_excludes_test_generated_sources`, `test_B004_inventory_preserves_carriage_return_in_literal_git_filename`; `GateAcceptanceTests.test_B004_local_and_ci_share_policy_evaluator_and_output` | Covered — local invocation parity; Linux CI execution pending |
 
