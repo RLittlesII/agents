@@ -131,6 +131,17 @@ checkout of 0001-F1 plus a role `log-reader` signing as Zed. The scenarios in
 - C-1 is a review question: at review, read new skill text for a bare one-word
   role name used as a name rather than a word.
 
+The [repository Testing policy](../../README.md#testing) establishes the shared
+local/CI coverage gate and its 80% pooled changed executable production-line
+floor under ADR-0007. Fresh repository verification run
+`b9a269b572274089a3ad5b6e2b6561b2` passes 217/242 changed executable lines
+(89.67%); its source-bound manifest validates independently. The four named
+`F4_` tests all pass within the 62-test original-linked F# runner. This F4
+change edits specification evidence; its lint production source is unchanged.
+The synthetic filesystem and pure lint seam require no clock, network or live
+provider. Linux CI execution of the shared gate remains pending; local evidence
+does not substitute for that result.
+
 ### Performance
 
 Not applicable.
