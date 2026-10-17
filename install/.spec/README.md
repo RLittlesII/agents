@@ -193,9 +193,10 @@ instructions and companion guidance belong to the consumer, without linking
 unshipped producer files. The producer index and source contracts are untouched.
 Reserve the index and roster names against native-role collisions.
 
-`build_plan` retains its existing ordered path-to-bytes result. A scoped
-`read_tree` exclusion handles private method `.spec` directories; it does not
-filter the committed host projections or ordinary runtime support files. Known
+`build_plan` retains its existing ordered path-to-bytes result.
+The private-only `.spec` exclusion does not apply to committed host projections
+or ordinary runtime support files. B-008 separately excludes `.issue` entries
+from both native and private skill trees. Known
 role and index dependency links are checked against the completed private plan
 before managers or consumer writes. No general Markdown parser, exporter,
 recursive producer closure or new production interface is introduced. Synthetic
@@ -416,6 +417,22 @@ by the user's approved scope/defaults. No unresolved requirement blocks design.
 | Consumer preservation, C-3/C-4 | Medium | Publication spans files; ordinary failures roll back, while crash and concurrent-writer transactions are absent |
 
 Written by Marcus.
+
+### Tracker metadata boundary
+
+[Decision 0003](decisions/0003-exclude-tracker-metadata.md) adds B-008.
+`read_tree` skips exact `.issue` entries before path validation, descent or
+reads, for both committed native skill trees and private method sources.
+Its existing private-only `.spec` exclusion remains. Top-level private method
+selection already skips dot-prefixed entries. This provides defense at the
+installation boundary even when an older projection contains tracker records.
+
+All manager staging, destination validation, force semantics and non-pruning
+behavior remain. Previously installed metadata is not silently removed. Tests
+install native root and nested metadata through both hosts/managers,
+exercise private nested metadata and linked excluded entries, and assert
+ordinary hidden/binary runtime bytes and source trees remain unchanged.
+Readiness: Ready; independent agreement/design approval is recorded in § 12.
 
 ## 8. Testing Strategy
 
