@@ -180,6 +180,23 @@ let filesUnder (directory: string) =
         |> List.ofSeq
     else []
 
+let private isSkillMetadata (path: string) =
+    let name = Path.GetFileName path
+    name = ".spec" || name = ".issue"
+
+/// 0001-F1 B-025, 0001-F4 B-004: prune source metadata before traversal.
+/// Output comparison uses filesUnder so old tracker outputs remain stale.
+let runtimeFilesUnder (directory: string) =
+    let rec visit folder =
+        seq {
+            for entry in Directory.EnumerateFileSystemEntries folder do
+                if not (isSkillMetadata entry) then
+                    if Directory.Exists entry then yield! visit entry
+                    else yield entry
+        }
+    if Directory.Exists directory then visit directory |> Seq.sort |> List.ofSeq
+    else []
+
 /// Split a Markdown file into its frontmatter pairs and the body after the
 /// closing `---`. The body keeps every byte after the single newline that
 /// follows the closing marker.
@@ -842,7 +859,7 @@ let plan (root: string) : Plan =
     let skillsDirectory = Path.Combine(root, "skills")
     let skills =
         Directory.EnumerateDirectories skillsDirectory
-        |> Seq.filter (fun d -> Path.GetFileName d <> ".spec")
+        |> Seq.filter (isSkillMetadata >> not)
         |> Seq.sort
         |> List.ofSeq
     for skill in skills do
@@ -860,7 +877,7 @@ let plan (root: string) : Plan =
                   yield host.Output.Replace("{name}", role.Name), bytes (renderAgent host role)
               // B-004: every skill file, byte for byte, into the host's skills directory.
               for skill in skills do
-                  for file in filesUnder skill do
+                  for file in runtimeFilesUnder skill do
                       let rel = relative skillsDirectory file
                       let content =
                           if rel = "sdd-conventions/SKILL.md" then bytes companionText
