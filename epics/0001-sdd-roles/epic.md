@@ -6,9 +6,9 @@ type: epic
 status: in-progress
 priority: med
 milestone: null
-children: ["0001-F1", "0001-F2", "0001-F3", "0001-F4", "0001-F5"]
+children: ["0001-F1", "0001-F2", "0001-F3", "0001-F4", "0001-F5", "0001-F6"]
 created: "2026-10-14"
-updated: "2026-10-14"
+updated: "2026-10-16"
 github_issue: null
 ---
 
@@ -34,13 +34,14 @@ host, and the copies drift from each other and from the method.
 
 ## Measure
 
-The epic is delivered when all three hold:
+The epic is delivered when all four hold:
 
 1. Every role, skill and command projects to Claude Code and Codex, and
    `dotnet fsi scripts/project.fsx --check` passes in CI.
 2. A consuming repository pulls its roles, skills and commands from this
    repository at a tag, and keeps no hand-edited copy of any of them.
 3. Each Feature below is approved with no `Missing` row in its § 9.
+4. Repository verification enforces its changed-line coverage policy locally and in CI.
 
 ## Features
 
@@ -51,6 +52,10 @@ The epic is delivered when all three hold:
 | F3      | Commands       | [`commands/.spec/README.md`](../../commands/.spec/README.md)       |
 | F4      | Skill boundary | [`skills/.spec/README.md`](../../skills/.spec/README.md)           |
 | F5      | Next work      | [`skills/next/.spec/README.md`](../../skills/next/.spec/README.md) |
+| F6      | Repository verification | [`.github/.spec/README.md`](../../.github/.spec/README.md) |
+
+The user confirmed F6 under this epic on 2026-10-16. It verifies changes to the
+shared method without adding product technology to portable roles or skills.
 
 ## Placement
 

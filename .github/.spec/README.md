@@ -5,13 +5,13 @@ type: feature
 id: "F6"
 epic: "0001"
 spec_status: approved
-status: ready
+status: in-progress
 priority: med
-value: 0
-risk: 0
+value: 4
+risk: 3
 rank: 0 # Required template sentinel; never a ranking input.
-scored_by: null
-scored_on: null
+scored_by: organizer
+scored_on: "2026-10-16"
 milestone: null
 domain: "Repository verification"
 author: "spec-author"
@@ -339,8 +339,15 @@ establish feasibility; they do not establish delivery or a final coverage score.
 
 ## Tasks
 
-None cut in this agreement-only record.
+<!-- last written by: organizer, 2026-10-16 -->
+
+- [0044 — Enforce repository changed-line coverage](../.issue/0044-repository-coverage-gate.yml).
 
 ## Scoring
 
-Not scored in this agreement-only record.
+<!-- last written by: organizer, 2026-10-16 -->
+
+| Field | Value | Basis |
+| --- | --- | --- |
+| value | 4 | Makes the repository's adopted coverage requirement enforceable for every production change. |
+| risk | 3 | Collector parity and source/report identity need independent verification. |
