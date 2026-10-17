@@ -20,7 +20,7 @@ depends_on: []
 blocks: []
 spikes: []
 created: "2026-10-16"
-updated: "2026-10-16"
+updated: "2026-10-17"
 github_issue: null
 synced_at: null
 ---
@@ -52,7 +52,7 @@ None. Stakeholder-approved defaults are recorded in § 11.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID | Claim | Source | Status |
 | --- | --- | --- | --- |
@@ -62,6 +62,7 @@ None. Stakeholder-approved defaults are recorded in § 11.
 | B-004 | Given either supported host and Microsoft apm as the selected manager, this Feature invokes Microsoft apm as part of installing the complete selected host. | User clarification, 2026-10-16 | Active |
 | B-005 | Given the documented prerequisites on Windows, macOS or Linux, this Feature accepts the same script arguments and produces the selected host's installation. | User request for a cross-platform scripting language | Active |
 | B-006 | Given an installed role or command, this Feature supplies the repository-owned contracts and skills that its instructions reference at their installed locations. | Complete installation in B-001 and B-002 | Active |
+| B-007 | Given a Codex installation, its planned private bundle supplies selected runtime role contracts, method skills and runtime resources with a consumer-facing index, excluding maintainer specifications. | User decision 0002, 2026-10-17 | Active |
 
 ## 4. Constraints
 
@@ -453,13 +454,19 @@ execution on those platforms. Written by Kevin.
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
-None.
+2026-10-17: User selected runtime-only private Codex contracts/resources with a
+consumer index, excluding maintainer specifications. Add B-007 and decision
+0002; reproduce the prior plan's 23 private specification files and 12 unresolved
+relative links. Revise DR-2 without altering runtime contract bytes, native
+projections or publication safeguards. The incident and regression evidence are
+recorded in [lesson 0001](lessons/0001-runtime-bundles-exclude-producer-records.md).
+Independent amendment review is recorded in § 12.
 
 ## 11. Open Questions
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID | Question | Blocks | Resolution |
 | --- | --- | --- | --- |
@@ -468,13 +475,17 @@ None.
 | OQ-3 | Does this agreement belong in the proposed installation epic 0038, separate from projection epic 0001? | B-001–B-006 | Resolved by the user, 2026-10-16: approved the scope and defaults; epic 0038 accepted. |
 | OQ-4 | May the design use Python 3.11+ with no third-party Python dependencies, explicit host and manager arguments, and a checkout as its source? | B-001–B-005 | Resolved by the user, 2026-10-16: approved. |
 | OQ-5 | Should a differing destination file fail without overwriting it, with any replacement available only through an explicit installer option? | B-001, B-002, B-006 | Resolved by the user, 2026-10-16: approved; replacement requires --force. |
+| OQ-6 | Should private Codex copies contain runtime contracts/resources with a consumer index, or maintainer documents with their full referenced-file closure? | B-006 | Resolved by the user, 2026-10-17: runtime contracts/resources with a consumer-facing index; exclude maintainer specifications. See decision 0002 and B-007. |
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | Section | Status | Reviewer | Note |
 | --- | --- | --- | --- |
+| Design: § 7 runtime bundle amendment | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
+| Diff: §§ 3, 7–12; installer, tests, decision and lesson | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
+| Surface: submitted amendment boundaries | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; no actionable findings, with R2/R3 applicability verified. |
 | 1-5 | 🟢 | spec-reviewer | Jessica approved, 2026-10-16; stakeholder approved scope and defaults the same day. |
 | 6-7 | 🟢 | spec-reviewer | Jessica approved the recorded design with no findings, 2026-10-16. |
 | 8-9 | 🟢 | spec-reviewer | Jessica approved, 2026-10-16; 23 tests pass on macOS with Python 3.11 and 3.13; Windows/Linux CI pending. |
@@ -484,6 +495,17 @@ Kyle approved the filesystem and subprocess surface pass without findings,
 2026-10-16. Full real-manager smoke verified identical consumer results for
 Skillfile 1.7.1 and Microsoft apm 0.33.0 on both hosts: 39 Claude files or 91
 Codex files, preserving consumer instructions. No Windows/Linux run is claimed.
+
+### Superseded amendment review history
+
+These pending records predate the current independent verdicts. They retain
+their original notes; current live-agent evidence limits remain in § 8.
+
+- B-007; DR-2 runtime selection and index amendment — 🟡 — spec-reviewer — User packaging decision recorded 2026-10-17; independent design/diff and surface review pending. Earlier approval remains historical for the prior selection and applicable unchanged scope.
+
+Current amendment verdicts apply to the identified reviewed snapshot. Earlier
+pending rows are retained for their earlier subjects; current review approval
+does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 
