@@ -6,7 +6,7 @@ type: overview
 
 # agents
 
-Nineteen role contracts, seven method skills and twelve commands for
+Nineteen role contracts, eight method skills and twelve commands for
 specification-driven development, written once, host-free, and projected into
 the files each AI host reads. The repository carries no product technology and
 no tool-specific knowledge: a consuming repository adds a companion skill that
@@ -37,6 +37,7 @@ when; [PERSONAS.md](agents/PERSONAS.md) lists each voice and optional signing na
 | [`sdd-conventions`](skills/sdd-conventions/SKILL.md)               | the method's shared facts: workflow, section ownership, id schemes, spec layout, the companion contract |
 | [`spec-and-traceability`](skills/spec-and-traceability/SKILL.md)   | the specification model, claims, records, blast radius            |
 | [`clarify-requirements`](skills/clarify-requirements/SKILL.md)     | when to ask versus decide, and writing the answer back            |
+| [`technology-decisions`](skills/technology-decisions/SKILL.md)   | stack, packages, architecture and UI agreed with the human before implementation |
 | [`deliver-change`](skills/deliver-change/SKILL.md)                 | work item to branch to specification to pull request              |
 | [`test-from-scenarios`](skills/test-from-scenarios/SKILL.md)       | a claim first, injected time, synthetic fixtures, every tier owed |
 | [`coding-conventions`](skills/coding-conventions/SKILL.md)         | orient, keep the design direct, say it once                       |

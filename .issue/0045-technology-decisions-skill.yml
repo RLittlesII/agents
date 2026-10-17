@@ -1,0 +1,40 @@
+id: "0045"
+type: chore
+title: Author human-led technology decision guidance
+status: in-progress
+value: 5
+cost: 2
+risk: 2
+parent: null
+children: []
+depends_on: []
+spikes: []
+spec: null
+claims: []
+created: "2026-10-17"
+updated: "2026-10-17"
+closed: null
+summary: |
+  Author a portable method skill for deciding project technology with the
+  human before dependent implementation. The user reported an external
+  incident in which a wanted library was excluded using invented requirements
+  and unsupported reasons, discovered only after code was written.
+  This is process documentation; projection and role-schema mechanisms stay
+  within their existing agreements.
+acceptance_criteria:
+  - "Cover stack, packages, architecture, UI, assumptions and unknowns."
+  - "Preserve explicit human choices and require evidence and human resolution before replacing them."
+  - "Record decisions and outstanding questions before dependent design, stubs, tests or implementation."
+  - "Route design and implementation through the skill; regenerate host outputs."
+  - "Validate skill structure, specifications, projection, projector tests and installer tests; obtain an independent diff verdict."
+decisions:
+  - "2026-10-17, user: add a technology decisions skill and require the design responsibility to discuss project technology with the human."
+  - "2026-10-17, scope: author method guidance and workflow links; no new command, executable approval mechanism or product technology selection. Preserve the existing checkout and unrelated changes."
+  - "2026-10-17, verification: 62 projector tests and 23 installer tests passed; strict specification check reported zero errors and warnings; projection --check reported all 80 outputs current; git diff --check passed. Repository projection validates skill structure and the one-way boundary."
+  - "2026-10-17, tooling: the optional skill-creator quick validator could not run because PyYAML is absent from both available Python runtimes; repository schema validation completed through the projector."
+  - "2026-10-17, independent diff pass: /root/technology_skill_review approved the new skill, item, role changes, command and workflow links, indexes and corresponding generated outputs with no findings. Initial project recording and byte-identical host copies verified; unrelated dirty changes excluded. No surface pass trigger."
+  - "2026-10-17, delivery: the user authorized committing this scope and opening a PR. Copied only the reviewed technology-decision files onto codex/technology-decisions from origin/main c6eb36c; the original dirty checkout is untouched."
+  - "2026-10-17, delivery gates: reran strict specifications (seven Features), all 80 projection outputs, 62 projector tests and 23 installer tests on main c6eb36c. Temporary tooling resolved the optional validator dependency and the skill is valid. Repository coverage gate passed with N/A: zero changed executable production lines. Bounded independent delivery review by /root/technology_skill_review approved all 25 paths with no findings."
+out_of_scope:
+  - "Choosing a stack or library for a consuming project; no such project or package was identified."
+  - "Changing projector behavior, role ownership, or existing uncommitted work."

@@ -74,6 +74,10 @@ ownership.
   [`spec-and-traceability`](../skills/spec-and-traceability/SKILL.md),
   [`clarify-requirements`](../skills/clarify-requirements/SKILL.md) and
   [`sdd-conventions`](../skills/sdd-conventions/SKILL.md).
+- [`technology-decisions`](../skills/technology-decisions/SKILL.md) before
+  selecting or changing project technology: discuss the affected stack,
+  packages, architecture and UI choices with the human and record their
+  authorization, assumptions and unknowns before dependent work.
 - The technology skills the project's companion names for the surface being
   designed.
 
@@ -156,8 +160,8 @@ advice does not move design ownership.
 - **ADRs for durable choices**, recording alternatives, costs and rejected
   options. Accepted ADRs are immutable; a changed rule needs a superseding ADR.
   A process rule is a convention in a skill and an interface detail is a claim;
-  neither is an ADR. A technology choice counts the incumbent as a candidate,
-  and admits no candidate without a decision driver it serves.
+  neither is an ADR. Technology evaluation and human authorization follow
+  [`technology-decisions`](../skills/technology-decisions/SKILL.md).
 - **Spike findings** in the existing work item or its tracked design record:
   the question, scope and time box, method, evidence, conclusion and remaining
   uncertainty. State whether the mechanism is feasible and what decision follows;

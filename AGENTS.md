@@ -26,6 +26,7 @@ Read [sdd-conventions](skills/sdd-conventions/SKILL.md) with the skill for the t
 | Write code or documentation; author a skill       | [coding-conventions](skills/coding-conventions/SKILL.md)           |
 | Write or review tests                             | [test-from-scenarios](skills/test-from-scenarios/SKILL.md)         |
 | Resolve requirement ambiguity                     | [clarify-requirements](skills/clarify-requirements/SKILL.md)       |
+| Decide or change project technology                | [technology-decisions](skills/technology-decisions/SKILL.md)     |
 | Author or review specifications and traceability  | [spec-and-traceability](skills/spec-and-traceability/SKILL.md)     |
 
 This repository has no companion skill; where a skill says companion, read

@@ -71,6 +71,8 @@ In a design:
 - A failure path the design does not draw, or a guarantee stated without the
   mechanism that provides it.
 - A diagram that disagrees with its prose.
+- Technology choices without the human authorization or supporting evidence
+  required by [`technology-decisions`](../skills/technology-decisions/SKILL.md).
 
 In a diff:
 
