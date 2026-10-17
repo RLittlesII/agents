@@ -35,6 +35,12 @@ identifies the source checkout, so you can invoke it from any working directory.
 Codex's private `.sdd/` copies supply the authoritative source contracts its
 agents reference. The installer adjusts that source path in the installed TOML;
 role instructions, model settings and the committed checkout remain unchanged.
+The private role index is generated for consumers and links the selected runtime
+contracts and method guidance. Private method copies omit `.spec` directories
+at every depth while preserving other runtime resources, including nested files.
+Producer documentation is not copied as the consumer index. On upgrades, review
+and explicitly remove old private specifications left by earlier versions; the
+installer's non-pruning policy also applies to those files.
 
 Both managers install skills in a temporary project. apm receives each skill
 as a separate local package to preserve links between skills. The installer verifies
@@ -51,7 +57,11 @@ before any consumer file is changed. Review those differences, then add
 `--force` to replace only the installer’s planned files. This option is never
 passed to apm and does not bypass its security scan. Unrelated files, host
 configuration, `AGENTS.md` and `CLAUDE.md` are preserved. Old files from an
-earlier version are not pruned.
+earlier version are not pruned. After an upgrade that retires roles or commands,
+review the old installation against the selected version and remove obsolete
+installer files explicitly. A leftover native role or command can remain
+discoverable; `--force` replaces planned files but does not remove those retired
+entries. Preserve consumer-owned files when reconciling the installation.
 
 Linked source, staged or destination paths beneath the selected roots are
 rejected, including Windows junctions. Manager or validation failures leave
