@@ -36,8 +36,10 @@ Codex's private `.sdd/` copies supply the authoritative source contracts its
 agents reference. The installer adjusts that source path in the installed TOML;
 role instructions, model settings and the committed checkout remain unchanged.
 The private role index is generated for consumers and links the selected runtime
-contracts and method guidance. Private method copies omit `.spec` directories
-at every depth while preserving other runtime resources, including nested files.
+contracts and method guidance. Native and private skill copies omit `.issue`
+tracker entries at every depth. Private method copies also omit `.spec`
+metadata; other runtime resources, including nested and hidden files, retain
+their bytes.
 Producer documentation is not copied as the consumer index. On upgrades, review
 and explicitly remove old private specifications left by earlier versions; the
 installer's non-pruning policy also applies to those files.
