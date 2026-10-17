@@ -1,0 +1,80 @@
+id: "0046"
+type: chore
+title: Correct contract-audit regressions and clarify handoffs
+status: in-progress
+value: 4
+cost: 2
+risk: 1
+parent: "0001"
+children: []
+depends_on: []
+spikes: []
+spec: null
+claims: []
+created: "2026-10-17"
+updated: "2026-10-17"
+closed: null
+summary: |
+  The user requested tests following the role, skill and command audit.
+  Add bounded regression evidence for existing ownership enforcement under
+  0001-F1 B-016, including the tool-owned template tracked by 0007.
+  Broader workflow-policy findings remain review concerns until their
+  expected behavior is agreed. The user subsequently authorized fixing the
+  three observed fence-handling failures before discussing workflow policy.
+acceptance_criteria:
+  - "Reproduce the existing template-owner mitigation without editing tool-owned templates."
+  - "Exercise fenced examples and real ownership violations through projection planning."
+  - "Fix the three observed fence-handling failures without weakening assertions."
+  - "Clarify the already-decided specification-first bootstrap; bring unresolved handoff choices to the user."
+  - "Apply the user's refactor-evidence choice consistently to the implementation lead, affected specialists and test writer."
+  - "Keep PR corrections with their existing artifact owners."
+  - "Make one identified Feature coordination item the source for mirrored delivery status, preserving independent child states."
+  - "Allow approved supporting details to authorize assertions traceable to an existing claim, preserving agreement authority for new user-visible behavior."
+  - "Allow same-owner continuation and explicit transfers without timeout-based ownership inference."
+  - "Make IDs permanent on merge or citation outside the authoring branch; update every local reference for unpublished ID corrections."
+  - "Review substantive changed scope against its new revision; retain applicable approval for unchanged scope with its evidence."
+decisions:
+  - "2026-10-17: Verification only; retain failing regressions for existing B-016 rather than choose new workflow policy."
+  - "2026-10-17: Added five registered tests; 67 tests ran, 64 passed and three B-016 fence-handling regressions failed. Both design/sign-off ownership guards passed."
+  - "2026-10-17: Projection check remains current at 80 outputs; strict specification validation reports zero errors and warnings. No production or tool-owned template files changed."
+  - "2026-10-17: User accepted the observed failure scope and requested the fix. Root cause: validateStamps in 6fb217db toggles on any triple-backtick prefix, ignores tilde fences and misreads shorter backticks inside longer fences."
+  - "2026-10-17: Reuse the existing Markdig dependency to exclude parsed fenced-code spans; keep ownership comparison and diagnostics unchanged under 0001-F1 B-016."
+  - "2026-10-17: All 67 projector tests pass. The shared coverage gate against main passes 9/9 changed executable production lines (100%; required 80%)."
+  - "2026-10-17: Scope delivery's item-taking guard to tracked delivery, preserving the existing specification-before-items agreement in spec-and-traceability. No intake-item requirement is introduced."
+  - "2026-10-17: User selected preserved constraints and adequate tests, with characterization for gaps. Recorded in 0001-F2 decision 0002 and B-042; no new role or delivery state."
+  - "2026-10-17: PR response coordination remains with the implementation lead; corrections return to their artifact owners under existing B-012/B-013. Domain design advice goes to architect; implementation code goes to implementer."
+  - "2026-10-17: Restore existing conventions for present substitutions, retained unattributed bug reports, unmeasured pre-code costs, sequential dependencies and approval reuse. These clarify existing authority; independent instruction review remains pending."
+  - "2026-10-17: Retain the existing B-041 traceability evidence; remove the duplicate added during this audit. B-042 remains Partial because its local instruction walkthrough is not independent or live-agent evidence."
+  - "2026-10-17: User selected one Feature coordination item as the mirrored status source. Recorded in 0001-F2 decision 0003 and B-043; the companion identifies the source and source-only synchronization operation."
+  - "2026-10-17: Existing local records contain no type: feature coordination items. Missing sources remain explicit reconciliation gaps; this change does not guess a source or migrate existing tasks."
+  - "2026-10-17: Reconciled instruction checks pass: 67 projector tests, 23 installer tests, 80 current outputs, strict specification checks and whitespace checks. New role behavior remains partially verified by authored static walkthroughs; independent/live-agent evaluation is pending."
+  - "2026-10-17: 0001-F2 OQ-2 records the pending user choice about assertion authority for approved design, constraints and signal declarations. No change to those entry requirements is made before the answer."
+  - "2026-10-17: User allowed approved constraints, design and signal declarations as assertion authority when traceable to an existing claim. Recorded decision 0004 and B-044; resolved OQ-2. Test evidence cites source and approval; draft details and new behavior remain outside that authority."
+  - "2026-10-17: Assertion-authority change passes 67 projector tests, 23 installer tests and strict specification validation; generated outputs regenerated. B-044 remains Partial authored static evidence, with independent/live evaluation pending."
+  - "2026-10-17: Cleanup now limits documentation corrections to their owner and tracks edits beyond the convened owners' boundaries for existing artifact owners. Delivery no longer permits an assumption record to bypass a blocking material question; the existing clarification rule governs."
+  - "2026-10-17: OQ-3 records the pending ownership question for resuming or transferring taken work; no timeout or automatic takeover rule is introduced before the answer."
+  - "2026-10-17: After cleanup and clarification routing corrections, all 80 outputs are regenerated; strict specification validation and whitespace checks pass. Taken-work ownership remains pending OQ-3."
+  - "2026-10-17: User selected same-owner continuation and explicit release or authorized reassignment for another owner, never timeout alone. Record decision 0005/B-045 and resolve OQ-3; ownership events use the existing decisions log."
+  - "2026-10-17: Ownership claim reconciled from the user's active assignment and uninterrupted chat history: agent session 01a14b53-64a3-7f92-bfb0-531bbe8620b3, branch codex/contract-audit-tests, checkout /Users/rlittlesii/source/rlittlesii/agents. Completed evidence is above; remaining work is contract-audit handoff/ambiguity corrections and their checks. No release or transfer is recorded."
+  - "2026-10-17: User selected publication-based ID permanence: merged or externally cited IDs cannot change; unpublished new IDs may change with every local reference updated. Record decision 0006/B-046 and resolved OQ-4; no existing IDs renumbered."
+  - "2026-10-17: Ownership and ID amendments pass 67 projector tests, 23 installer tests and strict specification checks. B-045/B-046 remain authored static evidence with independent/live evaluation pending."
+  - "2026-10-17: Connect existing review responsibilities: spec convenes independent agreement review; design includes the sign-off owner; recorded applicable design approval precedes stubs and dependent tests, while testability feedback may precede it. Read-only reviewers receive identified diff/history evidence from the requester and return missing inputs, without expanding host tools."
+  - "2026-10-17: OQ-5 records the pending policy for substantive edits and prior approval applicability; no supersession or automatic reuse policy is inferred before the answer."
+  - "2026-10-17: Final ownership/ID/review-handoff verification: 67 projector tests, 23 installer tests, 80 current generated outputs, strict specification validation and whitespace checks pass. Approval revision applicability remains pending OQ-5; independent/live-agent evaluation remains unverified."
+  - "2026-10-17: User selected new-revision review for substantively changed scope, carrying forward applicable approval for unchanged scope. Record decision 0007/B-047 and resolve OQ-5; align sign-off recording, current-scope maturity, stage gates and assertion authority without changing historical verdicts or claiming new independent approval."
+  - "2026-10-17: Complete companion routing for existing working-record, scratch and release references. README names pre-item notes and ignored experiment locations, plus the absence of established release automation; no publish command is invented. Preserve the refactor characterization exception to the changed-behavior claim gate."
+  - "2026-10-17: Installer non-pruning remains its documented safety policy; clarify that retired native entries may stay discoverable and need explicit reconciliation. Private-bundle maintainer-document closure is a separate pending user decision."
+  - "2026-10-17: Approval-applicability verification passes: 67 projector tests, 23 installer tests, 80 current outputs, strict specification checks and whitespace checks. B-047 remains authored static evidence; independent/live-agent evaluation is pending. Installation OQ-6 awaits the runtime-versus-maintainer packaging choice; installer behavior is unchanged."
+  - "2026-10-17: User selected runtime contracts/resources with a consumer-facing index, excluding maintainer specifications. Record install/0038-F1 decision 0002 and B-007; resolve OQ-6. Reproduce 23 private .spec files and 12 dangling relative references in the old real-checkout plan."
+  - "2026-10-17: This bounded correction remains in the user's active cross-cutting audit assignment. Existing installer item 0039 still says in-progress despite its code being present in trunk; do not silently reclaim it, close it or open a competing Feature delivery item. Tracker reconciliation remains separate."
+  - "2026-10-17: Four new installer cases are red against prior packaging (five reports including both manager subcases); after bounded selection/index changes all 27 installer tests pass. The real private bundle has zero .spec paths and zero unresolved file links; dry-plan counts are Claude 39 and Codex 68. Source/runtime bytes, native projections and publication safeguards remain intact."
+  - "2026-10-17: Concurrent standalone and coverage F# suites collided because scripts/project.tests.fsx deletes the shared projection-tests temp root at completion (ab0b33f9). The first coverage attempt failed F2_B039 after the standalone suite completed. Rerun serially to verify, then isolate test cleanup by run rather than delete another run's fixtures."
+  - "2026-10-17: Serial coverage confirms the packaging fix: 37/37 changed executable production lines (100%; required 80%). Isolate F# suite scratch under a unique per-run directory; overlapping standalone/coverage runs and a foreign-fixture sentinel verify cleanup ownership."
+  - "2026-10-17: Final overlapping-run verification passes: standalone and covered F# suites each pass 67 tests; installer suite passes 27; coverage passes 37/37 changed executable production lines; the foreign-fixture sentinel survives both cleanups. Projection check reports 80 current outputs and strict specification validation reports no errors/warnings."
+  - "2026-10-17: User explicitly authorized two independent reviewers. /root/contract_design_diff_review approved scoped designs and all diff amendments at working snapshot 36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b; /root/contract_surface_review approved the surface with no actionable findings. Review was retrospective; no live-agent behavior is claimed."
+  - "2026-10-17: Resolve review P2s by linking canonical withdrawn-claim handling, limiting scenario cross-checks to active claims, and adding current-revision pending approval coverage without overwriting historical verdicts. Regenerated copies match; no production executable source changed."
+  - "2026-10-17: Re-review verifies all 97 working-file hashes and the bounded R2/R3 deltas. Affected checks pass: 67 projector tests, 27 installer tests, 80 outputs current, strict specifications and whitespace clean; prior 37/37 changed-line coverage remains applicable. Record returned verdicts in owned sign-off sections, retaining prior subjects and baseline scope."
+  - "2026-10-17: Recording current approval exposed SPEC061: the checker treats every approval-table row as current. Preserve superseded pending records in a labeled history block and keep applicable coverage in the active table; align the canonical recording guidance without editing checker schemas or historical verdict text."
+  - "2026-10-17: Final independent R4 review at 3f9a49d4441601fdf1e37b5dee1d196b857b9d157fe9f325aa886481476ed66a: /root/contract_design_diff_review approves design and diff with no findings; /root/contract_surface_review carries surface approval forward with no findings. All 97 hashes and the nine-file recording delta verified; both P2 retirement/history findings resolved. Current amendment reviews are complete; live-agent/platform evidence remains unclaimed and external template/install/tracker reconciliation remains separate."
+out_of_scope:
+  - "Fixing upstream templates or settling unresolved workflow policy without the user's decision."
