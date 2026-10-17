@@ -20,7 +20,7 @@ depends_on: []
 blocks: ["F3", "F4"]
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-16"
+updated: "2026-10-17"
 github_issue: null
 synced_at: null
 ---
@@ -38,7 +38,7 @@ accountability and turn specialties into unnecessary workflow stops. — Ruth
 
 ## 2. User Needs
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | #   | Persona              | Need                                                           | Pain Point Today                                            |
 | --- | -------------------- | -------------------------------------------------------------- | ----------------------------------------------------------- |
@@ -112,9 +112,9 @@ The declaration has the ordered columns `Boundary | Signal | Level | Template | 
 
 Where no relevant signal is required, the subsection states `None.` with a
 reason. Each emitted boundary signal is declared and asserted in a test;
-`observability` hands declarations to `test-writer` for those assertions.
-Signal declarations authorize neither test code nor production code,
-parent design edits, performance findings or review verdicts. — Ruth
+`observability` hands declarations, existing claim links and recorded approvals
+to `test-writer` under B-044. This gives `observability` no authority to write
+tests, production code, parent design, performance findings or review verdicts. — Ruth
 
 ### Retired roles and retained responsibilities
 
@@ -148,9 +148,27 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | A-1 | The specification template's `##` headings are the authority on which sections exist. |
 | A-2 | A consuming repository provides a companion skill that names its paths and commands.  |
 
+### Behavior-preserving refactors
+
+The implementation lead and affected implementation specialists use the
+refactor evidence defined in `deliver-change` § Behavior-preserving refactors.
+The test writer supplies characterization tests for identified gaps. Artifact
+ownership, existing approvals and independent review remain in force;
+[decision 0002](decisions/0002-refactors-use-existing-contract-evidence.md)
+records the user's choice.
+
+### Feature status synchronization
+
+The work-item owner synchronizes a Feature's `status` from the single Feature
+coordination record identified by the companion, following `sdd-conventions`
+§ The spec / work-item split. Children retain independent delivery states;
+numbered specification sections and `spec_status` retain their existing owners.
+[Decision 0003](decisions/0003-feature-status-has-one-coordination-source.md)
+records the user's source-selection choice.
+
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID    | Claim                                                                                                                                                                     | Source                                                                         | Status |
 | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------ |
@@ -195,6 +213,12 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | B-039 | Given migration from `metric-nerd` to `observability`, this Feature replaces the active role identity within the nineteen-role roster while preserving historical identities and evidence. | User amendment: rename the actual role, 2026-10-16; B-035 | Active |
 | B-040 | Given a role declaring `persona`, it requires a nonblank single-line `voice` and permits an omitted `name`; a supplied name is nonblank, single-line and unique across roles, while role identifiers and machine-read stamps retain the role name. | Owner request: optional persona names | Active |
 | B-041 | Given a source role, it declares name, nonblank description, numeric version and owned_spec_sections; optional schema metadata and host fields are accepted, and rendered settings remain overlay-owned. | Owner examples; ADR-0009 | Active |
+| B-042 | Given a behavior-preserving refactor, this Feature assigns implementation against preserved constraints and adequate passing tests, with characterization tests added for gaps before production changes instead of requiring a new claim or failing test. | User decision 0002, 2026-10-17 | Active |
+| B-043 | Given a Feature specification's mirrored delivery status, this Feature assigns its synchronization to the work-item owner using only the explicitly identified Feature coordination item as the source. | User decision 0003, 2026-10-17 | Active |
+| B-044 | Given an existing claim, test assertions may use approved constraints, technical design and signal declarations traceable to it, citing their source and approval without introducing new user-visible behavior. | User decision 0004, 2026-10-17 | Active |
+| B-045 | Given interrupted taken work, its recorded owner may resume while another owner requires an explicit release or authorized reassignment, with no transfer inferred from elapsed time. | User decision 0005, 2026-10-17 | Active |
+| B-046 | Given a newly allocated ID, it becomes permanent on merge or citation outside its authoring branch, and only an unpublished ID may change with all local references updated. | User decision 0006, 2026-10-17 | Active |
+| B-047 | Given a substantive agreement or design edit, approval of the changed scope requires review against its new revision while applicable approval for unchanged scope carries forward with its evidence. | User decision 0007, 2026-10-17 | Active |
 
 ## 4. Constraints
 
@@ -987,10 +1011,15 @@ limitation continue to apply. — Kevin
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | Date | Trigger | Delta |
 | --- | --- | --- |
+| 2026-10-17 | User required review of substantively changed scope at its new revision | Add B-047 and [decision 0007](decisions/0007-approval-follows-the-reviewed-revision.md); resolve OQ-5 while retaining applicable unchanged-scope evidence. |
+| 2026-10-17 | User selected explicit ownership continuation and publication-based ID permanence | Add B-045/B-046 and decisions [0005](decisions/0005-taken-work-retains-explicit-ownership.md)/[0006](decisions/0006-published-identifiers-are-permanent.md); resolve OQ-3 and the ID collision exception without migrating old records. |
+| 2026-10-17 | User allowed approved supporting details traceable to an existing claim | Add B-044 and [decision 0004](decisions/0004-test-details-trace-to-approved-claims.md); resolve OQ-2 while preserving agreement and artifact ownership. |
+| 2026-10-17 | User selected one Feature coordination item as the mirrored status source | Add B-043 and [decision 0003](decisions/0003-feature-status-has-one-coordination-source.md); preserve child state, specification maturity and numbered-section ownership. |
+| 2026-10-17 | User selected preserved constraints and adequate tests for behavior-preserving refactors | Add B-042 and [decision 0002](decisions/0002-refactors-use-existing-contract-evidence.md); retain failing tests for behavior changes and existing artifact boundaries. Route PR revisions to their existing owners under B-012–B-013. |
 | 2026-10-16 | User requested simpler roles and handoffs | Add B-010–B-036 and § 2 grouping/routing; retire six standalone roles by folding their duties into retained roles or modes; include `database`, reversing § 5 row 5's earlier exclusion; record the choice and rejected alternatives in [decision 0001](decisions/0001-lead-and-specialist-collaboration.md). — Ruth |
 | 2026-10-16 | User requested the next part after committing the agreement | Record DR-1–DR-5, source/projection testability and independent design reviews; preserve baseline evidence and pending amendment coverage. — Ruth |
 | 2026-10-16 | Concurrent main commit `5924065` changed the active roster | Reconcile the design with three completed folds and the combined measurement role; preserve the agreed nineteen-role target and distinct observability capability; append provenance to decision 0001. — Ruth |
@@ -1003,18 +1032,28 @@ add B-041 and adopt ADR-0009; preserve prior baseline evidence and roster bodies
 
 ## 11. Open Questions
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID   | Question                                                                                   | Blocks | Resolution |
 | ---- | ------------------------------------------------------------------------------------------ | ------ | ---------- |
 | OQ-1 | Should the contract require a `## Report` heading for reviewing roles, as `spec-reviewer` and `architect` already carry? | B-003  | Resolved 2026-10-14: yes. A body with `## Look for` also carries `## Report`; claimed as B-005. |
+| OQ-2 | May approved constraints, design and signal declarations authorize test assertions traceable to an existing claim, or must each assertion appear in the claim text? | B-038 | Resolved 2026-10-17: approved supporting details may authorize assertions traceable to an existing claim; new user-visible behavior requires a claim amendment. See B-044 and decision 0004. |
+| OQ-3 | How may an interrupted taken item resume or transfer without allowing duplicate ownership? | B-012 | Resolved 2026-10-17: recorded owner may resume; another owner needs explicit release or authorized reassignment, never timeout alone. See B-045 and decision 0005. |
+| OQ-4 | When does a newly allocated ID become permanent, given the existing collision exception? | B-046 | Resolved 2026-10-17: on merge or citation outside its authoring branch; unpublished IDs may change with all local references updated. See decision 0006. |
+| OQ-5 | Does a substantive edit require new approval for its changed scope, or does earlier approval apply until explicitly revoked? | B-014 | Resolved 2026-10-17: review changed scope against its new revision; carry applicable approval forward for unchanged scope. See B-047 and decision 0007. |
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | Section | Status | Reviewer      | Note                                                            |
 | ------- | ------ | ------------- | --------------------------------------------------------------- |
+| Design: current approval-table/history layout | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved R4 subject `3f9a49d4441601fdf1e37b5dee1d196b857b9d157fe9f325aa886481476ed66a`; current coverage and historical evidence remain distinct. |
+| Diff: verdict recording and bounded history clarification | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved R4 subject `3f9a49d4441601fdf1e37b5dee1d196b857b9d157fe9f325aa886481476ed66a` with no findings; verdict scopes and limitations preserved. |
+| Surface: R4 record-only delta applicability | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved applicability to `3f9a49d4441601fdf1e37b5dee1d196b857b9d157fe9f325aa886481476ed66a`; no new findings or authority changes. |
+| Design: § 7 policy/handoff amendments | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
+| Diff: §§ 2–3, 7–12; contracts, skills, decisions and scenarios | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
+| Surface: submitted amendment boundaries | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; no actionable findings, with R2/R3 applicability verified. |
 | 1-12    | 🟡     | spec-reviewer | Baseline draft. Preserve B-004 review evidence: grep at scaffolding and second-wave roster (2026-10-14) found no product technology in role bodies. |
 | 1-5, 7-10, 12, scenarios, decision 0001 | 🟢 | spec-reviewer | Agreement-only amendment reviewed 2026-10-16; § 7 scopes baseline readiness, §§ 8–9 record pending coverage; implementation remains pending. |
 | 6-7 | 🟢 | critic | B-010–B-036 design critique, 2026-10-16; independent instance approved after B-030 recovery-path correction and re-review. |
@@ -1029,6 +1068,22 @@ add B-041 and adopt ADR-0009; preserve prior baseline evidence and roster bodies
 
 | Optional-name input and projection boundary | 🟢 | adversary | Independent `/root/persona_surface_review`, 2026-10-16: no security regressions in the rebase delta; validation, escaped rendering and role permissions preserved. |
 | B-041; amended agreement, design and coverage | 🟢 | spec-reviewer | Independent `/root/final_schema_review`, 2026-10-16: approved after literal-description round-trip fix and ADR-0009 reconciliation; stale description row corrected. 62 projector and 23 installer tests pass; strict checks clean; 78 outputs current. |
+
+### Superseded amendment review history
+
+These pending records predate the current independent verdicts. They retain
+their original notes; current live-agent evidence limits remain in § 8.
+
+- B-047; approval applicability — 🟡 — spec-reviewer — User policy decision recorded 2026-10-17; independent review and live-agent evaluation pending. Earlier evidence retained for its reviewed subject.
+- Review completion and read-only inputs; B-012/B-013/B-014/B-020 — 🟡 — spec-reviewer — Existing responsibilities reconciled 2026-10-17; independent review and live-agent evaluation pending.
+- B-045/B-046; ownership and ID publication — 🟡 — spec-reviewer — User decisions recorded 2026-10-17; independent review and live-agent evaluation pending. Prior approval scopes retained.
+- B-044; assertion authority amendment — 🟡 — spec-reviewer — User policy decision recorded 2026-10-17; independent review and live-agent evaluation pending. Earlier approval scopes remain unchanged.
+- B-043; Feature status synchronization amendment — 🟡 — spec-reviewer — User source-selection decision recorded 2026-10-17; independent review and behavioral evaluation pending. Prior approval evidence retains its original scope.
+- B-042; refactor and contract-audit handoff corrections — 🟡 — spec-reviewer — User policy decision recorded 2026-10-17; independent design/diff review pending for the refactor, PR/domain routing, substitution, unresolved-report, measurement, dependency and approval-reuse corrections. Earlier evidence remains unchanged for its original scope.
+
+Current amendment verdicts apply to the identified reviewed snapshot. Earlier
+pending rows are retained for their earlier subjects; current review approval
+does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 

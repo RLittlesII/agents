@@ -526,6 +526,112 @@ Feature: Role contract
     Then both roles load with their voices
     And the unnamed personas do not conflict
 
+  @B-043
+  Scenario: Feature status comes from its coordination item
+    Given the companion identifies one Feature coordination item marked in-progress
+    And its child items have different delivery states
+    When the work-item owner synchronizes the Feature specification
+    Then the specification's mirrored status is in-progress
+    And the child states and specification maturity are unchanged
+
+  @B-043
+  Scenario Outline: An unresolved coordination source is not guessed
+    Given the companion's coordination identity matches <matches>
+    When the work-item owner checks the Feature's mirror source
+    Then the missing or ambiguous source is reported
+    And the mirrored status is left unchanged
+    And no child is substituted as the source
+
+    Examples:
+      | matches         |
+      | no item         |
+      | more than one item |
+
+  @B-044
+  Scenario Outline: Approved supporting details authorize assertions under an existing claim
+    Given an existing claim and an approved <source> traceable to it
+    When test-writer writes an assertion using that supporting detail
+    Then the test evidence cites the claim, source and recorded approval
+    And spec-reviewer applies the same assertion authority
+
+    Examples:
+      | source             |
+      | constraint         |
+      | technical design   |
+      | signal declaration |
+
+  @B-044
+  Scenario Outline: Missing assertion authority returns to its owner
+    Given a supporting detail that <gap>
+    When test-writer checks assertion authority
+    Then the assertion does not depend on that detail
+    And the missing authority returns to the relevant section owner
+
+    Examples:
+      | gap                       |
+      | remains a draft           |
+      | has no recorded approval  |
+      | has no existing claim link |
+
+  @B-044
+  Scenario: Supporting details cannot introduce new user-visible behavior
+    Given a design detail introduces user-visible behavior absent from the agreement
+    When test-writer checks assertion authority
+    Then spec-author must amend the agreement before that behavior is asserted
+    And a readiness verdict alone does not authorize it
+
+  @B-043
+  Scenario: Queue recommendation does not synchronize Feature status
+    Given a Feature's mirror differs from its coordination item
+    And its child delivery states can be verified
+    When the next work is recommended
+    Then the disagreement is reported without changing records
+    And the verified child states remain available for the recommendation
+
+  @B-043
+  Scenario: A coordination record does not occupy its children's delivery lane
+    Given a Feature coordination item is marked in-progress
+    And none of its delivery children is taken
+    And one child meets its existing start requirements
+    When the next work is recommended
+    Then the coordination record does not prevent that child being offered
+    And the one-delivery-child limit still applies
+
+  @B-042
+  Scenario: A refactor reuses adequate passing tests
+    Given a tracked refactor preserves the existing contract and cites its constraints
+    And the applicable design and approvals remain valid
+    And existing tests adequately cover the affected behavior and pass before changes
+    When the implementation lead assigns the refactor
+    Then implementation can proceed without a new claim or deliberately failing test
+    And every contribution stays within its artifact ownership
+    And the applicable tests and regression checks run again before handoff
+
+  @B-042
+  Scenario: A refactor fills a characterization gap before production changes
+    Given a tracked refactor preserves the existing contract and cites its constraints
+    And the existing tests leave affected behavior unverified
+    When the implementation lead assesses the entry evidence
+    Then test-writer adds characterization for the existing documented behavior
+    And the tests must pass before production changes begin
+    And implementation does not write or weaken those tests
+
+  @B-042
+  Scenario: A behavior change cannot use the refactor exception
+    Given an item is presented as a refactor
+    But its proposed change alters behavior or an externally consumed contract
+    When the implementation lead checks its scope
+    Then the change returns to the normal agreement and design owners
+    And the changed behavior requires its normal failing-test evidence
+
+  @B-042
+  Scenario: A failing baseline is not refactor entry evidence
+    Given a tracked refactor cites the constraints it preserves
+    But its applicable baseline tests fail before production changes
+    When the implementation lead assesses the entry evidence
+    Then the failure returns to investigation
+    And the refactor exception does not authorize a repair
+
   @B-040
   Scenario Outline: A supplied persona name must be a nonblank single line
     Given a role declaring a persona voice and a name that is <invalid>
@@ -555,3 +661,91 @@ Feature: Role contract
       | multiline       |
       | carriage return |
       | a list          |
+
+  @B-045
+  Scenario: The recorded owner resumes interrupted work
+    Given owner A has a taken item and its ownership record remains current
+    When A resumes after an interruption
+    Then A verifies scope, stage gates and the existing checkout before editing
+    And the continuation does not claim another delivery lane
+
+  @B-045
+  Scenario: Inactivity does not authorize another owner
+    Given an item is taken by A and has no recorded release or authorized reassignment
+    When B observes that A has been inactive
+    Then B cannot claim or edit the item
+    And missing or conflicting ownership is reported instead of inferred
+
+  @B-045
+  Scenario Outline: Another owner obtains explicit ownership evidence
+    Given A has a taken item with <event>
+    When B continues the work
+    Then B records the new ownership before editing
+    And the handoff identifies completed work, remaining work and checkout evidence
+    And the event does not satisfy delivery prerequisites
+
+    Examples:
+      | event                                |
+      | an explicit release by A             |
+      | an authorized reassignment naming B  |
+
+  @B-046
+  Scenario: A colliding unpublished ID is corrected with its references
+    Given a newly allocated ID has never merged or been cited outside its authoring branch
+    And a rebase reveals an ID collision
+    When its author corrects the unpublished ID
+    Then every local reference is updated before publication
+    And existing permanent IDs remain unchanged
+
+  @B-046
+  Scenario Outline: Publication makes an ID permanent
+    Given a newly allocated ID that <publication>
+    When a later change encounters an ID collision
+    Then that ID is not renumbered
+    And a conflict between permanent IDs returns for an explicit reconciliation decision
+
+    Examples:
+      | publication                             |
+      | has merged                              |
+      | is cited by a shared review             |
+      | is cited in a work item outside its branch |
+
+  @B-047
+  Scenario: A substantive edit renews review only for affected scope
+    Given revision R1 has approval for scopes A and B
+    And revision R2 substantively changes A without affecting B or its dependencies
+    When approval applicability is checked
+    Then A requires review against R2
+    And B retains its applicable R1 approval evidence
+    And R1 approval does not authorize the changed A
+
+  @B-047
+  Scenario: Changed agreement dependencies affect design approval
+    Given a design verdict relies on an approved agreement
+    And a substantive agreement edit changes what that verdict established
+    When dependent design approval is checked
+    Then the affected design scope requires review against the new subject
+    And textually unchanged design alone does not prove approval applicability
+
+  @B-047
+  Scenario: A bounded new verdict preserves unchanged baseline evidence
+    Given R1 approval remains applicable to unchanged scope B
+    And an independent review returns a verdict for changed scope A at R2
+    When the sign-off owner records the verdict
+    Then the review unit, scope and identified subject revision accompany it
+    And B retains its baseline evidence
+    And earlier verdicts remain historical evidence for their reviewed subjects
+
+  @B-047
+  Scenario Outline: An approval gap is not resolved by selecting an old favorable row
+    Given the current changed scope has <gap>
+    When approval applicability is checked
+    Then the affected gate remains unmet pending authoritative evidence
+    And independent unchanged scope is not withheld for that gap alone
+
+    Examples:
+      | gap                                      |
+      | no review verdict                        |
+      | a Blocked verdict                        |
+      | conflicting applicable verdicts          |
+      | no identifiable reviewed subject         |
