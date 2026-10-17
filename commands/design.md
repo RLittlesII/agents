@@ -2,7 +2,7 @@
 name: design
 description: Design the technical solution for an agreed Feature, then have the design critiqued before any test or code is written against it.
 roles: [architect, domain, database, observability, test-writer, benchmarker, spec-reviewer]
-skills: [spec-and-traceability, coding-conventions, test-from-scenarios]
+skills: [spec-and-traceability, coding-conventions, test-from-scenarios, technology-decisions]
 argument-hint: "<Feature specification path>"
 ---
 

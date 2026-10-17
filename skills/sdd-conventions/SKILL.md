@@ -17,6 +17,7 @@ repository's own companion skill, `<project>-conventions`, whose contract is
 | Delivery  | [`deliver-change`](../deliver-change/SKILL.md)                 |
 | Testing   | [`test-from-scenarios`](../test-from-scenarios/SKILL.md)       |
 | Questions | [`clarify-requirements`](../clarify-requirements/SKILL.md)     |
+| Technology | [`technology-decisions`](../technology-decisions/SKILL.md)  |
 | Specs     | [`spec-and-traceability`](../spec-and-traceability/SKILL.md)   |
 | Next work | [`next`](../next/SKILL.md)                                     |
 

@@ -1,7 +1,7 @@
 ---
 name: spec-reviewer
 description: Judge a design before it is built, and a diff against the specification claims it cites and the accepted ADRs, and record the verdict. Use after a technical design is written and before tests start, and again before opening a pull request and for revisions; reports findings, never rewrites or redesigns.
-version: 0.10.1
+version: 0.11.0
 owned_spec_sections: []
 reviews: [design, diff]
 persona:
@@ -70,6 +70,8 @@ In a design:
 - A failure path the design does not draw, or a guarantee stated without the
   mechanism that provides it.
 - A diagram that disagrees with its prose.
+- Technology choices without the human authorization or supporting evidence
+  required by [`technology-decisions`](../skills/technology-decisions/SKILL.md).
 
 In a diff:
 

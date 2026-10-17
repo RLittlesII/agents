@@ -57,6 +57,10 @@ fails the build rather than a review.
 
 ## Dependencies
 
+Project technology selection and changes follow
+[`technology-decisions`](../technology-decisions/SKILL.md), including its check
+against recorded human choices before implementation.
+
 Versions are declared centrally for the whole repository, never in a single
 project file. A new dependency lands as a declaration **and** a reference in the
 same change, with a reason beside it if the version is pinned for a reason.

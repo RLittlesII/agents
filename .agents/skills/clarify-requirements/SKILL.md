@@ -20,6 +20,10 @@ an open question rather than re-asked.
 
 ## Decide or ask
 
+For project technology choices, use
+[`technology-decisions`](../technology-decisions/SKILL.md) for evaluation and
+human authorization; this skill governs the questions and requirement answers.
+
 - **Reversible, with no behavioural change?** Decide it, and document the
   assumption locally. Folder names, class structure, the order of two independent
   operations — those are yours.

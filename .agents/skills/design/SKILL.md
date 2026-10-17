@@ -15,7 +15,7 @@ Convene these roles as the body directs:
 
 Read each role's contract before acting as it, and keep the boundaries it declares: a role that refuses a kind of work still refuses it here.
 
-Use these skills: `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`), `coding-conventions` (`.agents/skills/coding-conventions/SKILL.md`), `test-from-scenarios` (`.agents/skills/test-from-scenarios/SKILL.md`).
+Use these skills: `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`), `coding-conventions` (`.agents/skills/coding-conventions/SKILL.md`), `test-from-scenarios` (`.agents/skills/test-from-scenarios/SKILL.md`), `technology-decisions` (`.agents/skills/technology-decisions/SKILL.md`).
 
 The architect records the concern separation and the technical design, with
 diagrams and a readiness verdict. When the claims carry business rules, the
