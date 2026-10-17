@@ -106,7 +106,7 @@ Written by Marcus.
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-16 -->
+<!-- last written by: architect, 2026-10-17 -->
 
 ### DR-1 — One Python entry point, with a plan before effects
 
@@ -142,8 +142,9 @@ conflict policy and exposes manager-owned instruction/configuration writes.
 | Claude | `.claude/skills/<name>/**` | `.claude/skills/<name>/**` | Verified manager output, byte-preserved |
 | Codex | `.codex/agents/*.toml` | `.codex/agents/<role>.toml` | Rebase only the authoritative-source prefix |
 | Codex | `.agents/skills/<name>/**` | `.agents/skills/<name>/**` | Verified manager output, byte-preserved |
-| Codex | `agents/*.md` | `.sdd/agents/<file>.md` | None |
-| Codex | `skills/<name>/**` | `.sdd/skills/<name>/**` | None |
+| Codex | Selected native roles' source contracts and optional `agents/PERSONAS.md` | `.sdd/agents/<file>.md` | Byte-preserved |
+| Codex | Selected role and method inventory | `.sdd/agents/README.md` | Derived consumer index |
+| Codex | `skills/<name>/**` excluding `.spec` at every depth | `.sdd/skills/<name>/**` | Remaining runtime bytes preserved |
 
 Codex's discovery tree already includes command skills, per accepted
 [ADR-0005](../../.spec/adr/0005-commands-project-to-claude-commands-and-codex-skills.md).
@@ -165,7 +166,9 @@ Before staging, validate the contracts' known Markdown sibling and
 `../skills/<name>/...` links against the private byte plan, ignoring anchor
 fragments; a missing repository-owned dependency fails validation. Source skill
 selection copies named skill directories containing `SKILL.md`, excluding
-top-level specification metadata such as `skills/.spec`. This bounded link
+top-level specification metadata such as `skills/.spec` and nested `.spec`
+directories. The optional tree-reading exclusion prunes that reserved metadata
+before traversal; other nested resources retain their paths and bytes. This bounded link
 grammar matches the existing contracts; it is not a general Markdown parser.
 Claude's sibling and skill links already resolve under `.claude/`; it needs no
 private copy. Consumer README, AGENTS.md and companion references retain their
@@ -176,6 +179,30 @@ Private Codex sources avoid overwriting ordinary consumer `agents/` and
 role bodies and duplicates the projector's responsibility. Modifying committed
 projections or running the projector during installation was rejected by C-2
 and [ADR-0002](../../.spec/adr/0002-generated-host-outputs-are-committed.md).
+
+#### Runtime bundle amendment, 2026-10-17
+
+Under [decision 0002](decisions/0002-runtime-contracts-with-a-consumer-index.md),
+select private source contracts by the native Codex role inventory instead of
+copying every top-level source Markdown file. Require each selected source;
+retain the optional generated persona roster as a runtime reference. Derive a
+small index at `.sdd/agents/README.md` with links to those contracts, installed
+method entry points and the roster when present. It explains that project
+instructions and companion guidance belong to the consumer, without linking
+unshipped producer files. The producer index and source contracts are untouched.
+Reserve the index and roster names against native-role collisions.
+
+`build_plan` retains its existing ordered path-to-bytes result. A scoped
+`read_tree` exclusion handles private method `.spec` directories; it does not
+filter the committed host projections or ordinary runtime support files. Known
+role and index dependency links are checked against the completed private plan
+before managers or consumer writes. No general Markdown parser, exporter,
+recursive producer closure or new production interface is introduced. Synthetic
+public-entry tests pin selected-role inventory, index links, nested runtime
+bytes, excluded metadata and failure before effects for missing dependencies.
+Independent review of this amendment is recorded in § 12; prior DR-2 approval applies
+to its unchanged layout, rebasing and publication mechanisms, not this selection
+delta.
 
 ### DR-3 — Managers run in an isolated staging project
 
