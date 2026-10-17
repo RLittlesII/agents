@@ -126,7 +126,7 @@ this Feature removes both failure states.
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-16 -->
+<!-- last written by: architect, 2026-10-17 -->
 
 Two files. [`Projection.fsx`](../Projection.fsx) is a library with no top-level
 effects: it loads, validates, merges and renders, and returns a plan. It is the
@@ -185,7 +185,9 @@ Design positions:
 - **Stamps are read against the table they feed.** `validateStamps` reads every
   `<area>/.spec/README.md` outside a dot-directory and checks each stamp against
   the row `ownershipRows` produced for its heading, before anything is rendered.
-  A `###` heading is its own row only where the table lists it.
+  Markdig's fenced-code source spans exclude example lines, including tilde
+  fences and longer backtick fences containing shorter backticks. A `###`
+  heading is its own row only where the table lists it.
 - **The persona roster is the same kind of file.** `agents/PERSONAS.md` holds
   prose around a generated block; the roles loader skips it as it skips the
   roles index. The persona line is the one text projection adds to a role: it
