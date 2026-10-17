@@ -97,13 +97,14 @@ makes the rule a check instead of a convention.
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-16 -->
+<!-- last written by: architect, 2026-10-17 -->
 
 `lintSkills` in [`Projection.fsx`](../../scripts/Projection.fsx) is the
 authority. `plan` calls it after the roles load and before any output is
 built, so a violation writes nothing. It builds one pattern per form from the
 loaded roles and supplied persona names; unnamed personas add no name pattern.
-It reads every text file `filesUnder` returns for `skills/` (which excludes `.spec/`),
+It reads every text file the source traversal returns for `skills/` (excluding
+`.spec/` and `.issue/` metadata),
 blanks each generated block while keeping its newlines, and reports every
 finding in one failure.
 
@@ -113,6 +114,19 @@ to review. The way to say who without a role name is the section owner ("the
 owner of § 7") or the review pass ("the diff pass").
 
 Readiness: **Ready for tests and implementation.**
+
+### Tracker metadata boundary
+
+[Decision 0002](decisions/0002-exclude-tracker-metadata.md) extends C-2 and
+adds B-004. `lintSkills` uses projection's source-only `runtimeFilesUnder`
+traversal, specified by 0001-F1 B-025, rather than the output-file traversal.
+Exact `.issue` entries are excluded before opening or descending; role names
+in work-item records therefore do not become method instructions. Unrelated
+hidden runtime resources and similarly named files remain linted.
+
+Synthetic fixtures put role-bearing records at the skill root and nested
+resource depths, then introduce a runtime violation to prove the guard remains
+active. Readiness: Ready; independent agreement/design approval is recorded in § 12.
 
 ## 8. Testing Strategy
 
