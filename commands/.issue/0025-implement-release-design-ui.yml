@@ -7,7 +7,7 @@ status: done
 value: 4
 risk: 3
 
-parent: "0001"
+parent: "0050"
 children: []
 
 depends_on: []
@@ -18,7 +18,7 @@ spec: commands/.spec/README.md
 claims: []
 
 created: "2026-10-14"
-updated: "2026-10-14"
+updated: "2026-10-17"
 closed: "2026-10-14"
 
 summary: |
@@ -48,4 +48,5 @@ decisions:
   - "2026-10-14: no new § 3 claim. 0001-F3 claims govern how any command projects (B-001 to B-007) and the eight existing commands carry no claim of their own, so a command's content is not a claim; the projector tests already cover the three new files. The criteria naming per-command claims and § 9 rows are met by that route."
   - "2026-10-14: the release command is named ship, after LTI ship-it, so it does not read as the release role."
 
+  - "2026-10-17, user-authorized legacy coordination migration: parent changes from 0001 to 0050, the explicit 0001-F3 coordination source. Keep this delivered item’s identity, type, state, acceptance criteria, prior decisions and merge evidence; the coordinator lists 0025 reciprocally."
 out_of_scope: []

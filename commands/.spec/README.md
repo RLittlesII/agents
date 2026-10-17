@@ -5,7 +5,7 @@ type: feature
 id: "F3"
 epic: "0001"
 spec_status: draft
-status: ready
+status: in-progress
 priority: med
 value: 0
 risk: 0
@@ -209,8 +209,12 @@ does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 
-None cut. The twelve commands land with this Feature; a new command is a
-new file and needs no work item of its own.
+<!-- last written by: organizer, 2026-10-17 -->
+
+- [0050 — Coordinate Commands delivery](../.issue/0050-coordinate-commands.yml) — authoritative delivery-status source.
+- [0025 — Add the implement, release and design-ui commands](../.issue/0025-implement-release-design-ui.yml).
+- [0026 — Widen the roles that design, spec and bug convene](../.issue/0026-command-role-lists.yml).
+- [0027 — Decide the pull-request, backlog and single-role commands](../.issue/0027-pr-backlog-commands.yml).
 
 ## Scoring
 
