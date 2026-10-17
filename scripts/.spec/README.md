@@ -5,7 +5,7 @@ type: feature
 id: "F1"
 epic: "0001"
 spec_status: in-review
-status: ready
+status: in-progress
 priority: med
 value: 0
 risk: 0
@@ -20,7 +20,7 @@ depends_on: []
 blocks: ["F3"]
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-16"
+updated: "2026-10-17"
 github_issue: null
 synced_at: null
 ---
@@ -423,7 +423,11 @@ does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 
-- [0041 — Agent and skill schemas](../.issue/0041-agent-skill-schemas.yml).
+<!-- last written by: organizer, 2026-10-17 -->
+
+- [0048 — Coordinate Projection delivery](../.issue/0048-coordinate-projection.yml) — authoritative delivery-status source.
+- [0029 — Check section stamps against the ownership table](../.issue/0029-stamp-ownership-check.yml).
+- [0041 — Enforce agent and skill document schemas in projection](../.issue/0041-agent-skill-schemas.yml).
 
 ## Scoring
 

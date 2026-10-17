@@ -1,19 +1,19 @@
 id: "0041"
 type: task
 title: Enforce agent and skill document schemas in projection
-status: in-progress
+status: done
 value: 4
 cost: 3
 risk: 2
-parent: "0001"
+parent: "0048"
 children: []
 depends_on: []
 spikes: []
 spec: scripts/.spec/README.md
 claims: [B-019, B-020, B-021, B-022, B-023, B-024]
 created: "2026-10-16"
-updated: "2026-10-16"
-closed: null
+updated: "2026-10-17"
+closed: "2026-10-17"
 summary: |
   Add tracked schemas and enforce source frontmatter and required Markdown
   structure before the projector constructs output.
@@ -27,5 +27,8 @@ acceptance_criteria:
   - "§ 9 names executable tests for each delivered claim."
 decisions:
   - "2026-10-16: Preserve flexible skill headings; require one title and Never add, while rule/trap meaning remains a review concern."
+  - "2026-10-17, user-authorized tracker reconciliation: GitHub confirms https://github.com/RLittlesII/agents/pull/6 merged on 2026-10-17 (UTC), commit c890c826dc439cd617349a417ef396748eab2439; merge is an ancestor of this checkout and contains this delivered item. Close this item’s delivered scope; previously recorded verification gaps remain."
+
+  - "2026-10-17, user-authorized legacy coordination migration: parent changes from 0001 to 0048, the explicit 0001-F1 coordination source. Keep this delivered item’s identity, type, state, acceptance criteria, prior decisions and merge evidence; the coordinator lists 0041 reciprocally."
 out_of_scope:
   - "Host formats and schema validation of commands remain with 0001-F3."
