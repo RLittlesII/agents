@@ -113,19 +113,19 @@ Select tracked and non-ignored untracked `**/*.py`, `**/*.fsx` and `**/*.fs` acr
 
 ```mermaid
 flowchart LR
-    Local[Local command] --> Gate[Proposed shared coverage gate]
+    Local[Local command] --> Gate[Shared coverage gate]
     CI[Existing CI job] --> Gate
-    Policy[Proposed versioned policy] --> Gate
+    Policy[Versioned policy] --> Gate
     Git[Git base and current sources] --> Gate
     Gate --> Python[coverage.py plus offline Python suites]
     Gate --> FSharp[Coverlet plus linked original F# scripts]
     Python --> Evidence[Ignored reports and manifest]
     FSharp --> Evidence
-    Evidence --> Evaluate[Proposed deterministic evaluator]
+    Evidence --> Evaluate[Deterministic evaluator]
     Evaluate --> Result[Pass, fail, or explicit N/A]
 ```
 
-DR-1 component view: existing execution contexts consume one proposed gate; reports remain machine-local artifacts, not committed inputs.
+DR-1 component view: existing execution contexts consume one shared gate; reports remain machine-local artifacts, not committed inputs.
 
 ### DR-2: Original F# sources, instrumentable test-only assemblies
 
@@ -160,6 +160,8 @@ Resolve `--base` with Git to a full requested-base commit SHA, reject unknown re
 
 Local comparison is the resolved merge-base comparison SHA to current working tree, including staged/unstaged tracked changes and non-ignored untracked sources. Use zero-context Git diff without rename detection; added files and new paths of renames contribute all current added lines. Untracked production files contribute all current lines. The deleted half of a hunk contributes no current executable line. Reject unsupported binary source input and invalid hunk metadata rather than assuming it contains no executable lines.
 
+Production sources require UTF-8 text with LF or CRLF line endings. Before diffing, [run.py](../coverage/run.py) rejects unsupported source separators; LF-based line counting preserves Git line identity for newly added sources.
+
 CI uses full history and explicit immutable event input: pull request base SHA against checked-out head SHA; main push uses the event's previous SHA against pushed HEAD. A missing initial-push/manual base is a failure requiring an explicit base, not an implicit all-green result. This policy requires CI claim/constraint agreement; do not bury the base contract solely in workflow YAML.
 
 The manifest has this fixed schema; unknown schema versions, missing required fields and duplicate source/report identities fail:
@@ -180,11 +182,11 @@ Hashes bind evidence to declared bytes and identity; they do not authenticate an
 
 ```mermaid
 sequenceDiagram
-    participant Gate as Proposed gate
+    participant Gate as Shared gate
     participant Git as Existing Git checkout
-    participant Collectors as Proposed instrumented test processes
+    participant Collectors as Instrumented test processes
     participant Files as Ignored run artifact directory
-    participant Evaluator as Proposed evaluator
+    participant Evaluator as Evaluator
     Gate->>Git: Resolve base and HEAD, inventory and hash current sources
     Gate->>Collectors: Run required suites and emit coverage
     Collectors->>Files: Write isolated reports
@@ -234,13 +236,13 @@ Keep plain functions; do not add provider classes or an extensible framework. Th
 
 Inventory maps repository-relative paths to SHA-256 strings. Snapshot is a process-local dictionary with exact keys: `requested_base_sha`, `comparison_base_sha`, `head_sha`, `policy_sha256`, `sources` (same meanings as the manifest), plus `policy` (the parsed policy dictionary), `tools` (expected observed tool-version strings) and `run_dir` (trusted absolute `Path` created by `main`). `collect` requires its `output_dir` to equal snapshot `run_dir`; `read_reports` resolves manifest artifact paths against snapshot `run_dir`. Snapshot is not serialized as the portable manifest. Re-inventory uses snapshot `policy` and current repository bytes. Collection returns the completed manifest. Evidence errors raise `ValueError`; `main` reports them and exits nonzero. Evaluation returns `verdict` (`pass`, `fail`, `not-applicable`), integer `covered` and `changed`, and sorted `missed` `(path,line)` pairs. Imports have no effects; execution uses an `__main__` guard. Subprocess execution and filesystem/report readers belong at collection boundaries and remain patchable through standard-library seams; arithmetic tests supply values directly. Unit tests cannot use a fabricated XML report as collector feasibility proof.
 
-The approved declarations are exposed as importable, behavior-free stubs in `.github/coverage/run.py` before test implementation. Stubs return explicit unimplemented/empty placeholders and exit 2; their presence proves importability only.
+Before test implementation, the architecture handoff exposed the approved declarations as importable, behavior-free stubs in `.github/coverage/run.py`. Those initial stubs returned explicit unimplemented/empty placeholders and exited 2; their presence proved importability only. That file now owns the implemented interfaces.
 
 Use an isolated per-run `.artifacts/coverage/<run-id>/` directory. Partial artifacts never constitute a valid manifest; publish the completed manifest only after required reports exist. No cross-run cache skips collection. Retain failed-run diagnostics locally; CI uploads them without changing the gate exit result. No concurrent report merge or shared writer is required.
 
 ### Performance and risks
 
-Inventory/hash cost is linear in inventoried source bytes; report parsing and diff intersection are linear in report line records plus changed lines. Set/map storage is linear in executable source lines. Existing workload is three production files plus proposed gate Python files; report evidence currently contains 582 Projection lines and 25 entrypoint lines. These counts are measurements of this probe, not performance targets or changed-line scores.
+Inventory/hash cost is linear in inventoried source bytes; report parsing and diff intersection are linear in report line records plus changed lines. Set/map storage is linear in executable source lines. Existing workload is three production files plus gate Python files; report evidence currently contains 582 Projection lines and 25 entrypoint lines. These counts are measurements of this probe, not performance targets or changed-line scores.
 
 Coverage adds test-only compilation and instrumentation plus Python coverage execution. Reuse the existing offline suites; do not invent latency or throughput budgets. Wall time is unmeasured; repeated FSI subprocess startup remains an explicit cost assumption rather than a measured bottleneck. No infrastructure service or paid coverage provider is introduced. A measured duration requirement, if requested, belongs to a separate benchmark assignment.
 
@@ -266,7 +268,7 @@ Portable primary documentation: [Microsoft dotnet-coverage platform and static i
 
 ### Readiness
 
-Ready for tests and implementation of 0001-F6 B-001–B-004 under C-1–C-5. Section 12 records approved agreement/design and independent testability Ready; item 0044 is taken and the declared API stubs compile/import. This verdict authorizes the test-first handoff, not delivery or executable claim coverage. Feasibility of linked-original F# static coverage is established. A truly non-executable source without explicit collector evidence remains fail-closed, so an absent source entry cannot be used to infer an empty executable set. Real synthetic collector fixtures must prove missed lines/new-file behavior before implementation delivery. No F4 claims, existing production behavior, tests or accepted ADRs were edited by this design assignment.
+Ready for tests and implementation of 0001-F6 B-001–B-004 under C-1–C-5. Section 12 records approved agreement/design and independent testability Ready. At the architecture handoff, item 0044 was taken and the declared API stubs compiled/imported. This verdict authorizes the test-first handoff, not delivery or executable claim coverage. Feasibility of linked-original F# static coverage is established. A truly non-executable source without explicit collector evidence remains fail-closed, so an absent source entry cannot be used to infer an empty executable set. The handoff required real synthetic collector fixtures to prove missed lines/new-file behavior before implementation delivery; verification results belong to sections 8–9. No F4 claims, existing production behavior, tests or accepted ADRs were edited by this design assignment.
 
 ## 8. Testing Strategy
 
