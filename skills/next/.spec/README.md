@@ -462,11 +462,24 @@ follows one recorded decision and the deliverable is prose checked by review.
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-14 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 The scenarios in [`next.feature`](next.feature) are verified by review: a reader
 checks each against the `SKILL.md` text its claim cites. There is no executable
 tier, because the deliverable is prose and not code.
+
+The coordination-source clarification is checked against the manual B-043
+cases in [0001-F2](../../../agents/.spec/README.md#8-testing-strategy): a parent
+marked in-progress consumes no child lane; mismatched mirror state is reported
+without synchronization. The B-017 reservation clarification is checked against
+0001-F2 B-045's static cases: same-owner continuation creates no new start;
+release is not delivery; reassignment remains occupied. These are authored
+static checks, not independent or live-agent evaluation.
+
+Approval applicability is walked through using 0001-F2 B-047's invented R1/R2
+cases: changed scope is withheld pending review; independent unchanged scope
+retains its evidence; an old favorable row cannot resolve conflicting current
+verdicts. These are authored static checks; independent content review is recorded in § 12; live-agent evaluation is pending.
 
 ### Performance
 
