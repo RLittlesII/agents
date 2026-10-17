@@ -267,13 +267,50 @@ Ready for tests and implementation of 0001-F6 B-001–B-004 under C-1–C-5. Sec
 
 <!-- last written by: test-writer, 2026-10-16 -->
 
-Not recorded in this agreement-only step.
+Unit tests exercise exact pooled arithmetic, executable-line intersection,
+duplicate-hit union, source/path normalization, diff parsing and manifest
+validation. Synthetic reports prove evaluator behavior only; they do not prove
+collector measurement. Cases include exactly 80%, 79.9%, missing reports,
+malformed lines, source mutation preserving mtime, changed inventory, omitted
+new production files, ambiguous mappings and failed collection/test processes.
+
+Acceptance tests invoke the shared gate entry point with synthetic checkout
+state and patched subprocess effects, asserting exit code, comparison identity,
+covered/changed counts and explicit N/A without a percentage. Both local and CI
+contexts use this entry point and policy. The gate's own production source is
+included in inventory; test/harness sources are excluded.
+
+Integration tests run real coverage.py and compiled F# collectors over committed
+synthetic sources. Deliberately unexecuted branches must produce zero-hit
+executable lines; an entirely unexecuted new source must be represented or cause
+the gate to fail. These tests use installed pinned tools without network access.
+Existing FSI and installer tests remain authoritative for their own contracts.
+
+The design is testable through pure evaluation and ordinary stdlib patchpoints.
+No clock, credential, live provider or constructor side effect is required.
+Filesystem/process boundaries are explicit; no new public member exists solely
+for tests. Database, UI and distributed-state tiers do not apply to this local
+verification command. Evidence validation precedes zero-denominator N/A.
+
+Discovery uses unittest test_*.py files and test-prefixed methods; record baseline
+and discovered counts when the suite is authored. Tests carry Given/When/Then
+blocks and B-00n names. No behavioral test exists yet; approved design and
+production stubs must precede a red assertion run.
+
+The proposed gate enforces at least 80% of pooled changed executable production
+lines using exact counts. Changed-line measurement is pending implementation;
+no coverage percentage or passing verification is claimed by this proposal.
 
 ## 9. Traceability Matrix
 
 <!-- last written by: test-writer, 2026-10-16 -->
 
-Not recorded in this agreement-only step.
+| Claim ID | Scenario | Test | Status |
+| --- | --- | --- | --- |
+| B-001 | [@B-001](repository-verification.feature#B-001) | Missing | Missing |
+| B-002 | [@B-002](repository-verification.feature#B-002) | Missing | Missing |
+| B-003 | [@B-003](repository-verification.feature#B-003) | Missing | Missing |
+| B-004 | [@B-004](repository-verification.feature#B-004) | Missing | Missing |
 
 ## 10. Lessons / Spec Deltas
 
