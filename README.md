@@ -143,6 +143,8 @@ Reports and build outputs stay under ignored `.artifacts/coverage/`.
 The F# build adapter validates checkout, output and Python interpreter paths
 before invoking its shell-based build target; [the gate](.github/coverage/run.py)
 defines the supported path characters. Unsupported paths fail before collection.
+Production text must use UTF-8 with LF or CRLF line endings so Git and collector
+line identities agree; ambiguous separators fail before evaluation.
 
 To add a role: write `agents/<name>.md` with the keys the
 [role contract](agents/.spec/README.md) requires, add it to each host overlay
