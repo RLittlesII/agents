@@ -56,9 +56,12 @@ def changed_lines(repo: Path, base_sha: str, inventory: dict[str, str]) -> dict[
         if b"\0" in raw:
             raise ValueError(f"Binary production source: {name}")
         try:
-            count = len(raw.decode("utf-8").splitlines())
+            text = raw.decode("utf-8")
         except UnicodeDecodeError as error:
             raise ValueError(f"Non-UTF8 production source: {name}") from error
+        if any(separator in text.replace("\r\n", "\n") for separator in "\r\v\f\x1c\x1d\x1e\x85\u2028\u2029"):
+            raise ValueError(f"Unsupported source line separator (use LF or CRLF): {name}")
+        count = text.count("\n") + int(bool(text) and not text.endswith("\n"))
         if name not in tracked:
             changed[name] = set(range(1, count + 1))
             continue
