@@ -4,7 +4,7 @@ description: "Enforce trustworthy changed-line coverage through one local and CI
 type: feature
 id: "F6"
 epic: "0001"
-spec_status: draft
+spec_status: approved
 status: ready
 priority: med
 value: 0
@@ -335,8 +335,7 @@ establish feasibility; they do not establish delivery or a final coverage score.
 
 | Section | Status | Reviewer | Note |
 | --- | --- | --- | --- |
-| 1-5 | 🟢 | spec-reviewer | Independent /root/f4_baseline_review approved agreement content; the user confirmed placement under epic 0001. |
-| 6-12 | 🟡 | spec-reviewer | Design and verification contributions are recorded in subsequent ownership steps. |
+| 1-12 | 🟢 | spec-reviewer | Independent /root/f4_baseline_review, 2026-10-16: agreement, registered placement, design and strategy approved. Design technically Ready for declared stubs/tests; all four new coverage rows remain Missing and block delivery. Testability Ready from /root/coverage_testability. |
 
 ## Tasks
 
