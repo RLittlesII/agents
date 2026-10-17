@@ -20,7 +20,7 @@ depends_on: []
 blocks: []
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-15"
+updated: "2026-10-17"
 github_issue: null
 synced_at: null
 ---
@@ -59,7 +59,7 @@ missing estimate or an unreadable tracker as zero or as permission to start.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-15 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 Each source is a section of [`SKILL.md`](../SKILL.md).
 
@@ -81,7 +81,7 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 | B-014 | Given a `spec_status` or an item status that reads as approved or ready while the gating § 12 rows are not approved, this Feature treats the gate as unmet.                                         | § Stage gates; § Derive an evidenced next step | Active |
 | B-015 | Given an open question whose row names blocked claims, none of which the work links, this Feature does not withhold the work for it. | § Stage gates                            | Active |
 | B-016 | Given a spike, this Feature offers the investigation only when the spike states a bounded question and a time box.                                                                                 | § Stage gates                            | Active |
-| B-017 | Given taken work inside or outside the requested scope, including work in review, this Feature shows it as occupied until it is delivered and offers no new start in its lane. | § Stage gates; § Use lanes to support the choice | Active |
+| B-017 | Given taken work inside or outside the requested scope, including work in review, this Feature shows its current reservation as occupied and offers no new start in its lane while that reservation remains. | § Stage gates; § Use lanes to support the choice | Active |
 | B-018 | Given a prerequisite, this Feature counts it as delivered only when it finished as completed, and not while it is in review, closed as not planned or reopened.                                    | § Stage gates                            | Active |
 | B-019 | Given an item whose dependencies or spikes are unfinished, this Feature treats it as waiting whatever its status says.                                                                            | § Stage gates                            | Active |
 | B-020 | Given a container with unfinished children, this Feature offers its children as candidates and never the container.                                                                               | § Stage gates                            | Active |
@@ -504,9 +504,21 @@ Not applicable.
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-15 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 No lesson is recorded for this Feature.
+
+2026-10-17: Apply user decision 0001-F2/0007 to the existing stage gates: approval
+must apply to the current scope and subject, preserving unchanged baseline evidence.
+
+2026-10-17: Apply user decision 0001-F2/0005 to B-017: occupied means a current
+reservation, not an irrevocable hold until delivery. Same-owner continuation is
+not a new start; release is not delivery, and recommendation remains read-only.
+
+2026-10-17: Apply the agreed single coordination-source identity to Feature
+mirror diagnostics and distinguish coordination records from delivery children
+under the existing B-017/B-046 lane cap. The source-selection decision remains
+in 0001-F2 decision 0003; recommendation remains read-only under B-040.
 
 ### Ported from Hooked
 
@@ -605,11 +617,25 @@ record naming the rule it follows and the option it rejected.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-15 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | Section | Status | Reviewer      | Note                    |
 | ------- | ------ | ------------- | ----------------------- |
+| Design: § 7 coordination, ownership and approval applicability | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
+| Diff: §§ 3, 7–8, 10, 12 and scenarios | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
 | 1-12    | 🟡     | spec-reviewer | Draft; not yet reviewed. |
+
+### Superseded amendment review history
+
+These pending records predate the current independent verdicts. They retain
+their original notes; current live-agent evidence limits remain in § 8.
+
+- Current-revision approval applicability, 2026-10-17 — 🟡 — spec-reviewer — User decision recorded in 0001-F2/0007; authored static checks only, independent/live evaluation pending.
+- B-017 current reservations, 2026-10-17 — 🟡 — spec-reviewer — User ownership decision recorded in 0001-F2/0005; authored static checks only, independent review pending.
+
+Current amendment verdicts apply to the identified reviewed snapshot. Earlier
+pending rows are retained for their earlier subjects; current review approval
+does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 

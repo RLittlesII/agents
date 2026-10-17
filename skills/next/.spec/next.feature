@@ -408,3 +408,29 @@ Feature: Next work
     When the person asks what is next
     Then no start is offered for that Feature
     And the startable item is shown queued
+
+  @B-017
+  Scenario: An authorized reassignment retains the occupied lane
+    Given a taken item is reassigned from A to B with recorded authorization
+    When the person asks what is next
+    Then its lane remains occupied under B
+    And no new start is offered there
+    And recommendation changes no ownership record
+
+  @B-017
+  Scenario: An explicit release ends a reservation without delivering the item
+    Given A explicitly released a taken item and the tracker records the release
+    When the person asks what is next
+    Then the old reservation does not occupy the lane
+    And the unfinished item does not satisfy its dependents
+    And any new start still requires the applicable stage evidence
+
+  @B-011 @B-013 @B-014
+  Scenario: A substantive change needs applicable current approval
+    Given earlier approval covers revision R1
+    And revision R2 substantively changes the scope needed by the next stage
+    And that changed scope has no review against R2
+    When the person asks what is next
+    Then the affected stage is withheld pending review of the new subject
+    And independent unchanged scope retains its applicable approval evidence
+    And recommendation edits no sign-off record
