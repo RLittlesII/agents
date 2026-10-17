@@ -1,0 +1,4 @@
+def choose(positive):
+    if positive:
+        return 1
+    return 2

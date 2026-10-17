@@ -292,14 +292,16 @@ Filesystem/process boundaries are explicit; no new public member exists solely
 for tests. Database, UI and distributed-state tiers do not apply to this local
 verification command. Evidence validation precedes zero-denominator N/A.
 
-Discovery uses unittest test_*.py files and test-prefixed methods; record baseline
-and discovered counts when the suite is authored. Tests carry Given/When/Then
-blocks and B-00n names. No behavioral test exists yet; approved design and
-production stubs must precede a red assertion run.
+Discovery uses unittest `test_*.py` files and test-prefixed methods. The initial
+`python3 -m unittest discover -s .github/coverage -p 'test_*.py' -v` run discovered
+24 tests, up from zero: 23 assertion failures, zero errors, one deletion-only diff
+case passing against empty behavior stubs. Tests carry Given/When/Then blocks and
+B-00n names. This is red evidence, not completed verification; real collector
+regression tests remain outstanding.
 
-The proposed gate enforces at least 80% of pooled changed executable production
+The agreed gate enforces at least 80% of pooled changed executable production
 lines using exact counts. Changed-line measurement is pending implementation;
-no coverage percentage or passing verification is claimed by this proposal.
+no coverage percentage or passing verification is claimed.
 
 ## 9. Traceability Matrix
 
@@ -307,10 +309,10 @@ no coverage percentage or passing verification is claimed by this proposal.
 
 | Claim ID | Scenario | Test | Status |
 | --- | --- | --- | --- |
-| B-001 | [@B-001](repository-verification.feature#B-001) | Missing | Missing |
-| B-002 | [@B-002](repository-verification.feature#B-002) | Missing | Missing |
-| B-003 | [@B-003](repository-verification.feature#B-003) | Missing | Missing |
-| B-004 | [@B-004](repository-verification.feature#B-004) | Missing | Missing |
+| B-001 | [@B-001](repository-verification.feature#B-001) | `EvaluationTests.test_B001_exact_floor_pools_languages_by_line_count`, `test_B001_below_floor_does_not_round_up`, `test_B001_only_changed_executable_lines_enter_denominator`; `SourceTests.test_B001_diff_includes_modified_current_lines_and_all_new_file_lines`, `test_B001_deleted_lines_do_not_create_current_denominator`; `GateAcceptanceTests.test_B001_gate_exit_and_counts_observe_exact_floor` | Missing |
+| B-002 | [@B-002](repository-verification.feature#B-002) | `EvidenceTests.test_B002_missing_report_is_rejected`, `test_B002_malformed_report_is_rejected`, `test_B002_stale_source_bytes_are_rejected_despite_same_mtime`, `test_B002_mismapped_source_is_rejected`, `test_B002_new_production_source_absent_from_reports_is_rejected`, `test_B002_failed_test_process_is_rejected`; `SourceTests.test_B002_binary_source_diff_is_rejected` | Missing |
+| B-003 | [@B-003](repository-verification.feature#B-003) | `EvaluationTests.test_B003_no_changed_executable_lines_is_not_applicable`; `GateAcceptanceTests.test_B003_gate_reports_zero_denominator_without_percentage` | Missing |
+| B-004 | [@B-004](repository-verification.feature#B-004) | `SourceTests.test_B004_inventory_includes_gate_and_excludes_test_generated_sources`; `GateAcceptanceTests.test_B004_local_and_ci_share_policy_evaluator_and_output` | Missing |
 
 ## 10. Lessons / Spec Deltas
 

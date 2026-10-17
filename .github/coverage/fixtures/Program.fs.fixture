@@ -1,0 +1,5 @@
+module SyntheticRunner
+
+[<EntryPoint>]
+let main _ =
+    if SyntheticSubject.choose true = 1 then 0 else 1
