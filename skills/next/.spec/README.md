@@ -158,7 +158,7 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-15 -->
+<!-- last written by: architect, 2026-10-17 -->
 
 The deliverable is prose in [`SKILL.md`](../SKILL.md), which an agent follows;
 there is no code ([decision 0015](decisions/0015-a-skill-not-an-executable.md)).
@@ -169,6 +169,22 @@ drift-checked
 ([ADR-0002](../../../.spec/adr/0002-generated-host-outputs-are-committed.md)). It
 names no role ([0001-F4](../../.spec/README.md) B-001): the next actor is a
 stage, such as grooming, or a section owner.
+
+Feature mirror identity follows
+[`sdd-conventions` § The spec / work-item split](../../sdd-conventions/SKILL.md#the-spec--work-item-split)
+and the companion's mapping. A coordination record is not a delivery child or
+occupied child lane. Completion evidence that disagrees with its recorded
+state produces a maintenance diagnostic without a write or an inferred tracker
+state. The user decision is recorded in
+[0001-F2 decision 0003](../../../agents/.spec/decisions/0003-feature-status-has-one-coordination-source.md).
+
+Taken-work continuation follows
+[0001-F2 decision 0005](../../../agents/.spec/decisions/0005-taken-work-retains-explicit-ownership.md)
+and `deliver-change` § Resume, release and reassignment. Recommendation reads
+current reservations; it performs no resume, release or transfer. An explicit
+release ends the reservation but does not satisfy dependencies; reassignment
+retains the reservation under the new owner. Missing ownership is a diagnostic,
+not proof of release. B-017's wording now preserves that reservation boundary.
 
 ### Design positions
 
@@ -365,6 +381,13 @@ flowchart TD
 
 No entity, class or state view applies: nothing is stored, there is no code,
 and the delivery lifecycle is the tracker's (C-1).
+
+Approval applicability follows
+[0001-F2 decision 0007](../../../agents/.spec/decisions/0007-approval-follows-the-reviewed-revision.md)
+and `spec-and-traceability` § Approval applicability. Stage gates evaluate the
+current subject: substantively changed scope needs a new verdict; unchanged
+scope retains applicable baseline evidence. Unclear or conflicting applicability
+withholds only the affected gate. Recommendation edits no sign-off or maturity.
 
 ### Review map
 
