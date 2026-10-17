@@ -35,7 +35,10 @@ prerequisites once within a Feature's remaining work and promote the work that
 unlocks the selected Features. Do not substitute stored derived fields or invent
 missing estimates, value assessments, claim assignments, or delivery state.
 Read delivery state from the tracker only. A mirrored status that disagrees with
-it is a diagnostic, and an unreadable tracker leaves the affected work with no
+its identified Feature coordination item is a diagnostic; children use their
+own tracker records. A missing or ambiguous coordination source is reported
+without inferring the Feature's mirrored status from children. Independently
+verified child states remain usable. An unreadable tracker leaves the affected work with no
 start. Two records claiming one stable id are named as a duplicate; choose
 neither, and withhold the work that depends on either.
 
@@ -51,8 +54,12 @@ with reasons, not an empty success claim.
 
 ## Stage gates
 
-Read approval from the § 12 rows by section, and open questions from § 11 by
-the claims they block. `spec_status` alone is not approval evidence, and an
+Read approval from the § 12 rows by section and reviewed subject, following
+[`spec-and-traceability`](../spec-and-traceability/SKILL.md) § "Approval applicability".
+A prior verdict cannot authorize substantively changed scope at a new revision;
+carry forward applicable evidence for unchanged scope. Missing or conflicting
+applicability is a gap for the affected gate, not permission to choose an older
+green row. Read open questions from § 11 by the claims they block. `spec_status` alone is not approval evidence, and an
 unrelated question blocks nothing. An open question whose row names no claim leaves its
 Feature's design and implementation readiness unverified: withhold both and name
 the gap. A row reading `None` names that it blocks nothing.
@@ -63,7 +70,13 @@ the gap. A row reading `None` names that it blocks nothing.
 | Design           | §§ 1-5 approved for the linked claims, no open question blocking them    |
 | Implementation   | §§ 1-7 approved and the design Ready for the linked claims, no question blocking them, and every prerequisite delivered |
 | Spike            | a bounded question and a time box; the status alone authorizes nothing more |
-| Taken            | occupied, in review too: show it and reserve its lane until delivered; offer no new start there |
+| Taken            | occupied, in review too: show its current reservation; offer no new start there |
+
+Continuation and transfer follow
+[`deliver-change`](../deliver-change/SKILL.md) § "Resume, release and reassignment".
+A same-owner resume is not a new start. A recorded release ends its reservation;
+reassignment keeps it occupied under the new owner. Diagnose missing ownership
+without assuming release. Recommendation performs none of these operations.
 
 Delivered means finished as completed. Work in review, closed as not planned or
 reopened does not satisfy a prerequisite. Design can proceed while
@@ -102,8 +115,10 @@ unscored. No derived tier, score or gate is written back to a record.
 ## Use lanes to support the choice
 
 Offer one ranked startable head per available lane. Offer at most one start per
-Feature, since one item is in progress per Feature: its other startable items
-wait behind the head, and a Feature with taken work offers none. Check both dependencies and
+Feature, since one delivery child is in progress per Feature: its other
+startable children wait behind the head, and a Feature with a taken delivery
+child offers none. A Feature coordination record is not another delivery
+candidate or an occupied child lane. Check both dependencies and
 shared edits: independent tasks can still collide in a specification or generated
 output. Apply existing reservations before narrowing the displayed scope.
 
@@ -123,6 +138,10 @@ an item or authorize starting it. Inspect both the agreement and delivery record
 before calling a Feature finished; a completed child list alone proves only that
 the known child work is complete. A Feature with no unfinished closure and every active
 claim delivered is finished: report it so and leave it out of ranking.
+If verified completion and the coordination item's recorded state disagree,
+report the completed scope and the remaining coordination maintenance
+separately. Do not silently change the recorded state or treat an unfinished
+tracker prerequisite as delivered.
 
 ## Never add
 
