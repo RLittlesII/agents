@@ -4,7 +4,7 @@ description: "A skill never names a role: projection rejects role names outside 
 type: feature
 id: "F4"
 epic: "0001"
-spec_status: in-review
+spec_status: approved
 status: ready
 priority: med
 value: 0
@@ -177,7 +177,7 @@ claim assignment or new runtime behavior is asserted.
 
 | ID | Question | Blocks | Resolution |
 | --- | --- | --- | --- |
-| OQ-1 | Which changed-line coverage threshold and enforcement gate does this repository adopt under ADR-0007? | B-001, B-002, B-003 | Open: README, the companion substitute, names neither. Full §8 baseline approval and future implementation/release verification remain withheld; this documentation-only review can proceed. |
+| OQ-1 | Which changed-line coverage threshold and enforcement gate does this repository adopt under ADR-0007? | None | Resolved 2026-10-16: README Testing adopts the 80% pooled changed executable production-line floor and shared local/CI gate delivered under 0001-F6. Independent /root/coverage_diff_review approved §8 and this resolution. |
 
 ## 12. Sign-off
 
@@ -186,7 +186,7 @@ claim assignment or new runtime behavior is asserted.
 | Section | Status | Reviewer      | Note                                                                                       |
 | ------- | ------ | ------------- | ------------------------------------------------------------------------------------------ |
 | 1-7, 9-12 | 🟢 | spec-reviewer | Independent `/root/f4_baseline_review`, 2026-10-16: bounded baseline approved after original scope clarification and historical-delta recording. Original five-violation cleanup evidence is `48a71f0`; earlier amendment approvals remain intact. |
-| 8 | 🔴 | spec-reviewer | Independent `/root/f4_baseline_review`, 2026-10-16: full baseline approval withheld under ADR-0007 until OQ-1 establishes the repository threshold and gate. Prior delta-only evidence is preserved. |
+| 8 | 🟢 | spec-reviewer | Independent `/root/coverage_diff_review`, 2026-10-16: baseline approved against README Testing and the measured 0001-F6 gate; OQ-1 resolved. Earlier ADR-0007 blocker is cleared. Linux CI execution remains pending; prerequisite F2 still prevents declaring full F4 delivery. |
 | 7-9 | 🟢 | spec-reviewer | Approved 2026-10-16: optional-name lint design and coverage reviewed; 0001-F4 B-001 remains satisfied. Baseline evidence retained. |
 | 7-9, 12 | 🟢 | spec-reviewer | Rebase delta approved 2026-10-16 by independent `/root/persona_diff_review` against main `e60dea1`; no findings, earlier evidence retained. |
 
