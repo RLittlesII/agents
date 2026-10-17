@@ -1,10 +1,10 @@
 ---
 title: "Specification: Skill boundary"
-description: "A skill never names a role: projection fails when a file under skills/ names one outside a generated block."
+description: "A skill never names a role: projection rejects role names outside generated blocks in source text within C-2 scope."
 type: feature
 id: "F4"
 epic: "0001"
-spec_status: draft
+spec_status: approved
 status: ready
 priority: med
 value: 0
@@ -57,22 +57,22 @@ makes the rule a check instead of a convention.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-15 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
 | ID    | Claim                                                                                                                                                                                                                       | Source                     | Status |
 | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ------ |
-| B-001 | Given a file under `skills/` that, outside a generated block, names a role — its name in backticks, a hyphenated name as a whole word with its hyphens or with spaces, its persona name as a whole word, or a path into `agents/` — projection fails naming the file, the line and the role, and writes nothing. | 0001-F2 C-3 | Active |
+| B-001 | Given a file within the lint scope (C-2) that, outside a generated block, names a role — its name in backticks, a hyphenated name as a whole word with its hyphens or with spaces, its persona name as a whole word, or a path into `agents/` — projection fails naming the file, the line and the role, and writes nothing. | 0001-F2 C-3 | Active |
 | B-002 | Given a role name between a `BEGIN GENERATED` marker and its matching `END GENERATED` marker, the file passes, and lines after the block are reported at their own line numbers.                                             | A-1                        | Active |
-| B-003 | Given this repository's `skills/`, the lint passes.                                                                                                                                                                         | Brief                      | Active |
+| B-003 | Given this repository's files within the lint scope (C-2), the lint passes.                                                                                                                                                                         | Brief                      | Active |
 
 ## 4. Constraints
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
 | ID  | Constraint                                                                                   | Rules Out                                                                    |
 | --- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | C-1 | A bare one-word role name is not linted.                                                      | Failing on "build", "release", "domain" or "design" used as ordinary words   |
-| C-2 | The lint reads only `skills/`, never a host copy or `commands/`.                              | Linting generated output; treating a command projected as a Codex skill as a skill |
+| C-2 | The lint reads text files under `skills/`, excluding `.spec/` and files containing NUL bytes, and never host copies or `commands/`.                              | Linting specification records, binary assets, generated host output or commands |
 
 ## 5. Out of Scope
 
@@ -131,6 +131,17 @@ checkout of 0001-F1 plus a role `log-reader` signing as Zed. The scenarios in
 - C-1 is a review question: at review, read new skill text for a bare one-word
   role name used as a name rather than a word.
 
+The [repository Testing policy](../../README.md#testing) establishes the shared
+local/CI coverage gate and its 80% pooled changed executable production-line
+floor under ADR-0007. Fresh repository verification run
+`b9a269b572274089a3ad5b6e2b6561b2` passes 217/242 changed executable lines
+(89.67%); its source-bound manifest validates independently. The four named
+`F4_` tests all pass within the 62-test original-linked F# runner. This F4
+change edits specification evidence; its lint production source is unchanged.
+The synthetic filesystem and pure lint seam require no clock, network or live
+provider. Linux CI execution of the shared gate remains pending; local evidence
+does not substitute for that result.
+
 ### Performance
 
 Not applicable.
@@ -147,15 +158,26 @@ Not applicable.
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
-None.
+| Date | Trigger | Delta / evidence |
+| --- | --- | --- |
+| 2026-10-14 | Original implementation and source cleanup | `ecb996c` explicitly delivered B-001–B-003; `48a71f0` removed source violations and regenerated outputs for B-003. |
+| 2026-10-15 | Spaced role titles name the same role | `7d5e84f` amended B-001; `8e1a60d` added its mechanism and regression case. |
+| 2026-10-16 | Optional persona names | PR #5, `f5366b9`, preserved B-001 and added unnamed-persona verification; earlier §12 delta approvals remain recorded. |
+| 2026-10-16 | Independent baseline review | Clarify C-2 and its claim references to match the original recorded scope; [decision 0001](decisions/0001-recorded-source-text-scope.md). |
+
+These commits are ancestors of `origin/main` at `c890c82`. They establish
+historical delivery; current tests corroborate it. No retrospective tracker
+claim assignment or new runtime behavior is asserted.
 
 ## 11. Open Questions
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-16 -->
 
-None.
+| ID | Question | Blocks | Resolution |
+| --- | --- | --- | --- |
+| OQ-1 | Which changed-line coverage threshold and enforcement gate does this repository adopt under ADR-0007? | None | Resolved 2026-10-16: README Testing adopts the 80% pooled changed executable production-line floor and shared local/CI gate delivered under 0001-F6. Independent /root/coverage_diff_review approved §8 and this resolution. |
 
 ## 12. Sign-off
 
@@ -163,13 +185,16 @@ None.
 
 | Section | Status | Reviewer      | Note                                                                                       |
 | ------- | ------ | ------------- | ------------------------------------------------------------------------------------------ |
-| 1-12    | 🟡     | spec-reviewer | Draft. The five existing violations in `sdd-conventions` were rephrased by section owner and review pass. |
+| 1-7, 9-12 | 🟢 | spec-reviewer | Independent `/root/f4_baseline_review`, 2026-10-16: bounded baseline approved after original scope clarification and historical-delta recording. Original five-violation cleanup evidence is `48a71f0`; earlier amendment approvals remain intact. |
+| 8 | 🟢 | spec-reviewer | Independent `/root/coverage_diff_review`, 2026-10-16: baseline approved against README Testing and the measured 0001-F6 gate; OQ-1 resolved. Earlier ADR-0007 blocker is cleared. Linux CI execution remains pending; prerequisite F2 still prevents declaring full F4 delivery. |
 | 7-9 | 🟢 | spec-reviewer | Approved 2026-10-16: optional-name lint design and coverage reviewed; 0001-F4 B-001 remains satisfied. Baseline evidence retained. |
 | 7-9, 12 | 🟢 | spec-reviewer | Rebase delta approved 2026-10-16 by independent `/root/persona_diff_review` against main `e60dea1`; no findings, earlier evidence retained. |
 
 ## Tasks
 
-None cut. The lint and the clean-up of the existing violations land together.
+<!-- last written by: organizer, 2026-10-16 -->
+
+- [0043 — Review Skill boundary baseline and reconcile delivery evidence](../../.issue/0043-skill-boundary-evidence.yml).
 
 ## Scoring
 

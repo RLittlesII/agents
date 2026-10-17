@@ -1,0 +1,4 @@
+module SyntheticNever
+
+let untouched () =
+    42

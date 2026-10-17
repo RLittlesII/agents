@@ -118,6 +118,34 @@ dotnet fsi scripts/project.tests.fsx     # claim-named tests
 python3 -m unittest discover -s install -p 'test_*.py' -v
 ```
 
+### Testing
+
+The repository adopts an **80% pooled changed executable production-line
+coverage floor** under [ADR-0007](.spec/adr/0007-the-companion-declares-the-coverage-threshold.md).
+[Repository verification](.github/.spec/README.md) defines the source inventory,
+comparison and failure contract; its versioned `.github/coverage/` policy and
+shared gate enforce that contract locally and in CI.
+
+From an activated Python 3.11+ virtual environment, install the pinned tooling
+and run the shared gate against the base branch:
+
+```sh
+python -m pip install -r .github/coverage/requirements.txt
+python .github/coverage/run.py --base origin/main
+```
+
+The gate resolves the comparison merge base and measures current tracked edits
+and non-ignored untracked sources. It collects F# coverage from test-only
+assemblies linked to original scripts and Python coverage from offline suites;
+production entrypoints stay unchanged. Missing, stale or mismapped evidence
+fails before evaluation. A valid zero denominator reports N/A, never 100%.
+Reports and build outputs stay under ignored `.artifacts/coverage/`.
+The F# build adapter validates checkout, output and Python interpreter paths
+before invoking its shell-based build target; [the gate](.github/coverage/run.py)
+defines the supported path characters. Unsupported paths fail before collection.
+Production text must use UTF-8 with LF or CRLF line endings so Git and collector
+line identities agree; ambiguous separators fail before evaluation.
+
 To add a role: write `agents/<name>.md` with the keys the
 [role contract](agents/.spec/README.md) requires, add it to each host overlay
 under `hosts/`, and run the projector. To change a role's model or effort on

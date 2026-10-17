@@ -54,6 +54,7 @@ them. A command names roles and skills in frontmatter only.
 - [Commands](commands/.spec/README.md) — `0001-F3`, prompts that convene roles.
 - [Skill boundary](skills/.spec/README.md) — `0001-F4`, the one-way rule.
 - [Next work](skills/next/.spec/README.md) — `0001-F5`, choosing the next work.
+- [Repository verification](.github/.spec/README.md) — `0001-F6`, the coverage gate.
 - [Decisions](.spec/adr/) — repository-wide ADRs.
 
 ## Specification-driven development
