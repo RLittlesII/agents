@@ -232,7 +232,7 @@ Readiness: **Ready for tests and implementation.**
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 Library and CLI integration checks run with
 `dotnet fsi scripts/project.tests.fsx`; its exit code equals the failure count.
@@ -240,7 +240,15 @@ Baseline synthetic fixtures use two roles, both host overlays, one skill with a
 nested file, the companion with empty markers, and three numbered template
 sections plus Tasks and Scoring. Other checks load the real checkout or use
 twenty-role migration fixtures. Baseline tests call the library; migration tests
-also exercise the public CLI against explicit temporary roots. The scenarios in
+also exercise the public CLI against explicit temporary roots. Each runner owns
+one unique scratch directory containing its fixture directories and cleans up
+only that directory, so overlapping standalone and instrumented runs cannot
+delete one another's inputs.
+On 2026-10-17, the former shared-root cleanup removed fixtures owned by an
+overlapping run, failing its final B-039 CLI check. After isolating scratch,
+standalone and instrumented suites each pass all 67 tests while an unrelated
+fixture sentinel survives both cleanups. This is direct runner-isolation
+execution evidence; no production claim or coverage exemption is added. The scenarios in
 [`projection.feature`](projection.feature) are
 executed by those tests; there is no separate step-definition layer because the
 repository has no acceptance harness beyond `dotnet fsi`.
@@ -272,7 +280,19 @@ Mechanism per claim:
 - B-016: `validateStamps` through `plan`; a fixture specification passes with
   the owner's stamp, a fenced example and a stamp on an unowned section, then
   fails naming the file, section and both roles when a non-owner signs.
+  Design and sign-off examples exercise template-owner mistakes. Tilde fences
+  and longer backtick fences distinguish example stamps from a real violation
+  after the example.
 - C-3: two plans produce identical bytes, no byte-order mark, no absolute path.
+
+On 2026-10-17 the 67-test run passed 64 and failed three B-016 regressions:
+tilde-fenced examples, shorter backticks inside a longer fence, and a real
+ownership violation after that example. The first two reject valid documents;
+the third accepts an invalid one. Production code remains unchanged.
+
+After replacing fence toggling with Markdig's fenced-code spans, the same
+67-test suite passes all tests. Projection reports 80 current outputs and
+strict specification validation reports zero errors and warnings.
 
 CLI integration is now exercised by
 `F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck` and
@@ -297,7 +317,7 @@ inventory count.
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 | Claim ID | Scenario                                                   | Test                                                              | Status  |
 | -------- | ---------------------------------------------------------- | ----------------------------------------------------------------- | ------- |
@@ -316,7 +336,7 @@ inventory count.
 | B-013    | Review units become the registry                           | `B013_ReviewUnits_WriteRegistryBetweenMarkers`                    | Covered |
 | B-014    | Two roles review one unit                                  | `B014_TwoRolesReviewOneUnit_FailsNamingBoth`                      | Covered |
 | B-015    | A unit no role reviews, or one nobody declared             | `B015_UnreviewedOrUndeclaredUnit_FailsNamingIt`                   | Covered |
-| B-016    | A section stamp names a role that does not own it          | `B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles`     | Covered |
+| B-016    | A section stamp names a role that does not own it          | `B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles`, `B016_DesignSectionsRejectAnImplementationStamp`, `B016_SignOffRejectsAReviewersStamp`, `B016_TildeFencedExampleDoesNotCreateAnOwnershipViolation`, `B016_ShorterBackticksDoNotEndAFencedExample`, `B016_RealViolationAfterAFencedExampleIsStillRejected` | Covered |
 | B-017 | Named and unnamed personas become the roster | `B017_Personas_WriteRosterBetweenMarkers`, `B017_MixedPersonas_SortNamedThenUnnamedRoles` | Covered |
 | B-018 | Named or voice-only lines precede verbatim bodies | `B018_Persona_PrecedesVerbatimBodyOnBothHosts`, `B018_UnnamedPersona_PreservesVoiceOnBothHosts` | Covered |
 | B-019 | [@B-019](projection.feature) Agent document schema | `B019_AgentSchemaRejectsInvalidFrontmatter`, `B019_PortableFrontmatterAcceptsUserExamples`, `B019_LiteralDescriptionRoundTripsThroughBothHosts` | Covered |

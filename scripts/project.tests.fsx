@@ -14,6 +14,7 @@ open System.Text
 open Projection
 
 let repoRoot = Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, ".."))
+let scratch = Path.Combine(Path.GetTempPath(), "projection-tests", Guid.NewGuid().ToString("N"))
 
 // ---------------------------------------------------------------- Fixtures
 
@@ -110,7 +111,7 @@ let write (root: string) (rel: string) (text: string) =
 /// empty persona roster and a template with three numbered sections plus Tasks
 /// and Scoring.
 let checkout () =
-    let root = Path.Combine(Path.GetTempPath(), "projection-tests", Guid.NewGuid().ToString("N"))
+    let root = Path.Combine(scratch, Guid.NewGuid().ToString("N"))
     Directory.CreateDirectory root |> ignore
     for schema in [ "agent"; "skill" ] do
         let source = Path.Combine(repoRoot, "schemas", schema + ".schema.json")
@@ -463,6 +464,63 @@ let B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles () =
     write root "area/.spec/README.md" (spec "beta")
     let message = expectFailure (fun () -> plan root)
     contains "area/.spec/README.md: section '1. Business Goal' is stamped by 'beta', but 'alpha' owns it" message
+    nothingWritten root
+
+let B016_DesignSectionsRejectAnImplementationStamp () =
+    // Given design sections owned by alpha, when a template-derived copy names
+    // an implementation writer, then planning rejects each section before writes.
+    for number, title in [ "6", "Concern Separation"; "7", "Technical Design" ] do
+        let root = checkout ()
+        let section = number + ". " + title
+        write root ".specht/templates/feature.md" (template.Replace("## Tasks", "## " + section + "\n\n## Tasks"))
+        write root "agents/alpha.md" (role "alpha" (sprintf "[\"1\", \"2\", \"%s\", \"Tasks\"]" number) alphaBody)
+        let document writer = sprintf "## %s\n\n<!-- last written by: %s, 2026-10-17 -->\n" section writer
+        write root "area/.spec/README.md" (document "alpha")
+        plan root |> ignore
+        write root "area/.spec/README.md" (document "implementer")
+        contains (sprintf "area/.spec/README.md: section '%s' is stamped by 'implementer', but 'alpha' owns it" section)
+            (expectFailure (fun () -> plan root))
+        nothingWritten root
+
+let B016_SignOffRejectsAReviewersStamp () =
+    // Given sign-off has a recording owner, when the reviewing role signs it,
+    // then projection cannot publish that ownership violation.
+    let root = checkout ()
+    write root ".specht/templates/feature.md" (template.Replace("## Tasks", "## 12. Sign-off\n\n## Tasks"))
+    write root "agents/beta.md" (role "beta" "[\"3\", \"12\"]" betaBody)
+    write root "area/.spec/README.md" "## 12. Sign-off\n\n<!-- last written by: beta, 2026-10-17 -->\n"
+    plan root |> ignore
+    write root "area/.spec/README.md" "## 12. Sign-off\n\n<!-- last written by: spec-reviewer, 2026-10-17 -->\n"
+    contains "area/.spec/README.md: section '12. Sign-off' is stamped by 'spec-reviewer', but 'beta' owns it"
+        (expectFailure (fun () -> plan root))
+    nothingWritten root
+
+let B016_TildeFencedExampleDoesNotCreateAnOwnershipViolation () =
+    // Given a valid stamp and a non-owner stamp inside a Markdown example,
+    // when the example uses a tilde fence, then planning still succeeds.
+    let root = checkout ()
+    write root "area/.spec/README.md"
+        "## 1. Business Goal\n\n<!-- last written by: alpha, 2026-10-17 -->\n\n~~~markdown\n## 3. Acceptance Criteria\n<!-- last written by: alpha, 2026-10-17 -->\n~~~\n"
+    plan root |> ignore
+    nothingWritten root
+
+let B016_ShorterBackticksDoNotEndAFencedExample () =
+    // Given a four-backtick example containing three literal backticks,
+    // when an example stamp names a non-owner, then it remains exempt.
+    let root = checkout ()
+    write root "area/.spec/README.md"
+        "## 1. Business Goal\n\n<!-- last written by: alpha, 2026-10-17 -->\n\n````markdown\n```\n## 3. Acceptance Criteria\n<!-- last written by: alpha, 2026-10-17 -->\n````\n"
+    plan root |> ignore
+    nothingWritten root
+
+let B016_RealViolationAfterAFencedExampleIsStillRejected () =
+    // Given the same nested example followed by a real ownership violation,
+    // when planning runs, then the example cannot hide the following section.
+    let root = checkout ()
+    write root "area/.spec/README.md"
+        "````markdown\n```\nAn example of a shorter fence.\n````\n\n## 1. Business Goal\n\n<!-- last written by: beta, 2026-10-17 -->\n"
+    contains "area/.spec/README.md: section '1. Business Goal' is stamped by 'beta', but 'alpha' owns it"
+        (expectFailure (fun () -> plan root))
     nothingWritten root
 
 let C3_Outputs_AreDeterministicAcrossRuns () =
@@ -1117,6 +1175,11 @@ let tests : (string * (unit -> unit)) list =
       nameof B014_TwoRolesReviewOneUnit_FailsNamingBoth, B014_TwoRolesReviewOneUnit_FailsNamingBoth
       nameof B015_UnreviewedOrUndeclaredUnit_FailsNamingIt, B015_UnreviewedOrUndeclaredUnit_FailsNamingIt
       nameof B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles, B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles
+      nameof B016_DesignSectionsRejectAnImplementationStamp, B016_DesignSectionsRejectAnImplementationStamp
+      nameof B016_SignOffRejectsAReviewersStamp, B016_SignOffRejectsAReviewersStamp
+      nameof B016_TildeFencedExampleDoesNotCreateAnOwnershipViolation, B016_TildeFencedExampleDoesNotCreateAnOwnershipViolation
+      nameof B016_ShorterBackticksDoNotEndAFencedExample, B016_ShorterBackticksDoNotEndAFencedExample
+      nameof B016_RealViolationAfterAFencedExampleIsStillRejected, B016_RealViolationAfterAFencedExampleIsStillRejected
       nameof B017_MixedPersonas_SortNamedThenUnnamedRoles, B017_MixedPersonas_SortNamedThenUnnamedRoles
       nameof B018_UnnamedPersona_PreservesVoiceOnBothHosts, B018_UnnamedPersona_PreservesVoiceOnBothHosts
       nameof F2_B040_InvalidSuppliedNameFails, F2_B040_InvalidSuppliedNameFails
@@ -1164,7 +1227,6 @@ for name, test in tests do
         failures <- failures + 1
         printfn "  FAIL %s\n       %s" name (ex.Message.Replace("\n", "\n       "))
 
-let scratch = Path.Combine(Path.GetTempPath(), "projection-tests")
 if Directory.Exists scratch then Directory.Delete(scratch, true)
 
 printfn "%d tests, %d failed" tests.Length failures
