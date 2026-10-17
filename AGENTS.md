@@ -33,8 +33,9 @@ This repository has no companion skill; where a skill says companion, read
 [README.md](README.md) § Layout and § Maintaining.
 
 **One-way rule.** A role may name skills; a skill never names a role. Say who by
-section owner or review pass instead. Projection fails on a role name under
-`skills/` outside a generated block ([0001-F4](skills/.spec/README.md)).
+section owner or review pass instead. Projection fails on a role name in runtime
+skill text outside a generated block ([0001-F4](skills/.spec/README.md));
+`.spec` and `.issue` metadata are outside that lint scope.
 
 ## Roles
 
