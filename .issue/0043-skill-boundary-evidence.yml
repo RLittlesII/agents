@@ -7,7 +7,7 @@ cost: 2
 risk: 1
 parent: "0001"
 children: []
-depends_on: []
+depends_on: ["0044"]
 spikes: []
 spec: null
 claims: []
@@ -30,6 +30,15 @@ decisions:
   - "2026-10-16, planning: value 3 removes uncertainty about an existing portability guard; cost 2 covers bounded review and evidence reconciliation; risk 1 reflects documentation-only intent."
   - "2026-10-16, reservation: 0042 is reserved by the user's uncommitted tracker reconciliation. No open PR reserves a later id; claim 0043 against fetched origin/main before branch/worktree creation."
   - "2026-10-16, delivery placement exception: this standalone evidence-maintenance chore uses root .issue with spec null. The projector treats skills/.issue as a skill and requires its SKILL.md; placing this review-only record there breaks projection. Do not change F1 runtime behavior to host this record."
+
+  - "2026-10-16, independent review /root/f4_baseline_review: historical design 593df19 and implementation ecb996c establish the existing .spec/NUL exclusions. Clarifying C-2 and B-001/B-003 changes no recorded behavior; keep IDs and scenarios."
+  - "2026-10-16, independent review /root/f4_baseline_review: baseline sections 1-7 and 9-12 are approved after corrections; full section 8 approval is withheld under ADR-0007. Earlier green delta approvals remain. Record OQ-1 without inventing a threshold, gate or shipping waiver."
+  - "2026-10-16, verification: 62 projector tests, including all four F4 checks, and 23 installer tests pass; strict specifications report zero errors/warnings; all 78 projected outputs are current. Runtime, test and generated files are unchanged."
+  - "2026-10-16, delivery scope: maintain documentation-only review and historical evidence reconciliation. Prerequisite 0001-F2 completion remains outside this item; no new implementation or full Feature completion is claimed."
+
+  - "2026-10-16, user scope expansion: include repository-wide coverage policy and enforcement. Preserve this F4 evidence slice and its independent review; prepare a separately owned coverage agreement/design and implementation before resolving OQ-1. Proposed placement 0001-F6 under epic 0001 awaits the user confirmation required by spec-and-traceability."
+
+  - "2026-10-16, user: confirmed 0001-F6 under epic 0001. Item 0044 owns its coverage policy and enforcement; this F4 documentation item waits for that delivered prerequisite before completion. Agreement and evidence review proceed independently, with no new F4 runtime implementation."
 
 out_of_scope:
   - "New runtime lint behavior and unrelated Feature approval are outside this evidence slice."

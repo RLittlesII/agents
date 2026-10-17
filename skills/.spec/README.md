@@ -181,7 +181,9 @@ claim assignment or new runtime behavior is asserted.
 
 ## Tasks
 
-None cut. The lint and the clean-up of the existing violations land together.
+<!-- last written by: organizer, 2026-10-16 -->
+
+- [0043 — Review Skill boundary baseline and reconcile delivery evidence](../../.issue/0043-skill-boundary-evidence.yml).
 
 ## Scoring
 
