@@ -130,7 +130,14 @@ writes nothing.
 - **A command is not a skill.** `commands/` is a sibling of `skills/`; a lint
   over skills does not read it, even though Codex receives commands as skills.
 
-Readiness: **Ready for tests and implementation.**
+B-005 retains the existing inline-link guard and also parses the command body
+with the existing Markdown dependency. Resolved reference-link destinations into
+`../agents/` or `../skills/` fail with the command path before output writes.
+Full, collapsed and shortcut references share this check; fenced reference
+examples are not resolved links. Existing inline rejection and valid rendering
+remain unchanged. Regression cases exercise planning and public CLI failure.
+
+Readiness: **Ready for regression tests after independent correction-design approval.**
 
 ## 8. Testing Strategy
 
