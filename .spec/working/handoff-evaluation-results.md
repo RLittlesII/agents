@@ -7,7 +7,7 @@ type: working-note
 # Bounded handoff evaluation results
 
 2026-10-17: owner authorized two fresh read-only agents for the
-[predeclared probes](handoff-evaluation-plan.md). Runtime baseline: `2997ac3`.
+[predeclared probes](../../agents/.spec/README.md#bounded-handoff-evaluation-plan). Runtime baseline: `2997ac3`.
 
 | Probe | Authority | Result | Decisive response excerpt |
 | --- | --- | --- | --- |
