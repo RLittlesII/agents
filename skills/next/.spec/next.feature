@@ -434,3 +434,22 @@ Feature: Next work
     Then the affected stage is withheld pending review of the new subject
     And independent unchanged scope retains its applicable approval evidence
     And recommendation edits no sign-off record
+
+  @B-034 @B-046
+  Scenario: A capped candidate leaves its lane available to another Feature
+    Given the highest-ranked startable item in Feature A heads lane one
+    And another startable item in Feature A ranks first in lane two
+    And a startable item in Feature B ranks next in lane two
+    When the person asks what is next
+    Then the second item in Feature A is shown queued behind its Feature
+    And lane two offers the item in Feature B as its head
+    And at most one start is offered per Feature
+
+  @B-003 @B-046
+  Scenario: A prerequisite consumes its owning Feature's start
+    Given a selected Feature A requires a startable prerequisite owned by Feature B
+    And Feature B already has a head in another lane
+    And Feature A has independent startable work with no unmet prerequisites
+    When the person asks what is next
+    Then the prerequisite is shown queued behind Feature B
+    And Feature A's independent work may still be offered as its start

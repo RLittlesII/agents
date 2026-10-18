@@ -4,7 +4,7 @@ description: "Compare Features and their completion paths to recommend the next 
 type: feature
 id: "F5"
 epic: "0001"
-spec_status: draft
+spec_status: approved
 status: in-progress
 priority: med
 value: 0
@@ -540,6 +540,11 @@ Not applicable.
 
 ## 10. Lessons / Spec Deltas
 
+2026-10-17: record independent baseline approval. Incorporate existing Finding 5
+in canonical lane guidance and two B-046 scenarios; align the old §7 reservation
+sentence and decision 0017 with the already-approved explicit-release policy.
+No claim or ranking rule changes; correction review remains pending.
+
 <!-- last written by: spec-author, 2026-10-17 -->
 
 No lesson is recorded for this Feature.
@@ -659,9 +664,15 @@ record naming the rule it follows and the option it rejected.
 | ------- | ------ | ------------- | ----------------------- |
 | Design: § 7 coordination, ownership and approval applicability | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
 | Diff: §§ 3, 7–8, 10, 12 and scenarios | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
-| 1-12    | 🟡     | spec-reviewer | Draft; not yet reviewed. |
+| Baseline: 1-12 and scenarios | 🟢 | spec-reviewer | Independent `/root/baseline_roles_next`, 2026-10-17: retrospective baseline content Approved at `2997ac3c6dbdf3bef910ffb6fef86aecc19d0bed`. Content approval; 46 Missing rows and the recorded nonblocking lane/record follow-ups remain. No historical pre-implementation approval is claimed. |
+| Correction: §7, scenarios, decision0017 and canonical lanes | 🟢 | spec-reviewer | Independent `/root/baseline_roles_next`, 2026-10-17: Approved at `b148707e323938c2eb58ed22479ae09604c318bf781168cf3b0de07a5fffa088`; unchanged baseline remains applicable, 46 Missing rows retained. |
+| Diff: lane and reservation corrections | 🟢 | spec-reviewer | Independent `/root/baseline_roles_next`, 2026-10-17: Approved at `a148bf47a5a726c87dbf4908547bcc27c6cfe56c70dfb7b7b95a2ca33ab629ed`; canonical lane prose, scenarios, decision0017 and history agree; both generated copies identical. 46 Missing rows remain. |
 
 ### Superseded amendment review history
+
+Prior baseline record, superseded by the returned baseline content verdict:
+
+> | 1-12    | 🟡     | spec-reviewer | Draft; not yet reviewed. |
 
 These pending records predate the current independent verdicts. They retain
 their original notes; current live-agent evidence limits remain in § 8.
