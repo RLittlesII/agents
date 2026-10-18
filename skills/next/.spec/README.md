@@ -227,7 +227,8 @@ not proof of release. B-017's wording now preserves that reservation boundary.
   cell reads `None` is scoped to nothing and withholds nothing (B-010, B-015,
   B-044, [decision 0019](decisions/0019-an-unscoped-question-leaves-readiness-unverified.md)).
   Delivered means finished as completed (B-018). Taken work, in review included,
-  occupies its lane until it is delivered
+  occupies its lane while its recorded reservation remains; explicit release ends
+  the reservation without delivery, and authorized reassignment retains it
   (B-017, [decision 0017](decisions/0017-work-in-review-holds-its-lane.md)).
   Waiting is derived from unfinished `depends_on` and spikes (B-019); a
   container with open children yields its children (B-020).
@@ -442,6 +443,11 @@ Findings 1 to 4 were recorded 2026-10-14 and are resolved; rechecked
    prerequisite owned by another Feature is capped by its owner, not by the
    selected Feature (`spec-author`). The design
    settles it, so no claim waits on it.
+
+2026-10-17: **Finding 5 resolved** in reviewed subject
+`b148707e323938c2eb58ed22479ae09604c318bf781168cf3b0de07a5fffa088`:
+canonical guidance states the ranked scan and owning-Feature cap; both requested
+B-046 scenarios are present. Independent `/root/baseline_roles_next` approved.
 
 No open question remains in § 11. Decisions 0016 to 0021 settle every claim
 the 2026-10-14 verdict excepted, and B-042 to B-046, which follow from them:
