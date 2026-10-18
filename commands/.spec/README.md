@@ -152,7 +152,9 @@ checkout of 0001-F1 with `commands_output` set on both hosts and one command,
   multi-role and one single-role command.
 - B-003, B-004, B-007: `plan` raises `ProjectionError` naming the offender and
   no output directory exists; B-003 also validates the real `commands/`.
-- B-005: one case per malformation, each failing before anything is written.
+- B-005: one case per malformation, including resolved full/collapsed/shortcut
+  reference destinations in both source namespaces. Planning and CLI cases reject
+  before writes; a fenced-reference control preserves valid body text.
 - B-006: the base fixture, whose hosts lack `commands_output`, projects no
   command; a planted file in `.claude/commands/` is reported stale.
 - C-1 and C-3 are review questions, read with each new command.
@@ -171,7 +173,7 @@ Not applicable.
 | B-002    | A command projects to a Codex skill              | `F3_B002_CommandProjectsToCodexSkill`                    | Covered |
 | B-003    | A command names a role with no file              | `F3_B003_CommandNamingMissingRole_FailsNamingBoth`       | Covered |
 | B-004    | A command names a skill with no directory        | `F3_B004_CommandNamingMissingSkill_FailsNamingBoth`      | Covered |
-| B-005    | A malformed command fails                        | `F3_B005_MalformedCommand_Fails`                         | Covered |
+| B-005    | A malformed command fails                        | `F3_B005_MalformedCommand_Fails`; `F3_B005_FullReferenceRoleLinkFails`; `F3_B005_FullReferenceSkillLinkFails`; `F3_B005_CollapsedReferenceRoleLinkFails`; `F3_B005_ShortcutReferenceRoleLinkFails`; `F3_B005_FencedReferenceExampleRemainsVerbatim` | Covered |
 | B-006    | Commands follow the host and stale ones show     | `F3_B006_CommandsFollowTheHostAndStaleOnesAreReported`   | Covered |
 | B-007    | A command named like a skill fails               | `F3_B007_CommandNamedLikeSkill_Fails`                    | Covered |
 

@@ -1238,6 +1238,29 @@ let B022_MissingRoleDescriptionCliNamesSourceBeforeWrites () =
     contains "description" message
     nothingWritten root
 
+let F3_B005_ReferenceLinkDestinationFails (body: string) () =
+    let root = commandsCheckout ()
+    write root "commands/convene.md" (command "convene" "[alpha]" "[]" body)
+    let error = expectFailure (fun () -> plan root)
+    contains "commands/convene.md" error
+    contains "the body links into agents/ or skills/" error
+    nothingWritten root
+    let code, message = runProject root false
+    equal 2 code
+    contains "commands/convene.md" message
+    contains "the body links into agents/ or skills/" message
+    nothingWritten root
+
+let F3_B005_FencedReferenceExampleRemainsVerbatim () =
+    let root = commandsCheckout ()
+    let body = "\nExample:\n\n```markdown\n[alpha][contract]\n\n[contract]: ../agents/alpha.md\n```\n\nWork on: $ARGUMENTS\n"
+    write root "commands/convene.md" (command "convene" "[alpha]" "[]" body)
+    let outputs = (plan root).Outputs
+    let claude = Encoding.UTF8.GetString outputs.[".claude/commands/convene.md"]
+    let codex = Encoding.UTF8.GetString outputs.[".agents/skills/convene/SKILL.md"]
+    contains body claude
+    contains (body.Replace("$ARGUMENTS", "the request that invoked this skill")) codex
+
 let B008_LinkedOutputPathsFailBeforePublication (linkPath: string) () =
     let root = checkout ()
     apply root (plan root) |> ignore
@@ -1350,6 +1373,11 @@ let tests : (string * (unit -> unit)) list =
     [ nameof B008_StaleSpecificationOutputsAreReportedAndRemoved, B008_StaleSpecificationOutputsAreReportedAndRemoved
       nameof B022_MissingRoleDescriptionNamesSourceAndPreservesOutputs, B022_MissingRoleDescriptionNamesSourceAndPreservesOutputs
       nameof B022_MissingRoleDescriptionCliNamesSourceBeforeWrites, B022_MissingRoleDescriptionCliNamesSourceBeforeWrites
+      "F3_B005_FullReferenceRoleLinkFails", F3_B005_ReferenceLinkDestinationFails "\n[alpha][contract]\n\n[contract]: ../agents/alpha.md\n"
+      "F3_B005_FullReferenceSkillLinkFails", F3_B005_ReferenceLinkDestinationFails "\n[guide][contract]\n\n[contract]: ../skills/sdd-conventions/SKILL.md\n"
+      "F3_B005_CollapsedReferenceRoleLinkFails", F3_B005_ReferenceLinkDestinationFails "\n[alpha][]\n\n[alpha]: ../agents/alpha.md\n"
+      "F3_B005_ShortcutReferenceRoleLinkFails", F3_B005_ReferenceLinkDestinationFails "\n[alpha]\n\n[alpha]: ../agents/alpha.md\n"
+      nameof F3_B005_FencedReferenceExampleRemainsVerbatim, F3_B005_FencedReferenceExampleRemainsVerbatim
       "B008_LinkedMetadataFailsBeforePublication", B008_LinkedOutputPathsFailBeforePublication ".claude/skills/old/.spec"
       "B008_LinkedOutputRootFailsBeforePublication", B008_LinkedOutputPathsFailBeforePublication ".claude/skills"
       "B008_LinkedOutputAncestorFailsBeforePublication", B008_LinkedOutputPathsFailBeforePublication ".codex"
