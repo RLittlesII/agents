@@ -4,7 +4,7 @@ description: "A composable prompt written once under commands/ convenes roles an
 type: feature
 id: "F3"
 epic: "0001"
-spec_status: draft
+spec_status: approved
 status: in-progress
 priority: med
 value: 0
@@ -170,6 +170,16 @@ Not applicable.
 
 ## 10. Lessons / Spec Deltas
 
+2026-10-17: [lesson 0001](lessons/0001-resolve-markdown-reference-destinations.md)
+records the inline-only guard failure and resolved-destination correction. Four
+reference regressions failed before implementation and pass afterward; final
+source-bound execution evidence remains linked from Projection §8.
+
+2026-10-17: baseline content approved; B-005 reference-link rejection requires a
+bounded implementation correction, now implemented and independently reviewed.
+The existing claim and constraint are unchanged; regression evidence and the
+returned approvals are recorded in Projection §8 and this Feature’s §12.
+
 <!-- last written by: spec-author, 2026-10-17 -->
 
 2026-10-17: Reconcile command division of work with existing artifact authority
@@ -194,9 +204,15 @@ None.
 | Section | Status | Reviewer      | Note                                                                    |
 | ------- | ------ | ------------- | ----------------------------------------------------------------------- |
 | Diff: §§ 10, 12 and command corrections | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
-| 1-12    | 🟡     | spec-reviewer | Draft. The twelve commands read for C-1 and C-3: no transitions, no technology. |
+| Baseline: 1-12 and scenarios | 🟢 | spec-reviewer | Independent `/root/baseline_projection_commands`, 2026-10-17: retrospective baseline content Approved at `2997ac3c6dbdf3bef910ffb6fef86aecc19d0bed`. Content approval; B-005 reference-link validation remains an implementation finding. No historical pre-implementation approval is claimed. |
+| Correction: §7 B-005 reference links and scenarios | 🟢 | spec-reviewer | Independent `/root/baseline_projection_commands`, 2026-10-17: Approved at `a2c1215ccec340282a9e75c4ba2e014946624db8f49c59513c03562bc247e7e3`; unchanged baseline approval remains applicable. |
+| Diff: B-005 reference-link correction and evidence | 🟢 | spec-reviewer | Independent `/root/baseline_projection_commands`, 2026-10-17: Approved production, regression and recording scope at `a148bf47a5a726c87dbf4908547bcc27c6cfe56c70dfb7b7b95a2ca33ab629ed`; subsequent incident citations independently Approved, completed 84-test execution and full gate confirmed. |
 
 ### Superseded amendment review history
+
+Prior baseline record, superseded by the returned baseline content verdict:
+
+> | 1-12    | 🟡     | spec-reviewer | Draft. The twelve commands read for C-1 and C-3: no transitions, no technology. |
 
 These pending records predate the current independent verdicts. They retain
 their original notes; current live-agent evidence limits remain in § 8.

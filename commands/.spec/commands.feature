@@ -50,6 +50,8 @@ Feature: Commands
       | has a description of two lines            |
       | names no role                             |
       | links agents/alpha.md from its body       |
+      | references agents/alpha.md through a link definition |
+      | references a skill through a link definition |
 
   @B-006
   Scenario: A host without a commands output gets no command
@@ -70,3 +72,9 @@ Feature: Commands
     When the checkout is projected
     Then projection fails naming the command and the skill
     And no output directory exists
+
+  @B-005 @boundary
+  Scenario: A fenced reference example remains command text
+    Given the command body contains a fenced example of a reference link
+    When the checkout is projected
+    Then the example remains unchanged in the command body
