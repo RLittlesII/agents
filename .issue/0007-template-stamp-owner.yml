@@ -19,7 +19,7 @@ spec: null
 claims: []
 
 created: "2026-10-14"
-updated: "2026-10-14"
+updated: "2026-10-17"
 closed: null
 
 summary: |
@@ -37,6 +37,9 @@ decisions:
   - "2026-10-14: blocked on specht. The request below goes to specht; no ADR-0004 exception is taken, so .specht/templates/ stays tool-owned."
   - "2026-10-14: mitigated here by 0001-F1 B-016 (0029). A spec copied from the template with implementer on §§ 6-7 now fails projection naming the section and architect, so the wrong owner cannot land."
 
+  - "2026-10-17: Retain PR #9 upstream follow-up evidence here rather than a post-item discovery file. specht.tool 0.1.90 / schema 0.1.0 templates also prescribe the reviewer as sign-off recorder, GitHub lifecycle/Tasks, inconsistent priority ownership and Reqnroll. Consumer-neutral ownership, tracker, scoring, testing and current-approval guidance belongs upstream; ADR-0004 still forbids hand-editing installed templates."
+  - "2026-10-17: Audit follow-up recorded upstream agreement commit cfde34d6, targeting owner-confirmed unpublished 0.2.0. This is reported historical evidence, not fresh sibling-checkout verification; implementation, distribution and consumer adoption remain outstanding. GitHub issues were disabled and no upstream message was sent. This blocked item's state is unchanged."
+
 out_of_scope: []
 
 upstream_request: |
@@ -49,3 +52,14 @@ upstream_request: |
   "<!-- last written by: {{owner}}, {{date}} -->" placeholder the author
   fills. Either way, a rule that flags a stamp naming a role other than the
   declared owner would let consumers drop their own check.
+
+  Additional request scope: route ownership, sign-off recording, tracker/mirror
+  mapping, priority and test-stack guidance through consumer policy; distinguish
+  current applicable approvals from retained verdict history. Do not export this
+  repository's roster or change checker/schema behavior without upstream claims.
+  Neutral placeholders avoid adding a configuration API; configurable owners need
+  explicit agreement. Preserve published snapshots and settle target pins before
+  implementation. Proposed checks use alternate owner, local-tracker and
+  non-Reqnroll fixtures, consistent priority guidance, preserved approval history
+  and immutable version/pin behavior. These are proposed upstream checks, not
+  approved claims or completed tests.
