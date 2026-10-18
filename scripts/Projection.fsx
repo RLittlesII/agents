@@ -719,6 +719,14 @@ type Command =
 
 let private relativeLink = Regex(@"\]\(\.\./(agents|skills)/")
 
+let private linksIntoSources (body: string) =
+    relativeLink.IsMatch body ||
+    ((Markdown.Parse body).Descendants<LinkInline>()
+     |> Seq.exists (fun link ->
+         not (isNull link.Url) &&
+         (link.Url.StartsWith("../agents/", StringComparison.Ordinal) ||
+          link.Url.StartsWith("../skills/", StringComparison.Ordinal))))
+
 let loadCommand (root: string) (path: string) : Command =
     let source = relative root path
     let pairs, body = splitFrontmatter source (readText path)
@@ -737,7 +745,7 @@ let loadCommand (root: string) (path: string) : Command =
         | Some _ -> fail (sprintf "%s: %s must be a list" source key)
     let roles = list "roles"
     if roles.IsEmpty then fail (sprintf "%s: roles must name at least one role" source)
-    if relativeLink.IsMatch body then
+    if linksIntoSources body then
         fail (sprintf "%s: the body links into agents/ or skills/; name roles and skills in frontmatter, which projection turns into each host's paths" source)
     let hint =
         match tryGet "argument-hint" pairs with
