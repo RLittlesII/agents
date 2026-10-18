@@ -193,7 +193,7 @@ Feature: Projection
     Then projection fails naming the file, the Business Goal, beta and alpha
     And no output directory exists
 
-  @boundary
+  @B-001 @B-002 @boundary
   Scenario: A role absent from an overlay receives the defaults
     Given a role named beta that no overlay names
     When the checkout is projected
@@ -262,3 +262,29 @@ Feature: Projection
     Given a host output contains a tracker record absent from the runtime plan
     When projection differences are checked
     Then the tracker record is reported as stale without changing the source tracker
+
+  @B-008
+  Scenario: Old specification metadata in generated output is stale
+    Given projected outputs otherwise match their sources
+    And old specification metadata remains below a declared output root
+    When the checkout is checked
+    Then the old metadata is named as stale without changing any file
+    When the projection is applied
+    Then that stale output is removed
+    And source metadata and files outside output roots are unchanged
+
+  @B-008 @boundary
+  Scenario: Unix output paths retain literal backslashes
+    Given an output path contains a literal backslash on Unix
+    When projection compares or applies outputs
+    Then it uses that native path without substituting a slash-named directory
+    And any linked output component fails before publication
+    And stale cleanup preserves unrelated slash-named files
+
+  @B-022
+  Scenario: A missing required role value names its source before writes
+    Given a role document is missing its required description
+    And existing generated outputs are present
+    When the checkout is projected
+    Then projection fails naming the role document and the required field
+    And existing outputs are unchanged

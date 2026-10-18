@@ -4,7 +4,7 @@ description: "Host-free role contracts plus a per-host overlay become committed,
 type: feature
 id: "F1"
 epic: "0001"
-spec_status: in-review
+spec_status: approved
 status: in-progress
 priority: med
 value: 0
@@ -96,8 +96,8 @@ this Feature removes both failure states.
 | --- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | C-1 | A role is defined once, in `agents/<name>.md`; host overlays are authoritative for rendered host settings. | A second role copy per host |
 | C-2 | A role body projects verbatim.                                              | Per-host wording, link rewriting, or any transform of the body text          |
-| C-3 | Outputs are committed and byte-deterministic.                               | Timestamps, absolute paths, CRLF, a byte-order mark, machine-dependent order |
-| C-4 | Projection reads only the checkout.                                         | A network call, a package feed lookup, or an environment variable at run time |
+| C-3 | Outputs are committed and byte-deterministic; rendered text uses UTF-8 without a BOM and LF, while copied runtime resources preserve their bytes under B-004. | Timestamps, machine-dependent order, absolute generated paths, or newline/BOM rewriting of copied resources |
+| C-4 | Projection reads checkout inputs offline after the pinned script dependencies are restored under ADR-0003. | Network, feed or environment-dependent projection decisions; dependency bootstrap is separate |
 | C-5 | Projection runs with the pinned .NET SDK and nothing else installed.        | Python, Node, a packaged tool, or a build system as a prerequisite           |
 
 ## 5. Out of Scope
@@ -110,7 +110,7 @@ this Feature removes both failure states.
 | 2   | Commands                                               | [0001-F3 Commands](../../commands/.spec/README.md)                                |
 | 3   | Hosts other than Claude Code and Codex                 | Each needs its own overlay and renderer; added as a new host, not a change here  |
 | 4   | Linting the one-way rule between skills and roles      | [0001-F4 Skill boundary](../../skills/.spec/README.md)                         |
-| 5   | Validating the role body's section headings            | Owned by [0001-F2 Role contract](../../agents/.spec/README.md)                   |
+| 5   | Defining the role body's required section headings | Owned by [0001-F2 Role contract](../../agents/.spec/README.md); B-019/B-021 enforce that structure through the tracked schema |
 
 ## 6. Concern Separation
 
@@ -374,6 +374,15 @@ inventory count.
 
 ## 10. Lessons / Spec Deltas
 
+2026-10-17: [output inventory lesson 0002](lessons/0002-output-inventory-is-not-source-selection.md)
+and [diagnostic lesson 0003](lessons/0003-preserve-source-context-before-schema-validation.md)
+record the implementation causes and boundary corrections under B-008/B-022.
+
+2026-10-17: reconcile C-3/C-4 and heading-definition scope with existing claims
+and ADR-0003; tag the defaults boundary. Baseline review also diagnosed B-008
+output-metadata omission and B-022 source-less scalar diagnostics. The correction
+design preserves existing behavior elsewhere; regressions and their observed red/green evidence are recorded in §8.
+
 <!-- last written by: spec-author, 2026-10-17 -->
 
 2026-10-16: Owner requested clearing persona names while preserving voices.
@@ -408,7 +417,9 @@ None.
 | Design: § 7 fence parsing | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
 | Diff: §§ 7–10; parser, tests and lesson | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
 | Surface: submitted amendment boundaries | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; no actionable findings, with R2/R3 applicability verified. |
-| 1-12    | 🟡     | spec-reviewer | Draft baseline. Original scaffolding evidence retained; claims and tests landed together. |
+| Baseline correction: §§3–5,7–8,10,12 and scenarios | 🟢 | spec-reviewer | Independent `/root/baseline_projection_commands`, 2026-10-17: Approved at `a2c1215ccec340282a9e75c4ba2e014946624db8f49c59513c03562bc247e7e3`; prior `2997ac3` approval covers unchanged §§1–2,6,9,11 and other unchanged scope. Together these establish baseline content approval; implementation and execution were pending at this design review (final evidence: §8). |
+| Surface: output and reference-link correction design | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17: Approved at `a2c1215ccec340282a9e75c4ba2e014946624db8f49c59513c03562bc247e7e3`; linked/escaped output paths must fail before publication. Regression execution was pending at this design review (final evidence: §8). |
+| Surface: native-path correction design | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17: Approved §7 at source SHA-256 `5bf1f51041cb5d4fc324aa6d8d6cfaaf4cd03a06d5cfd3ae1354f655e68913dc` before dependent tests/code. Native spelling must persist through output roots, traversal and effects; four Unix regression cases required. |
 | 3, 7-10, 12 | 🟢 | spec-reviewer | Approved 2026-10-16: optional-name delta reviewed against 0001-F1 B-017 and B-018; source, scenarios, tests and projections agree. Baseline evidence retained. |
 | 3, 7-10, 12 | 🟢 | spec-reviewer | Rebase delta approved 2026-10-16 by independent `/root/persona_diff_review` against main `e60dea1`; no findings, earlier evidence retained. |
 | B-019–B-024; schemas, projector and coverage | 🟢 | spec-reviewer | Independent `/root/final_schema_review`, 2026-10-16: approved after literal-description round-trip fix and ADR-0009 reconciliation; stale description row corrected. 62 projector and 23 installer tests pass; strict checks clean; 78 outputs current. |
@@ -416,6 +427,14 @@ None.
 | Design: § 7 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; planned strategy is testable. |
 | Diff: B-025 tracker metadata and executed tests | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; 71 projector and 30 installer tests pass, with test-first evidence. |
 | Surface: tracker metadata boundary | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; native/private traversal and existing publication safeguards verified. |
+| Surface: implemented output boundaries | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17: static implementation Approved at `6edf58971d594b9f033fabe226caf6da8d4be93cacfdb385d3446a9ebc56746b`, all 20 hashes verified, no remaining findings. Both native-path findings resolved; four Unix controls retain all previous cases. Subsequent source-bound execution is recorded separately in §8. |
+| Diff: completed baseline corrections | 🟢 | spec-reviewer | Independent `/root/baseline_projection_commands`, 2026-10-17: Approved native-path implementation, four regressions, design/scenario/traceability alignment, lessons and inspected recording-only corrections at `6edf58971d594b9f033fabe226caf6da8d4be93cacfdb385d3446a9ebc56746b`; unchanged F1/F3 approval at `a148bf47a5a726c87dbf4908547bcc27c6cfe56c70dfb7b7b95a2ca33ab629ed` remains applicable. Final 88/6/30/36 test execution, matching report/source hashes and 88/89 coverage verified. No remaining findings; Feature completion is not asserted. |
+
+### Superseded baseline review history
+
+Prior correction review: `/root/baseline_projection_commands` approved agreement/design but blocked §12 history at `b148707e323938c2eb58ed22479ae09604c318bf781168cf3b0de07a5fffa088`; R2 preserves that history and clears the finding. Prior surface review at that subject was Blocked on linked output traversal; R2 clears the design finding.
+
+> | 1-12    | 🟡     | spec-reviewer | Draft baseline. Original scaffolding evidence retained; claims and tests landed together. |
 
 Current amendment verdicts apply to the identified reviewed snapshot. Earlier
 pending rows are retained for their earlier subjects; current review approval
