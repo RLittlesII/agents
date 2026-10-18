@@ -1198,10 +1198,164 @@ let F4_B004_TrackerRecordsAreIgnoredButRuntimeStillFailsLint () =
     for path in records do
         if message.Contains path then failwithf "tracker was linted: %s" path
 
+// ---------------------------------------------------------------- Baseline-review regressions
+
+let B008_StaleSpecificationOutputsAreReportedAndRemoved () =
+    let root = checkout ()
+    write root "agents/.spec/source.md" "source metadata\n"
+    write root ".claude/unrelated/.spec/keep.md" "outside output roots\n"
+    apply root (plan root) |> ignore
+    let stale = [ ".claude/skills/old/.spec/README.md"; ".agents/skills/sdd-conventions/.spec/old.md" ]
+    for path in stale do write root path "old metadata\n"
+    equal (stale |> List.map Stale |> List.sort) (differences root (plan root) |> List.sort)
+    let code, message = runProject root true
+    equal 1 code
+    for path in stale do
+        contains path message
+        equal "old metadata\n" (read root path)
+    apply root (plan root) |> ignore
+    for path in stale do equal false (exists root path)
+    equal "source metadata\n" (read root "agents/.spec/source.md")
+    equal "outside output roots\n" (read root ".claude/unrelated/.spec/keep.md")
+    equal [] (differences root (plan root))
+
+let B022_MissingRoleDescriptionNamesSourceAndPreservesOutputs () =
+    let root = checkout ()
+    apply root (plan root) |> ignore
+    let before = (plan root).Outputs |> Map.toList |> List.map (fun (rel, _) -> rel, File.ReadAllBytes(Path.Combine(root, rel)))
+    write root "agents/beta.md" ((read root "agents/beta.md").Replace("description: Does beta things.\n", ""))
+    let error = expectFailure (fun () -> plan root)
+    contains "agents/beta.md" error
+    contains "description" error
+    for rel, bytes in before do equal bytes (File.ReadAllBytes(Path.Combine(root, rel)))
+
+let B022_MissingRoleDescriptionCliNamesSourceBeforeWrites () =
+    let root = checkout ()
+    write root "agents/beta.md" ((read root "agents/beta.md").Replace("description: Does beta things.\n", ""))
+    let code, message = runProject root false
+    equal 2 code
+    contains "agents/beta.md" message
+    contains "description" message
+    nothingWritten root
+
+let B008_LinkedOutputPathsFailBeforePublication (linkPath: string) () =
+    let root = checkout ()
+    apply root (plan root) |> ignore
+    let before = (plan root).Outputs |> Map.toList |> List.map (fun (rel, _) -> rel, File.ReadAllBytes(Path.Combine(root, rel)))
+    write root "unrelated/keep.md" "target metadata\n"
+    let target = Path.Combine(root, "unrelated")
+    let link = Path.Combine(root, linkPath)
+    Directory.CreateDirectory(Path.GetDirectoryName link) |> ignore
+    if Directory.Exists link then Directory.Delete(link, true)
+    Directory.CreateSymbolicLink(link, target) |> ignore
+    try
+        // Force an early planned change: rejection must precede every publication.
+        write root "agents/beta.md" ((read root "agents/beta.md").Replace("Owns nothing.", "Still owns nothing."))
+        let output = plan root
+        let error = expectFailure (fun () -> apply root output)
+        contains "linked output" error
+        equal "target metadata\n" (read root "unrelated/keep.md")
+        for rel, bytes in before do
+            if not (rel.StartsWith(linkPath + "/", StringComparison.Ordinal)) then
+                equal bytes (File.ReadAllBytes(Path.Combine(root, rel)))
+    finally
+        Directory.Delete link
+
+let B008_EscapingOutputRootFailsBeforePublication () =
+    let root = checkout ()
+    write root "unrelated/keep.md" "not an output\n"
+    let output = plan root
+    let escaped = { output with OutputRoots = [ "../" + Path.GetFileName root + "/../outside" ] }
+    let error = expectFailure (fun () -> apply root escaped)
+    contains "outside the checkout" error
+    nothingWritten root
+    equal "not an output\n" (read root "unrelated/keep.md")
+
+let B008_LinkedPlannedFileFailsBeforePublication () =
+    let root = checkout ()
+    apply root (plan root) |> ignore
+    let before = read root ".claude/agents/alpha.md"
+    write root "unrelated/target.md" "consumer-owned target\n"
+    let link = Path.Combine(root, ".claude/agents/beta.md")
+    File.Delete link
+    File.CreateSymbolicLink(link, Path.Combine(root, "unrelated/target.md")) |> ignore
+    try
+        write root "agents/alpha.md" ((read root "agents/alpha.md").Replace("Reads", "Also reads"))
+        let error = expectFailure (fun () -> apply root (plan root))
+        contains ".claude/agents/beta.md: linked output" error
+        equal "consumer-owned target\n" (read root "unrelated/target.md")
+        equal before (read root ".claude/agents/alpha.md")
+    finally
+        File.Delete link
+
+// B-008 native-path controls use §7's independently approved correction design
+// (2026-10-17, source SHA-256 5bf1f51041cb5d4fc324aa6d8d6cfaaf4cd03a06d5cfd3ae1354f655e68913dc).
+// A backslash is a filename character on Unix; register these cases only there.
+let B008_UnixBackslashPlannedLinkFailsBeforePublication () =
+    let root = checkout ()
+    apply root (plan root) |> ignore
+    let before = read root ".claude/agents/alpha.md"
+    write root "unrelated/target.md" "linked target\n"
+    let link = Path.Combine(root, @".claude/native\link")
+    Directory.CreateSymbolicLink(link, Path.Combine(root, "unrelated")) |> ignore
+    try
+        write root "agents/alpha.md" ((read root "agents/alpha.md").Replace("Reads", "Also reads"))
+        let output = plan root
+        let linked = { output with Outputs = output.Outputs.Add(@".claude/native\link/target.md", bytes "overwrite\n") }
+        let error = expectFailure (fun () -> apply root linked)
+        contains "linked output" error
+        equal "linked target\n" (read root "unrelated/target.md")
+        equal before (read root ".claude/agents/alpha.md")
+    finally
+        Directory.Delete link
+
+let B008_UnixBackslashDiscoveredLinkFailsBeforePublication () =
+    B008_LinkedOutputPathsFailBeforePublication @".claude/skills/native\link" ()
+
+let B008_UnixBackslashStaleFilePreservesSlashSentinel () =
+    let root = checkout ()
+    apply root (plan root) |> ignore
+    let literal = @".claude/skills/stale\keep.md"
+    let slash = ".claude/skills/stale/keep.md"
+    write root literal "stale literal\n"
+    write root slash "planned sentinel\n"
+    let output = plan root
+    let withSentinel = { output with Outputs = output.Outputs.Add(slash, bytes "planned sentinel\n") }
+    let diffs = apply root withSentinel
+    equal true (List.contains (Stale literal) diffs)
+    equal false (File.Exists(Path.Combine(root, literal)))
+    equal "planned sentinel\n" (read root slash)
+
+let B008_UnixBackslashRoleRootPreservesSlashDirectory () =
+    let root = checkout ()
+    write root "hosts/claude.yaml" (claudeHost.Replace(".claude/agents/{name}.md", @".claude/native\roles/{name}.md"))
+    write root ".claude/native/roles/keep.md" "outside declared root\n"
+    write root @".claude/native\roles/old.md" "stale role\n"
+    let diffs = apply root (plan root)
+    equal true (List.contains (Stale @".claude/native\roles/old.md") diffs)
+    equal false (File.Exists(Path.Combine(root, @".claude/native\roles/old.md")))
+    equal "outside declared root\n" (read root ".claude/native/roles/keep.md")
+    contains "name: alpha" (read root @".claude/native\roles/alpha.md")
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
-    [ nameof B025_TrackerDirectoryIsNotASkill, B025_TrackerDirectoryIsNotASkill
+    let unixTests =
+      if OperatingSystem.IsWindows() then [] else
+        [ nameof B008_UnixBackslashPlannedLinkFailsBeforePublication, B008_UnixBackslashPlannedLinkFailsBeforePublication
+          nameof B008_UnixBackslashDiscoveredLinkFailsBeforePublication, B008_UnixBackslashDiscoveredLinkFailsBeforePublication
+          nameof B008_UnixBackslashStaleFilePreservesSlashSentinel, B008_UnixBackslashStaleFilePreservesSlashSentinel
+          nameof B008_UnixBackslashRoleRootPreservesSlashDirectory, B008_UnixBackslashRoleRootPreservesSlashDirectory ]
+    unixTests @
+    [ nameof B008_StaleSpecificationOutputsAreReportedAndRemoved, B008_StaleSpecificationOutputsAreReportedAndRemoved
+      nameof B022_MissingRoleDescriptionNamesSourceAndPreservesOutputs, B022_MissingRoleDescriptionNamesSourceAndPreservesOutputs
+      nameof B022_MissingRoleDescriptionCliNamesSourceBeforeWrites, B022_MissingRoleDescriptionCliNamesSourceBeforeWrites
+      "B008_LinkedMetadataFailsBeforePublication", B008_LinkedOutputPathsFailBeforePublication ".claude/skills/old/.spec"
+      "B008_LinkedOutputRootFailsBeforePublication", B008_LinkedOutputPathsFailBeforePublication ".claude/skills"
+      "B008_LinkedOutputAncestorFailsBeforePublication", B008_LinkedOutputPathsFailBeforePublication ".codex"
+      nameof B008_EscapingOutputRootFailsBeforePublication, B008_EscapingOutputRootFailsBeforePublication
+      nameof B008_LinkedPlannedFileFailsBeforePublication, B008_LinkedPlannedFileFailsBeforePublication
+      nameof B025_TrackerDirectoryIsNotASkill, B025_TrackerDirectoryIsNotASkill
       nameof B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive, B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive
       nameof B008_B025_StaleTrackerOutputsAreReportedAndRemoved, B008_B025_StaleTrackerOutputsAreReportedAndRemoved
       nameof F4_B004_TrackerRecordsAreIgnoredButRuntimeStillFailsLint, F4_B004_TrackerRecordsAreIgnoredButRuntimeStillFailsLint

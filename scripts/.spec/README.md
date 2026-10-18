@@ -312,7 +312,7 @@ Mechanism per claim:
 - B-003: `tomlString`; the test decodes the emitted string with its own TOML
   basic-string decoder and asserts the body round-trips and no surrogate escape
   appears.
-- B-004: `plan` collecting `filesUnder` each skill; compared as bytes, with CRLF
+- B-004: `plan` collecting `runtimeFilesUnder` each skill; compared as bytes, with CRLF
   and a binary file in the fixture.
 - B-005: `ownershipRows` and `renderOwnershipTable`; exact table, idempotent on a
   second plan. A subsection row renders under its parent and is exempt from
@@ -335,7 +335,7 @@ Mechanism per claim:
   Design and sign-off examples exercise template-owner mistakes. Tilde fences
   and longer backtick fences distinguish example stamps from a real violation
   after the example.
-- C-3: two plans produce identical bytes, no byte-order mark, no absolute path.
+- C-3: two plans produce identical bytes; rendered text has no BOM or absolute generated path. B-004 separately checks copied bytes.
 
 On 2026-10-17 the 67-test run passed 64 and failed three B-016 regressions:
 tilde-fenced examples, shorter backticks inside a longer fence, and a real
@@ -376,6 +376,33 @@ Not measured. The nineteen-role source set projects to 78 outputs across both
 hosts. No latency measurement or performance target is established by this
 inventory count.
 
+### Baseline correction execution
+
+The unchanged baseline passed 71 tests. Before production edits, 12 registered
+regression/control cases produced 11 expected failures in 83 tests: stale
+metadata, source-less diagnostics, reference links and unsafe output paths. The
+fenced reference control passed. After the bounded production correction, those
+83 tests passed. A separate planned-file link control brought the first passing
+full gate to 84 tests. Surface review then found Unix path aliasing; four new
+native-path controls reproduced four failures in 88 tests before correction.
+
+Final source-bound gate: **88 F# tests, six compiled CLI cases, 30 installer
+tests and 36 coverage-gate tests passed**. Changed production coverage is
+**88/89 lines (98.88%)**, above the required 80%; only the existing unused
+missing-directory return at `scripts/Projection.fsx:197` remains uncovered.
+Evidence: `.artifacts/baseline-corrections/native-red-tests.log`,
+`.artifacts/baseline-corrections/native-coverage.log` and
+`.artifacts/coverage/2c78c8cb933a428dba047a51e9f5aa54/manifest.json`.
+All six collector/report processes exited zero, and recorded production hashes
+match the final source. Requested and comparison base are
+`d4eac9c975718756f0d97d150ddced6f90044648`; HEAD remains `2997ac3`.
+Strict specifications pass with zero errors/warnings; all 80 outputs are current.
+
+The tests use synthetic temporary roots and existing library/CLI entry points;
+no consumer installation or manager invocation is involved. Prior platform and
+behavioral evidence limits remain. Output path checks are preflight/repeated
+validation, not an atomic defense against concurrent filesystem replacement.
+
 ## 9. Traceability Matrix
 
 <!-- last written by: test-writer, 2026-10-17 -->
@@ -389,7 +416,7 @@ inventory count.
 | B-005    | Ownership declarations become the companion's table        | `B005_OwnedSections_WriteOwnershipTableBetweenMarkers`, `B005b_Subsection_RendersUnderItsParentAndIsExemptFromTotality` | Covered |
 | B-006    | Two roles claim one section                                | `B006_TwoRolesClaimOneSection_FailsNamingBoth`                    | Covered |
 | B-007    | A template section has no owner                            | `B007_UnownedTemplateSection_FailsNamingIt`                       | Covered |
-| B-008    | Check passes when current and names every drift            | `B008_Check_IsSilentWhenCurrentAndNamesEveryDrift`                | Covered |
+| B-008    | Check passes when current and names every drift            | `B008_Check_IsSilentWhenCurrentAndNamesEveryDrift`; `B008_StaleSpecificationOutputsAreReportedAndRemoved`; `B008_LinkedMetadataFailsBeforePublication`; `B008_LinkedOutputRootFailsBeforePublication`; `B008_LinkedOutputAncestorFailsBeforePublication`; `B008_EscapingOutputRootFailsBeforePublication`; `B008_LinkedPlannedFileFailsBeforePublication`; `B008_UnixBackslashPlannedLinkFailsBeforePublication`; `B008_UnixBackslashDiscoveredLinkFailsBeforePublication`; `B008_UnixBackslashStaleFilePreservesSlashSentinel`; `B008_UnixBackslashRoleRootPreservesSlashDirectory` | Covered |
 | B-009    | An overlay or a role name points at nothing                | `B009_OverlayNamesMissingRole_Fails`, `B009b_RoleNameDiffersFromFileName_Fails` | Covered |
 | B-010 | A role file carries a host key | Superseded by B-024 | Withdrawn |
 | B-011    | Personas become the roster                                 | `B011_Personas_WriteRosterBetweenMarkers`                         | Withdrawn |
@@ -403,7 +430,7 @@ inventory count.
 | B-019 | [@B-019](projection.feature) Agent document schema | `B019_AgentSchemaRejectsInvalidFrontmatter`, `B019_PortableFrontmatterAcceptsUserExamples`, `B019_LiteralDescriptionRoundTripsThroughBothHosts` | Covered |
 | B-020 | [@B-020](projection.feature) Skill document schema | `B020_SkillSchemaValidatesMetadataAndStructure` | Covered |
 | B-021 | [@B-021](projection.feature) Parsed document structure | `B021_ExamplesCannotSatisfyRequiredHeadings` | Covered |
-| B-022 | [@B-022](projection.feature) Reject before writes | `B022_InvalidSchemasPreserveExistingOutputs` | Covered |
+| B-022 | [@B-022](projection.feature) Reject before writes | `B022_InvalidSchemasPreserveExistingOutputs`; `B022_MissingRoleDescriptionNamesSourceAndPreservesOutputs`; `B022_MissingRoleDescriptionCliNamesSourceBeforeWrites` | Covered |
 | B-023 | [@B-023](projection.feature) Schema-driven rules | `B023_ChangedSchemaRulesTakeEffectOnNextPlan` | Covered |
 | B-024 | [@B-024](projection.feature) Host overlays remain authoritative | `B024_HostOverlaysRemainAuthoritative` | Covered |
 | B-025 | Tracker metadata scenarios in the companion `.feature` | `B025_TrackerDirectoryIsNotASkill`; `B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive`; `B008_B025_StaleTrackerOutputsAreReportedAndRemoved` | Covered |
