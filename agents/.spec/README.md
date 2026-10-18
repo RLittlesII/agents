@@ -4,7 +4,7 @@ description: "Host-free role contracts organized around accountable leads, condi
 type: feature
 id: "F2"
 epic: "0001"
-spec_status: in-review
+spec_status: approved
 status: in-progress
 priority: med
 value: 0
@@ -1228,7 +1228,7 @@ add B-041 and adopt ADR-0009; preserve prior baseline evidence and roster bodies
 | Design: § 7 policy/handoff amendments | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
 | Diff: §§ 2–3, 7–12; contracts, skills, decisions and scenarios | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
 | Surface: submitted amendment boundaries | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; no actionable findings, with R2/R3 applicability verified. |
-| 1-12    | 🟡     | spec-reviewer | Baseline draft. Preserve B-004 review evidence: grep at scaffolding and second-wave roster (2026-10-14) found no product technology in role bodies. |
+| Baseline: 1-12 and scenarios | 🟢 | spec-reviewer | Independent `/root/baseline_roles_next`, 2026-10-17: retrospective baseline content Approved at `2997ac3c6dbdf3bef910ffb6fef86aecc19d0bed`. Content approval; 32 Partial instruction rows remain delivery gaps. No historical pre-implementation approval is claimed. |
 | 1-5, 7-10, 12, scenarios, decision 0001 | 🟢 | spec-reviewer | Agreement-only amendment reviewed 2026-10-16; § 7 scopes baseline readiness, §§ 8–9 record pending coverage; implementation remains pending. |
 | 6-7 | 🟢 | critic | B-010–B-036 design critique, 2026-10-16; independent instance approved after B-030 recovery-path correction and re-review. |
 | 6-8, Tasks | 🟢 | spec-reviewer | Design-only amendment reviewed 2026-10-16; no findings, baseline evidence preserved, implementation and new executable coverage pending. |
@@ -1242,8 +1242,13 @@ add B-041 and adopt ADR-0009; preserve prior baseline evidence and roster bodies
 
 | Optional-name input and projection boundary | 🟢 | adversary | Independent `/root/persona_surface_review`, 2026-10-16: no security regressions in the rebase delta; validation, escaped rendering and role permissions preserved. |
 | B-041; amended agreement, design and coverage | 🟢 | spec-reviewer | Independent `/root/final_schema_review`, 2026-10-16: approved after literal-description round-trip fix and ADR-0009 reconciliation; stale description row corrected. 62 projector and 23 installer tests pass; strict checks clean; 78 outputs current. |
+| Diff: baseline verdict recording | 🟢 | spec-reviewer | Independent `/root/baseline_roles_next`, 2026-10-17: Approved at `a148bf47a5a726c87dbf4908547bcc27c6cfe56c70dfb7b7b95a2ca33ab629ed`; faithful baseline/history recording, 32 Partial rows retained. |
 
 ### Superseded amendment review history
+
+Prior baseline record, superseded by the returned baseline content verdict:
+
+> | 1-12    | 🟡     | spec-reviewer | Baseline draft. Preserve B-004 review evidence: grep at scaffolding and second-wave roster (2026-10-14) found no product technology in role bodies. |
 
 These pending records predate the current independent verdicts. They retain
 their original notes; current live-agent evidence limits remain in § 8.
