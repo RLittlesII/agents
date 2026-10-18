@@ -82,7 +82,7 @@ let readText (path: string) = File.ReadAllText(path, Encoding.UTF8) |> normalize
 let utf8 = UTF8Encoding(false)
 
 let relative (root: string) (path: string) =
-    Path.GetRelativePath(root, path).Replace('\\', '/')
+    Path.GetRelativePath(root, path).Replace(Path.DirectorySeparatorChar, '/')
 
 let rec private toJsonValue depth (value: obj) =
     if depth > 64 then fail "YAML nesting exceeds 64 levels"
@@ -175,7 +175,6 @@ let bytes (text: string) = utf8.GetBytes text
 let filesUnder (directory: string) =
     if Directory.Exists directory then
         Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories)
-        |> Seq.filter (fun f -> not (f.Contains("/.spec/") || f.Contains("\\.spec\\")))
         |> Seq.sort
         |> List.ofSeq
     else []
@@ -185,7 +184,7 @@ let private isSkillMetadata (path: string) =
     name = ".spec" || name = ".issue"
 
 /// 0001-F1 B-025, 0001-F4 B-004: prune source metadata before traversal.
-/// Output comparison uses filesUnder so old tracker outputs remain stale.
+/// Output comparison uses filesUnder so old metadata outputs remain stale.
 let runtimeFilesUnder (directory: string) =
     let rec visit folder =
         seq {
@@ -230,12 +229,15 @@ let private semver = Regex(@"^\d+\.\d+\.\d+$")
 let loadRole (root: string) (path: string) : Role =
     let source = relative root path
     let pairs, body = splitFrontmatter source (readText path)
-    let name = getScalar "name" pairs
+    let scalar key =
+        try getScalar key pairs
+        with ProjectionError message -> fail (sprintf "%s: %s" source message)
+    let name = scalar "name"
     // B-009: the name matches the file name.
     let stem = Path.GetFileNameWithoutExtension path
     if name <> stem then fail (sprintf "%s: name '%s' does not match the file name '%s'" source name stem)
-    let description = getScalar "description" pairs
-    let version = getScalar "version" pairs
+    let description = scalar "description"
+    let version = scalar "version"
     if not (semver.IsMatch version) then fail (sprintf "%s: version '%s' is not semver" source version)
     let owned =
         match tryGet "owned_spec_sections" pairs with
@@ -819,7 +821,7 @@ type Plan =
 
 let outputRoots (hosts: Host list) =
     [ for host in hosts do
-        yield Path.GetDirectoryName(host.Output).Replace('\\', '/')
+        yield Path.GetDirectoryName(host.Output).Replace(Path.DirectorySeparatorChar, '/')
         yield host.SkillsOutput
         // 0001-F3 B-006: the directory before `{name}`, so a stale command is found.
         match host.CommandsOutput with
@@ -896,9 +898,38 @@ type Difference =
     | Missing of string
     | Stale of string
 
+let private checkedOutputPath (root: string) (path: string) =
+    let checkout = Path.GetFullPath root
+    let full = Path.GetFullPath(Path.Combine(checkout, path))
+    let rel = Path.GetRelativePath(checkout, full)
+    if Path.IsPathRooted rel || rel = ".." || rel.StartsWith(".." + string Path.DirectorySeparatorChar, StringComparison.Ordinal) then
+        fail "output path is outside the checkout"
+    let mutable current = checkout
+    for part in rel.Split([| Path.DirectorySeparatorChar; Path.AltDirectorySeparatorChar |], StringSplitOptions.RemoveEmptyEntries) do
+        current <- Path.Combine(current, part)
+        let attributes =
+            try Some(File.GetAttributes current)
+            with
+            | :? FileNotFoundException | :? DirectoryNotFoundException -> None
+        match attributes with
+        | Some value when value.HasFlag FileAttributes.ReparsePoint ->
+            fail (sprintf "%s: linked output path" (relative checkout current))
+        | _ -> ()
+    full
+
+let rec private validateOutputTree root directory =
+    if Directory.Exists directory then
+        for entry in Directory.EnumerateFileSystemEntries directory do
+            checkedOutputPath root entry |> ignore
+            if Directory.Exists entry then validateOutputTree root entry
+
 /// B-008: every planned output compared byte for byte, plus files in the output
 /// roots the plan does not produce.
 let differences (root: string) (plan: Plan) : Difference list =
+    // Validate before reading output or publishing any change, including metadata.
+    for KeyValue(rel, _) in plan.Outputs do checkedOutputPath root rel |> ignore
+    for outputRoot in plan.OutputRoots do
+        checkedOutputPath root outputRoot |> validateOutputTree root
     let planned =
         [ for KeyValue(rel, content) in plan.Outputs do
             let path = Path.Combine(root, rel)
@@ -916,10 +947,10 @@ let apply (root: string) (plan: Plan) : Difference list =
     for diff in diffs do
         match diff with
         | Changed rel | Missing rel ->
-            let path = Path.Combine(root, rel)
+            let path = checkedOutputPath root rel
             Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
             File.WriteAllBytes(path, plan.Outputs.[rel])
-        | Stale rel -> File.Delete(Path.Combine(root, rel))
+        | Stale rel -> File.Delete(checkedOutputPath root rel)
     diffs
 
 let describe (diff: Difference) =
