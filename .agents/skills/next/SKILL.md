@@ -118,8 +118,17 @@ Offer one ranked startable head per available lane. Offer at most one start per
 Feature, since one delivery child is in progress per Feature: its other
 startable children wait behind the head, and a Feature with a taken delivery
 child offers none. A Feature coordination record is not another delivery
-candidate or an occupied child lane. Check both dependencies and
-shared edits: independent tasks can still collide in a specification or generated
+candidate or an occupied child lane.
+
+Choose heads in one pass over ranked startable items. Apply the cap to the
+Feature that owns each item, including a prerequisite owned by another Feature.
+If its Feature already has a head or taken delivery work, show the item queued
+behind that Feature and consider the next startable item in its lane. Otherwise,
+a lane occupied by taken work offers no start, a lane with a head queues the
+item, and a free lane selects it as its head. Actionable unscored work stays
+outside this ranked pass.
+
+Check both dependencies and shared edits: independent tasks can still collide in a specification or generated
 output. Apply existing reservations before narrowing the displayed scope.
 
 Explain each inferred conflict and its uncertainty. Separate actionable unscored
