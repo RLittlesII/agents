@@ -134,7 +134,7 @@ effects: it loads, validates, merges and renders, and returns a plan. It is the
 declaring file for every type and function named below. [`project.fsx`](../project.fsx)
 parses the command line, builds the plan, and either applies it or reports
 differences. [`project.tests.fsx`](../project.tests.fsx) loads the library
-directly and never shells out.
+directly; CLI integration cases also launch the public entry point against synthetic checkouts.
 
 ```mermaid
 flowchart LR
@@ -239,12 +239,48 @@ A source-only `runtimeFilesUnder` traversal skips entries with those exact
 names before descending or opening them, at every depth. Skill copying and
 0001-F4 lint share this traversal; normal hidden runtime resources remain in
 scope. Existing `filesUnder` output comparison remains unchanged, so stale
-`.issue` outputs remain observable and removable under B-008.
+`.spec` and `.issue` outputs remain observable and removable under B-008.
 
 No new dependency or general ignore mechanism is needed. Existing entry points,
 plan-before-write behavior and deterministic byte copying remain. Test fixtures
 distinguish root discovery, nested copying, role-bearing metadata, ordinary
 runtime names and stale output reconciliation. Readiness: Ready; independent agreement/design approval is recorded in § 12.
+
+### Baseline correction design
+
+B-008 output enumeration includes every file below each declared output root,
+including `.spec` metadata. Before comparing or writing output, reject output
+roots escaping the checkout and linked output roots/components, including linked
+metadata directories or files. Traversal checks each entry before descending;
+application repeats the relevant path checks before writes/deletions. An existing
+unsafe path fails before any publication. This bounds ordinary reconciliation,
+not an atomic filesystem guarantee against concurrent path replacement.
+Path checks split only native platform separators and inspect traversal entries
+without rewriting their names. Output inventory preserves literal Unix
+backslashes, so comparison and effects address the same native path. A Unix
+directory-link regression covers both planned paths and discovered stale entries;
+an ordinary backslash-named stale file is removed without changing a slash-named
+sentinel. Shared relative-path formatting and role output-root derivation replace
+only the platform directory separator; a configured role directory with a literal
+backslash keeps its spelling and cannot redirect stale cleanup to a slash-named
+directory.
+Source selection continues using `runtimeFilesUnder`
+to exclude `.spec`/`.issue` before copying. `differences` remains read-only;
+`apply` removes only stale files in declared roots. Unrelated source metadata and
+files outside those roots remain untouched.
+
+B-022 retains `loadRole`'s existing validation order. Its required name,
+description and version scalar reads attach the repository-relative source path
+to `ProjectionError`, preserving the field diagnostic. This introduces no schema,
+rendering or failure-exit change.
+
+Regression proof uses existing synthetic checkouts and the public CLI: stale
+output metadata is reported before removal; malformed roles name source/field
+without publishing changes. A synthetic directory link beneath output metadata
+must fail without modifying its target or any planned output; root and parent
+links receive equivalent checks. No new interfaces, dependencies or product behavior
+are introduced. Ready for regression tests after the returned design review is
+recorded in §12.
 
 ## 8. Testing Strategy
 
