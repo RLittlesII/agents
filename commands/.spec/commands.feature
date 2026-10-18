@@ -15,12 +15,13 @@ Feature: Commands
     And it names the skill at its Claude path
     And the command body follows unchanged, request placeholder included
 
-  @B-002
+  @B-008
   Scenario: A command projects to a Codex skill
     Given a command solo naming only beta and no skill
     When the checkout is projected
     Then the Codex skill for solo carries the name and the description
-    And it tells the reader to act as beta, whose contract is beta's Codex agent file
+    And it follows repository artifact ownership and review boundaries
+    And its instructions contain no agent binding or agent contract path
     And its request placeholder reads as the request that invoked the skill
 
   @B-003
@@ -78,3 +79,10 @@ Feature: Commands
     Given the command body contains a fenced example of a reference link
     When the checkout is projected
     Then the example remains unchanged in the command body
+
+  @B-008
+  Scenario: Skill rendering is independent of agent output paths
+    Given the host agent output path changes
+    When the checkout is projected
+    Then the command skill bytes remain unchanged
+    And native command files still name their host agent contracts

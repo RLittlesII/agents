@@ -1,7 +1,7 @@
 // Tests for the projector. Names cite the claims they cover:
 //   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B018_
 //   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B040_
-//   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B007_
+//   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B008_
 //   skills/.spec/README.md   (0001-F4 Skill boundary) F4_B001_..F4_B003_
 //
 //   dotnet fsi scripts/project.tests.fsx        exit code = number of failures
@@ -689,7 +689,7 @@ let F3_B001_CommandProjectsToClaudeCommandFile () =
               "" ]
     equal (expected + commandBody) (read root ".claude/commands/convene.md")
 
-let F3_B002_CommandProjectsToCodexSkill () =
+let F3_B008_CommandSkillUsesOwnershipWithoutAgentBindings () =
     let root = commandsCheckout ()
     write root "commands/solo.md" (command "solo" "[beta]" "[]" commandBody)
     apply root (plan root) |> ignore
@@ -700,7 +700,7 @@ let F3_B002_CommandProjectsToCodexSkill () =
               "description: \"Convene for solo.\""
               "---"
               ""
-              "Act as the `beta` role, whose contract is `.codex/agents/beta.toml`. Read it before acting, and " + keep
+              "Follow the artifact ownership and review boundaries in the repository guidance."
               ""
               "Do the thing."
               ""
@@ -710,6 +710,29 @@ let F3_B002_CommandProjectsToCodexSkill () =
     contains "`sdd-conventions` (`.agents/skills/sdd-conventions/SKILL.md`)" (read root ".agents/skills/convene/SKILL.md")
     // Claude keeps the placeholder; it substitutes the arguments itself.
     contains "Work on: $ARGUMENTS" (read root ".claude/commands/solo.md")
+
+// B-008; approved §7 details: /root/pr9_review composite bcf82372e7d69ff36d3158922f62ea033cf16d2a94f7a6730d18a009e8ac3564.
+let F3_B008_AgentOutputPathCannotChangeCommandSkill () =
+    let root = commandsCheckout ()
+    let host = loadHost root "codex"
+    let command = loadCommands root |> List.head
+    let original = renderCommand host command
+    equal original (renderCommand { host with Output = ".other/agents/{name}.toml" } command)
+    let expected =
+        "---\nname: convene\ndescription: \"Convene for convene.\"\n---\n\n" +
+        "Follow the artifact ownership and review boundaries in the repository guidance.\n\n" +
+        "Use these skills: `sdd-conventions` (`.agents/skills/sdd-conventions/SKILL.md`).\n" +
+        commandBody.Replace("$ARGUMENTS", "the request that invoked this skill")
+    equal expected original
+
+let F3_B008_RepositoryCommandSkillsNameNoAgent () =
+    let root = Path.Combine(scratch, Guid.NewGuid().ToString("N"))
+    let host = loadHost repoRoot "codex"
+    for command in loadCommands repoRoot do
+        let rendered = renderCommand host command
+        if rendered.Contains("/agents/") || rendered.Contains("`agents/") then failwith (command.Source + ": projected skill contains an agent contract path")
+        write root ("skills/" + command.Name + "/SKILL.md") rendered
+    lintSkills root (loadRoles repoRoot)
 
 let F3_B003_CommandNamingMissingRole_FailsNamingBoth () =
     // The real commands name only roles and skills that exist.
@@ -1039,7 +1062,7 @@ let F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory () =
     equal 19 (loadRoles root).Length
     for dir in [ ".claude/agents"; ".codex/agents" ] do equal 19 (Directory.GetFiles(Path.Combine(root, dir)).Length)
     contains ".claude/agents/observability.md" (read root ".claude/commands/convene.md")
-    contains ".codex/agents/observability.toml" (read root ".agents/skills/convene/SKILL.md")
+    contains "Follow the artifact ownership and review boundaries" (read root ".agents/skills/convene/SKILL.md")
     equal (Encoding.UTF8.GetBytes history) (File.ReadAllBytes(Path.Combine(root, "agents/.spec/decisions/history.md")))
     equal [] (differences root (plan root))
     equal 0 (fst (runProject root true))
@@ -1432,7 +1455,9 @@ let tests : (string * (unit -> unit)) list =
       nameof F2_B008_ReviewingRoleCarriesLookForAndReport, F2_B008_ReviewingRoleCarriesLookForAndReport
       nameof F2_B009_ReviewUnitDeclaresTriggerAndRefusal, F2_B009_ReviewUnitDeclaresTriggerAndRefusal
       nameof F3_B001_CommandProjectsToClaudeCommandFile, F3_B001_CommandProjectsToClaudeCommandFile
-      nameof F3_B002_CommandProjectsToCodexSkill, F3_B002_CommandProjectsToCodexSkill
+      nameof F3_B008_CommandSkillUsesOwnershipWithoutAgentBindings, F3_B008_CommandSkillUsesOwnershipWithoutAgentBindings
+      nameof F3_B008_AgentOutputPathCannotChangeCommandSkill, F3_B008_AgentOutputPathCannotChangeCommandSkill
+      nameof F3_B008_RepositoryCommandSkillsNameNoAgent, F3_B008_RepositoryCommandSkillsNameNoAgent
       nameof F3_B003_CommandNamingMissingRole_FailsNamingBoth, F3_B003_CommandNamingMissingRole_FailsNamingBoth
       nameof F3_B004_CommandNamingMissingSkill_FailsNamingBoth, F3_B004_CommandNamingMissingSkill_FailsNamingBoth
       nameof F3_B005_MalformedCommand_Fails, F3_B005_MalformedCommand_Fails

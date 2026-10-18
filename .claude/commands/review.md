@@ -12,8 +12,8 @@ Read each role's contract before acting as it, and keep the boundaries it declar
 
 Use these skills: `spec-and-traceability` (`.claude/skills/spec-and-traceability/SKILL.md`), `coding-conventions` (`.claude/skills/coding-conventions/SKILL.md`).
 
-The spec reviewer reads the diff against every claim it cites and every
-accepted decision it touches. The adversary joins only when the diff changes a
+The independent reviewer reads the diff against every claim it cites and every
+accepted decision it touches. The surface pass joins only when the diff changes a
 trust boundary, a credential, an input from outside, or a permission; say which
 of those it touches, or that it touches none.
 

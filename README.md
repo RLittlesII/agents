@@ -45,9 +45,10 @@ when; [PERSONAS.md](agents/PERSONAS.md) lists each voice and optional signing na
 
 ## Commands
 
-A command convenes roles as its body directs and names the skills they work with; the
-roles' contracts decide what each does. Type `/<name>` in Claude Code or
-`$<name>` in Codex.
+A command names its role and skill dependencies in source frontmatter. Native
+command files bind the roles; generated skills follow repository artifact
+ownership and review boundaries without agent references. The shared body states
+the work sequence. Type `/<name>` in Claude Code or `$<name>` in Codex.
 
 | Command                               | Convenes                                  | For                                                  |
 | ------------------------------------- | ----------------------------------------- | ---------------------------------------------------- |

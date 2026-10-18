@@ -12,7 +12,7 @@ Read each role's contract before acting as it, and keep the boundaries it declar
 
 Use these skills: `clarify-requirements` (`.claude/skills/clarify-requirements/SKILL.md`), `spec-and-traceability` (`.claude/skills/spec-and-traceability/SKILL.md`).
 
-The specification author explores the ask in discovery mode: who wants it,
+The agreement owner explores the ask in discovery mode: who wants it,
 what failure state it removes, settled answers and material unknowns. Once the
 asker confirms the recorded need, the author writes the agreement and scenarios.
 The reviewer returns independent findings and an agreement verdict. The author

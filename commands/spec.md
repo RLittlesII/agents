@@ -6,7 +6,7 @@ skills: [clarify-requirements, spec-and-traceability]
 argument-hint: "<the raw ask, or a path to notes>"
 ---
 
-The specification author explores the ask in discovery mode: who wants it,
+The agreement owner explores the ask in discovery mode: who wants it,
 what failure state it removes, settled answers and material unknowns. Once the
 asker confirms the recorded need, the author writes the agreement and scenarios.
 The reviewer returns independent findings and an agreement verdict. The author

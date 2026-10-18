@@ -3,7 +3,7 @@ name: document
 description: "Repair documentation against what the repository actually holds, and regenerate what is generated rather than editing it."
 ---
 
-Act as the `document-writer` role, whose contract is `.codex/agents/document-writer.toml`. Read it before acting, and keep the boundaries it declares: a role that refuses a kind of work still refuses it here.
+Follow the artifact ownership and review boundaries in the repository guidance.
 
 Use these skills: `coding-conventions` (`.agents/skills/coding-conventions/SKILL.md`).
 

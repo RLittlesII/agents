@@ -777,22 +777,25 @@ let validateCommands (roles: Role list) (skills: string list) (commands: Command
         if List.contains command.Name skills then
             fail (sprintf "%s: command '%s' has the name of skill '%s'; a host that projects commands as skills would hold both in one place" command.Source command.Name command.Name)
 
-/// The generated paragraphs ahead of a command body: each role's contract and
-/// each skill at this host's paths.
+/// Native command files name host contracts; command skills follow artifact
+/// ownership without agent references (0001-F3 B-008). Both name skill dependencies.
 let commandPreamble (host: Host) (command: Command) =
     let contract role = host.Output.Replace("{name}", role)
     let keep = "keep the boundaries it declares: a role that refuses a kind of work still refuses it here."
     let roles =
-        match command.Roles with
-        | [ role ] ->
-            sprintf "Act as the `%s` role, whose contract is `%s`. Read it before acting, and %s" role (contract role) keep
-        | many ->
-            [ yield "Convene these roles as the body directs:"
-              yield ""
-              for role in many do yield sprintf "- `%s`, whose contract is `%s`" role (contract role)
-              yield ""
-              yield "Read each role's contract before acting as it, and " + keep ]
-            |> String.concat "\n"
+        if (defaultArg host.CommandsOutput "").EndsWith "/SKILL.md" then
+            "Follow the artifact ownership and review boundaries in the repository guidance."
+        else
+            match command.Roles with
+            | [ role ] ->
+                sprintf "Act as the `%s` role, whose contract is `%s`. Read it before acting, and %s" role (contract role) keep
+            | many ->
+                [ yield "Convene these roles as the body directs:"
+                  yield ""
+                  for role in many do yield sprintf "- `%s`, whose contract is `%s`" role (contract role)
+                  yield ""
+                  yield "Read each role's contract before acting as it, and " + keep ]
+                |> String.concat "\n"
     let skills =
         command.Skills
         |> List.map (fun s -> sprintf "`%s` (`%s/%s/SKILL.md`)" s host.SkillsOutput s)
@@ -803,7 +806,7 @@ let commandPreamble (host: Host) (command: Command) =
 let private quoted (s: string) = "\"" + s.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\""
 
 /// B-001: a command file — description and argument hint, the preamble, then
-/// the body verbatim. B-002: a skill file — name and description, the preamble,
+/// the body verbatim. B-008: a skill file — name and description, the preamble,
 /// then the body with `$ARGUMENTS` replaced by the host's text for it.
 let renderCommand (host: Host) (command: Command) =
     let asSkill = (defaultArg host.CommandsOutput "").EndsWith "/SKILL.md"

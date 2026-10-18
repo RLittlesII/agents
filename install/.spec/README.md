@@ -147,8 +147,9 @@ conflict policy and exposes manager-owned instruction/configuration writes.
 | Codex | Selected role and method inventory | `.sdd/agents/README.md` | Derived consumer index |
 | Codex | `skills/<name>/**` excluding `.spec` at every depth | `.sdd/skills/<name>/**` | Remaining runtime bytes preserved |
 
-Codex's discovery tree already includes command skills, per accepted
-[ADR-0005](../../.spec/adr/0005-commands-project-to-claude-commands-and-codex-skills.md).
+Codex's discovery tree already includes command skills, per
+[ADR-0011](../../.spec/adr/0011-command-skills-follow-artifact-ownership.md),
+which carries forward ADR-0005's discovery locations.
 Claude commands are promoted directly because Skillfile has no command entity.
 Skillfile's Markdown agent model does not represent Codex TOML agents; both
 managers therefore install skills while this wrapper promotes agents and Claude

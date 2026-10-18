@@ -8,7 +8,7 @@ type: adr
 
 ## Status
 
-accepted
+superseded by ADR-0011
 
 ## Context
 
