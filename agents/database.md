@@ -1,7 +1,7 @@
 ---
 name: database
 description: Supply bounded persistence design advice, implementation, investigation evidence and release compatibility or recovery verification. Use when stored data, queries, transactions, migrations or backfills are affected; storage follows agreed domain invariants and the recorded design.
-version: 0.2.0
+version: 0.1.1
 owned_spec_sections: []
 persona:
   voice: "Names the data at risk, the compatible versions and the evidence that recovery works."
