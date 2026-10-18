@@ -9,7 +9,8 @@ type: working-note
 ## Committed baseline
 
 Reviewed item [0046](../../.issue/0046-contract-audit-regression-tests.yml)
-spans 20 local commits, ending at `56c615d`. Its delivery remains in progress
+initially spanned 20 local commits ending at `56c615d`; 23 reviewed follow-up
+commits end at `2997ac3`. Its delivery remains in progress
 until merge; its verification and review evidence stays in the item.
 
 ## Tracker reconciliation
@@ -39,9 +40,9 @@ were verified. Historical item evidence retains platform and live-agent limits.
 | --- | --- | --- |
 | Feature coordination records | Seven unique sources created as 0048–0054 under the approved migration. | Five mirrors synchronized; remaining completion gaps stay explicit and no Feature is closed. |
 | Tracker metadata placement | User selected consistent exclusion; source/installer implementation passes 71 projector and 30 installer tests. | Both independent reviews approved; coverage passes 49/50 (98%). Real coordination metadata stays outside the runtime plans. |
-| Upstream templates | Tool-owned feature template contradicts current ownership, tracker, priority and testing guidance. | Prepare upstream scope; preserve ADR-0004 and published template versions. |
-| Existing consumer installations | Installer does not prune obsolete files. | Identify a consumer target; inventory owned stale files before proposing removals. |
-| Actual agent behavior | Static instruction reviews do not establish live compliance. | Agree bounded synthetic evaluations and execution authority before recording new behavioral evidence. |
+| Upstream templates | Agreement committed in specht as `cfde34d6`, targeting owner-confirmed unpublished `0.2.0`. | Implementation and distributed adoption remain outstanding; no downstream template edits. |
+| Existing consumer installations | Installer does not prune obsolete files. | Outside this audit continuation by explicit user instruction; no consumer inspection or edits. |
+| Actual agent behavior | Static instruction reviews do not establish live compliance. | [Nine routing probes passed](handoff-evaluation-results.md), including an H9 fixture clarification; real workflow and host enforcement remain unverified. |
 
 ## Upstream template evidence
 
@@ -120,3 +121,41 @@ diff and `/root/contract_surface_review` carries surface approval at subject
 All 45 hashes and the semantic checks were independently verified. Provisional
 source-maintenance estimates do not become Feature completion estimates or
 permission to start a child.
+
+## Return to handoff findings
+
+The upstream agreement is committed; no upstream implementation is part of this
+audit continuation. [The evaluation plan](handoff-evaluation-plan.md) records
+nine executed routing probes against existing claims. No new contract policy,
+installed-file removal, coverage upgrade or Feature closure is inferred.
+
+## Baseline verdicts and bounded corrections
+
+The user authorized recording the three returned baseline approvals and fixing
+baseline findings in this repository. F2, F3 and F5 retrospective content
+approvals at `2997ac3` are recorded in their §12 histories; revised Projection
+agreement/design also received independent approval before dependent tests.
+Consumer projects and specht remain outside this continuation.
+
+The bounded correction covers reference-link validation, complete stale-output
+inventory, source-qualified role diagnostics, native/linked output-path safety,
+Projection contract/scenario alignment, and Next-work lane/reservation guidance.
+Regression execution and final diff/surface verdicts are recorded in Projection
+§8/§12 and the owning Features’ §12 rows. The original 71-test baseline passed;
+11 of 83 expanded cases failed before correction. A planned-file control brought
+the first passing full gate to 84 tests. Subsequent surface review exposed Unix
+path aliasing; four further controls failed before its native-path correction.
+
+These content reviews remove the four baseline-review gaps in the migration
+table above. Completion still requires the audit amendments to merge, the 32
+Partial F2 rows and 46 Missing F5 rows to gain adequate evidence, and each
+Feature’s other recorded prerequisite/platform evidence. All seven coordinators
+and Feature delivery mirrors remain in progress. No Feature is declared complete.
+
+Final local gate passes 88 F# tests, six compiled CLI cases, 30 installer tests
+and 36 coverage-gate tests; changed production coverage is 88/89 (98.88%).
+Strict specifications and the 80-output projection check pass. Surface review
+Approved the implementation at `6edf5897` with no remaining findings.
+Final diff review also Approved at `6edf5897`, including inspected recording-only
+corrections, with no remaining findings. Unchanged F1/F3 and F2/F5 approvals
+remain applicable. These changes are local and uncommitted.
