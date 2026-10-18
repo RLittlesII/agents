@@ -20,7 +20,7 @@ depends_on: []
 blocks: []
 spikes: []
 created: "2026-10-16"
-updated: "2026-10-16"
+updated: "2026-10-17"
 github_issue: null
 synced_at: null
 ---
@@ -366,8 +366,9 @@ establish feasibility; they do not establish delivery or a final coverage score.
 
 ## Tasks
 
-<!-- last written by: organizer, 2026-10-16 -->
+<!-- last written by: organizer, 2026-10-17 -->
 
+- [0053 — Coordinate Repository verification delivery](../.issue/0053-coordinate-repository-verification.yml) — authoritative delivery-status source.
 - [0044 — Enforce repository changed-line coverage](../.issue/0044-repository-coverage-gate.yml).
 
 ## Scoring

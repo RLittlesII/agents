@@ -2,7 +2,7 @@ id: "0037"
 type: chore
 title: Bring Next work's design in line with the resolved open questions
 
-status: in-progress
+status: done
 
 value: 4
 cost: 2
@@ -11,7 +11,7 @@ risk: 1
 parent: "0001"
 children: []
 
-depends_on: ["0036"]
+depends_on: ["0047"]
 spikes: []
 
 spec: null
@@ -19,17 +19,17 @@ spec: null
 claims: []
 
 created: "2026-10-15"
-updated: "2026-10-15"
-closed: null
+updated: "2026-10-17"
+closed: "2026-10-16"
 
 summary: |
-  Next work (0001-F5). 0036 wrote back the maintainer's rulings on OQ-1 to
+  Next work (0001-F5). 0047 wrote back the maintainer's rulings on OQ-1 to
   OQ-6 as decisions 0016 to 0021 and claims B-042 to B-046. Its spec review
   found §§ 6 and 7 stale: § 7 still treats OQ-1, OQ-5 and OQ-6 as open, its
   readiness verdict still excepts B-011, B-013, B-015, B-017, B-033, B-034 and
   B-035, and B-042 to B-046 sit in no concern row, design position or review
-  map row. §§ 6 and 7 are the architect's, so they were left out of 0036.
-  Depends on 0036, whose claims and decisions this design cites.
+  map row. §§ 6 and 7 are the architect's, so they were left out of 0047.
+  Depends on 0047, whose claims and decisions this design cites.
 
 acceptance_criteria:
   - "§ 6 places B-042 to B-046 in a concern row."
@@ -42,6 +42,9 @@ acceptance_criteria:
 decisions:
   - "2026-10-15, architect: starts are capped per owning Feature after lanes are drawn, testing the Feature before the lane; a lane whose first item is capped offers its next. SKILL.md does not say so; finding 5 routes the wording to implementer and two B-046 examples to spec-author. Rejected: leaving that lane empty, which wastes a parallel lane delivery allows."
   - "2026-10-15, spec review of 606e09a: request changes, the lane-head view tested the lane before the Feature. Fixed in 0ecdfe5; re-review approved §§ 6 and 7, with the unscored list and a prerequisite example taken up after approval."
+
+  - "2026-10-17, user-authorized identity correction: dependency and current prose now cite 0047, formerly .issue/0036-resolve-f5-open-questions.yml in PR2; dependency meaning is unchanged. Historical aliases are in .issue/README.md."
+  - "2026-10-17, user-authorized tracker reconciliation: GitHub confirms https://github.com/RLittlesII/agents/pull/2 merged on 2026-10-16 (UTC), commit 785de62a3f57419b2feab102615fb2ebfa984d40; merge is an ancestor of this checkout and contains this delivered item. Close this item’s delivered scope; previously recorded verification gaps remain."
 
 out_of_scope:
   - "§§ 1-5, 8-12 of the specification: other owners' sections."

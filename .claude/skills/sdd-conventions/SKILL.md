@@ -38,9 +38,11 @@ here rather than maintaining another copy.
 ```mermaid
 flowchart LR
     Ask[Raw ask] -->|/spec| Specification[Specification + scenarios]
-    Specification -->|/groom| Grooming[Grooming]
+    Specification --> AgreementReview[Independent agreement review + recorded verdict]
+    AgreementReview -->|/groom| Grooming[Grooming]
     Grooming -->|/design| Architecture[Architecture]
-    Architecture --> Stubs[Interface stubs]
+    Architecture --> DesignReview[Independent design review + recorded verdict]
+    DesignReview --> Stubs[Interface stubs]
     Stubs -->|/test| Tests[Tests]
     Tests -->|/implement| Implementation[Implementation]
     Implementation -->|/review| Review[Diff review]
@@ -56,8 +58,11 @@ a specification change it returns a verdict per authored section, the owner of
 items are cut from claims whose § 12 rows are approved, during grooming.
 
 The owner of § 7 reviews the groomed agreement and records design readiness
-before tests and implementation. Once the design is Ready, the owner of § 7
-scaffolds the declared interfaces as compiling stubs, so a test fails on
+before tests and implementation. Readiness is the author's assessment, not an
+independent approval. The design pass returns its verdict and the owner of § 12
+records it. Once the design is Ready and the applicable design scope is approved
+in § 12, the owner of § 7 scaffolds the declared interfaces as compiling stubs,
+so a test fails on
 behaviour rather than on a compile error; the tests and the implementation start
 from them. The diff pass (§ "Review passes") reviews the local diff before the
 PR is opened; subsequent PR feedback follows the same ownership and revision
@@ -67,7 +72,10 @@ the first pass at feasibility; written performance concerns go to the owner of
 
 A shortcut may skip authoring, never approval. A gate tied to an approval is met
 only when that approval exists: a filled section is content, not consent, and an
-earlier approval is evidence, not this person's consent now.
+earlier review verdict does not establish human consent to a new decision.
+Apply [`spec-and-traceability`](../spec-and-traceability/SKILL.md)
+§ "Approval applicability" to the current revision and scope; unchanged work
+retains its applicable baseline evidence.
 
 ## Delivery state
 
@@ -127,6 +135,16 @@ and the units declared in the roles index, so change those, not the table.
 A pass edits nothing it reviews: it reports findings and a verdict, and each
 goes to whoever owns the artifact. No pass reviews its own work.
 
+The requester supplies review inputs the pass's available tools cannot obtain:
+identified baseline and target revisions (or an identified working snapshot),
+the complete relevant diff including deletions and untracked changes, linked
+claims and decisions, and the history or verification evidence requested by the
+pass. The reviewer checks completeness and asks the requester for missing
+material. Missing evidence is an incomplete or blocked review, never an empty
+finding list represented as approval. If the target changes, identify the new
+snapshot before continuing. A supplied bundle grants no write or execution
+authority to the pass.
+
 **Order.** The design pass runs before implementation exists, because a design
 finding raised after the code is written costs the code. The diff pass runs
 before the surface pass: attacking a change that does not yet do what it claims
@@ -177,21 +195,37 @@ another; a pass that could would stop being worth running.
 
 Always carry the prefix in prose — several sequences have a twelfth member.
 
-**Ids are never reused and never renumbered**, including during a migration
-between layouts. Renumbering breaks every citation in every past commit, review,
-item and sibling specification. A dropped claim leaves its number retired.
+An ID becomes **permanent on merge or citation outside its authoring branch**,
+whichever happens first. Shared reviews and work-item citations count even before
+merge. Permanent IDs are never reused or renumbered, including during migrations;
+a withdrawn permanent claim keeps its number retired.
+
+Before publication, a new ID may change to resolve a collision only with every
+local reference updated. Rebase and inspect shared reservations before allocating.
+An unmerged branch is not proof that its IDs are unpublished. Unknown publication
+history or two colliding permanent IDs returns for an explicit identity decision;
+never renumber either automatically. This rule preserves published citations in
+commits, reviews, items and sibling specifications.
 
 ## The spec / work-item split
 
 **Delivery state is tracked in the work-item tracker; content is tracked in the
-repository.** Exactly one field crosses that line in each direction: the item
-names its specification, and the specification's `status` frontmatter mirrors
-the item's delivery state once the item exists. Drift between the two is a
-review finding; the offline checker never calls the tracker. `priority` is authored in the
-specification and never mirrored. Derived fields — `rank`, `blocks` — are
-recomputed, never hand-edited. The companion names the tracker and the label or
-field that carries delivery state. `spec_status` is the document's own maturity,
-set by the owner of § 12 from the diff pass's verdict and never mirrored.
+repository.** Items name their specification. A Feature specification's `status`
+mirrors exactly one Feature coordination item's delivery state; a child item
+never supplies that value, and children keep their own states. The companion
+names the tracker, source field, coordination-item identity and synchronization
+operation. The coordination record's maintenance owner updates the source first
+and copies its value to the mirror; the mirror is never independently authored.
+
+Before that source exists, or when its identity is ambiguous or unreadable,
+report the gap and leave the mirror unchanged. Never infer a replacement from
+child states. Drift between an identified source and its mirror is a review
+finding; the offline checker never calls the tracker.
+
+`priority` is authored in the specification and never mirrored. Derived fields
+— `rank`, `blocks` — are recomputed, never hand-edited. `spec_status` is the
+document's own maturity, set by the owner of § 12 from the diff pass's verdict
+and never mirrored.
 
 ## Spec layout
 
@@ -230,9 +264,12 @@ must answer for each of these:
 | ------------ | ----------------------------------------------------------------------- |
 | Layout       | the projects, directories and what sits beside them at the root        |
 | Coding       | the formatter, analyzers, dependency policy and build commands         |
-| Delivery     | the tracker, the delivery-state field, branches, merge strategy, where a claim citation survives |
+| Delivery     | the tracker, delivery-state field, Feature coordination-item identity and mirror synchronization operation, ownership record and authorized release/reassignment operation, branches, merge strategy, where a claim citation survives |
 | Testing      | the test projects, tiers, how scenarios execute and whether any are documentation only, assertion form, naming form and discovery traps, the changed-line coverage threshold and its gate |
 | Questions    | where answers are recorded and which questions are already settled     |
+| Working records | where discovery notes and confirmed needs live before work items exist |
+| Scratch      | where bounded experiments and generated logs live, their exclusion from delivery and cleanup convention |
+| Release      | version and changelog authority, targets, publishing and recovery procedures, or an explicit statement of what is not established |
 | Specs        | where specifications live when the layout differs from § "Spec layout", the glossary and the epic blank |
 | Next work    | tracker access, the identity contract, planning metadata, ranking inputs, shared-edit evidence, reservations and where standalone work appears |
 | Benchmarking | the harness, where benchmarks live and the measurement traps           |
@@ -244,8 +281,8 @@ A companion restates no method rule. It says where the rule lands.
 - A rule in a generated host directory. Those trees are projected from tracked
   sources; a rule there cannot be reviewed in a pull request.
 - A second index of roles or skills beside the one the projector reads.
-- A renumbered claim, constraint, question or task id.
-- A hand edit to `status` after the work item exists, or to any derived field.
+- A reused or renumbered permanent ID, or an unpublished ID changed without all local references.
+- An independent edit to mirrored `status`, or a hand edit to any derived field.
 - A hand edit to the generated section-ownership table.
 - A path, a command or a repository name that belongs to one consuming
   repository. The checker and its files are the method's, not a project's.

@@ -17,14 +17,14 @@ Read each role's contract before acting as it, and keep the boundaries it declar
 
 Use these skills: `deliver-change` (`.claude/skills/deliver-change/SKILL.md`), `spec-and-traceability` (`.claude/skills/spec-and-traceability/SKILL.md`).
 
-The spec reviewer judges the diff against the claims it cites. The adversary
+The independent reviewer judges the diff against the claims it cites. The surface pass
 joins when the release touches a trust boundary, a credential, a permission or
-input from outside; say which, or that it touches none. The auditor reads the
+input from outside; say which, or that it touches none. The repository pass reads the
 repository at rest for drift. When an operational decision needs evidence, the
-observability specialist states signal requirements, the baseline and the
-comparison to read after rollout. When persistence is affected, the database specialist supplies
-compatibility and verified rollback or recovery evidence. The benchmarker joins
-only for a written performance, cost or structural concern. The release engineer then
+signal owner states signal requirements, the baseline and the
+comparison to read after rollout. When persistence is affected, the storage specialist supplies
+compatibility and verified rollback or recovery evidence. The performance owner joins
+only for a written performance, cost or structural concern. The release owner then
 versions, writes the changelog and stages the rollout, with the rollback
 stated.
 

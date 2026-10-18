@@ -13,6 +13,9 @@ lands there. Read all three.
 
 ## Before implementing
 
+- For behavior-preserving refactors, use
+  [`deliver-change`](../deliver-change/SKILL.md) § "Behavior-preserving refactors"
+  for the entry evidence; the red-to-green guidance below covers behavior changes.
 - **Orient first.** Read the claim, the scenario, the sections that own the
   design, and the code that already exists. Most apparent gaps are a sibling's
   stated scope.

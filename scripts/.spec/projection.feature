@@ -158,7 +158,42 @@ Feature: Projection
     Then projection fails naming the file, the Business Goal, beta and alpha
     And no output directory exists
 
-  @boundary
+  @B-016
+  Scenario Outline: A template-style stamp names the wrong writer
+    Given a specification whose <section> belongs to <owner>
+    And its stamp names <writer>
+    When the checkout is projected
+    Then projection fails naming the file, the section and both roles
+    And no output directory exists
+
+    Examples:
+      | section            | owner | writer        |
+      | Concern Separation | alpha | implementer   |
+      | Technical Design   | alpha | implementer   |
+      | Sign-off           | beta  | spec-reviewer |
+
+  @B-016
+  Scenario Outline: A fenced example does not declare section ownership
+    Given a specification with a correctly owned section stamp
+    And a non-owner stamp appears only in a <fence> example
+    When the checkout is projected
+    Then projection succeeds without treating the example as a specification section
+
+    Examples:
+      | fence                                              |
+      | tilde-fenced                                       |
+      | four-backtick-fenced containing shorter backticks   |
+
+  @B-016
+  Scenario: A fenced example does not hide a later ownership violation
+    Given a four-backtick example containing shorter backticks
+    And a real Business Goal after the example is stamped by beta
+    And alpha owns the Business Goal
+    When the checkout is projected
+    Then projection fails naming the file, the Business Goal, beta and alpha
+    And no output directory exists
+
+  @B-001 @B-002 @boundary
   Scenario: A role absent from an overlay receives the defaults
     Given a role named beta that no overlay names
     When the checkout is projected
@@ -214,3 +249,42 @@ Feature: Projection
     Given a tracked schema adds a required document section
     When the checkout is projected
     Then the document fails until it includes that section
+
+  @B-025
+  Scenario: Tracker entries do not become skills or skill resources
+    Given tracker entries beside skill directories and nested among runtime resources
+    When the checkout is projected
+    Then tracker entries produce no host skill or resource
+    And ordinary hidden and similarly named runtime resources retain their bytes
+
+  @B-008 @B-025
+  Scenario: Previously projected tracker records are stale outputs
+    Given a host output contains a tracker record absent from the runtime plan
+    When projection differences are checked
+    Then the tracker record is reported as stale without changing the source tracker
+
+  @B-008
+  Scenario: Old specification metadata in generated output is stale
+    Given projected outputs otherwise match their sources
+    And old specification metadata remains below a declared output root
+    When the checkout is checked
+    Then the old metadata is named as stale without changing any file
+    When the projection is applied
+    Then that stale output is removed
+    And source metadata and files outside output roots are unchanged
+
+  @B-008 @boundary
+  Scenario: Unix output paths retain literal backslashes
+    Given an output path contains a literal backslash on Unix
+    When projection compares or applies outputs
+    Then it uses that native path without substituting a slash-named directory
+    And any linked output component fails before publication
+    And stale cleanup preserves unrelated slash-named files
+
+  @B-022
+  Scenario: A missing required role value names its source before writes
+    Given a role document is missing its required description
+    And existing generated outputs are present
+    When the checkout is projected
+    Then projection fails naming the role document and the required field
+    And existing outputs are unchanged

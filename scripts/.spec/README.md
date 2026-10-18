@@ -4,8 +4,8 @@ description: "Host-free role contracts plus a per-host overlay become committed,
 type: feature
 id: "F1"
 epic: "0001"
-spec_status: in-review
-status: ready
+spec_status: approved
+status: in-progress
 priority: med
 value: 0
 risk: 0
@@ -20,7 +20,7 @@ depends_on: []
 blocks: ["F3"]
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-16"
+updated: "2026-10-17"
 github_issue: null
 synced_at: null
 ---
@@ -58,14 +58,14 @@ this Feature removes both failure states.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID    | Claim                                                                                                                                                                                                                 | Source                                        | Status |
 | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------ |
 | B-001 | Given a role file and the Claude overlay, this Feature emits `.claude/agents/<name>.md` whose frontmatter carries the name, the description and the overlay keys in overlay order, and whose body is the role body verbatim, preceded only by the persona line of B-018. | [ADR-0001](../../.spec/adr/0001-roles-are-host-free-and-hosts-are-overlays.md) | Active |
 | B-002 | Given a role file and the Codex overlay, this Feature emits `.codex/agents/<name>.toml` carrying the name, the description, `developer_instructions` prefixed with the authoritative-source sentence, and the overlay keys. | ADR-0001                                      | Active |
 | B-003 | Given a role body containing quotes, backslashes, tabs, non-ASCII text and characters outside the Basic Multilingual Plane, the Codex file parses as TOML and the text after the prefix equals the role body.          | [ADR-0003](../../.spec/adr/0003-the-projector-is-an-fsharp-script.md) | Active |
-| B-004 | Given a directory under `skills/`, this Feature copies every file in it byte for byte to the Claude skills directory and to the Codex discovery directory.                                                            | A-1, A-2                                      | Active |
+| B-004 | Given a runtime skill directory under `skills/`, this Feature copies its files byte for byte to both hosts, excluding reserved `.spec` and `.issue` metadata entries.                                                            | A-1, A-2                                      | Active |
 | B-005 | Given the roles' `owned_spec_sections` and the unowned declarations, this Feature writes the section-ownership table into `sdd-conventions` between its generated markers, one row per template section in template order. | LTI `generate-spec-ownership.sh`              | Active |
 | B-006 | Given two roles claiming one section, this Feature fails naming the section and both roles, and writes nothing.                                                                                                       | LTI double-claim rule                         | Active |
 | B-007 | Given a template section no role or unowned declaration claims, or a claim naming a section the template lacks, this Feature fails naming the section and writes nothing.                                            | LTI totality rule                             | Active |
@@ -86,17 +86,18 @@ this Feature removes both failure states.
 | B-022 | Given invalid source documents or missing or malformed schemas, projection fails with the source or schema path and the violated field or structure before writing any output. | Owner request: enforcement | Active |
 | B-023 | Given a changed tracked schema, the next projection uses that schema's rules without a projector code change. | Owner request: explicit schemas | Active |
 | B-024 | Given optional host settings in role frontmatter, projection accepts the document while host overlays remain authoritative for rendered host settings. | Owner examples: proper agent frontmatter | Active |
+| B-025 | Given reserved `.issue` tracker entries under `skills/`, projection excludes them from skill discovery and copied skill resources at every depth while preserving other runtime files byte for byte. | Decision 0001, 2026-10-17 | Active |
 
 ## 4. Constraints
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID  | Constraint                                                                  | Rules Out                                                                    |
 | --- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | C-1 | A role is defined once, in `agents/<name>.md`; host overlays are authoritative for rendered host settings. | A second role copy per host |
 | C-2 | A role body projects verbatim.                                              | Per-host wording, link rewriting, or any transform of the body text          |
-| C-3 | Outputs are committed and byte-deterministic.                               | Timestamps, absolute paths, CRLF, a byte-order mark, machine-dependent order |
-| C-4 | Projection reads only the checkout.                                         | A network call, a package feed lookup, or an environment variable at run time |
+| C-3 | Outputs are committed and byte-deterministic; rendered text uses UTF-8 without a BOM and LF, while copied runtime resources preserve their bytes under B-004. | Timestamps, machine-dependent order, absolute generated paths, or newline/BOM rewriting of copied resources |
+| C-4 | Projection reads checkout inputs offline after the pinned script dependencies are restored under ADR-0003. | Network, feed or environment-dependent projection decisions; dependency bootstrap is separate |
 | C-5 | Projection runs with the pinned .NET SDK and nothing else installed.        | Python, Node, a packaged tool, or a build system as a prerequisite           |
 
 ## 5. Out of Scope
@@ -109,7 +110,7 @@ this Feature removes both failure states.
 | 2   | Commands                                               | [0001-F3 Commands](../../commands/.spec/README.md)                                |
 | 3   | Hosts other than Claude Code and Codex                 | Each needs its own overlay and renderer; added as a new host, not a change here  |
 | 4   | Linting the one-way rule between skills and roles      | [0001-F4 Skill boundary](../../skills/.spec/README.md)                         |
-| 5   | Validating the role body's section headings            | Owned by [0001-F2 Role contract](../../agents/.spec/README.md)                   |
+| 5   | Defining the role body's required section headings | Owned by [0001-F2 Role contract](../../agents/.spec/README.md); B-019/B-021 enforce that structure through the tracked schema |
 
 ## 6. Concern Separation
 
@@ -126,14 +127,14 @@ this Feature removes both failure states.
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-16 -->
+<!-- last written by: architect, 2026-10-17 -->
 
 Two files. [`Projection.fsx`](../Projection.fsx) is a library with no top-level
 effects: it loads, validates, merges and renders, and returns a plan. It is the
 declaring file for every type and function named below. [`project.fsx`](../project.fsx)
 parses the command line, builds the plan, and either applies it or reports
 differences. [`project.tests.fsx`](../project.tests.fsx) loads the library
-directly and never shells out.
+directly; CLI integration cases also launch the public entry point against synthetic checkouts.
 
 ```mermaid
 flowchart LR
@@ -185,7 +186,9 @@ Design positions:
 - **Stamps are read against the table they feed.** `validateStamps` reads every
   `<area>/.spec/README.md` outside a dot-directory and checks each stamp against
   the row `ownershipRows` produced for its heading, before anything is rendered.
-  A `###` heading is its own row only where the table lists it.
+  Markdig's fenced-code source spans exclude example lines, including tilde
+  fences and longer backtick fences containing shorter backticks. A `###`
+  heading is its own row only where the table lists it.
 - **The persona roster is the same kind of file.** `agents/PERSONAS.md` holds
   prose around a generated block; the roles loader skips it as it skips the
   roles index. The persona line is the one text projection adds to a role: it
@@ -228,9 +231,60 @@ Durable choices are recorded in [ADR-0001](../../.spec/adr/0001-roles-are-host-f
 
 Readiness: **Ready for tests and implementation.**
 
+### Tracker metadata boundary
+
+User decision [0001](decisions/0001-exclude-tracker-metadata.md) adds B-025.
+Skill discovery excludes the exact immediate names `.spec` and `.issue`.
+A source-only `runtimeFilesUnder` traversal skips entries with those exact
+names before descending or opening them, at every depth. Skill copying and
+0001-F4 lint share this traversal; normal hidden runtime resources remain in
+scope. Existing `filesUnder` output comparison remains unchanged, so stale
+`.spec` and `.issue` outputs remain observable and removable under B-008.
+
+No new dependency or general ignore mechanism is needed. Existing entry points,
+plan-before-write behavior and deterministic byte copying remain. Test fixtures
+distinguish root discovery, nested copying, role-bearing metadata, ordinary
+runtime names and stale output reconciliation. Readiness: Ready; independent agreement/design approval is recorded in § 12.
+
+### Baseline correction design
+
+B-008 output enumeration includes every file below each declared output root,
+including `.spec` metadata. Before comparing or writing output, reject output
+roots escaping the checkout and linked output roots/components, including linked
+metadata directories or files. Traversal checks each entry before descending;
+application repeats the relevant path checks before writes/deletions. An existing
+unsafe path fails before any publication. This bounds ordinary reconciliation,
+not an atomic filesystem guarantee against concurrent path replacement.
+Path checks split only native platform separators and inspect traversal entries
+without rewriting their names. Output inventory preserves literal Unix
+backslashes, so comparison and effects address the same native path. A Unix
+directory-link regression covers both planned paths and discovered stale entries;
+an ordinary backslash-named stale file is removed without changing a slash-named
+sentinel. Shared relative-path formatting and role output-root derivation replace
+only the platform directory separator; a configured role directory with a literal
+backslash keeps its spelling and cannot redirect stale cleanup to a slash-named
+directory.
+Source selection continues using `runtimeFilesUnder`
+to exclude `.spec`/`.issue` before copying. `differences` remains read-only;
+`apply` removes only stale files in declared roots. Unrelated source metadata and
+files outside those roots remain untouched.
+
+B-022 retains `loadRole`'s existing validation order. Its required name,
+description and version scalar reads attach the repository-relative source path
+to `ProjectionError`, preserving the field diagnostic. This introduces no schema,
+rendering or failure-exit change.
+
+Regression proof uses existing synthetic checkouts and the public CLI: stale
+output metadata is reported before removal; malformed roles name source/field
+without publishing changes. A synthetic directory link beneath output metadata
+must fail without modifying its target or any planned output; root and parent
+links receive equivalent checks. No new interfaces, dependencies or product behavior
+are introduced. Ready for regression tests after the returned design review is
+recorded in §12.
+
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 Library and CLI integration checks run with
 `dotnet fsi scripts/project.tests.fsx`; its exit code equals the failure count.
@@ -238,7 +292,15 @@ Baseline synthetic fixtures use two roles, both host overlays, one skill with a
 nested file, the companion with empty markers, and three numbered template
 sections plus Tasks and Scoring. Other checks load the real checkout or use
 twenty-role migration fixtures. Baseline tests call the library; migration tests
-also exercise the public CLI against explicit temporary roots. The scenarios in
+also exercise the public CLI against explicit temporary roots. Each runner owns
+one unique scratch directory containing its fixture directories and cleans up
+only that directory, so overlapping standalone and instrumented runs cannot
+delete one another's inputs.
+On 2026-10-17, the former shared-root cleanup removed fixtures owned by an
+overlapping run, failing its final B-039 CLI check. After isolating scratch,
+standalone and instrumented suites each pass all 67 tests while an unrelated
+fixture sentinel survives both cleanups. This is direct runner-isolation
+execution evidence; no production claim or coverage exemption is added. The scenarios in
 [`projection.feature`](projection.feature) are
 executed by those tests; there is no separate step-definition layer because the
 repository has no acceptance harness beyond `dotnet fsi`.
@@ -250,7 +312,7 @@ Mechanism per claim:
 - B-003: `tomlString`; the test decodes the emitted string with its own TOML
   basic-string decoder and asserts the body round-trips and no surrogate escape
   appears.
-- B-004: `plan` collecting `filesUnder` each skill; compared as bytes, with CRLF
+- B-004: `plan` collecting `runtimeFilesUnder` each skill; compared as bytes, with CRLF
   and a binary file in the fixture.
 - B-005: `ownershipRows` and `renderOwnershipTable`; exact table, idempotent on a
   second plan. A subsection row renders under its parent and is exempt from
@@ -270,7 +332,19 @@ Mechanism per claim:
 - B-016: `validateStamps` through `plan`; a fixture specification passes with
   the owner's stamp, a fenced example and a stamp on an unowned section, then
   fails naming the file, section and both roles when a non-owner signs.
-- C-3: two plans produce identical bytes, no byte-order mark, no absolute path.
+  Design and sign-off examples exercise template-owner mistakes. Tilde fences
+  and longer backtick fences distinguish example stamps from a real violation
+  after the example.
+- C-3: two plans produce identical bytes; rendered text has no BOM or absolute generated path. B-004 separately checks copied bytes.
+
+On 2026-10-17 the 67-test run passed 64 and failed three B-016 regressions:
+tilde-fenced examples, shorter backticks inside a longer fence, and a real
+ownership violation after that example. The first two reject valid documents;
+the third accepts an invalid one. Production code remains unchanged.
+
+After replacing fence toggling with Markdig's fenced-code spans, the same
+67-test suite passes all tests. Projection reports 80 current outputs and
+strict specification validation reports zero errors and warnings.
 
 CLI integration is now exercised by
 `F2_B034_MigrationRemovesThreeRolesAddsTwoAndPassesPublicCheck` and
@@ -285,6 +359,15 @@ Markdown parsing (fences, comments and nested headings), schema mutations,
 malformed/missing source and schema files, and unchanged existing-output bytes.
 Each tests `plan` or the actual CLI, with no network or live provider.
 
+Tracker-metadata amendment: 71 projector tests passed; the three new metadata failure cases were observed red before implementation, and stale-output detection remained green.
+Testability: Ready, using the existing synthetic fixtures without network or a
+new dependency. Independent agreement/design approval preceded test authoring;
+see § 12.
+Fresh source-bound coverage against main `d4eac9c` passes 49/50 changed
+executable production lines (98%; required 80%). The unused missing-directory
+return in the source traversal is the one uncovered line. This measured gate
+does not establish additional platform, real-manager or live-agent execution.
+
 ### Performance
 
 <!-- last written by: benchmarker, 2026-10-16 -->
@@ -293,9 +376,36 @@ Not measured. The nineteen-role source set projects to 78 outputs across both
 hosts. No latency measurement or performance target is established by this
 inventory count.
 
+### Baseline correction execution
+
+The unchanged baseline passed 71 tests. Before production edits, 12 registered
+regression/control cases produced 11 expected failures in 83 tests: stale
+metadata, source-less diagnostics, reference links and unsafe output paths. The
+fenced reference control passed. After the bounded production correction, those
+83 tests passed. A separate planned-file link control brought the first passing
+full gate to 84 tests. Surface review then found Unix path aliasing; four new
+native-path controls reproduced four failures in 88 tests before correction.
+
+Final source-bound gate: **88 F# tests, six compiled CLI cases, 30 installer
+tests and 36 coverage-gate tests passed**. Changed production coverage is
+**88/89 lines (98.88%)**, above the required 80%; only the existing unused
+missing-directory return at `scripts/Projection.fsx:197` remains uncovered.
+Evidence: `.artifacts/baseline-corrections/native-red-tests.log`,
+`.artifacts/baseline-corrections/native-coverage.log` and
+`.artifacts/coverage/2c78c8cb933a428dba047a51e9f5aa54/manifest.json`.
+All six collector/report processes exited zero, and recorded production hashes
+match the final source. Requested and comparison base are
+`d4eac9c975718756f0d97d150ddced6f90044648`; HEAD remains `2997ac3`.
+Strict specifications pass with zero errors/warnings; all 80 outputs are current.
+
+The tests use synthetic temporary roots and existing library/CLI entry points;
+no consumer installation or manager invocation is involved. Prior platform and
+behavioral evidence limits remain. Output path checks are preflight/repeated
+validation, not an atomic defense against concurrent filesystem replacement.
+
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 | Claim ID | Scenario                                                   | Test                                                              | Status  |
 | -------- | ---------------------------------------------------------- | ----------------------------------------------------------------- | ------- |
@@ -306,7 +416,7 @@ inventory count.
 | B-005    | Ownership declarations become the companion's table        | `B005_OwnedSections_WriteOwnershipTableBetweenMarkers`, `B005b_Subsection_RendersUnderItsParentAndIsExemptFromTotality` | Covered |
 | B-006    | Two roles claim one section                                | `B006_TwoRolesClaimOneSection_FailsNamingBoth`                    | Covered |
 | B-007    | A template section has no owner                            | `B007_UnownedTemplateSection_FailsNamingIt`                       | Covered |
-| B-008    | Check passes when current and names every drift            | `B008_Check_IsSilentWhenCurrentAndNamesEveryDrift`                | Covered |
+| B-008    | Check passes when current and names every drift            | `B008_Check_IsSilentWhenCurrentAndNamesEveryDrift`; `B008_StaleSpecificationOutputsAreReportedAndRemoved`; `B008_LinkedMetadataFailsBeforePublication`; `B008_LinkedOutputRootFailsBeforePublication`; `B008_LinkedOutputAncestorFailsBeforePublication`; `B008_EscapingOutputRootFailsBeforePublication`; `B008_LinkedPlannedFileFailsBeforePublication`; `B008_UnixBackslashPlannedLinkFailsBeforePublication`; `B008_UnixBackslashDiscoveredLinkFailsBeforePublication`; `B008_UnixBackslashStaleFilePreservesSlashSentinel`; `B008_UnixBackslashRoleRootPreservesSlashDirectory` | Covered |
 | B-009    | An overlay or a role name points at nothing                | `B009_OverlayNamesMissingRole_Fails`, `B009b_RoleNameDiffersFromFileName_Fails` | Covered |
 | B-010 | A role file carries a host key | Superseded by B-024 | Withdrawn |
 | B-011    | Personas become the roster                                 | `B011_Personas_WriteRosterBetweenMarkers`                         | Withdrawn |
@@ -314,19 +424,29 @@ inventory count.
 | B-013    | Review units become the registry                           | `B013_ReviewUnits_WriteRegistryBetweenMarkers`                    | Covered |
 | B-014    | Two roles review one unit                                  | `B014_TwoRolesReviewOneUnit_FailsNamingBoth`                      | Covered |
 | B-015    | A unit no role reviews, or one nobody declared             | `B015_UnreviewedOrUndeclaredUnit_FailsNamingIt`                   | Covered |
-| B-016    | A section stamp names a role that does not own it          | `B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles`     | Covered |
+| B-016    | A section stamp names a role that does not own it          | `B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles`, `B016_DesignSectionsRejectAnImplementationStamp`, `B016_SignOffRejectsAReviewersStamp`, `B016_TildeFencedExampleDoesNotCreateAnOwnershipViolation`, `B016_ShorterBackticksDoNotEndAFencedExample`, `B016_RealViolationAfterAFencedExampleIsStillRejected` | Covered |
 | B-017 | Named and unnamed personas become the roster | `B017_Personas_WriteRosterBetweenMarkers`, `B017_MixedPersonas_SortNamedThenUnnamedRoles` | Covered |
 | B-018 | Named or voice-only lines precede verbatim bodies | `B018_Persona_PrecedesVerbatimBodyOnBothHosts`, `B018_UnnamedPersona_PreservesVoiceOnBothHosts` | Covered |
 | B-019 | [@B-019](projection.feature) Agent document schema | `B019_AgentSchemaRejectsInvalidFrontmatter`, `B019_PortableFrontmatterAcceptsUserExamples`, `B019_LiteralDescriptionRoundTripsThroughBothHosts` | Covered |
 | B-020 | [@B-020](projection.feature) Skill document schema | `B020_SkillSchemaValidatesMetadataAndStructure` | Covered |
 | B-021 | [@B-021](projection.feature) Parsed document structure | `B021_ExamplesCannotSatisfyRequiredHeadings` | Covered |
-| B-022 | [@B-022](projection.feature) Reject before writes | `B022_InvalidSchemasPreserveExistingOutputs` | Covered |
+| B-022 | [@B-022](projection.feature) Reject before writes | `B022_InvalidSchemasPreserveExistingOutputs`; `B022_MissingRoleDescriptionNamesSourceAndPreservesOutputs`; `B022_MissingRoleDescriptionCliNamesSourceBeforeWrites` | Covered |
 | B-023 | [@B-023](projection.feature) Schema-driven rules | `B023_ChangedSchemaRulesTakeEffectOnNextPlan` | Covered |
 | B-024 | [@B-024](projection.feature) Host overlays remain authoritative | `B024_HostOverlaysRemainAuthoritative` | Covered |
+| B-025 | Tracker metadata scenarios in the companion `.feature` | `B025_TrackerDirectoryIsNotASkill`; `B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive`; `B008_B025_StaleTrackerOutputsAreReportedAndRemoved` | Covered |
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-16 -->
+2026-10-17: [output inventory lesson 0002](lessons/0002-output-inventory-is-not-source-selection.md)
+and [diagnostic lesson 0003](lessons/0003-preserve-source-context-before-schema-validation.md)
+record the implementation causes and boundary corrections under B-008/B-022.
+
+2026-10-17: reconcile C-3/C-4 and heading-definition scope with existing claims
+and ADR-0003; tag the defaults boundary. Baseline review also diagnosed B-008
+output-metadata omission and B-022 source-less scalar diagnostics. The correction
+design preserves existing behavior elsewhere; regressions and their observed red/green evidence are recorded in §8.
+
+<!-- last written by: spec-author, 2026-10-17 -->
 
 2026-10-16: Owner requested clearing persona names while preserving voices.
 B-011 and B-012 are withdrawn and replaced by B-017 and B-018: unnamed personas
@@ -338,6 +458,13 @@ frontmatter and required structure; add B-019–B-023, retaining earlier evidenc
 The supplied host-native examples supersede the rejection in B-010 with B-024;
 portable schemas validate frontmatter directly and expose document structure separately.
 
+2026-10-17: [Lesson 0001](lessons/0001-parse-fences-with-the-markdown-parser.md)
+records the B-016 fence-parsing correction; the claim is unchanged.
+
+2026-10-17: User selected consistent tracker metadata exclusion. Add B-025;
+source traversal and installation omit reserved tracker entries, preserving
+runtime bytes and existing ownership. See Decision 0001.
+
 ## 11. Open Questions
 
 <!-- last written by: spec-author, 2026-10-14 -->
@@ -346,18 +473,43 @@ None.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | Section | Status | Reviewer      | Note                                                   |
 | ------- | ------ | ------------- | ------------------------------------------------------ |
-| 1-12    | 🟡     | spec-reviewer | Draft baseline. Original scaffolding evidence retained; claims and tests landed together. |
+| Design: § 7 fence parsing | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
+| Diff: §§ 7–10; parser, tests and lesson | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
+| Surface: submitted amendment boundaries | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; no actionable findings, with R2/R3 applicability verified. |
+| Baseline correction: §§3–5,7–8,10,12 and scenarios | 🟢 | spec-reviewer | Independent `/root/baseline_projection_commands`, 2026-10-17: Approved at `a2c1215ccec340282a9e75c4ba2e014946624db8f49c59513c03562bc247e7e3`; prior `2997ac3` approval covers unchanged §§1–2,6,9,11 and other unchanged scope. Together these establish baseline content approval; implementation and execution were pending at this design review (final evidence: §8). |
+| Surface: output and reference-link correction design | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17: Approved at `a2c1215ccec340282a9e75c4ba2e014946624db8f49c59513c03562bc247e7e3`; linked/escaped output paths must fail before publication. Regression execution was pending at this design review (final evidence: §8). |
+| Surface: native-path correction design | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17: Approved §7 at source SHA-256 `5bf1f51041cb5d4fc324aa6d8d6cfaaf4cd03a06d5cfd3ae1354f655e68913dc` before dependent tests/code. Native spelling must persist through output roots, traversal and effects; four Unix regression cases required. |
 | 3, 7-10, 12 | 🟢 | spec-reviewer | Approved 2026-10-16: optional-name delta reviewed against 0001-F1 B-017 and B-018; source, scenarios, tests and projections agree. Baseline evidence retained. |
 | 3, 7-10, 12 | 🟢 | spec-reviewer | Rebase delta approved 2026-10-16 by independent `/root/persona_diff_review` against main `e60dea1`; no findings, earlier evidence retained. |
 | B-019–B-024; schemas, projector and coverage | 🟢 | spec-reviewer | Independent `/root/final_schema_review`, 2026-10-16: approved after literal-description round-trip fix and ADR-0009 reconciliation; stale description row corrected. 62 projector and 23 installer tests pass; strict checks clean; 78 outputs current. |
+| Agreement: B-025 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; scenarios and decisions included. |
+| Design: § 7 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; planned strategy is testable. |
+| Diff: B-025 tracker metadata and executed tests | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; 71 projector and 30 installer tests pass, with test-first evidence. |
+| Surface: tracker metadata boundary | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; native/private traversal and existing publication safeguards verified. |
+| Surface: implemented output boundaries | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17: static implementation Approved at `6edf58971d594b9f033fabe226caf6da8d4be93cacfdb385d3446a9ebc56746b`, all 20 hashes verified, no remaining findings. Both native-path findings resolved; four Unix controls retain all previous cases. Subsequent source-bound execution is recorded separately in §8. |
+| Diff: completed baseline corrections | 🟢 | spec-reviewer | Independent `/root/baseline_projection_commands`, 2026-10-17: Approved native-path implementation, four regressions, design/scenario/traceability alignment, lessons and inspected recording-only corrections at `6edf58971d594b9f033fabe226caf6da8d4be93cacfdb385d3446a9ebc56746b`; unchanged F1/F3 approval at `a148bf47a5a726c87dbf4908547bcc27c6cfe56c70dfb7b7b95a2ca33ab629ed` remains applicable. Final 88/6/30/36 test execution, matching report/source hashes and 88/89 coverage verified. No remaining findings; Feature completion is not asserted. |
+
+### Superseded baseline review history
+
+Prior correction review: `/root/baseline_projection_commands` approved agreement/design but blocked §12 history at `b148707e323938c2eb58ed22479ae09604c318bf781168cf3b0de07a5fffa088`; R2 preserves that history and clears the finding. Prior surface review at that subject was Blocked on linked output traversal; R2 clears the design finding.
+
+> | 1-12    | 🟡     | spec-reviewer | Draft baseline. Original scaffolding evidence retained; claims and tests landed together. |
+
+Current amendment verdicts apply to the identified reviewed snapshot. Earlier
+pending rows are retained for their earlier subjects; current review approval
+does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 
-- [0041 — Agent and skill schemas](../.issue/0041-agent-skill-schemas.yml).
+<!-- last written by: organizer, 2026-10-17 -->
+
+- [0048 — Coordinate Projection delivery](../.issue/0048-coordinate-projection.yml) — authoritative delivery-status source.
+- [0029 — Check section stamps against the ownership table](../.issue/0029-stamp-ownership-check.yml).
+- [0041 — Enforce agent and skill document schemas in projection](../.issue/0041-agent-skill-schemas.yml).
 
 ## Scoring
 

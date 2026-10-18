@@ -3,28 +3,18 @@ name: ship
 description: "Run the final gate before a release — the diff, the exposed surface and the repository at rest — then release with a rollback and explicit confirmation."
 ---
 
-Convene these roles as the body directs:
-
-- `spec-reviewer`, whose contract is `.codex/agents/spec-reviewer.toml`
-- `adversary`, whose contract is `.codex/agents/adversary.toml`
-- `auditor`, whose contract is `.codex/agents/auditor.toml`
-- `observability`, whose contract is `.codex/agents/observability.toml`
-- `database`, whose contract is `.codex/agents/database.toml`
-- `benchmarker`, whose contract is `.codex/agents/benchmarker.toml`
-- `release`, whose contract is `.codex/agents/release.toml`
-
-Read each role's contract before acting as it, and keep the boundaries it declares: a role that refuses a kind of work still refuses it here.
+Follow the artifact ownership and review boundaries in the repository guidance.
 
 Use these skills: `deliver-change` (`.agents/skills/deliver-change/SKILL.md`), `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`).
 
-The spec reviewer judges the diff against the claims it cites. The adversary
+The independent reviewer judges the diff against the claims it cites. The surface pass
 joins when the release touches a trust boundary, a credential, a permission or
-input from outside; say which, or that it touches none. The auditor reads the
+input from outside; say which, or that it touches none. The repository pass reads the
 repository at rest for drift. When an operational decision needs evidence, the
-observability specialist states signal requirements, the baseline and the
-comparison to read after rollout. When persistence is affected, the database specialist supplies
-compatibility and verified rollback or recovery evidence. The benchmarker joins
-only for a written performance, cost or structural concern. The release engineer then
+signal owner states signal requirements, the baseline and the
+comparison to read after rollout. When persistence is affected, the storage specialist supplies
+compatibility and verified rollback or recovery evidence. The performance owner joins
+only for a written performance, cost or structural concern. The release owner then
 versions, writes the changelog and stages the rollout, with the rollback
 stated.
 

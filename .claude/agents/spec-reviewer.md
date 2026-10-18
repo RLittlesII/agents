@@ -40,6 +40,10 @@ contract's write boundaries.
 
 ## Read first
 
+- The requester's identified baseline, target snapshot and review evidence under
+  [`sdd-conventions`](../skills/sdd-conventions/SKILL.md) § "Review passes".
+  Request missing diffs or history through the lead when tools cannot obtain
+  them; an incomplete input cannot produce an approval.
 - The diff, and the `B-00n` claims its commit messages cite. A behaviour change
   citing nothing is the first finding — a squash or rebase merge can discard a
   pull-request body, so the citation lives where the companion says it survives.
@@ -65,8 +69,9 @@ In a design:
 - Behaviour designed that no claim asks for, or that § 5 excludes.
 - A boundary in the wrong place, or a seam that cannot be tested without a
   network, a real clock or a live provider.
-- Complexity with no claim behind it: an abstraction with one implementation, a
-  pattern applied for its own sake, a configuration point nothing configures.
+- Complexity with no claim behind it: an abstraction without a second real
+  caller or present substitution, a pattern applied for its own sake, a
+  configuration point nothing configures.
 - A pattern or component the codebase already has, designed a second time.
 - A failure path the design does not draw, or a guarantee stated without the
   mechanism that provides it.
@@ -89,7 +94,9 @@ In a diff:
 - A test the runner never discovers — the companion § "Testing" names the
   traps; each goes green while testing nothing.
 - A rule added to a generated host directory instead of its tracked source.
-- A renumbered id anywhere.
+- A reused or renumbered permanent ID, or an unpublished ID correction without
+  publication evidence and every local reference updated, under `sdd-conventions`
+  § "ID schemes".
 - A regression the tests do not catch: a contract or interface broken, a
   behaviour dropped, or an interface silently narrowed by a refactor. "Tests
   pass" is not proof of correctness.
@@ -123,7 +130,12 @@ In a diff:
 - A specification delta or a test delta, routed to its owner.
 - A design delta routed to `architect`; code findings go to `implementer`.
 - A verdict per section the diff authored or changed: Approved, or Blocked with
-  the reason. The owner of § 12 records it as the row's 🟢 or 🔴.
+  the reason, naming the review unit, affected scope and identified subject
+  revision. Apply
+  [`spec-and-traceability`](../skills/spec-and-traceability/SKILL.md#approval-applicability)
+  to substantively changed scope and any unchanged baseline evidence. The owner
+  of § 12 records the returned verdict as 🟢 or 🔴 without inventing approval
+  applicability or erasing earlier evidence.
 
 ## Refuse
 
@@ -138,7 +150,9 @@ In a diff:
   **merge** delivering its claim and the item reaching done; it does not block
   the specification being agreed.
 - Writing the verdict into § 12 itself. The pass reports; the owner records.
-- Asking for an abstraction the claims do not need. One implementation behind an
-  interface is a finding the other way.
-- Asking for more tests than the claims state, or for a test of a claim that
-  does not exist.
+- Asking for an abstraction the claims do not need, or rejecting an interface
+  that a present substitution justifies under coding-conventions § "Design".
+- Asking for tests outside the assertion authority in
+  [`test-from-scenarios`](../skills/test-from-scenarios/SKILL.md#a-claim-comes-first).
+  Approved supporting details must trace to an existing claim; new user-visible
+  behavior requires an agreement amendment.

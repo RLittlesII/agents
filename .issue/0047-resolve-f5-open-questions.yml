@@ -1,8 +1,8 @@
-id: "0036"
+id: "0047"
 type: chore
 title: Write back the maintainer's answers to Next work's open questions
 
-status: in-progress
+status: done
 
 value: 4
 cost: 2
@@ -19,8 +19,8 @@ spec: null
 claims: []
 
 created: "2026-10-15"
-updated: "2026-10-15"
-closed: null
+updated: "2026-10-17"
+closed: "2026-10-16"
 
 summary: |
   Next work (0001-F5). Release readiness for epic 0001 needs every Feature approved with no Missing
@@ -40,6 +40,9 @@ decisions:
   - "2026-10-15, repository maintainer: OQ-1 tracker only; OQ-2 review holds its lane; OQ-3 diagnose a duplicate id and withhold; OQ-4 an open question naming no claim leaves readiness unverified; OQ-5 finished and unranked; OQ-6 lanes from edits, starts capped at one per Feature by deliver-change rule 3. Rejected options are in decisions 0016 to 0021."
   - "2026-10-15, assumed here after review, reversible: a § 11 row whose Blocks cell reads None is scoped to nothing and withholds nothing; only a row naming no claim at all leaves readiness unverified (B-044, decision 0019)."
   - "2026-10-15, spec review: § 6 and § 7 still treat OQ-1, OQ-5 and OQ-6 as open and give B-042 to B-046 no design verdict. That is the architect's section and a follow-up, not this item."
+
+  - "2026-10-17, user-authorized one-time identity correction: published 0036 at .issue/0036-resolve-f5-open-questions.yml in PR2 now resolves to 0047. Earlier PR1 role-handoff item retains 0036; historical aliases are recorded in .issue/README.md. Current main d4eac9c, all open PRs, local branches and worktree reservations were checked; 0047 was free. This exception does not permit other permanent-ID renumbering."
+  - "2026-10-17, user-authorized tracker reconciliation: GitHub confirms https://github.com/RLittlesII/agents/pull/2 merged on 2026-10-16 (UTC), commit 785de62a3f57419b2feab102615fb2ebfa984d40; merge is an ancestor of this checkout and contains this delivered item. Close this item’s delivered scope; previously recorded verification gaps remain."
 
 out_of_scope:
   - "Tests for the claims: a follow-up item; § 9 rows stay Missing here."

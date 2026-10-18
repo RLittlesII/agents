@@ -87,3 +87,41 @@ Feature: Host installation
     When the installer runs
     Then the installer exits unsuccessfully
     And no file outside the project is changed
+
+  @B-007 @B-006
+  Scenario Outline: Private sources contain runtime artifacts and a consumer index
+    Given a checkout with maintainer documentation and nested specification metadata
+    And selected runtime role contracts and method resources
+    When Codex is installed through <manager>
+    Then the private bundle includes those contracts and runtime resources unchanged
+    And a consumer index links only installed contracts and method entry points
+    And no maintainer specifications or producer-only contract documents are installed
+    And the source checkout and consumer instructions are preserved
+
+    Examples:
+      | manager  |
+      | Skillfile |
+      | apm      |
+
+  @B-007
+  Scenario: Private runtime selection preserves non-specification nested resources
+    Given a method with binary and Markdown runtime resources in nested directories
+    And maintainer specifications at multiple depths
+    When Codex is installed
+    Then runtime resource paths and bytes are preserved
+    And every specification directory is excluded
+
+  @B-007 @B-006
+  Scenario: A selected role's missing runtime dependency fails before effects
+    Given a selected role refers to a missing private contract
+    When Codex installation is planned
+    Then installation fails before manager execution or consumer writes
+
+  @B-008
+  Scenario: Tracker metadata is absent from native and private installations
+    Given native skill projections and private method sources contain tracker entries at several depths
+    When either host is installed through either manager
+    Then no tracker entry is staged or installed
+    And ordinary hidden and similarly named runtime resources preserve their bytes
+    And excluded linked tracker entries are not traversed
+    And source files remain unchanged

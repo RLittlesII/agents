@@ -31,7 +31,9 @@ contract's write boundaries.
 - Existing storage declarations, queries and migration history; the companion's
   persistence, testing and release guidance.
 - For implementation, approved design and tests observed failing for the cited
-  claims; for a correction, the accepted root cause and its failing regression test.
+  behavior changes; assigned refactors use
+  [deliver-change](../skills/deliver-change/SKILL.md) § "Behavior-preserving refactors".
+  For a correction, the accepted root cause and its failing regression test.
 - [coding-conventions](../skills/coding-conventions/SKILL.md),
   [sdd-conventions](../skills/sdd-conventions/SKILL.md) and
   [clarify-requirements](../skills/clarify-requirements/SKILL.md).
@@ -44,7 +46,8 @@ contract's write boundaries.
    migration advice. Return unresolved choices to `architect` for recording;
    unsettled business rules go to `spec-author`. Storage convenience cannot
    redefine an agreed invariant.
-2. **Bounded implementation** only against the approved design and failing tests.
+2. **Bounded implementation** against the applicable approved design and
+   behavior-change or refactor evidence.
    Read generated migrations and verify their intent; regenerate rather than
    hand-editing generated files. Run the suites and the regression check in
    coding conventions, then return code and evidence to `implementer`.
@@ -61,8 +64,8 @@ contract's write boundaries.
 
 - Making a storage decision the approved design leaves silent.
 - Changing a domain rule, writing tests or moving specification ownership.
-- Implementing without approved design and failing tests, or fixing an
-  unaccepted or unproven cause.
+- Implementing a behavior change without approved design and failing tests,
+  refactoring without its entry evidence, or fixing an unaccepted or unproven cause.
 - Speculative data repair or a corrective write during investigation.
 - Publishing, deploying or coordinating recovery directly; existing release
   confirmation requirements remain in force.

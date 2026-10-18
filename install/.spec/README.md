@@ -20,7 +20,7 @@ depends_on: []
 blocks: []
 spikes: []
 created: "2026-10-16"
-updated: "2026-10-16"
+updated: "2026-10-17"
 github_issue: null
 synced_at: null
 ---
@@ -52,7 +52,7 @@ None. Stakeholder-approved defaults are recorded in § 11.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID | Claim | Source | Status |
 | --- | --- | --- | --- |
@@ -62,10 +62,12 @@ None. Stakeholder-approved defaults are recorded in § 11.
 | B-004 | Given either supported host and Microsoft apm as the selected manager, this Feature invokes Microsoft apm as part of installing the complete selected host. | User clarification, 2026-10-16 | Active |
 | B-005 | Given the documented prerequisites on Windows, macOS or Linux, this Feature accepts the same script arguments and produces the selected host's installation. | User request for a cross-platform scripting language | Active |
 | B-006 | Given an installed role or command, this Feature supplies the repository-owned contracts and skills that its instructions reference at their installed locations. | Complete installation in B-001 and B-002 | Active |
+| B-007 | Given a Codex installation, its planned private bundle supplies selected runtime role contracts, method skills and runtime resources with a consumer-facing index, excluding maintainer specifications. | User decision 0002, 2026-10-17 | Active |
+| B-008 | Given `.issue` tracker entries in native skill projections or private method sources, installation excludes them at every depth for both hosts and managers while preserving other runtime files. | Decision 0003, 2026-10-17 | Active |
 
 ## 4. Constraints
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID | Constraint | Rules Out |
 | --- | --- | --- |
@@ -105,7 +107,7 @@ Written by Marcus.
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-16 -->
+<!-- last written by: architect, 2026-10-17 -->
 
 ### DR-1 — One Python entry point, with a plan before effects
 
@@ -141,11 +143,13 @@ conflict policy and exposes manager-owned instruction/configuration writes.
 | Claude | `.claude/skills/<name>/**` | `.claude/skills/<name>/**` | Verified manager output, byte-preserved |
 | Codex | `.codex/agents/*.toml` | `.codex/agents/<role>.toml` | Rebase only the authoritative-source prefix |
 | Codex | `.agents/skills/<name>/**` | `.agents/skills/<name>/**` | Verified manager output, byte-preserved |
-| Codex | `agents/*.md` | `.sdd/agents/<file>.md` | None |
-| Codex | `skills/<name>/**` | `.sdd/skills/<name>/**` | None |
+| Codex | Selected native roles' source contracts and optional `agents/PERSONAS.md` | `.sdd/agents/<file>.md` | Byte-preserved |
+| Codex | Selected role and method inventory | `.sdd/agents/README.md` | Derived consumer index |
+| Codex | `skills/<name>/**` excluding `.spec` at every depth | `.sdd/skills/<name>/**` | Remaining runtime bytes preserved |
 
-Codex's discovery tree already includes command skills, per accepted
-[ADR-0005](../../.spec/adr/0005-commands-project-to-claude-commands-and-codex-skills.md).
+Codex's discovery tree already includes command skills, per
+[ADR-0011](../../.spec/adr/0011-command-skills-follow-artifact-ownership.md),
+which carries forward ADR-0005's discovery locations.
 Claude commands are promoted directly because Skillfile has no command entity.
 Skillfile's Markdown agent model does not represent Codex TOML agents; both
 managers therefore install skills while this wrapper promotes agents and Claude
@@ -164,7 +168,9 @@ Before staging, validate the contracts' known Markdown sibling and
 `../skills/<name>/...` links against the private byte plan, ignoring anchor
 fragments; a missing repository-owned dependency fails validation. Source skill
 selection copies named skill directories containing `SKILL.md`, excluding
-top-level specification metadata such as `skills/.spec`. This bounded link
+top-level specification metadata such as `skills/.spec` and nested `.spec`
+directories. The optional tree-reading exclusion prunes that reserved metadata
+before traversal; other nested resources retain their paths and bytes. This bounded link
 grammar matches the existing contracts; it is not a general Markdown parser.
 Claude's sibling and skill links already resolve under `.claude/`; it needs no
 private copy. Consumer README, AGENTS.md and companion references retain their
@@ -175,6 +181,31 @@ Private Codex sources avoid overwriting ordinary consumer `agents/` and
 role bodies and duplicates the projector's responsibility. Modifying committed
 projections or running the projector during installation was rejected by C-2
 and [ADR-0002](../../.spec/adr/0002-generated-host-outputs-are-committed.md).
+
+#### Runtime bundle amendment, 2026-10-17
+
+Under [decision 0002](decisions/0002-runtime-contracts-with-a-consumer-index.md),
+select private source contracts by the native Codex role inventory instead of
+copying every top-level source Markdown file. Require each selected source;
+retain the optional generated persona roster as a runtime reference. Derive a
+small index at `.sdd/agents/README.md` with links to those contracts, installed
+method entry points and the roster when present. It explains that project
+instructions and companion guidance belong to the consumer, without linking
+unshipped producer files. The producer index and source contracts are untouched.
+Reserve the index and roster names against native-role collisions.
+
+`build_plan` retains its existing ordered path-to-bytes result.
+The private-only `.spec` exclusion does not apply to committed host projections
+or ordinary runtime support files. B-008 separately excludes `.issue` entries
+from both native and private skill trees. Known
+role and index dependency links are checked against the completed private plan
+before managers or consumer writes. No general Markdown parser, exporter,
+recursive producer closure or new production interface is introduced. Synthetic
+public-entry tests pin selected-role inventory, index links, nested runtime
+bytes, excluded metadata and failure before effects for missing dependencies.
+Independent review of this amendment is recorded in § 12; prior DR-2 approval applies
+to its unchanged layout, rebasing and publication mechanisms, not this selection
+delta.
 
 ### DR-3 — Managers run in an isolated staging project
 
@@ -388,11 +419,27 @@ by the user's approved scope/defaults. No unresolved requirement blocks design.
 
 Written by Marcus.
 
+### Tracker metadata boundary
+
+[Decision 0003](decisions/0003-exclude-tracker-metadata.md) adds B-008.
+`read_tree` skips exact `.issue` entries before path validation, descent or
+reads, for both committed native skill trees and private method sources.
+Its existing private-only `.spec` exclusion remains. Top-level private method
+selection already skips dot-prefixed entries. This provides defense at the
+installation boundary even when an older projection contains tracker records.
+
+All manager staging, destination validation, force semantics and non-pruning
+behavior remain. Previously installed metadata is not silently removed. Tests
+install native root and nested metadata through both hosts/managers,
+exercise private nested metadata and linked excluded entries, and assert
+ordinary hidden/binary runtime bytes and source trees remain unchanged.
+Readiness: Ready; independent agreement/design approval is recorded in § 12.
+
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
-`python3 -m unittest discover -s install -p 'test_*.py' -v` discovers 23
+`python3 -m unittest discover -s install -p 'test_*.py' -v` discovers 27
 public-entry tests in `install/test_install.py`; discovery previously had zero
 installer tests. The `.feature` scenarios are documentary; named unittest cases
 execute their acceptance behaviors through `install` and `main`.
@@ -425,16 +472,51 @@ Linux. Local macOS execution cannot substantiate Windows/Linux claims; those
 runs remain pending CI. Real-manager compatibility smoke is separate feasibility
 evidence in § 7, not an offline acceptance substitute.
 
-README § Maintaining defines no changed-line coverage percentage or gate;
-therefore no numeric threshold is asserted. Behavioral test discovery and the
-full existing repository checks are required. No numeric coverage claim or
-threshold is asserted; generated coverage reports are not committed.
+README § Maintaining › Testing now declares the 80% pooled changed executable
+production-line floor under ADR-0007. Run the shared gate against the comparison
+base for this amendment; generated reports remain ignored. Earlier no-threshold
+statements described the original implementation and are superseded by that
+repository policy.
+
+B-007 regression cases use synthetic maintainer indexes and nested `.spec`
+metadata alongside binary and Markdown runtime resources. They install through
+the public entry point with both managers, require a consumer index whose links
+resolve inside the private bundle, and verify preserved runtime bytes and source
+checkout bytes. Selected native roles determine the contract inventory; a
+producer-only Markdown file cannot become an installed contract. The real
+checkout's dry plan is also inspected for `.spec` metadata and unresolved private
+links.
+
+2026-10-17 amendment evidence: four new tests were discovered against the prior
+installer. All failed for the intended packaging assertions (five failure reports
+because the index case exercises both managers); the existing 23 cases passed.
+After the bounded fix, all 27 cases pass. The new real-checkout offline install
+contains no private `.spec` path and every observed private Markdown file link
+resolves inside `.sdd`. The dry plan has 39 Claude files and 68 Codex files;
+there are no private specification files or unresolved relative file links.
+These file counts describe this checkout, not a fixed compatibility promise.
+No new real-manager, Windows or Linux execution is claimed.
+The shared gate against `main` at `d4eac9c975718756f0d97d150ddced6f90044648`
+passes 37/37 changed executable production lines (100%; required 80%) across
+this change and the projector fence fix. The first concurrent attempt failed
+because the standalone F# suite removed the instrumented run's shared fixtures;
+a serial rerun passed. Per-run F# scratch isolation then allows both overlapping
+runs to pass, with a foreign fixture preserved. Reports remain ignored.
 
 Written by Kevin.
 
+Tracker-metadata amendment: 30 installer tests passed. All three added cases were observed red before implementation; both hosts and managers pass offline, including excluded source links on macOS. Other OS execution and live manager reruns remain unclaimed.
+Testability: Ready, using the existing synthetic fixtures without network or a
+new dependency. Independent agreement/design approval preceded test authoring;
+see § 12.
+Fresh source-bound coverage against main `d4eac9c` passes 49/50 changed
+executable production lines (98%; required 80%). The unused missing-directory
+return in the source traversal is the one uncovered line. This measured gate
+does not establish additional platform, real-manager or live-agent execution.
+
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 | Claim ID | Scenario | Test | Status |
 | --- | --- | --- | --- |
@@ -444,22 +526,32 @@ Written by Kevin.
 | B-004 | [@B-004](install.feature#L35) | `test_B001_B004_claude_apm_complete_installation`; `test_B002_B004_codex_apm_complete_installation` | Covered |
 | B-005 | [@B-005](install.feature#L47) | `test_B005_cli_accepts_host_manager_target_and_force`; `test_B005_cli_help_invalid_arguments_and_failure_exit`; all four complete-installation tests on the three-OS CI matrix | Covered |
 | B-006 | [@B-006](install.feature#L60) | `test_B006_codex_rebases_only_source_prefix_and_supplies_dependencies`; `test_B001_B003_claude_skillfile_complete_installation`; `test_B006_unexpected_codex_source_prefix_is_rejected`; `test_B006_missing_authoritative_role_is_rejected`; `test_B006_missing_referenced_private_method_is_rejected` | Covered |
+| B-007 | [@B-007](install.feature) Runtime bundle and consumer index | `test_B007_consumer_index_uses_selected_runtime_inventory_with_both_managers`; `test_B007_private_specs_are_excluded_at_every_depth_and_runtime_bytes_survive`; `test_B007_native_role_cannot_overwrite_the_consumer_index`; `test_B007_checkout_runtime_bundle_is_closed_over_private_file_links` | Covered |
+| B-008 | Tracker metadata scenarios in the companion `.feature` | `test_B008_root_tracker_is_not_a_skill_for_either_host_or_manager`; `test_B008_nested_native_and_private_tracker_records_are_omitted`; `test_B008_linked_tracker_is_skipped_before_source_validation` | Covered |
 
 B-005 has executable acceptance and argument-mechanism coverage; actual
 Windows/Linux CI execution remains pending. Local macOS results do not assert
 execution on those platforms. Written by Kevin.
 
-
-
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
-None.
+2026-10-17: User selected runtime-only private Codex contracts/resources with a
+consumer index, excluding maintainer specifications. Add B-007 and decision
+0002; reproduce the prior plan's 23 private specification files and 12 unresolved
+relative links. Revise DR-2 without altering runtime contract bytes, native
+projections or publication safeguards. The incident and regression evidence are
+recorded in [lesson 0001](lessons/0001-runtime-bundles-exclude-producer-records.md).
+Independent amendment review is recorded in § 12.
+
+2026-10-17: User selected consistent tracker metadata exclusion. Add B-008;
+source traversal and installation omit reserved tracker entries, preserving
+runtime bytes and existing ownership. See Decision 0003.
 
 ## 11. Open Questions
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID | Question | Blocks | Resolution |
 | --- | --- | --- | --- |
@@ -468,26 +560,48 @@ None.
 | OQ-3 | Does this agreement belong in the proposed installation epic 0038, separate from projection epic 0001? | B-001–B-006 | Resolved by the user, 2026-10-16: approved the scope and defaults; epic 0038 accepted. |
 | OQ-4 | May the design use Python 3.11+ with no third-party Python dependencies, explicit host and manager arguments, and a checkout as its source? | B-001–B-005 | Resolved by the user, 2026-10-16: approved. |
 | OQ-5 | Should a differing destination file fail without overwriting it, with any replacement available only through an explicit installer option? | B-001, B-002, B-006 | Resolved by the user, 2026-10-16: approved; replacement requires --force. |
+| OQ-6 | Should private Codex copies contain runtime contracts/resources with a consumer index, or maintainer documents with their full referenced-file closure? | B-006 | Resolved by the user, 2026-10-17: runtime contracts/resources with a consumer-facing index; exclude maintainer specifications. See decision 0002 and B-007. |
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | Section | Status | Reviewer | Note |
 | --- | --- | --- | --- |
+| Design: § 7 runtime bundle amendment | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
+| Diff: §§ 3, 7–12; installer, tests, decision and lesson | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
+| Surface: submitted amendment boundaries | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; no actionable findings, with R2/R3 applicability verified. |
 | 1-5 | 🟢 | spec-reviewer | Jessica approved, 2026-10-16; stakeholder approved scope and defaults the same day. |
 | 6-7 | 🟢 | spec-reviewer | Jessica approved the recorded design with no findings, 2026-10-16. |
 | 8-9 | 🟢 | spec-reviewer | Jessica approved, 2026-10-16; 23 tests pass on macOS with Python 3.11 and 3.13; Windows/Linux CI pending. |
 | 10-12 | 🟢 | spec-reviewer | Jessica approved the recorded clarifications and review evidence, 2026-10-16. |
+| Agreement: B-008 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; scenarios and decisions included. |
+| Design: § 7 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; planned strategy is testable. |
+| Diff: B-008 tracker metadata and executed tests | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; 71 projector and 30 installer tests pass, with test-first evidence. |
+| Surface: tracker metadata boundary | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; native/private traversal and existing publication safeguards verified. |
 
 Kyle approved the filesystem and subprocess surface pass without findings,
 2026-10-16. Full real-manager smoke verified identical consumer results for
 Skillfile 1.7.1 and Microsoft apm 0.33.0 on both hosts: 39 Claude files or 91
 Codex files, preserving consumer instructions. No Windows/Linux run is claimed.
 
+### Superseded amendment review history
+
+These pending records predate the current independent verdicts. They retain
+their original notes; current live-agent evidence limits remain in § 8.
+
+- B-007; DR-2 runtime selection and index amendment — 🟡 — spec-reviewer — User packaging decision recorded 2026-10-17; independent design/diff and surface review pending. Earlier approval remains historical for the prior selection and applicable unchanged scope.
+
+Current amendment verdicts apply to the identified reviewed snapshot. Earlier
+pending rows are retained for their earlier subjects; current review approval
+does not establish live-agent behavior or unperformed platform/manager runs.
+
 ## Tasks
 
-[0039 — Host installer](../.issue/0039-host-installer.yml), B-001–B-006.
+<!-- last written by: organizer, 2026-10-17 -->
+
+- [0054 — Coordinate Host installation delivery](../.issue/0054-coordinate-host-installation.yml) — authoritative delivery-status source.
+- [0039 — Install complete Claude or Codex hosts through Skillfile or Microsoft apm](../.issue/0039-host-installer.yml).
 
 ## Scoring
 

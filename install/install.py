@@ -37,7 +37,7 @@ def checked_path(root: Path, path: Path) -> Path:
     return path
 
 
-def read_tree(root: Path, directory: Path) -> dict[Path, bytes]:
+def read_tree(root: Path, directory: Path, exclude_specs: bool = False) -> dict[Path, bytes]:
     """Read a selected source tree without following links or special files."""
     checked_path(root, directory)
     if not directory.is_dir():
@@ -46,6 +46,8 @@ def read_tree(root: Path, directory: Path) -> dict[Path, bytes]:
 
     def visit(folder: Path) -> None:
         for path in sorted(folder.iterdir()):
+            if path.name == ".issue" or (exclude_specs and path.name == ".spec"):
+                continue
             checked_path(root, path)
             if path.is_dir():
                 visit(path)
@@ -112,20 +114,49 @@ def build_plan(source: Path, host: str) -> tuple[dict[Path, bytes], dict[Path, b
         plan.update(read_flat(source, ".claude/agents", ".md"))
         plan.update(read_flat(source, ".claude/commands", ".md"))
     else:
-        roles = read_flat(source, "agents", ".md")
-        plan.update({Path(".sdd") / path: data for path, data in roles.items()})
+        native_roles = read_flat(source, ".codex/agents", ".toml")
+        source_roles = read_flat(source, "agents", ".md")
+        roles = {}
+        for path in native_roles:
+            if path.stem.casefold() in ("readme", "personas"):
+                raise ValueError(f"Reserved private contract path: {path}")
+            contract = Path("agents", f"{path.stem}.md")
+            if contract not in source_roles:
+                raise ValueError(f"Missing authoritative source for {path}")
+            roles[contract] = source_roles[contract]
+        roster = Path("agents/PERSONAS.md")
+        if roster in source_roles:
+            roles[roster] = source_roles[roster]
         methods_root = checked_path(source, source / "skills")
         if not methods_root.is_dir():
             raise ValueError(f"Missing method skills: {methods_root}")
+        method_names = []
         for method in sorted(methods_root.iterdir()):
             if method.name.startswith("."):
                 continue
             checked_path(source, method)
             if method.is_dir():
-                files = read_tree(source, method)
+                files = read_tree(source, method, exclude_specs=True)
                 if Path("SKILL.md") not in files:
                     raise ValueError(f"Missing method SKILL.md: {method.name}")
                 plan.update({Path(".sdd/skills") / method.name / path: data for path, data in files.items()})
+                method_names.append(method.name)
+        index = [
+            "---", "title: Installed role contracts",
+            "description: Runtime contracts and method guidance installed for this project",
+            "type: reference", "---", "", "# Installed role contracts", "",
+            "Read this project's AGENTS.md and companion guidance first. These private",
+            "copies supply the installed roles' authoritative contracts and runtime resources.",
+            "Maintainer specifications and repository setup belong to the producer checkout.",
+            "", "## Roles", "",
+        ]
+        index += [f"- [{path.stem}]({path.stem}.md)" for path in native_roles]
+        if roster in roles:
+            index += ["", "[Persona roster](PERSONAS.md)."]
+        index += ["", "## Method guidance", ""]
+        index += [f"- [{name}](../skills/{name}/SKILL.md)" for name in method_names]
+        roles[Path("agents/README.md")] = ("\n".join(index) + "\n").encode("utf-8")
+        plan.update({Path(".sdd") / path: data for path, data in roles.items()})
         for relative, data in roles.items():
             # Role contracts use sibling Markdown and ../skills links; prose
             # about a consumer's README or companion remains consumer-owned.
@@ -133,9 +164,7 @@ def build_plan(source: Path, host: str) -> tuple[dict[Path, bytes], dict[Path, b
                 dependency = Path(os.path.normpath(str(Path(".sdd/agents") / link)))
                 if dependency not in plan:
                     raise ValueError(f"Missing contract dependency in {relative}: {link}")
-        for path, data in read_flat(source, ".codex/agents", ".toml").items():
-            if Path("agents", f"{path.stem}.md") not in roles:
-                raise ValueError(f"Missing authoritative source for {path}")
+        for path, data in native_roles.items():
             plan[path] = rebase_codex(path, data)
     return dict(sorted(plan.items())), skills
 

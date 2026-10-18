@@ -34,4 +34,9 @@ B-017, B-018, B-024, OQ-2,
 
 ## Reversal
 
-None.
+2026-10-17: the owner's explicit-release policy, recorded in
+[0001-F2 decision 0005](../../../../agents/.spec/decisions/0005-taken-work-retains-explicit-ownership.md),
+supersedes only the delivery-only lifetime above. Work in review remains taken
+while its reservation exists; an explicit recorded release ends that reservation
+without delivering the item, and authorized reassignment retains it. Silence or
+elapsed time alone never releases it. B-018 and B-024 remain unchanged.

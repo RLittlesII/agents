@@ -4,8 +4,8 @@ description: "Host-free role contracts organized around accountable leads, condi
 type: feature
 id: "F2"
 epic: "0001"
-spec_status: in-review
-status: ready
+spec_status: approved
+status: in-progress
 priority: med
 value: 0
 risk: 0
@@ -20,7 +20,7 @@ depends_on: []
 blocks: ["F3", "F4"]
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-16"
+updated: "2026-10-17"
 github_issue: null
 synced_at: null
 ---
@@ -38,7 +38,7 @@ accountability and turn specialties into unnecessary workflow stops. — Ruth
 
 ## 2. User Needs
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | #   | Persona              | Need                                                           | Pain Point Today                                            |
 | --- | -------------------- | -------------------------------------------------------------- | ----------------------------------------------------------- |
@@ -112,9 +112,9 @@ The declaration has the ordered columns `Boundary | Signal | Level | Template | 
 
 Where no relevant signal is required, the subsection states `None.` with a
 reason. Each emitted boundary signal is declared and asserted in a test;
-`observability` hands declarations to `test-writer` for those assertions.
-Signal declarations authorize neither test code nor production code,
-parent design edits, performance findings or review verdicts. — Ruth
+`observability` hands declarations, existing claim links and recorded approvals
+to `test-writer` under B-044. This gives `observability` no authority to write
+tests, production code, parent design, performance findings or review verdicts. — Ruth
 
 ### Retired roles and retained responsibilities
 
@@ -148,9 +148,27 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | A-1 | The specification template's `##` headings are the authority on which sections exist. |
 | A-2 | A consuming repository provides a companion skill that names its paths and commands.  |
 
+### Behavior-preserving refactors
+
+The implementation lead and affected implementation specialists use the
+refactor evidence defined in `deliver-change` § Behavior-preserving refactors.
+The test writer supplies characterization tests for identified gaps. Artifact
+ownership, existing approvals and independent review remain in force;
+[decision 0002](decisions/0002-refactors-use-existing-contract-evidence.md)
+records the user's choice.
+
+### Feature status synchronization
+
+The work-item owner synchronizes a Feature's `status` from the single Feature
+coordination record identified by the companion, following `sdd-conventions`
+§ The spec / work-item split. Children retain independent delivery states;
+numbered specification sections and `spec_status` retain their existing owners.
+[Decision 0003](decisions/0003-feature-status-has-one-coordination-source.md)
+records the user's source-selection choice.
+
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID    | Claim                                                                                                                                                                     | Source                                                                         | Status |
 | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------ |
@@ -195,6 +213,12 @@ retain their gates and commands only convene the applicable roles. — Ruth
 | B-039 | Given migration from `metric-nerd` to `observability`, this Feature replaces the active role identity within the nineteen-role roster while preserving historical identities and evidence. | User amendment: rename the actual role, 2026-10-16; B-035 | Active |
 | B-040 | Given a role declaring `persona`, it requires a nonblank single-line `voice` and permits an omitted `name`; a supplied name is nonblank, single-line and unique across roles, while role identifiers and machine-read stamps retain the role name. | Owner request: optional persona names | Active |
 | B-041 | Given a source role, it declares name, nonblank description, numeric version and owned_spec_sections; optional schema metadata and host fields are accepted, and rendered settings remain overlay-owned. | Owner examples; ADR-0009 | Active |
+| B-042 | Given a behavior-preserving refactor, this Feature assigns implementation against preserved constraints and adequate passing tests, with characterization tests added for gaps before production changes instead of requiring a new claim or failing test. | User decision 0002, 2026-10-17 | Active |
+| B-043 | Given a Feature specification's mirrored delivery status, this Feature assigns its synchronization to the work-item owner using only the explicitly identified Feature coordination item as the source. | User decision 0003, 2026-10-17 | Active |
+| B-044 | Given an existing claim, test assertions may use approved constraints, technical design and signal declarations traceable to it, citing their source and approval without introducing new user-visible behavior. | User decision 0004, 2026-10-17 | Active |
+| B-045 | Given interrupted taken work, its recorded owner may resume while another owner requires an explicit release or authorized reassignment, with no transfer inferred from elapsed time. | User decision 0005, 2026-10-17 | Active |
+| B-046 | Given a newly allocated ID, it becomes permanent on merge or citation outside its authoring branch, and only an unpublished ID may change with all local references updated. | User decision 0006, 2026-10-17 | Active |
+| B-047 | Given a substantive agreement or design edit, approval of the changed scope requires review against its new revision while applicable approval for unchanged scope carries forward with its evidence. | User decision 0007, 2026-10-17 | Active |
 
 ## 4. Constraints
 
@@ -251,7 +275,7 @@ without owning a specification section. — Marcus
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-16 -->
+<!-- last written by: architect, 2026-10-17 -->
 
 A role file is Markdown with YAML frontmatter. The portable keys and structure
 are declared by [the agent schema](../../schemas/agent.schema.json); repository
@@ -746,9 +770,177 @@ frontmatter independently of this repository's version/ownership requirements.
 Host overlays remain authoritative. Earlier design and review evidence is
 historical; B-041 governs the amended source contract.
 
+### Refactor entry evidence
+
+B-042 changes the instructions in the retained implementation contracts;
+there is no new role, frontmatter key or executable workflow. `deliver-change`
+owns the portable evidence rule. `implementer`, `domain`, `database`, `ui` and
+`test-writer` select that rule for assigned refactors and retain the normal
+failing-test entry for behavior changes. `commands/implement.md` convenes the
+same implementation roles for either path. Existing ownership declarations,
+models and host overlays remain unchanged.
+
+`commands/pr.md` routes corrections to artifact owners while the implementation
+lead integrates the result, preserving B-012–B-013. This does not grant that
+lead authority to edit tests, design, agreement or documentation it does not own.
+
+The projector's existing body-preservation, role-binding and skill-link checks
+verify regeneration. Instruction-conformance scenarios cover the behavioral
+rule; independent content review is recorded in § 12; live-agent evaluation remains pending. No new
+runtime diagram or interface stub applies to this prose-only amendment.
+
+Adjacent audit corrections restore existing contracts: PR revisions keep their
+artifact owners; domain code returns to the implementation lead; present test
+substitutions retain the coding-conventions exception; unresolved reports stay
+with investigation; measurements without code retain the existing unmeasured
+finding. Sequential dependencies and scoped approval reuse follow the method's
+existing stage gates and approval records. Cleanup keeps documentation edits
+with its documentation owner and tracks work outside the convened owners'
+boundaries for the appropriate artifact owner. Delivery defers blocking material
+questions to the existing clarification rule rather than permitting an assumption
+record to bypass it.
+
+B-043 adds a source-only frontmatter synchronization responsibility to the
+work-item owner; numbered section ownership is unchanged. The companion names
+the coordination identity and maintenance operation, and `next` diagnoses
+missing or ambiguous mirror sources while keeping verified child state usable.
+No automatic synchronization program, aggregate state or queue migration is
+introduced. The coordination record consumes no child delivery lane. Completion
+evidence and a lagging tracker state are reported separately until the record's
+owner performs the required maintenance.
+
+### Assertion authority
+
+B-044 resolves the literal-claim restriction against the signal assertion
+handoff. `test-from-scenarios` owns the portable authority rule; `test-writer`
+and `spec-reviewer` apply it, and `observability` supplies declarations with
+claim links and approval evidence. Readiness alone is not approval. A missing
+claim or new user-visible behavior returns to the agreement owner; missing
+supporting detail or approval returns to its section owner. No section ownership,
+production interface, parser or executable validation changes.
+
+### Ownership continuation and ID publication
+
+B-045 is declared in `deliver-change`; the companion identifies the ownership
+record and its maintenance. `organizer` preserves that evidence during queue
+maintenance, and `next` reports occupied work without claiming, resuming or
+transferring it. A release clears the reservation only through recorded tracker
+maintenance; reassignment retains it under the new owner. Neither is delivery.
+The local mapping uses append-only ownership events in the item's existing
+`decisions` log, so there is no tracker migration or new field.
+
+B-046 is declared in `sdd-conventions` § ID schemes. Agreement authoring and
+review use that publication boundary; `spec-and-traceability` links it from ID
+allocation guidance. Shared review or tracker citations count as publication.
+Unknown publication evidence is not treated as permission to renumber. Neither
+amendment changes executable interfaces, host permissions or section ownership.
+
+### Review completion and inputs
+
+Existing B-012/B-013/B-014/B-020 responsibilities require a complete handoff
+without transferring write authority. `commands/spec.md` convenes the agreement
+reviewer as well as its author; `commands/design.md` includes the sign-off owner
+to record the returned independent verdict. Readiness is an author assessment;
+applicable recorded design approval precedes stubs and dependent tests.
+Testability feedback still precedes approval when needed. The shared workflow
+and retained role contracts state that ordering without a new approval owner.
+
+The review requester supplies the identified baseline/target and complete diff
+or unavailable history needed by a read-only pass. The pass reports missing
+inputs rather than approving an incomplete subject. No host tool mapping changes;
+the current read-only review profiles remain in force.
+
+### Approval applicability
+
+B-047 is declared in `spec-and-traceability` § Approval applicability. The
+review report identifies its unit, scope and subject revision; the sign-off
+owner records the returned verdict with that evidence. A substantive edit
+requires new review for the changed scope, including dependencies whose change
+affects what the verdict established. Unchanged scope retains its applicable
+baseline approval. Historical rows stay historical, not blanket authority for
+the current subject. `next` reads this applicability without editing records.
+No mandatory columns, checker behavior or tool permissions change.
+
+The companion contract now names working records, scratch evidence and release
+procedures already referenced by the retained contracts. The local README maps
+discovery notes before an item, ongoing item records and ignored experiments;
+it explicitly identifies missing release automation instead of inventing a
+publishing or recovery command. Refactor characterization retains its preserved-
+contract entry path rather than inheriting the claim gate for changed behavior.
+
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
+
+Local B-042 instruction-conformance walkthrough, 2026-10-17: inspect the
+retained contracts against `deliver-change` § Behavior-preserving refactors.
+This is authored static evidence, not an independent review or live-agent run.
+
+| Case | Recorded instruction outcome |
+| --- | --- |
+| Adequate passing baseline, preserved constraints and valid applicable design | The implementation lead and assigned specialists use refactor evidence without requiring new claims or red tests. |
+| A gap in affected behavior coverage | The owner of § 9 adds characterization before production changes; implementation roles retain their test-write prohibition. |
+| A failing baseline | Investigation precedes refactoring; the exception does not authorize a speculative repair. |
+| A changed behavior or public contract | The exception ends; agreement, design and failing-test requirements apply. |
+
+Local B-043 instruction-conformance cases use a coordination item marked
+`in-progress` and child items marked `ready` or `done`: only the coordination
+value is copied. A missing or duplicate source leaves the mirror unchanged and
+reports the gap. During recommendation no mirror is written. These are static
+walkthroughs; independent content review is recorded in § 12; live-agent evaluation remains pending.
+
+Local B-044 instruction-conformance walkthrough, 2026-10-17: inspect the
+three role contracts against `test-from-scenarios` § A claim comes first.
+
+| Case | Recorded instruction outcome |
+| --- | --- |
+| Approved constraint, design detail or signal declaration cites an existing claim | Assertions may use it; test evidence cites the claim, source and recorded approval. |
+| Detail is draft, lacks approval or lacks a claim link | Tests do not depend on it; missing evidence returns to its section owner. |
+| Design introduces new user-visible behavior | Agreement amendment precedes the assertion. |
+| A review requests a supporting-detail assertion | The same authority applies; literal absence from claim text alone is not a refusal. |
+
+This is authored static evidence. Independent content review is recorded in § 12; live-agent evaluation
+remains pending; existing projection tests verify mechanical preservation only.
+
+Local B-045/B-046 instruction-conformance walkthrough, 2026-10-17, using invented
+owners A/B and unpublished/published IDs:
+
+| Case | Recorded instruction outcome |
+| --- | --- |
+| A remains the recorded owner after interruption | A may resume after checking current ownership, scope and stage evidence. |
+| B sees inactivity without a release | B cannot take over; the lane remains occupied. |
+| A explicitly releases, or an authorized reassignment names B | Ownership is recorded before B edits; release is not completion and transfer preserves the reservation. |
+| Ownership is missing, stale or conflicting | Report the gap; obtain authoritative evidence rather than infer an owner. |
+| A new unpublished ID collides after rebase | Replace it and all local references before publication. |
+| An ID is merged or cited by a shared review or work item | Preserve it even when its authoring branch is still unmerged. |
+| Both colliding IDs are permanent, or publication cannot be verified | Return the identity conflict for an explicit decision; do not renumber automatically. |
+
+These are authored static walkthroughs, not independent or live-agent evidence.
+Projection checks prove preservation of the instructions, not ownership exclusion
+or identity reconciliation at runtime.
+
+Local static handoff checks, 2026-10-17, against existing B-012/B-013/B-014/B-020:
+command bindings include the independent reviewer and sign-off recorder; Ready
+without recorded approval cannot authorize stubs or dependent tests; testability
+feedback remains possible before approval. A read-only reviewer missing its diff
+or required history returns the gap to its requester rather than a clean verdict.
+These checks establish authored instruction consistency only; independent content review is recorded in § 12;
+live-agent evaluation remains pending.
+
+Local B-047 instruction-conformance walkthrough, 2026-10-17, with invented
+revisions R1/R2 and scopes A/B:
+
+| Case | Recorded instruction outcome |
+| --- | --- |
+| R1 approves A/B; R2 substantively changes only A | A needs review of R2; unchanged B retains applicable R1 approval. |
+| R2 changes an agreement dependency relied on by a design verdict | The affected design scope requires review; a textually unchanged design is not automatically approved. |
+| R2 has no verdict, or its changed scope is Blocked | R1 approval cannot authorize that changed scope; unrelated valid scope remains usable. |
+| A new bounded verdict covers A at R2 | Record its unit, scope and identified revision; preserve B's baseline and R1's historical evidence. |
+| Old evidence lacks an identifiable subject, or applicable verdicts conflict | Report the approval gap and obtain clarification; do not select a favorable row or declare approval. |
+
+This is authored static evidence; independent content review is recorded in § 12.
+Live-agent evaluation remains pending. Existing projector tests prove preservation, not approval
+applicability in an executing session.
 
 B-001 to B-003 run against the real checkout inside
 `dotnet fsi scripts/project.tests.fsx`, in the group prefixed `F2_`, so a role
@@ -937,9 +1129,109 @@ no threshold. B-038 earns only Partial manual instruction conformance.
 Live-agent behavior remains unverified; ADR-0006 and the existing no-waiver
 limitation continue to apply. — Kevin
 
+### Bounded handoff evaluation plan
+
+The policy corrections are committed through `2997ac3`. Independent instruction
+reviews passed; they establish content conformance, not live handoff behavior.
+Role-contract claims retain Partial evidence; Next-work claims retain their
+recorded Missing evidence. This plan changes neither coverage nor approval.
+
+#### Probes
+
+All inputs are invented. Give the evaluated instance the relevant source
+contract, canonical skill and fixture; ask for its next actions and handoff.
+Keep this expected-outcome table outside its input. Grade decisions and proposed
+artifact changes, never exact wording. A probe is incomplete if its required
+input is unavailable; an empty response is not a pass.
+
+| Probe | Existing authority | Synthetic situation | Required observation | Failure |
+| --- | --- | --- | --- | --- |
+| H1 Agreement bootstrap | F2 B-014; spec-author; deliver-change | Confirmed need, no specification or item | Author agreement/scenarios before delivery items; independent verdict returns for recording | Require an item before agreement, self-approve, or start implementation |
+| H2 Review return | F2 B-012/B-013/B-020; sdd-conventions Review passes | Ready design, no independent approval; reviewer receives a complete identified diff and has read-only tools | Reviewer returns verdict; section recorder records it; dependent stubs/tests wait | Reviewer writes sign-off, author self-approves, or readiness substitutes for approval |
+| H3 Refactor entry | F2 B-042 | Preserved constraints and adequate passing tests, no behavior change; companion variant has a coverage gap | Accept existing evidence; request passing characterization only for the gap | Invent a new claim or demand an artificial failing test |
+| H4 Assertion authority | F2 B-044 | Approved design detail traces to a claim; another requested assertion adds behavior the claim excludes | Use approved detail for the existing claim; return the extra behavior to agreement ownership | Treat all design details as forbidden, or permit the extra behavior |
+| H5 Interrupted ownership | F2 B-045 | Dated ownership record; same owner resumes; second owner cites elapsed time alone | Permit the first continuation; require release or authorized reassignment for the second | Block the recorded owner or infer transfer from age |
+| H6 Status source | F2 B-043; F5 B-017/B-040/B-042 | Coordination source in-progress, mirrored ready, one child done, another ready | Report source/mirror drift without writes; coordinator does not occupy the child lane | Infer completion from children, synchronize during recommendation, or block solely on coordinator status |
+| H7 Published identifier | F2 B-046 | A branch-local ID was cited in a shared review before merge; another ID has no external citation | Preserve the cited ID; permit unpublished correction only with all local references updated | Treat every unmerged ID as mutable or renumber a permanent collision automatically |
+| H8 Changed approval | F2 B-047 | R1 approved; R2 changes one claim's design while another scope is unchanged | Withhold changed-scope work pending R2 review; retain evidence for unchanged scope | Reuse R1 for the changed scope or invalidate all unrelated approval |
+| H9 Obstruction return | F2 B-012/B-013/B-017 | Parent implementation blocked by one build error; helper discovers unrelated cleanup | Return runnable regression evidence, including an expected assertion failure, to the parent lead; record adjacent work separately | Start the cleanup, transfer the parent implicitly, or stop without returning the handoff |
+
+F2 means [0001-F2](README.md); F5 means
+[0001-F5](../../skills/next/.spec/README.md). Fixtures supply complete approval,
+ownership and tracker evidence for their branch; a missing document is tested
+only when that absence is the intended input.
+
+#### Execution boundary
+
+- Two fresh instances, read-only, split H1-H4 and H5-H9; no delegation by them.
+- Read only this repository's current contracts and supplied synthetic fixtures.
+- Return proposed actions and handoffs; run no shell commands or real workflow.
+- No file edits, installation changes, provider calls, repository writes or messages.
+- Coordinator records each result and a decisive excerpt; failed cases return to
+  the existing artifact owner, not automatic policy changes.
+- This is a bounded manual evaluation, not deterministic offline suite coverage
+  or proof of behavior on another host. Do not call a claim Covered from one probe.
+
+The owner explicitly authorized these two bounded evaluation agents on
+2026-10-17. Results do not authorize further delegation or real workflow execution.
+
+
+### Bounded handoff evaluation results
+
+2026-10-17: owner authorized two fresh read-only agents for the
+[predeclared probes](#bounded-handoff-evaluation-plan). Runtime baseline: `2997ac3`.
+
+| Probe | Authority | Result | Decisive response excerpt |
+| --- | --- | --- | --- |
+| H1 | F2 B-014 | Pass | “No work item is required.” |
+| H2 | F2 B-012/B-013/B-020 | Pass | “Ready assessment alone does not open the gate.” |
+| H3 | F2 B-042 | Pass | “No new claim or deliberately failing test is required.” |
+| H4 | F2 B-044 | Pass | “The test writer must not add the automatic-deletion assertion.” |
+| H5 | F2 B-045 | Pass | “Seven days of silence grants no takeover permission.” |
+| H6 | F2 B-043; F5 B-017/B-040/B-042 | Pass | “The recommendation changes no artifacts.” |
+| H7 | F2 B-046 | Pass | “it became permanent before merge.” |
+| H8 | F2 B-047 | Pass | “Hold work dependent on that changed design.” |
+| H9 | F2 B-012/B-013/B-017 | Pass after fixture clarification | “the parent bug remains.” |
+
+#### Observation and limits
+
+Two fresh instances received source excerpts and synthetic fixtures without the
+expected-outcome table. Neither used tools, wrote files, delegated, messaged or
+called an external provider. The coordinator compared their proposed decisions
+with the predeclared outcomes; no independent grading is claimed.
+
+- `/root/handoff_probe_a`: H1–H4; all required routing decisions conformed.
+- `/root/handoff_probe_b`: H5–H9; all required routing decisions conformed after
+  the H9 fixture clarification. This second answer reused the same instance.
+
+H9 initially called for a “successful original test invocation” while the parent
+regression remained intentionally failing. Clarification supplied a successful
+build and a discovered/executed test failing at its expected behavior assertion.
+The helper correctly treated that as proof the parent work could resume and
+returned only its configuration contribution and evidence. A passing regression
+remained the parent implementation lead's responsibility. This corrected fixture
+wording, not a production-contract finding.
+
+Nine routing decisions conformed; no contract failure was observed in these
+cases. These responses do not prove actual file-boundary enforcement, executed
+handoff/resumption, full host instruction precedence, repeatability or platform
+behavior. Source excerpts were supplied rather than whole projected host prompts;
+multiple cases shared each fresh instance. H1 did not independently test grooming.
+
+F2 means [0001-F2](README.md); F5 means
+[0001-F5](../../skills/next/.spec/README.md). Existing Partial/Missing traceability
+statuses are unchanged. No Feature, audit item or installed-file follow-up is
+closed by this evidence. The runtime source hashes remained unchanged throughout.
+
+Machine-readable grading and source fingerprints are retained locally under
+`.artifacts/handoff-evaluation/`; raw responses remain in the two named agent
+transcripts of historical session `01a14b53-64a3-7f92-bfb0-531bbe8620b3`.
+No new test framework, executable tests or runtime
+contract edits were introduced.
+
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 | Claim ID | Scenario                                            | Test                                                     | Status  |
 | -------- | --------------------------------------------------- | -------------------------------------------------------- | ------- |
@@ -984,13 +1276,24 @@ limitation continue to apply. — Kevin
 | B-038 | [@B-038](roles.feature) Portable signal declarations and write boundaries | Manual: Priya, four @B-038 instruction-conformance cases (§ 8), 2026-10-16; live-agent behavior unverified | Partial |
 | B-039 | [@B-039](roles.feature) Nineteen-to-nineteen observability rename preserves history | `F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory`; `F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs`; `F2_B033_NineteenRolesHaveExplicitMappingsOnBothHosts`; `F2_B033_NewSpecialistsProjectSourceBodiesAndAgreedProfiles`; `F2_B034_ActiveConveningBindingsResolveToRetainedRoles`; mechanical guarantees only (§ 8) | Covered |
 | B-040 | A persona requires a voice and permits an optional unique name | `F2_B040_PersonaRequiresVoiceAndOptionalUniqueName`, `F2_B040_InvalidSuppliedNameFails`, `F2_B040_InvalidVoiceFails` | Covered |
+| B-042 | [@B-042](roles.feature) Refactors use preserved contracts and adequate tests | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
+| B-043 | [@B-043](roles.feature) Feature status has one coordination source | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
+| B-044 | [@B-044](roles.feature) Approved supporting details authorize claim-traceable assertions | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
+| B-045 | [@B-045](roles.feature) Taken work retains explicit ownership | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
+| B-046 | [@B-046](roles.feature) Publication makes identifiers permanent | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
+| B-047 | [@B-047](roles.feature) Approval follows the reviewed revision and scope | Manual: local instruction-conformance walkthrough (§ 8); independent static review recorded in § 12; live-agent evaluation pending | Partial |
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | Date | Trigger | Delta |
 | --- | --- | --- |
+| 2026-10-17 | User required review of substantively changed scope at its new revision | Add B-047 and [decision 0007](decisions/0007-approval-follows-the-reviewed-revision.md); resolve OQ-5 while retaining applicable unchanged-scope evidence. |
+| 2026-10-17 | User selected explicit ownership continuation and publication-based ID permanence | Add B-045/B-046 and decisions [0005](decisions/0005-taken-work-retains-explicit-ownership.md)/[0006](decisions/0006-published-identifiers-are-permanent.md); resolve OQ-3 and the ID collision exception without migrating old records. |
+| 2026-10-17 | User allowed approved supporting details traceable to an existing claim | Add B-044 and [decision 0004](decisions/0004-test-details-trace-to-approved-claims.md); resolve OQ-2 while preserving agreement and artifact ownership. |
+| 2026-10-17 | User selected one Feature coordination item as the mirrored status source | Add B-043 and [decision 0003](decisions/0003-feature-status-has-one-coordination-source.md); preserve child state, specification maturity and numbered-section ownership. |
+| 2026-10-17 | User selected preserved constraints and adequate tests for behavior-preserving refactors | Add B-042 and [decision 0002](decisions/0002-refactors-use-existing-contract-evidence.md); retain failing tests for behavior changes and existing artifact boundaries. Route PR revisions to their existing owners under B-012–B-013. |
 | 2026-10-16 | User requested simpler roles and handoffs | Add B-010–B-036 and § 2 grouping/routing; retire six standalone roles by folding their duties into retained roles or modes; include `database`, reversing § 5 row 5's earlier exclusion; record the choice and rejected alternatives in [decision 0001](decisions/0001-lead-and-specialist-collaboration.md). — Ruth |
 | 2026-10-16 | User requested the next part after committing the agreement | Record DR-1–DR-5, source/projection testability and independent design reviews; preserve baseline evidence and pending amendment coverage. — Ruth |
 | 2026-10-16 | Concurrent main commit `5924065` changed the active roster | Reconcile the design with three completed folds and the combined measurement role; preserve the agreed nineteen-role target and distinct observability capability; append provenance to decision 0001. — Ruth |
@@ -1003,19 +1306,30 @@ add B-041 and adopt ADR-0009; preserve prior baseline evidence and roster bodies
 
 ## 11. Open Questions
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | ID   | Question                                                                                   | Blocks | Resolution |
 | ---- | ------------------------------------------------------------------------------------------ | ------ | ---------- |
 | OQ-1 | Should the contract require a `## Report` heading for reviewing roles, as `spec-reviewer` and `architect` already carry? | B-003  | Resolved 2026-10-14: yes. A body with `## Look for` also carries `## Report`; claimed as B-005. |
+| OQ-2 | May approved constraints, design and signal declarations authorize test assertions traceable to an existing claim, or must each assertion appear in the claim text? | B-038 | Resolved 2026-10-17: approved supporting details may authorize assertions traceable to an existing claim; new user-visible behavior requires a claim amendment. See B-044 and decision 0004. |
+| OQ-3 | How may an interrupted taken item resume or transfer without allowing duplicate ownership? | B-012 | Resolved 2026-10-17: recorded owner may resume; another owner needs explicit release or authorized reassignment, never timeout alone. See B-045 and decision 0005. |
+| OQ-4 | When does a newly allocated ID become permanent, given the existing collision exception? | B-046 | Resolved 2026-10-17: on merge or citation outside its authoring branch; unpublished IDs may change with all local references updated. See decision 0006. |
+| OQ-5 | Does a substantive edit require new approval for its changed scope, or does earlier approval apply until explicitly revoked? | B-014 | Resolved 2026-10-17: review changed scope against its new revision; carry applicable approval forward for unchanged scope. See B-047 and decision 0007. |
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | Section | Status | Reviewer      | Note                                                            |
 | ------- | ------ | ------------- | --------------------------------------------------------------- |
-| 1-12    | 🟡     | spec-reviewer | Baseline draft. Preserve B-004 review evidence: grep at scaffolding and second-wave roster (2026-10-14) found no product technology in role bodies. |
+| Diff: PR #9 §8 evidence migration and version restoration | 🟢 | spec-reviewer | Independent `/root/pr9_review`, 2026-10-17, Approved baseline `c7e3a9d` plus correction patch `e9a277dcb696e1f08e01210ab091a2e0c87c293fd0134a9eaa81eb8a729eb227`; manifest `1dbc35023731704b2e2c547b092ffdc732987bcb65aae9410259588f6208f111`. Historical probe limits and Partial rows preserved; no new behavioral coverage inferred. |
+| Design: current approval-table/history layout | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved R4 subject `3f9a49d4441601fdf1e37b5dee1d196b857b9d157fe9f325aa886481476ed66a`; current coverage and historical evidence remain distinct. |
+| Diff: verdict recording and bounded history clarification | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved R4 subject `3f9a49d4441601fdf1e37b5dee1d196b857b9d157fe9f325aa886481476ed66a` with no findings; verdict scopes and limitations preserved. |
+| Surface: R4 record-only delta applicability | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved applicability to `3f9a49d4441601fdf1e37b5dee1d196b857b9d157fe9f325aa886481476ed66a`; no new findings or authority changes. |
+| Design: § 7 policy/handoff amendments | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
+| Diff: §§ 2–3, 7–12; contracts, skills, decisions and scenarios | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
+| Surface: submitted amendment boundaries | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; no actionable findings, with R2/R3 applicability verified. |
+| Baseline: 1-12 and scenarios | 🟢 | spec-reviewer | Independent `/root/baseline_roles_next`, 2026-10-17: retrospective baseline content Approved at `2997ac3c6dbdf3bef910ffb6fef86aecc19d0bed`. Content approval; 32 Partial instruction rows remain delivery gaps. No historical pre-implementation approval is claimed. |
 | 1-5, 7-10, 12, scenarios, decision 0001 | 🟢 | spec-reviewer | Agreement-only amendment reviewed 2026-10-16; § 7 scopes baseline readiness, §§ 8–9 record pending coverage; implementation remains pending. |
 | 6-7 | 🟢 | critic | B-010–B-036 design critique, 2026-10-16; independent instance approved after B-030 recovery-path correction and re-review. |
 | 6-8, Tasks | 🟢 | spec-reviewer | Design-only amendment reviewed 2026-10-16; no findings, baseline evidence preserved, implementation and new executable coverage pending. |
@@ -1029,11 +1343,34 @@ add B-041 and adopt ADR-0009; preserve prior baseline evidence and roster bodies
 
 | Optional-name input and projection boundary | 🟢 | adversary | Independent `/root/persona_surface_review`, 2026-10-16: no security regressions in the rebase delta; validation, escaped rendering and role permissions preserved. |
 | B-041; amended agreement, design and coverage | 🟢 | spec-reviewer | Independent `/root/final_schema_review`, 2026-10-16: approved after literal-description round-trip fix and ADR-0009 reconciliation; stale description row corrected. 62 projector and 23 installer tests pass; strict checks clean; 78 outputs current. |
+| Diff: baseline verdict recording | 🟢 | spec-reviewer | Independent `/root/baseline_roles_next`, 2026-10-17: Approved at `a148bf47a5a726c87dbf4908547bcc27c6cfe56c70dfb7b7b95a2ca33ab629ed`; faithful baseline/history recording, 32 Partial rows retained. |
+
+### Superseded amendment review history
+
+Prior baseline record, superseded by the returned baseline content verdict:
+
+> | 1-12    | 🟡     | spec-reviewer | Baseline draft. Preserve B-004 review evidence: grep at scaffolding and second-wave roster (2026-10-14) found no product technology in role bodies. |
+
+These pending records predate the current independent verdicts. They retain
+their original notes; current live-agent evidence limits remain in § 8.
+
+- B-047; approval applicability — 🟡 — spec-reviewer — User policy decision recorded 2026-10-17; independent review and live-agent evaluation pending. Earlier evidence retained for its reviewed subject.
+- Review completion and read-only inputs; B-012/B-013/B-014/B-020 — 🟡 — spec-reviewer — Existing responsibilities reconciled 2026-10-17; independent review and live-agent evaluation pending.
+- B-045/B-046; ownership and ID publication — 🟡 — spec-reviewer — User decisions recorded 2026-10-17; independent review and live-agent evaluation pending. Prior approval scopes retained.
+- B-044; assertion authority amendment — 🟡 — spec-reviewer — User policy decision recorded 2026-10-17; independent review and live-agent evaluation pending. Earlier approval scopes remain unchanged.
+- B-043; Feature status synchronization amendment — 🟡 — spec-reviewer — User source-selection decision recorded 2026-10-17; independent review and behavioral evaluation pending. Prior approval evidence retains its original scope.
+- B-042; refactor and contract-audit handoff corrections — 🟡 — spec-reviewer — User policy decision recorded 2026-10-17; independent design/diff review pending for the refactor, PR/domain routing, substitution, unresolved-report, measurement, dependency and approval-reuse corrections. Earlier evidence remains unchanged for its original scope.
+
+Current amendment verdicts apply to the identified reviewed snapshot. Earlier
+pending rows are retained for their earlier subjects; current review approval
+does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 
-<!-- last written by: organizer, 2026-10-16 -->
+<!-- last written by: organizer, 2026-10-17 -->
 
+- [0049 — Coordinate Role contract delivery](../.issue/0049-coordinate-role-contract.yml) — authoritative delivery-status source.
+- [0028 — Restore registry triggers and settle two role-contract exclusions](../.issue/0028-registry-triggers.yml).
 - [0040 — Implement lead and specialist collaboration](../.issue/0040-role-collaboration-design.yml).
 
 ## Scoring

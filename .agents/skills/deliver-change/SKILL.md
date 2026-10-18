@@ -15,16 +15,21 @@ lands there. Read all three.
 
 1. **A Feature starts at its specification.** Items are cut from its claims after
    agreement, not before. A bug, spike or chore starts at the item instead.
-2. **Take exactly one item.** Signal that you have it in the tracker *before* the
-   branch, before the worktree, and before the first edit. An item already
-   signalled as taken is never picked up — that signal is the only thing stopping
-   two people building the same thing.
-3. **One item in progress at a time, per Feature.** A task that cannot be finished
-   without a sibling finishing first is a decomposition problem, not a small task.
-   Take it back to grooming rather than stacking branches.
-4. **Do not start an item whose specification is unresolved.** Open questions that
-   block the claims you are about to build are resolved first, or the exception is
-   written down as a decision record naming what was assumed.
+2. **Take exactly one item for tracked delivery.** Initial agreement authoring
+   follows [`spec-and-traceability`](../spec-and-traceability/SKILL.md)
+   § "Where a specification starts"; this item-taking guard does not apply
+   before its items exist. Signal that you have an item in the tracker *before* the
+   branch, before the worktree, and before the first edit. A taken item is not
+   new work; continuation follows § "Resume, release and reassignment" below.
+3. **One delivery child in progress at a time, per Feature.** A Feature's
+   coordination record does not consume that delivery slot. Sequential prerequisites
+   follow [`next`](../next/SKILL.md) § "Stage gates". A task that requires a
+   sibling to be started alongside it, or an unmerged sibling branch to be
+   stacked, returns to grooming for a cut that can finish on its own.
+4. **Resolve questions blocking the assigned claims before dependent work.**
+   Follow [`clarify-requirements`](../clarify-requirements/SKILL.md) for the answer
+   and its record; a decision record cannot turn an unanswered material question
+   into permission to proceed.
 5. **The specification delta is part of the change.** Scenario and claim edits ship
    in the same pull request as the code, not after it. A correction that lives only
    in conversation does not survive to the next session.
@@ -47,6 +52,27 @@ lands there. Read all three.
    the answer, and a reviewer who wants more reopens it. A comment you disagree
    with is answered in the thread before any resolve, and stays open.
 
+## Resume, release and reassignment
+
+A taken item retains its recorded owner across interruptions. Before resuming,
+verify the latest ownership record, scope, checkout and branch, completed work,
+remaining work and applicable stage evidence. The same owner may continue within
+that assignment without requesting permission again. Continuation occupies the
+existing delivery slot, not a second one.
+
+Another owner may take it only after the recorded owner's explicit release or
+an authorized reassignment. Record who released or authorized the change, the
+old and new owner where applicable, and the handoff evidence before editing.
+A release relinquishes ownership; reassignment replaces it. Neither completes
+the item or satisfies its dependents. Preserve the prior events and unfinished
+work; follow the companion's ownership record and maintenance operation.
+
+Age, silence, an inactive session or a missing owner is not a release. Missing,
+conflicting or unverifiable ownership returns for authoritative evidence or
+reassignment; do not infer a takeover. Read the latest record again before
+continuing if ownership may have changed. Transfer grants no new artifact
+permissions and does not bypass agreement, design or testing gates.
+
 ## Exemptions
 
 A behaviour change that touches no scenario is suspect. An exemption is claimed by
@@ -62,6 +88,26 @@ The format is fixed, in the commit body:
 No .feature change needed: <category> - <what changed and what still holds>.
 Constraints preserved: <epic>-F<n> C-<n>, <epic>-F<n> C-<n>
 ```
+
+## Behavior-preserving refactors
+
+A refactor changes structure while preserving the existing behavior and public
+contract. Its tracked item bounds the affected code and cites the constraints
+it preserves. Use the exemption format above rather than claiming delivery of
+new behavior. Existing design and approval requirements still apply.
+
+Before production changes, inspect the affected contract and run the applicable
+tests. Record why those tests adequately cover the behavior being preserved.
+Adequate passing tests are the entry evidence; a new claim or deliberately
+failing test is not required for unchanged behavior. Test gaps return to the
+owner of § 9 for characterization of existing documented behavior, observed
+passing before the refactor begins.
+
+The implementation lead integrates bounded contributions using that evidence;
+each contributor retains its existing artifact boundaries. Run the applicable
+tests and regression check again before handoff. A failing baseline returns to
+investigation. A change to behavior or an externally consumed contract leaves
+this path and follows the normal agreement, design and failing-test gates.
 
 ## When a bug fix reveals a gap
 
@@ -101,7 +147,8 @@ superseded by a lesson about a real one.
 ## Never add
 
 - A second item in progress alongside the first.
-- A branch or an edit before the item is signalled as taken.
+- A takeover inferred from elapsed time, silence or missing ownership evidence.
+- A branch or an edit for tracked delivery before the item is signalled as taken.
 - A claim, a status, or a rule duplicated into the item from the specification.
 - A scenario edit deferred to a follow-up pull request.
 - A skipped phase because the change "is small". Small changes skip roles, not

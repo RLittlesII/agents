@@ -13,9 +13,21 @@ lands there. Read all three.
 
 ## A claim comes first
 
-Encode only what the specification states. A test that asserts an inference is a
-test that will be "fixed" by someone who reads the claim instead. If the claim is
-incomplete, amend the claim — that is an escalation, not a detour.
+Characterization for a behavior-preserving refactor follows
+[`deliver-change`](../deliver-change/SKILL.md) § "Behavior-preserving refactors".
+
+Every behavior-change assertion needs an existing claim. Approved constraints,
+technical design and signal declarations may supply supporting details when they
+trace to that claim. Cite the claim, the detail's source and its recorded approval
+in the test evidence. Apply
+[`spec-and-traceability`](../spec-and-traceability/SKILL.md) § "Approval applicability"
+to those details at their current revision. A draft, a readiness verdict or a
+conversation alone does not authorize an assertion.
+
+Supporting details cannot introduce new user-visible behavior or contradict the
+agreement. Missing behavior returns to the agreement owner for a claim amendment;
+missing or conflicting design details return to their section owner before tests
+depend on them. Review applies the same authority rule when requesting tests.
 
 A scenario documents; a scenario alone is not coverage. Coverage is a test that
 runs and can fail.
@@ -23,8 +35,8 @@ runs and can fail.
 ## Write from the scenario, not the conversation
 
 The conversation that produced the claim is gone by the next session. Whatever it
-established that matters is in the claim, the constraint, or an open question —
-and if it is in none of them, it is not yet agreed.
+established that matters is recorded in the agreement, approved supporting
+details or an open question. An open question records a gap, not an authorization.
 
 ## Assert behaviour, not structure
 

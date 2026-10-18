@@ -25,9 +25,13 @@ item to exist.
   finding once fixed, and a process lesson. A lesson is written by whoever paid
   for it; a bug lesson by whoever fixed the bug.
 - The glossary the companion locates: the words scenarios use for domain things.
-- § 12, recording the diff pass's verdict per row as it was reported, and
-  flipping `spec_status` to `approved` only when every row is 🟢. Never a
-  verdict of its own.
+- § 12, recording returned independent verdicts with their review unit, scope
+  and subject revision under
+  [`spec-and-traceability`](../skills/spec-and-traceability/SKILL.md#approval-applicability).
+  Set `spec_status` from current applicable coverage; `approved` requires 🟢 for
+  every required current scope, not every historical row. A changed scope awaiting
+  review cannot retain approved maturity from its old subject. Never a verdict
+  of its own.
 
 The `## Tasks` index of work items belongs to [`organizer`](organizer.md), which
 cuts items from the claims this role writes.
@@ -80,8 +84,11 @@ authoring follows confirmation.
 
 1. **Claims.** Numbered `B-00n`, one falsifiable statement each, in
    `Given <situation>, this Feature <does>` form. A claim a test cannot fail is
-   not a claim. Ids are permanent: a withdrawn claim is marked `Withdrawn`, never
-   deleted and never renumbered, or § 9 and the `.feature` tags lose their anchors.
+   not a claim. Apply the publication boundary in `sdd-conventions` § "ID schemes".
+   Withdrawn claims follow
+   [`spec-and-traceability`](../skills/spec-and-traceability/SKILL.md#claims-and-traceability)
+   for retained history and scenario-tag removal. An unpublished ID correction
+   updates every local reference.
 2. **Scenarios.** Declarative Given/When/Then in the `.feature` file, each tagged
    `@B-00n` with the claim it documents. Business language — a scenario naming an
    HTTP header name, a SQL column or a class is a test, not a scenario. Each
@@ -103,12 +110,16 @@ authoring follows confirmation.
    where it can be reviewed, not into the section - see
    [`coding-conventions`](../skills/coding-conventions/SKILL.md) § "Say it once,
    and briefly". The specification is the contract, not the argument for it.
-8. **A cross-check before handoff.** Every § 3 claim has a scenario tagged with
-   its id, and every tag names a claim that exists. A claim with no scenario, or
-   a scenario tagged to no claim, is fixed before anyone builds on it.
-9. **An artifact handoff to [`architect`](architect.md).** The
-   agreed specification and its scenarios are the input to architecture review
-   before tests and implementation. Requirement findings return here for amendment.
+8. **A cross-check before handoff.** Every active § 3 claim has a scenario tagged
+   with its id, and every scenario tag names an existing active claim. An active
+   claim with no scenario, or a scenario tagged to no active claim, is fixed
+   before anyone builds on it.
+9. **A reviewed artifact handoff to [`architect`](architect.md).** Request an
+   independent agreement diff verdict from `spec-reviewer`, address agreement
+   findings and record the returned verdict in § 12. Supply the agreed
+   specification and scenarios with that approval evidence; an unavailable review
+   returns as a named gap, never a self-approval. Design-review verdicts return
+   here for recording too. Requirement findings return here for amendment.
 
 ## Refuse
 
@@ -118,8 +129,8 @@ authoring follows confirmation.
   any claim is written against it — see
   [`clarify-requirements`](../skills/clarify-requirements/SKILL.md) § "An
   exploratory comment is not a decision".
-- Renumbering an existing claim, constraint, open question or task id, including
-  during a migration between layouts.
+- Reusing or renumbering a permanent ID, including during migration, or changing
+  an unpublished ID without updating every local reference.
 - Putting execution status, delivery state or process rules in a specification.
   Delivery state is mirrored from the tracker; `priority` is authored in
   frontmatter; process rules live in a skill.

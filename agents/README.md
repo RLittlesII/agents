@@ -36,7 +36,7 @@ and the expertise it needs.
 | --- | --- | --- |
 | Specify | [spec-author](spec-author.md) | Confirmed need, agreement and scenarios |
 | Design | [architect](architect.md) | Technical design and readiness |
-| Implement | [implementer](implementer.md) | Integrated change against the design and failing tests |
+| Implement | [implementer](implementer.md) | Integrated change against the design and behavior-change or refactor evidence |
 | Verify | [spec-reviewer](spec-reviewer.md) | Independent design or diff findings and verdict |
 | Release | [release](release.md) | Rollout or recovery and verification |
 | Investigate | [bug-finder](bug-finder.md) | Reproduction, evidence and proven cause |
@@ -49,7 +49,7 @@ and the expertise it needs.
 | [ux](ux.md) | Interaction, accessibility, states or copy need deciding | Decided interaction |
 | [ui](ui.md) | A decided interaction needs presentation changes | Components and presentation state |
 | [database](database.md) | Persistence design, implementation, diagnosis or rollout is affected | Storage, queries, transactions, migrations and recovery evidence |
-| [test-writer](test-writer.md) | Agreed behavior needs tests or traceability changes | Failing tests and coverage records |
+| [test-writer](test-writer.md) | Agreed behavior needs tests or traceability changes | Behavior tests, refactor characterization and coverage records |
 | [tester](tester.md) | Behavior needs execution or exploration | Run evidence and reproductions |
 | [adversary](adversary.md) | A boundary, credential, permission or external input changes | Independent security findings |
 | [benchmarker](benchmarker.md) | A written performance, cost or structural concern needs measurement | Benchmark and comparative finding |
@@ -86,6 +86,13 @@ A responsibility can be exercised in the current session or delegated after its
 contract is read; it does not require a separate agent invocation. A reviewing
 instance must be different from the instance that authored its subject.
 Leadership and collaboration modes never expand a contract's write boundaries.
+
+Agreement authoring returns an independent diff verdict to the sign-off owner;
+design returns an independent design verdict there too. The applicable recorded
+approval accompanies each dependent handoff; readiness alone is not approval.
+Review requesters supply the identified snapshot, diff and unavailable history
+under [sdd-conventions § Review passes](../skills/sdd-conventions/SKILL.md#review-passes),
+so a read-only reviewer need not gain shell access to inspect the change.
 
 | Situation | Lead path and required artifacts | Conditional expertise |
 | --- | --- | --- |

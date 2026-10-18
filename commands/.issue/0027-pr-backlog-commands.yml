@@ -7,7 +7,7 @@ status: done
 value: 2
 risk: 2
 
-parent: "0001"
+parent: "0050"
 children: []
 
 depends_on: []
@@ -18,7 +18,7 @@ spec: commands/.spec/README.md
 claims: []
 
 created: "2026-10-14"
-updated: "2026-10-14"
+updated: "2026-10-17"
 closed: "2026-10-14"
 
 summary: |
@@ -41,4 +41,5 @@ decisions:
   - "2026-10-14: backlog work is modes of groom (file, health), not new commands; prioritising without a full groom is a scoped groom."
   - "2026-10-14: single-role commands stay excluded; 0001-F3 § 5 row 1 now says a role's halts live in its contract."
 
+  - "2026-10-17, user-authorized legacy coordination migration: parent changes from 0001 to 0050, the explicit 0001-F3 coordination source. Keep this delivered item’s identity, type, state, acceptance criteria, prior decisions and merge evidence; the coordinator lists 0027 reciprocally."
 out_of_scope: []

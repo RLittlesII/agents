@@ -1,0 +1,40 @@
+id: "0054"
+type: feature
+title: Coordinate Host installation delivery
+status: in-progress
+value: 3
+cost: 1
+risk: 2
+parent: "0038"
+children: ["0039"]
+depends_on: []
+spikes: []
+spec: install/.spec/README.md
+claims: ["B-001", "B-002", "B-003", "B-004", "B-005", "B-006", "B-007", "B-008"]
+created: "2026-10-17"
+updated: "2026-10-17"
+closed: null
+summary: |
+  Coordinate the existing 0038-F1 agreement and its delivery evidence.
+  This record is the sole source for install/.spec/README.md status.
+  The user selected in-progress during the legacy source migration.
+  Remaining completion work is recorded in decisions; root maintenance
+  history retains its existing scope and no new implementation is assigned.
+acceptance_criteria:
+  - "B-001, B-002, B-003, B-004, B-005, B-006 — coordinated current claim scope."
+  - "B-007, B-008 — coordinated current claim scope."
+  - "Every coordinated active claim has applicable approval and verified completion evidence in the specification before this source is closed."
+  - "Required delivery children are verified delivered; unresolved scope and recorded evidence gaps remain explicit."
+  - "Section 9 names a test for every coordinated active claim; Missing and Partial evidence is reconciled before completion."
+  - "Source status is maintained here and copied exactly to the identified specification under README Delivery status."
+decisions:
+  - "2026-10-17, user-authorized migration: create explicit coordination sources and synchronize mirrors. Initial status is in-progress by this recorded decision, not computed from child states. Preserve existing task IDs, completed evidence and specification maturity; no Feature completion is declared."
+  - "2026-10-17, reservation: current main d4eac9c is already an ancestor of this branch. Open PRs, local branches, all worktrees and epic reservations were inspected; 0048 through 0054 were free. Allocate this source and advance .issue/.sequence in the same change."
+  - "2026-10-17, maintenance ownership: agent session 01a14b53-64a3-7f92-bfb0-531bbe8620b3, branch codex/contract-audit-tests, checkout /Users/rlittlesii/source/rlittlesii/agents. User authorized this legacy coordination-source migration. Maintenance responsibility covers source/mirror synchronization and recording gaps; it does not take a delivery child slot or authorize child implementation."
+  - "2026-10-17, provisional bookkeeping estimates: value 3 reflects the benefit of an identifiable maintenance source; cost 1 covers source-record maintenance only; risk 2 reflects unresolved delivery evidence. These estimates do not size unfinished claim work. Feature completion remains unscored until remaining scope, closure costs and applicable readiness are verified; no derived ranking is stored."
+  - "2026-10-17, remaining completion evidence: The runtime-bundle and metadata amendments remain unmerged. Recorded Windows/Linux and current real-manager amendment verification gaps remain; prior executed manager evidence retains its historical scope."
+  - "2026-10-17, authority boundary: coordinate existing claim identities while preserving their current approval and coverage gaps. This legacy source-record migration authorizes no new child work against unapproved agreement scope. Reconcile and groom any missing delivery assignments before offering dependent implementation."
+  - "2026-10-17, child reconciliation: existing specification-scoped delivery records 0039 retain IDs, types, statuses, criteria and prior decisions. Update their parent links reciprocally to this coordinator under the approved migration."
+out_of_scope:
+  - "0038-F1 section 5 retains its existing scope exclusions; this record adds no product behavior or new implementation assignment."
+  - "Cross-cutting audit item 0046 and historical root chores keep their existing scope and ownership."

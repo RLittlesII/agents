@@ -1,7 +1,7 @@
 id: "0045"
 type: chore
 title: Author human-led technology decision guidance
-status: in-progress
+status: done
 value: 5
 cost: 2
 risk: 2
@@ -13,7 +13,7 @@ spec: null
 claims: []
 created: "2026-10-17"
 updated: "2026-10-17"
-closed: null
+closed: "2026-10-17"
 summary: |
   Author a portable method skill for deciding project technology with the
   human before dependent implementation. The user reported an external
@@ -35,6 +35,8 @@ decisions:
   - "2026-10-17, independent diff pass: /root/technology_skill_review approved the new skill, item, role changes, command and workflow links, indexes and corresponding generated outputs with no findings. Initial project recording and byte-identical host copies verified; unrelated dirty changes excluded. No surface pass trigger."
   - "2026-10-17, delivery: the user authorized committing this scope and opening a PR. Copied only the reviewed technology-decision files onto codex/technology-decisions from origin/main c6eb36c; the original dirty checkout is untouched."
   - "2026-10-17, delivery gates: reran strict specifications (seven Features), all 80 projection outputs, 62 projector tests and 23 installer tests on main c6eb36c. Temporary tooling resolved the optional validator dependency and the skill is valid. Repository coverage gate passed with N/A: zero changed executable production lines. Bounded independent delivery review by /root/technology_skill_review approved all 25 paths with no findings."
+  - "2026-10-17, user-authorized tracker reconciliation: GitHub confirms https://github.com/RLittlesII/agents/pull/8 merged on 2026-10-17 (UTC), commit d4eac9c975718756f0d97d150ddced6f90044648; merge is an ancestor of this checkout and contains this delivered item. Close this item’s delivered scope; previously recorded verification gaps remain."
+
 out_of_scope:
   - "Choosing a stack or library for a consuming project; no such project or package was identified."
   - "Changing projector behavior, role ownership, or existing uncommitted work."

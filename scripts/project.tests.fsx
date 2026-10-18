@@ -1,7 +1,7 @@
 // Tests for the projector. Names cite the claims they cover:
 //   scripts/.spec/README.md  (0001-F1 Projection)    B001_..B018_
 //   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B040_
-//   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B007_
+//   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B008_
 //   skills/.spec/README.md   (0001-F4 Skill boundary) F4_B001_..F4_B003_
 //
 //   dotnet fsi scripts/project.tests.fsx        exit code = number of failures
@@ -14,6 +14,7 @@ open System.Text
 open Projection
 
 let repoRoot = Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, ".."))
+let scratch = Path.Combine(Path.GetTempPath(), "projection-tests", Guid.NewGuid().ToString("N"))
 
 // ---------------------------------------------------------------- Fixtures
 
@@ -110,7 +111,7 @@ let write (root: string) (rel: string) (text: string) =
 /// empty persona roster and a template with three numbered sections plus Tasks
 /// and Scoring.
 let checkout () =
-    let root = Path.Combine(Path.GetTempPath(), "projection-tests", Guid.NewGuid().ToString("N"))
+    let root = Path.Combine(scratch, Guid.NewGuid().ToString("N"))
     Directory.CreateDirectory root |> ignore
     for schema in [ "agent"; "skill" ] do
         let source = Path.Combine(repoRoot, "schemas", schema + ".schema.json")
@@ -465,6 +466,63 @@ let B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles () =
     contains "area/.spec/README.md: section '1. Business Goal' is stamped by 'beta', but 'alpha' owns it" message
     nothingWritten root
 
+let B016_DesignSectionsRejectAnImplementationStamp () =
+    // Given design sections owned by alpha, when a template-derived copy names
+    // an implementation writer, then planning rejects each section before writes.
+    for number, title in [ "6", "Concern Separation"; "7", "Technical Design" ] do
+        let root = checkout ()
+        let section = number + ". " + title
+        write root ".specht/templates/feature.md" (template.Replace("## Tasks", "## " + section + "\n\n## Tasks"))
+        write root "agents/alpha.md" (role "alpha" (sprintf "[\"1\", \"2\", \"%s\", \"Tasks\"]" number) alphaBody)
+        let document writer = sprintf "## %s\n\n<!-- last written by: %s, 2026-10-17 -->\n" section writer
+        write root "area/.spec/README.md" (document "alpha")
+        plan root |> ignore
+        write root "area/.spec/README.md" (document "implementer")
+        contains (sprintf "area/.spec/README.md: section '%s' is stamped by 'implementer', but 'alpha' owns it" section)
+            (expectFailure (fun () -> plan root))
+        nothingWritten root
+
+let B016_SignOffRejectsAReviewersStamp () =
+    // Given sign-off has a recording owner, when the reviewing role signs it,
+    // then projection cannot publish that ownership violation.
+    let root = checkout ()
+    write root ".specht/templates/feature.md" (template.Replace("## Tasks", "## 12. Sign-off\n\n## Tasks"))
+    write root "agents/beta.md" (role "beta" "[\"3\", \"12\"]" betaBody)
+    write root "area/.spec/README.md" "## 12. Sign-off\n\n<!-- last written by: beta, 2026-10-17 -->\n"
+    plan root |> ignore
+    write root "area/.spec/README.md" "## 12. Sign-off\n\n<!-- last written by: spec-reviewer, 2026-10-17 -->\n"
+    contains "area/.spec/README.md: section '12. Sign-off' is stamped by 'spec-reviewer', but 'beta' owns it"
+        (expectFailure (fun () -> plan root))
+    nothingWritten root
+
+let B016_TildeFencedExampleDoesNotCreateAnOwnershipViolation () =
+    // Given a valid stamp and a non-owner stamp inside a Markdown example,
+    // when the example uses a tilde fence, then planning still succeeds.
+    let root = checkout ()
+    write root "area/.spec/README.md"
+        "## 1. Business Goal\n\n<!-- last written by: alpha, 2026-10-17 -->\n\n~~~markdown\n## 3. Acceptance Criteria\n<!-- last written by: alpha, 2026-10-17 -->\n~~~\n"
+    plan root |> ignore
+    nothingWritten root
+
+let B016_ShorterBackticksDoNotEndAFencedExample () =
+    // Given a four-backtick example containing three literal backticks,
+    // when an example stamp names a non-owner, then it remains exempt.
+    let root = checkout ()
+    write root "area/.spec/README.md"
+        "## 1. Business Goal\n\n<!-- last written by: alpha, 2026-10-17 -->\n\n````markdown\n```\n## 3. Acceptance Criteria\n<!-- last written by: alpha, 2026-10-17 -->\n````\n"
+    plan root |> ignore
+    nothingWritten root
+
+let B016_RealViolationAfterAFencedExampleIsStillRejected () =
+    // Given the same nested example followed by a real ownership violation,
+    // when planning runs, then the example cannot hide the following section.
+    let root = checkout ()
+    write root "area/.spec/README.md"
+        "````markdown\n```\nAn example of a shorter fence.\n````\n\n## 1. Business Goal\n\n<!-- last written by: beta, 2026-10-17 -->\n"
+    contains "area/.spec/README.md: section '1. Business Goal' is stamped by 'beta', but 'alpha' owns it"
+        (expectFailure (fun () -> plan root))
+    nothingWritten root
+
 let C3_Outputs_AreDeterministicAcrossRuns () =
     let root = checkout ()
     let first = (plan root).Outputs
@@ -631,7 +689,7 @@ let F3_B001_CommandProjectsToClaudeCommandFile () =
               "" ]
     equal (expected + commandBody) (read root ".claude/commands/convene.md")
 
-let F3_B002_CommandProjectsToCodexSkill () =
+let F3_B008_CommandSkillUsesOwnershipWithoutAgentBindings () =
     let root = commandsCheckout ()
     write root "commands/solo.md" (command "solo" "[beta]" "[]" commandBody)
     apply root (plan root) |> ignore
@@ -642,7 +700,7 @@ let F3_B002_CommandProjectsToCodexSkill () =
               "description: \"Convene for solo.\""
               "---"
               ""
-              "Act as the `beta` role, whose contract is `.codex/agents/beta.toml`. Read it before acting, and " + keep
+              "Follow the artifact ownership and review boundaries in the repository guidance."
               ""
               "Do the thing."
               ""
@@ -652,6 +710,29 @@ let F3_B002_CommandProjectsToCodexSkill () =
     contains "`sdd-conventions` (`.agents/skills/sdd-conventions/SKILL.md`)" (read root ".agents/skills/convene/SKILL.md")
     // Claude keeps the placeholder; it substitutes the arguments itself.
     contains "Work on: $ARGUMENTS" (read root ".claude/commands/solo.md")
+
+// B-008; approved §7 details: /root/pr9_review composite bcf82372e7d69ff36d3158922f62ea033cf16d2a94f7a6730d18a009e8ac3564.
+let F3_B008_AgentOutputPathCannotChangeCommandSkill () =
+    let root = commandsCheckout ()
+    let host = loadHost root "codex"
+    let command = loadCommands root |> List.head
+    let original = renderCommand host command
+    equal original (renderCommand { host with Output = ".other/agents/{name}.toml" } command)
+    let expected =
+        "---\nname: convene\ndescription: \"Convene for convene.\"\n---\n\n" +
+        "Follow the artifact ownership and review boundaries in the repository guidance.\n\n" +
+        "Use these skills: `sdd-conventions` (`.agents/skills/sdd-conventions/SKILL.md`).\n" +
+        commandBody.Replace("$ARGUMENTS", "the request that invoked this skill")
+    equal expected original
+
+let F3_B008_RepositoryCommandSkillsNameNoAgent () =
+    let root = Path.Combine(scratch, Guid.NewGuid().ToString("N"))
+    let host = loadHost repoRoot "codex"
+    for command in loadCommands repoRoot do
+        let rendered = renderCommand host command
+        if rendered.Contains("/agents/") || rendered.Contains("`agents/") then failwith (command.Source + ": projected skill contains an agent contract path")
+        write root ("skills/" + command.Name + "/SKILL.md") rendered
+    lintSkills root (loadRoles repoRoot)
 
 let F3_B003_CommandNamingMissingRole_FailsNamingBoth () =
     // The real commands name only roles and skills that exist.
@@ -981,7 +1062,7 @@ let F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory () =
     equal 19 (loadRoles root).Length
     for dir in [ ".claude/agents"; ".codex/agents" ] do equal 19 (Directory.GetFiles(Path.Combine(root, dir)).Length)
     contains ".claude/agents/observability.md" (read root ".claude/commands/convene.md")
-    contains ".codex/agents/observability.toml" (read root ".agents/skills/convene/SKILL.md")
+    contains "Follow the artifact ownership and review boundaries" (read root ".agents/skills/convene/SKILL.md")
     equal (Encoding.UTF8.GetBytes history) (File.ReadAllBytes(Path.Combine(root, "agents/.spec/decisions/history.md")))
     equal [] (differences root (plan root))
     equal 0 (fst (runProject root true))
@@ -1089,10 +1170,247 @@ let B023_ChangedSchemaRulesTakeEffectOnNextPlan () =
     write root skill ((read root skill).Replace("## Never add", "## Guard"))
     plan root |> ignore
 
+let B025_TrackerDirectoryIsNotASkill () =
+    let root = checkout ()
+    let tracker = "id: synthetic\nstatus: ready\n"
+    write root "skills/.issue/synthetic.yml" tracker
+    let result = plan root
+    apply root result |> ignore
+    equal tracker (read root "skills/.issue/synthetic.yml")
+    for host in [ ".claude/skills"; ".agents/skills" ] do
+        equal false (Directory.Exists(Path.Combine(root, host, ".issue")))
+        equal true (exists root (host + "/sdd-conventions/SKILL.md"))
+
+let B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive () =
+    let root = checkout ()
+    let metadata = [ "skills/sdd-conventions/.issue/item.yml"; "skills/sdd-conventions/references/.issue/item.yml" ]
+    for path in metadata do write root path "id: synthetic\n"
+    write root "skills/sdd-conventions/.spec/README.md" "producer spec\n"
+    let runtime = [ ".runtime/payload.bin", "\000\001binary"; ".issue-notes.md", "runtime notes\n"; ".issue-data/payload.bin", "\000\255resource" ]
+    for rel,content in runtime do write root ("skills/sdd-conventions/" + rel) content
+    apply root (plan root) |> ignore
+    for host in [ ".claude/skills"; ".agents/skills" ] do
+        for rel in [ ".issue/item.yml"; "references/.issue/item.yml"; ".spec/README.md" ] do
+            equal false (exists root (host + "/sdd-conventions/" + rel))
+        for rel,_ in runtime do
+            equal (File.ReadAllBytes(Path.Combine(root, "skills/sdd-conventions", rel)))
+                  (File.ReadAllBytes(Path.Combine(root, host, "sdd-conventions", rel)))
+    for path in metadata do equal "id: synthetic\n" (read root path)
+
+let B008_B025_StaleTrackerOutputsAreReportedAndRemoved () =
+    let root = checkout ()
+    write root ".issue/source.yml" "source tracker\n"
+    apply root (plan root) |> ignore
+    let stale = [ ".claude/skills/sdd-conventions/.issue/old.yml"; ".agents/skills/.issue/old.yml" ]
+    for path in stale do write root path "old projected tracker\n"
+    let expected = stale |> List.map Stale |> List.sort
+    equal expected (differences root (plan root) |> List.sort)
+    for path in stale do equal "old projected tracker\n" (read root path)
+    apply root (plan root) |> ignore
+    for path in stale do equal false (exists root path)
+    equal "source tracker\n" (read root ".issue/source.yml")
+
+let F4_B004_TrackerRecordsAreIgnoredButRuntimeStillFailsLint () =
+    let root = checkout ()
+    let records = [ "skills/.issue/item.yml"; "skills/sdd-conventions/.issue/item.yml"; "skills/sdd-conventions/references/.issue/item.yml" ]
+    for path in records do write root path "Ask `alpha`.\n"
+    lintSkills root (loadRoles root)
+    write root "skills/sdd-conventions/.runtime/guide.md" "Ask `alpha`.\n"
+    let message = expectFailure (fun () -> lintSkills root (loadRoles root))
+    contains "skills/sdd-conventions/.runtime/guide.md:1: names role 'alpha'" message
+    for path in records do
+        if message.Contains path then failwithf "tracker was linted: %s" path
+
+// ---------------------------------------------------------------- Baseline-review regressions
+
+let B008_StaleSpecificationOutputsAreReportedAndRemoved () =
+    let root = checkout ()
+    write root "agents/.spec/source.md" "source metadata\n"
+    write root ".claude/unrelated/.spec/keep.md" "outside output roots\n"
+    apply root (plan root) |> ignore
+    let stale = [ ".claude/skills/old/.spec/README.md"; ".agents/skills/sdd-conventions/.spec/old.md" ]
+    for path in stale do write root path "old metadata\n"
+    equal (stale |> List.map Stale |> List.sort) (differences root (plan root) |> List.sort)
+    let code, message = runProject root true
+    equal 1 code
+    for path in stale do
+        contains path message
+        equal "old metadata\n" (read root path)
+    apply root (plan root) |> ignore
+    for path in stale do equal false (exists root path)
+    equal "source metadata\n" (read root "agents/.spec/source.md")
+    equal "outside output roots\n" (read root ".claude/unrelated/.spec/keep.md")
+    equal [] (differences root (plan root))
+
+let B022_MissingRoleDescriptionNamesSourceAndPreservesOutputs () =
+    let root = checkout ()
+    apply root (plan root) |> ignore
+    let before = (plan root).Outputs |> Map.toList |> List.map (fun (rel, _) -> rel, File.ReadAllBytes(Path.Combine(root, rel)))
+    write root "agents/beta.md" ((read root "agents/beta.md").Replace("description: Does beta things.\n", ""))
+    let error = expectFailure (fun () -> plan root)
+    contains "agents/beta.md" error
+    contains "description" error
+    for rel, bytes in before do equal bytes (File.ReadAllBytes(Path.Combine(root, rel)))
+
+let B022_MissingRoleDescriptionCliNamesSourceBeforeWrites () =
+    let root = checkout ()
+    write root "agents/beta.md" ((read root "agents/beta.md").Replace("description: Does beta things.\n", ""))
+    let code, message = runProject root false
+    equal 2 code
+    contains "agents/beta.md" message
+    contains "description" message
+    nothingWritten root
+
+let F3_B005_ReferenceLinkDestinationFails (body: string) () =
+    let root = commandsCheckout ()
+    write root "commands/convene.md" (command "convene" "[alpha]" "[]" body)
+    let error = expectFailure (fun () -> plan root)
+    contains "commands/convene.md" error
+    contains "the body links into agents/ or skills/" error
+    nothingWritten root
+    let code, message = runProject root false
+    equal 2 code
+    contains "commands/convene.md" message
+    contains "the body links into agents/ or skills/" message
+    nothingWritten root
+
+let F3_B005_FencedReferenceExampleRemainsVerbatim () =
+    let root = commandsCheckout ()
+    let body = "\nExample:\n\n```markdown\n[alpha][contract]\n\n[contract]: ../agents/alpha.md\n```\n\nWork on: $ARGUMENTS\n"
+    write root "commands/convene.md" (command "convene" "[alpha]" "[]" body)
+    let outputs = (plan root).Outputs
+    let claude = Encoding.UTF8.GetString outputs.[".claude/commands/convene.md"]
+    let codex = Encoding.UTF8.GetString outputs.[".agents/skills/convene/SKILL.md"]
+    contains body claude
+    contains (body.Replace("$ARGUMENTS", "the request that invoked this skill")) codex
+
+let B008_LinkedOutputPathsFailBeforePublication (linkPath: string) () =
+    let root = checkout ()
+    apply root (plan root) |> ignore
+    let before = (plan root).Outputs |> Map.toList |> List.map (fun (rel, _) -> rel, File.ReadAllBytes(Path.Combine(root, rel)))
+    write root "unrelated/keep.md" "target metadata\n"
+    let target = Path.Combine(root, "unrelated")
+    let link = Path.Combine(root, linkPath)
+    Directory.CreateDirectory(Path.GetDirectoryName link) |> ignore
+    if Directory.Exists link then Directory.Delete(link, true)
+    Directory.CreateSymbolicLink(link, target) |> ignore
+    try
+        // Force an early planned change: rejection must precede every publication.
+        write root "agents/beta.md" ((read root "agents/beta.md").Replace("Owns nothing.", "Still owns nothing."))
+        let output = plan root
+        let error = expectFailure (fun () -> apply root output)
+        contains "linked output" error
+        equal "target metadata\n" (read root "unrelated/keep.md")
+        for rel, bytes in before do
+            if not (rel.StartsWith(linkPath + "/", StringComparison.Ordinal)) then
+                equal bytes (File.ReadAllBytes(Path.Combine(root, rel)))
+    finally
+        Directory.Delete link
+
+let B008_EscapingOutputRootFailsBeforePublication () =
+    let root = checkout ()
+    write root "unrelated/keep.md" "not an output\n"
+    let output = plan root
+    let escaped = { output with OutputRoots = [ "../" + Path.GetFileName root + "/../outside" ] }
+    let error = expectFailure (fun () -> apply root escaped)
+    contains "outside the checkout" error
+    nothingWritten root
+    equal "not an output\n" (read root "unrelated/keep.md")
+
+let B008_LinkedPlannedFileFailsBeforePublication () =
+    let root = checkout ()
+    apply root (plan root) |> ignore
+    let before = read root ".claude/agents/alpha.md"
+    write root "unrelated/target.md" "consumer-owned target\n"
+    let link = Path.Combine(root, ".claude/agents/beta.md")
+    File.Delete link
+    File.CreateSymbolicLink(link, Path.Combine(root, "unrelated/target.md")) |> ignore
+    try
+        write root "agents/alpha.md" ((read root "agents/alpha.md").Replace("Reads", "Also reads"))
+        let error = expectFailure (fun () -> apply root (plan root))
+        contains ".claude/agents/beta.md: linked output" error
+        equal "consumer-owned target\n" (read root "unrelated/target.md")
+        equal before (read root ".claude/agents/alpha.md")
+    finally
+        File.Delete link
+
+// B-008 native-path controls use §7's independently approved correction design
+// (2026-10-17, source SHA-256 5bf1f51041cb5d4fc324aa6d8d6cfaaf4cd03a06d5cfd3ae1354f655e68913dc).
+// A backslash is a filename character on Unix; register these cases only there.
+let B008_UnixBackslashPlannedLinkFailsBeforePublication () =
+    let root = checkout ()
+    apply root (plan root) |> ignore
+    let before = read root ".claude/agents/alpha.md"
+    write root "unrelated/target.md" "linked target\n"
+    let link = Path.Combine(root, @".claude/native\link")
+    Directory.CreateSymbolicLink(link, Path.Combine(root, "unrelated")) |> ignore
+    try
+        write root "agents/alpha.md" ((read root "agents/alpha.md").Replace("Reads", "Also reads"))
+        let output = plan root
+        let linked = { output with Outputs = output.Outputs.Add(@".claude/native\link/target.md", bytes "overwrite\n") }
+        let error = expectFailure (fun () -> apply root linked)
+        contains "linked output" error
+        equal "linked target\n" (read root "unrelated/target.md")
+        equal before (read root ".claude/agents/alpha.md")
+    finally
+        Directory.Delete link
+
+let B008_UnixBackslashDiscoveredLinkFailsBeforePublication () =
+    B008_LinkedOutputPathsFailBeforePublication @".claude/skills/native\link" ()
+
+let B008_UnixBackslashStaleFilePreservesSlashSentinel () =
+    let root = checkout ()
+    apply root (plan root) |> ignore
+    let literal = @".claude/skills/stale\keep.md"
+    let slash = ".claude/skills/stale/keep.md"
+    write root literal "stale literal\n"
+    write root slash "planned sentinel\n"
+    let output = plan root
+    let withSentinel = { output with Outputs = output.Outputs.Add(slash, bytes "planned sentinel\n") }
+    let diffs = apply root withSentinel
+    equal true (List.contains (Stale literal) diffs)
+    equal false (File.Exists(Path.Combine(root, literal)))
+    equal "planned sentinel\n" (read root slash)
+
+let B008_UnixBackslashRoleRootPreservesSlashDirectory () =
+    let root = checkout ()
+    write root "hosts/claude.yaml" (claudeHost.Replace(".claude/agents/{name}.md", @".claude/native\roles/{name}.md"))
+    write root ".claude/native/roles/keep.md" "outside declared root\n"
+    write root @".claude/native\roles/old.md" "stale role\n"
+    let diffs = apply root (plan root)
+    equal true (List.contains (Stale @".claude/native\roles/old.md") diffs)
+    equal false (File.Exists(Path.Combine(root, @".claude/native\roles/old.md")))
+    equal "outside declared root\n" (read root ".claude/native/roles/keep.md")
+    contains "name: alpha" (read root @".claude/native\roles/alpha.md")
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
-    [ nameof B019_LiteralDescriptionRoundTripsThroughBothHosts, B019_LiteralDescriptionRoundTripsThroughBothHosts
+    let unixTests =
+      if OperatingSystem.IsWindows() then [] else
+        [ nameof B008_UnixBackslashPlannedLinkFailsBeforePublication, B008_UnixBackslashPlannedLinkFailsBeforePublication
+          nameof B008_UnixBackslashDiscoveredLinkFailsBeforePublication, B008_UnixBackslashDiscoveredLinkFailsBeforePublication
+          nameof B008_UnixBackslashStaleFilePreservesSlashSentinel, B008_UnixBackslashStaleFilePreservesSlashSentinel
+          nameof B008_UnixBackslashRoleRootPreservesSlashDirectory, B008_UnixBackslashRoleRootPreservesSlashDirectory ]
+    unixTests @
+    [ nameof B008_StaleSpecificationOutputsAreReportedAndRemoved, B008_StaleSpecificationOutputsAreReportedAndRemoved
+      nameof B022_MissingRoleDescriptionNamesSourceAndPreservesOutputs, B022_MissingRoleDescriptionNamesSourceAndPreservesOutputs
+      nameof B022_MissingRoleDescriptionCliNamesSourceBeforeWrites, B022_MissingRoleDescriptionCliNamesSourceBeforeWrites
+      "F3_B005_FullReferenceRoleLinkFails", F3_B005_ReferenceLinkDestinationFails "\n[alpha][contract]\n\n[contract]: ../agents/alpha.md\n"
+      "F3_B005_FullReferenceSkillLinkFails", F3_B005_ReferenceLinkDestinationFails "\n[guide][contract]\n\n[contract]: ../skills/sdd-conventions/SKILL.md\n"
+      "F3_B005_CollapsedReferenceRoleLinkFails", F3_B005_ReferenceLinkDestinationFails "\n[alpha][]\n\n[alpha]: ../agents/alpha.md\n"
+      "F3_B005_ShortcutReferenceRoleLinkFails", F3_B005_ReferenceLinkDestinationFails "\n[alpha]\n\n[alpha]: ../agents/alpha.md\n"
+      nameof F3_B005_FencedReferenceExampleRemainsVerbatim, F3_B005_FencedReferenceExampleRemainsVerbatim
+      "B008_LinkedMetadataFailsBeforePublication", B008_LinkedOutputPathsFailBeforePublication ".claude/skills/old/.spec"
+      "B008_LinkedOutputRootFailsBeforePublication", B008_LinkedOutputPathsFailBeforePublication ".claude/skills"
+      "B008_LinkedOutputAncestorFailsBeforePublication", B008_LinkedOutputPathsFailBeforePublication ".codex"
+      nameof B008_EscapingOutputRootFailsBeforePublication, B008_EscapingOutputRootFailsBeforePublication
+      nameof B008_LinkedPlannedFileFailsBeforePublication, B008_LinkedPlannedFileFailsBeforePublication
+      nameof B025_TrackerDirectoryIsNotASkill, B025_TrackerDirectoryIsNotASkill
+      nameof B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive, B025_NestedTrackerResourcesAreOmittedAndRuntimeBytesSurvive
+      nameof B008_B025_StaleTrackerOutputsAreReportedAndRemoved, B008_B025_StaleTrackerOutputsAreReportedAndRemoved
+      nameof F4_B004_TrackerRecordsAreIgnoredButRuntimeStillFailsLint, F4_B004_TrackerRecordsAreIgnoredButRuntimeStillFailsLint
+      nameof B019_LiteralDescriptionRoundTripsThroughBothHosts, B019_LiteralDescriptionRoundTripsThroughBothHosts
       nameof B019_PortableFrontmatterAcceptsUserExamples, B019_PortableFrontmatterAcceptsUserExamples
       nameof B019_AgentSchemaRejectsInvalidFrontmatter, B019_AgentSchemaRejectsInvalidFrontmatter
       nameof B020_SkillSchemaValidatesMetadataAndStructure, B020_SkillSchemaValidatesMetadataAndStructure
@@ -1117,6 +1435,11 @@ let tests : (string * (unit -> unit)) list =
       nameof B014_TwoRolesReviewOneUnit_FailsNamingBoth, B014_TwoRolesReviewOneUnit_FailsNamingBoth
       nameof B015_UnreviewedOrUndeclaredUnit_FailsNamingIt, B015_UnreviewedOrUndeclaredUnit_FailsNamingIt
       nameof B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles, B016_StampNamingANonOwner_FailsNamingTheSectionAndBothRoles
+      nameof B016_DesignSectionsRejectAnImplementationStamp, B016_DesignSectionsRejectAnImplementationStamp
+      nameof B016_SignOffRejectsAReviewersStamp, B016_SignOffRejectsAReviewersStamp
+      nameof B016_TildeFencedExampleDoesNotCreateAnOwnershipViolation, B016_TildeFencedExampleDoesNotCreateAnOwnershipViolation
+      nameof B016_ShorterBackticksDoNotEndAFencedExample, B016_ShorterBackticksDoNotEndAFencedExample
+      nameof B016_RealViolationAfterAFencedExampleIsStillRejected, B016_RealViolationAfterAFencedExampleIsStillRejected
       nameof B017_MixedPersonas_SortNamedThenUnnamedRoles, B017_MixedPersonas_SortNamedThenUnnamedRoles
       nameof B018_UnnamedPersona_PreservesVoiceOnBothHosts, B018_UnnamedPersona_PreservesVoiceOnBothHosts
       nameof F2_B040_InvalidSuppliedNameFails, F2_B040_InvalidSuppliedNameFails
@@ -1132,7 +1455,9 @@ let tests : (string * (unit -> unit)) list =
       nameof F2_B008_ReviewingRoleCarriesLookForAndReport, F2_B008_ReviewingRoleCarriesLookForAndReport
       nameof F2_B009_ReviewUnitDeclaresTriggerAndRefusal, F2_B009_ReviewUnitDeclaresTriggerAndRefusal
       nameof F3_B001_CommandProjectsToClaudeCommandFile, F3_B001_CommandProjectsToClaudeCommandFile
-      nameof F3_B002_CommandProjectsToCodexSkill, F3_B002_CommandProjectsToCodexSkill
+      nameof F3_B008_CommandSkillUsesOwnershipWithoutAgentBindings, F3_B008_CommandSkillUsesOwnershipWithoutAgentBindings
+      nameof F3_B008_AgentOutputPathCannotChangeCommandSkill, F3_B008_AgentOutputPathCannotChangeCommandSkill
+      nameof F3_B008_RepositoryCommandSkillsNameNoAgent, F3_B008_RepositoryCommandSkillsNameNoAgent
       nameof F3_B003_CommandNamingMissingRole_FailsNamingBoth, F3_B003_CommandNamingMissingRole_FailsNamingBoth
       nameof F3_B004_CommandNamingMissingSkill_FailsNamingBoth, F3_B004_CommandNamingMissingSkill_FailsNamingBoth
       nameof F3_B005_MalformedCommand_Fails, F3_B005_MalformedCommand_Fails
@@ -1164,7 +1489,6 @@ for name, test in tests do
         failures <- failures + 1
         printfn "  FAIL %s\n       %s" name (ex.Message.Replace("\n", "\n       "))
 
-let scratch = Path.Combine(Path.GetTempPath(), "projection-tests")
 if Directory.Exists scratch then Directory.Delete(scratch, true)
 
 printfn "%d tests, %d failed" tests.Length failures
