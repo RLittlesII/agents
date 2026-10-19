@@ -7,9 +7,13 @@ Act as the `spec-author` role, whose contract is `.claude/agents/spec-author.md`
 
 Use these skills: `clarify-requirements` (`.claude/skills/clarify-requirements/SKILL.md`), `spec-and-traceability` (`.claude/skills/spec-and-traceability/SKILL.md`).
 
-The specification author explores the ask in discovery mode: who wants it,
-what failure state it removes, settled answers and material unknowns. Once the
-asker confirms the recorded need, the author writes the agreement and scenarios.
+The specification author preserves the supplied requirements source and
+provenance, then checks it for ambiguity, conflict, feasibility, atomicity and
+testability using the declared clarification guidance. Surface owned blocking
+questions before deriving criteria. In discovery mode, establish who wants the
+change, what failure state it removes, settled answers and material unknowns.
+Once the asker confirms the recorded need and blocking questions have
+authoritative answers, the author writes the agreement and scenarios.
 The output is a specification in the repository.
 
 Work on: $ARGUMENTS

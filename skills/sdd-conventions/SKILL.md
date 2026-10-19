@@ -232,7 +232,7 @@ must answer for each of these:
 | Coding       | the formatter, analyzers, dependency policy and build commands         |
 | Delivery     | the tracker, the delivery-state field, branches, merge strategy, where a claim citation survives |
 | Testing      | the test projects, tiers, how scenarios execute and whether any are documentation only, assertion form, naming form and discovery traps, the changed-line coverage threshold and its gate |
-| Questions    | where answers are recorded and which questions are already settled     |
+| Questions    | where source captures, provenance and answers are recorded; the capture and integrity-check procedure; which questions are already settled |
 | Specs        | where specifications live when the layout differs from § "Spec layout", the glossary and the epic blank |
 | Next work    | tracker access, the identity contract, planning metadata, ranking inputs, shared-edit evidence, reservations and where standalone work appears |
 | Benchmarking | the harness, where benchmarks live and the measurement traps           |

@@ -1,0 +1,34 @@
+id: "0055"
+type: chore
+title: Groom requirement sources and surface blocking questions
+status: in-progress
+value: 5
+cost: 2
+risk: 2
+parent: null
+children: []
+depends_on: []
+spikes: []
+spec: null
+claims: []
+created: "2026-10-19"
+updated: "2026-10-19"
+closed: null
+summary: |
+  Extend the portable requirements guidance so supplied source text and
+  provenance are preserved, requirement quality is assessed before criteria
+  are derived, and owned blocking questions are surfaced for authoritative
+  answers. Keep repository-specific capture paths and scripts in a consuming
+  repository's companion guidance.
+acceptance_criteria:
+  - "clarify-requirements defines source preservation, semantic grooming and blocking-question handling before criteria are derived."
+  - "The companion contract assigns source-record, provenance and capture/integrity-check details to consuming repositories."
+  - "The spec command runs requirements grooming before confirmation and agreement authoring."
+  - "Generated projections are current and specification/projector validation accepts the source changes."
+decisions:
+  - "2026-10-19, user: incorporate requirement grooming and surfacing questions; user invited judgment on whether it belongs with clarify-requirements."
+  - "2026-10-19, scope: extend clarify-requirements because it already owns material questions and writing answers back; keep source capture tooling and paths in consuming-repository companion guidance. No separate skill or command."
+  - "2026-10-19, ownership: current Codex session claimed the item on codex/contract-audit-tests before editing, then retained ownership while moving the scoped change to codex/groom-requirements-and-questions in this checkout; the original branch remains intact."
+out_of_scope:
+  - "Adding a repository-specific snapshot script or source-record schema; the method repository has no consuming product source format."
+  - "Changing the agreement schema, requirement semantics, or role ownership."
