@@ -1,6 +1,6 @@
 ---
 name: clarify-requirements
-description: Resolve genuinely material requirement ambiguity in a specification-driven repository. Use when two plausible readings would change user-visible behaviour, the data shape, a public surface, or a provider's terms.
+description: Assess requirement sources and resolve material ambiguity before deriving criteria in a specification-driven repository. Use to surface blocking questions and record authoritative answers.
 ---
 
 # Clarify requirements
@@ -10,6 +10,34 @@ schemes, section ownership, spec layout — are in
 [`sdd-conventions`](../sdd-conventions/SKILL.md). The consuming repository's
 companion skill, `<project>-conventions` § "Questions", names where this rule
 lands there. Read all three.
+
+## Preserve and groom the source
+
+Before paraphrasing a supplied requirements source, preserve its exact content
+and authoritative provenance in the consuming repository's source record. The
+companion names the record format and any capture or integrity-check procedure;
+do not invent a repository path or command here. Keep the source distinct from
+interpretations derived from it.
+
+Assess the source before deriving or changing acceptance criteria:
+
+- Identify the actor, trigger, behavior and observable outcome.
+- Check that each requirement expresses one concern.
+- Find undefined terms, boundaries, units, thresholds and error behavior.
+- Check for internal conflicts and conflicts with accepted records.
+- Check feasibility against current behavior, compatibility, constraints and
+  exclusions. Code establishes what exists and what is feasible, not business
+  intent.
+- Confirm each requirement can be falsified and has a realistic verification
+  path.
+- Distinguish authoritative statements from inferred implementation detail.
+
+Surface questions with the evidence, the owner who can answer, the concrete
+readings and the consequence of each. Ask a concise batch of blocking questions
+when an answer changes scope, behavior, data meaning, constraints, error
+handling or compatibility. Do not derive criteria from an unsupported reading;
+wait for authoritative answers on those points. Non-blocking findings may be
+recorded with their limits and do not invent a requirement.
 
 ## First, look
 
@@ -95,6 +123,8 @@ In the same change, so the next session starts from the answer:
 
 - The answer becomes a claim, a scenario, a specification edit, or an
   out-of-scope row. **The specification is where it lands first.**
+- Each criterion cites its preserved source or is labeled as derived; initialize
+  traceability without claiming scenarios or evidence that do not exist.
 - A decision record captures what was chosen **and what was rejected, with its
   cost** — the second half is what stops the rejected option being rediscovered as
   a gap.

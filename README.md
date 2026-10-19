@@ -36,7 +36,7 @@ when; [PERSONAS.md](agents/PERSONAS.md) lists each voice and optional signing na
 | ------------------------------------------------------------------ | ----------------------------------------------------------------- |
 | [`sdd-conventions`](skills/sdd-conventions/SKILL.md)               | the method's shared facts: workflow, section ownership, id schemes, spec layout, the companion contract |
 | [`spec-and-traceability`](skills/spec-and-traceability/SKILL.md)   | the specification model, claims, records, blast radius            |
-| [`clarify-requirements`](skills/clarify-requirements/SKILL.md)     | when to ask versus decide, and writing the answer back            |
+| [`clarify-requirements`](skills/clarify-requirements/SKILL.md)     | preserving and grooming sources, surfacing questions, and writing answers back |
 | [`technology-decisions`](skills/technology-decisions/SKILL.md)   | stack, packages, architecture and UI agreed with the human before implementation |
 | [`deliver-change`](skills/deliver-change/SKILL.md)                 | work item to branch to specification to pull request              |
 | [`test-from-scenarios`](skills/test-from-scenarios/SKILL.md)       | a claim first, injected time, synthetic fixtures, every tier owed |

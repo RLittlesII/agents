@@ -266,7 +266,7 @@ must answer for each of these:
 | Coding       | the formatter, analyzers, dependency policy and build commands         |
 | Delivery     | the tracker, delivery-state field, Feature coordination-item identity and mirror synchronization operation, ownership record and authorized release/reassignment operation, branches, merge strategy, where a claim citation survives |
 | Testing      | the test projects, tiers, how scenarios execute and whether any are documentation only, assertion form, naming form and discovery traps, the changed-line coverage threshold and its gate |
-| Questions    | where answers are recorded and which questions are already settled     |
+| Questions    | where source captures, provenance and answers are recorded; the capture and integrity-check procedure; which questions are already settled |
 | Working records | where discovery notes and confirmed needs live before work items exist |
 | Scratch      | where bounded experiments and generated logs live, their exclusion from delivery and cleanup convention |
 | Release      | version and changelog authority, targets, publishing and recovery procedures, or an explicit statement of what is not established |
