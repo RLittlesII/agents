@@ -47,3 +47,10 @@ Feature: Skill boundary
     When the checkout is projected
     Then the lint passes
     But a skill naming log-reader still fails naming the role
+
+  @B-004
+  Scenario: Tracker records may name roles without becoming method instructions
+    Given role-bearing tracker entries at the skill root and nested resource depths
+    When skill source text is linted
+    Then tracker entries are ignored
+    But a role name in an ordinary runtime resource still fails with its path and line

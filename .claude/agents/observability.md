@@ -59,8 +59,11 @@ columns `Boundary | Signal | Level | Template | Fields | Claim`:
 
 Where no relevant signal is required, write `None.` with its reason. Every
 emitted boundary signal must be declared and asserted in an affected test.
-Hand the emitted boundary-signal declarations to `test-writer` for those
-assertions; declarations authorize neither test nor production code here.
+Hand the emitted boundary-signal declarations, their existing claim links and
+recorded approvals to `test-writer` for those assertions, following
+[`test-from-scenarios`](../skills/test-from-scenarios/SKILL.md#a-claim-comes-first).
+Missing approval or claim coverage returns to the relevant section owner.
+This role still writes neither tests nor production code.
 
 1. **The question and the decision** the measurement answers.
 2. **A baseline** taken before anything changes.

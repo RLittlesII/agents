@@ -2,7 +2,7 @@ id: "0036"
 type: chore
 title: Groom the role handoff graph and merge four duplicated roles
 
-status: in-progress
+status: done
 
 value: 4
 cost: 5
@@ -19,8 +19,8 @@ spec: null
 claims: []
 
 created: "2026-10-15"
-updated: "2026-10-15"
-closed: null
+updated: "2026-10-17"
+closed: "2026-10-16"
 
 summary: |
   The handoff diagram in agents/README.md § Handoffs has a happy path that
@@ -40,5 +40,8 @@ acceptance_criteria:
 
 decisions:
   - "2026-10-15, repository owner: merge all four duplicated roles into the survivors named above; keep pair-programmer and yak-shaver, drawn as roles convened by name. Rejected: dropping pair-programmer or yak-shaver."
+
+  - "2026-10-17, user-authorized collision reconciliation: retain 0036 for this earlier PR1 item; PR2’s unrelated historical 0036 resolves to 0047 by path and PR in .issue/README.md."
+  - "2026-10-17, user-authorized tracker reconciliation: GitHub confirms https://github.com/RLittlesII/agents/pull/1 merged on 2026-10-16 (UTC), commit 5924065f10164bd16b42d1ef6ce391269c2d7f77; merge is an ancestor of this checkout and contains this delivered item. Close this item’s delivered scope; previously recorded verification gaps remain."
 
 out_of_scope: []

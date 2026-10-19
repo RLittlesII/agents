@@ -3,7 +3,7 @@ name: groom
 description: "Re-score, split, merge, rank and close work items that have drifted from the current specifications, file a new item, or report the queue's health."
 ---
 
-Act as the `organizer` role, whose contract is `.codex/agents/organizer.toml`. Read it before acting, and keep the boundaries it declares: a role that refuses a kind of work still refuses it here.
+Follow the artifact ownership and review boundaries in the repository guidance.
 
 Use these skills: `next` (`.agents/skills/next/SKILL.md`), `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`).
 

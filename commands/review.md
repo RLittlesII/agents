@@ -6,8 +6,8 @@ skills: [spec-and-traceability, coding-conventions]
 argument-hint: "<diff, branch or path>"
 ---
 
-The spec reviewer reads the diff against every claim it cites and every
-accepted decision it touches. The adversary joins only when the diff changes a
+The independent reviewer reads the diff against every claim it cites and every
+accepted decision it touches. The surface pass joins only when the diff changes a
 trust boundary, a credential, an input from outside, or a permission; say which
 of those it touches, or that it touches none.
 

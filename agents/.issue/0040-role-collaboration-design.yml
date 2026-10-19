@@ -1,11 +1,11 @@
 id: "0040"
 type: task
 title: Implement lead and specialist collaboration
-status: in-progress
+status: done
 value: 4
 cost: 5
 risk: 2
-parent: "0001"
+parent: "0049"
 children: []
 depends_on: []
 spikes: []
@@ -42,8 +42,8 @@ claims:
   - B-038
   - B-039
 created: "2026-10-16"
-updated: "2026-10-16"
-closed: null
+updated: "2026-10-17"
+closed: "2026-10-16"
 summary: |
   Continue the reviewed agreement and design with failing conformance and
   migration tests, then implement the nineteen-role source/host/command
@@ -79,6 +79,9 @@ decisions:
   - "2026-10-16: implementation 0df178a renames the operational role, declares optional 7/Observability ownership, preserves nineteen roles/profiles/Tess and hands emitted-signal assertions to the test owner. Regeneration writes 20 changes within 78 outputs; old source and both host identities removed."
   - "2026-10-16: independent verification observes 50 projector tests and 23 installer tests passing, 78 outputs current and strict specifications clean. B-037/B-039 have executable mechanical evidence; B-038 remains Partial manual instruction conformance, with live-agent and actual instrumentation unverified."
   - "2026-10-16: independent diff/evidence review approves the observability amendment with no findings; independent boundary review finds no actionable issues. Extend PR4; item remains in-progress until merge."
+  - "2026-10-17, user-authorized tracker reconciliation: GitHub confirms https://github.com/RLittlesII/agents/pull/4 merged on 2026-10-16 (UTC), commit e60dea1a4d6a735b9665139dfc88dad039aeb697; merge is an ancestor of this checkout and contains this delivered item. Close this item’s delivered scope; previously recorded verification gaps remain."
+
+  - "2026-10-17, user-authorized legacy coordination migration: parent changes from 0001 to 0049, the explicit 0001-F2 coordination source. Keep this delivered item’s identity, type, state, acceptance criteria, prior decisions and merge evidence; the coordinator lists 0040 reciprocally."
 out_of_scope:
   - "New runtime orchestration, schema fields and production projector behavior changes remain outside the recorded design."
   - "0001-F2 § 5 rows 5-7 exclude engine-specific tooling, a workflow engine and unrelated role or ownership changes."

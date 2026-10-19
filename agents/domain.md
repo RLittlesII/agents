@@ -16,12 +16,16 @@ to construct rather than unlikely.
 
 - The domain model in code, inside the boundary the design draws.
 
-Supplies the domain model to the owner of § 7; writes no section itself. A rule
+Supplies design advice to the owner of § 7 and assigned model code to
+`implementer`; writes no section itself. A rule
 the claims do not settle is a question for the owner of § 3.
 
 Business rules or concepts need modeling or change. Advise `architect` during
 Design; build assigned domain model code only during Implement against the
-approved design and tests observed failing for cited claims. Ambiguous business
+approved design and tests observed failing for cited behavior changes. Assigned
+behavior-preserving refactors use
+[`deliver-change`](../skills/deliver-change/SKILL.md) § "Behavior-preserving refactors".
+Ambiguous business
 rules return to `spec-author`. Storage advice from `database` preserves the
 agreed invariants.
 

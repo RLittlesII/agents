@@ -4,8 +4,8 @@ description: "Compare Features and their completion paths to recommend the next 
 type: feature
 id: "F5"
 epic: "0001"
-spec_status: draft
-status: ready
+spec_status: approved
+status: in-progress
 priority: med
 value: 0
 risk: 0
@@ -20,7 +20,7 @@ depends_on: []
 blocks: []
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-15"
+updated: "2026-10-17"
 github_issue: null
 synced_at: null
 ---
@@ -59,7 +59,7 @@ missing estimate or an unreadable tracker as zero or as permission to start.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-15 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 Each source is a section of [`SKILL.md`](../SKILL.md).
 
@@ -81,7 +81,7 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 | B-014 | Given a `spec_status` or an item status that reads as approved or ready while the gating § 12 rows are not approved, this Feature treats the gate as unmet.                                         | § Stage gates; § Derive an evidenced next step | Active |
 | B-015 | Given an open question whose row names blocked claims, none of which the work links, this Feature does not withhold the work for it. | § Stage gates                            | Active |
 | B-016 | Given a spike, this Feature offers the investigation only when the spike states a bounded question and a time box.                                                                                 | § Stage gates                            | Active |
-| B-017 | Given taken work inside or outside the requested scope, including work in review, this Feature shows it as occupied until it is delivered and offers no new start in its lane. | § Stage gates; § Use lanes to support the choice | Active |
+| B-017 | Given taken work inside or outside the requested scope, including work in review, this Feature shows its current reservation as occupied and offers no new start in its lane while that reservation remains. | § Stage gates; § Use lanes to support the choice | Active |
 | B-018 | Given a prerequisite, this Feature counts it as delivered only when it finished as completed, and not while it is in review, closed as not planned or reopened.                                    | § Stage gates                            | Active |
 | B-019 | Given an item whose dependencies or spikes are unfinished, this Feature treats it as waiting whatever its status says.                                                                            | § Stage gates                            | Active |
 | B-020 | Given a container with unfinished children, this Feature offers its children as candidates and never the container.                                                                               | § Stage gates                            | Active |
@@ -158,7 +158,7 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-15 -->
+<!-- last written by: architect, 2026-10-17 -->
 
 The deliverable is prose in [`SKILL.md`](../SKILL.md), which an agent follows;
 there is no code ([decision 0015](decisions/0015-a-skill-not-an-executable.md)).
@@ -169,6 +169,22 @@ drift-checked
 ([ADR-0002](../../../.spec/adr/0002-generated-host-outputs-are-committed.md)). It
 names no role ([0001-F4](../../.spec/README.md) B-001): the next actor is a
 stage, such as grooming, or a section owner.
+
+Feature mirror identity follows
+[`sdd-conventions` § The spec / work-item split](../../sdd-conventions/SKILL.md#the-spec--work-item-split)
+and the companion's mapping. A coordination record is not a delivery child or
+occupied child lane. Completion evidence that disagrees with its recorded
+state produces a maintenance diagnostic without a write or an inferred tracker
+state. The user decision is recorded in
+[0001-F2 decision 0003](../../../agents/.spec/decisions/0003-feature-status-has-one-coordination-source.md).
+
+Taken-work continuation follows
+[0001-F2 decision 0005](../../../agents/.spec/decisions/0005-taken-work-retains-explicit-ownership.md)
+and `deliver-change` § Resume, release and reassignment. Recommendation reads
+current reservations; it performs no resume, release or transfer. An explicit
+release ends the reservation but does not satisfy dependencies; reassignment
+retains the reservation under the new owner. Missing ownership is a diagnostic,
+not proof of release. B-017's wording now preserves that reservation boundary.
 
 ### Design positions
 
@@ -211,7 +227,8 @@ stage, such as grooming, or a section owner.
   cell reads `None` is scoped to nothing and withholds nothing (B-010, B-015,
   B-044, [decision 0019](decisions/0019-an-unscoped-question-leaves-readiness-unverified.md)).
   Delivered means finished as completed (B-018). Taken work, in review included,
-  occupies its lane until it is delivered
+  occupies its lane while its recorded reservation remains; explicit release ends
+  the reservation without delivery, and authorized reassignment retains it
   (B-017, [decision 0017](decisions/0017-work-in-review-holds-its-lane.md)).
   Waiting is derived from unfinished `depends_on` and spikes (B-019); a
   container with open children yields its children (B-020).
@@ -366,6 +383,13 @@ flowchart TD
 No entity, class or state view applies: nothing is stored, there is no code,
 and the delivery lifecycle is the tracker's (C-1).
 
+Approval applicability follows
+[0001-F2 decision 0007](../../../agents/.spec/decisions/0007-approval-follows-the-reviewed-revision.md)
+and `spec-and-traceability` § Approval applicability. Stage gates evaluate the
+current subject: substantively changed scope needs a new verdict; unchanged
+scope retains applicable baseline evidence. Unclear or conflicting applicability
+withholds only the affected gate. Recommendation edits no sign-off or maturity.
+
 ### Review map
 
 § 3's Source column names the sections each claim is read against. By section,
@@ -420,6 +444,11 @@ Findings 1 to 4 were recorded 2026-10-14 and are resolved; rechecked
    selected Feature (`spec-author`). The design
    settles it, so no claim waits on it.
 
+2026-10-17: **Finding 5 resolved** in reviewed subject
+`b148707e323938c2eb58ed22479ae09604c318bf781168cf3b0de07a5fffa088`:
+canonical guidance states the ranked scan and owning-Feature cap; both requested
+B-046 scenarios are present. Independent `/root/baseline_roles_next` approved.
+
 No open question remains in § 11. Decisions 0016 to 0021 settle every claim
 the 2026-10-14 verdict excepted, and B-042 to B-046, which follow from them:
 
@@ -439,11 +468,24 @@ follows one recorded decision and the deliverable is prose checked by review.
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-14 -->
+<!-- last written by: test-writer, 2026-10-17 -->
 
 The scenarios in [`next.feature`](next.feature) are verified by review: a reader
 checks each against the `SKILL.md` text its claim cites. There is no executable
 tier, because the deliverable is prose and not code.
+
+The coordination-source clarification is checked against the manual B-043
+cases in [0001-F2](../../../agents/.spec/README.md#8-testing-strategy): a parent
+marked in-progress consumes no child lane; mismatched mirror state is reported
+without synchronization. The B-017 reservation clarification is checked against
+0001-F2 B-045's static cases: same-owner continuation creates no new start;
+release is not delivery; reassignment remains occupied. These are authored
+static checks, not independent or live-agent evaluation.
+
+Approval applicability is walked through using 0001-F2 B-047's invented R1/R2
+cases: changed scope is withheld pending review; independent unchanged scope
+retains its evidence; an old favorable row cannot resolve conflicting current
+verdicts. These are authored static checks; independent content review is recorded in § 12; live-agent evaluation is pending.
 
 ### Performance
 
@@ -504,9 +546,26 @@ Not applicable.
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-15 -->
+2026-10-17: record independent baseline approval. Incorporate existing Finding 5
+in canonical lane guidance and two B-046 scenarios; align the old §7 reservation
+sentence and decision 0017 with the already-approved explicit-release policy.
+No claim or ranking rule changes; correction review remains pending.
+
+<!-- last written by: spec-author, 2026-10-17 -->
 
 No lesson is recorded for this Feature.
+
+2026-10-17: Apply user decision 0001-F2/0007 to the existing stage gates: approval
+must apply to the current scope and subject, preserving unchanged baseline evidence.
+
+2026-10-17: Apply user decision 0001-F2/0005 to B-017: occupied means a current
+reservation, not an irrevocable hold until delivery. Same-owner continuation is
+not a new start; release is not delivery, and recommendation remains read-only.
+
+2026-10-17: Apply the agreed single coordination-source identity to Feature
+mirror diagnostics and distinguish coordination records from delivery children
+under the existing B-017/B-046 lane cap. The source-selection decision remains
+in 0001-F2 decision 0003; recommendation remains read-only under B-040.
 
 ### Ported from Hooked
 
@@ -605,15 +664,39 @@ record naming the rule it follows and the option it rejected.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-15 -->
+<!-- last written by: spec-author, 2026-10-17 -->
 
 | Section | Status | Reviewer      | Note                    |
 | ------- | ------ | ------------- | ----------------------- |
-| 1-12    | 🟡     | spec-reviewer | Draft; not yet reviewed. |
+| Design: § 7 coordination, ownership and approval applicability | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
+| Diff: §§ 3, 7–8, 10, 12 and scenarios | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
+| Baseline: 1-12 and scenarios | 🟢 | spec-reviewer | Independent `/root/baseline_roles_next`, 2026-10-17: retrospective baseline content Approved at `2997ac3c6dbdf3bef910ffb6fef86aecc19d0bed`. Content approval; 46 Missing rows and the recorded nonblocking lane/record follow-ups remain. No historical pre-implementation approval is claimed. |
+| Correction: §7, scenarios, decision0017 and canonical lanes | 🟢 | spec-reviewer | Independent `/root/baseline_roles_next`, 2026-10-17: Approved at `b148707e323938c2eb58ed22479ae09604c318bf781168cf3b0de07a5fffa088`; unchanged baseline remains applicable, 46 Missing rows retained. |
+| Diff: lane and reservation corrections | 🟢 | spec-reviewer | Independent `/root/baseline_roles_next`, 2026-10-17: Approved at `a148bf47a5a726c87dbf4908547bcc27c6cfe56c70dfb7b7b95a2ca33ab629ed`; canonical lane prose, scenarios, decision0017 and history agree; both generated copies identical. 46 Missing rows remain. |
+
+### Superseded amendment review history
+
+Prior baseline record, superseded by the returned baseline content verdict:
+
+> | 1-12    | 🟡     | spec-reviewer | Draft; not yet reviewed. |
+
+These pending records predate the current independent verdicts. They retain
+their original notes; current live-agent evidence limits remain in § 8.
+
+- Current-revision approval applicability, 2026-10-17 — 🟡 — spec-reviewer — User decision recorded in 0001-F2/0007; authored static checks only, independent/live evaluation pending.
+- B-017 current reservations, 2026-10-17 — 🟡 — spec-reviewer — User ownership decision recorded in 0001-F2/0005; authored static checks only, independent review pending.
+
+Current amendment verdicts apply to the identified reviewed snapshot. Earlier
+pending rows are retained for their earlier subjects; current review approval
+does not establish live-agent behavior or unperformed platform/manager runs.
 
 ## Tasks
 
-None cut.
+<!-- last written by: organizer, 2026-10-17 -->
+
+- [0052 — Coordinate Next work delivery](../.issue/0052-coordinate-next-work.yml) — authoritative delivery-status source.
+
+Supporting root history, retaining its existing parents: [0004 — Original agreement](../../../.issue/0004-next-skill-agreement.yml), [0030 — Specification authoring](../../../.issue/0030-next-skill-specification.yml), [0037 — Design alignment](../../../.issue/0037-align-f5-design-with-rulings.yml), and [0047 — Open-question rulings](../../../.issue/0047-resolve-f5-open-questions.yml).
 
 ## Scoring
 

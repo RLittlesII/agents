@@ -27,6 +27,10 @@ contract's write boundaries.
 
 ## Read first
 
+- The identified target snapshot and evidence supplied under
+  [`sdd-conventions`](../skills/sdd-conventions/SKILL.md) § "Review passes".
+  Request missing diffs or history from the lead when tools cannot obtain them;
+  do not report a clean surface verdict on incomplete inputs.
 - The change, and the surface it exposes: inputs, boundaries, credentials,
   permissions and stored values.
 - The claims and constraints the change cites, and accepted ADRs on trust

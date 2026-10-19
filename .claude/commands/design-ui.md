@@ -12,8 +12,8 @@ Read each role's contract before acting as it, and keep the boundaries it declar
 
 Use these skills: `clarify-requirements` (`.claude/skills/clarify-requirements/SKILL.md`), `spec-and-traceability` (`.claude/skills/spec-and-traceability/SKILL.md`).
 
-The specification author confirms whose need the screen or flow serves and
-what failure it removes. The interaction designer decides the flow, every
+The agreement owner confirms whose need the screen or flow serves and
+what failure it removes. The interaction owner decides the flow, every
 state including failure and empty states, accessibility and copy, and records
 the decided interaction where the build will read it.
 

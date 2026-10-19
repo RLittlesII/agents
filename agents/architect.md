@@ -175,7 +175,8 @@ advice does not move design ownership.
   decision and owning role. Cite any blocking `OQ-n`; do not change § 12 sign-off
   or approve the specification on the reviewer's behalf.
 - **Compiling stubs of the declared interfaces**, where the companion places
-  production code, once the design is Ready. Each member compiles and does
+  production code, once the design is Ready and its applicable independent
+  approval is recorded in § 12. Each member compiles and does
   nothing a test could mistake for behaviour, so a test fails on behaviour, not
   on a compile error. Making a stub pass is not this role's.
 - **A risk for each item the design covers**, stated with the readiness verdict

@@ -1,19 +1,19 @@
 id: "0044"
 type: task
 title: Enforce repository changed-line coverage
-status: in-progress
+status: done
 value: 4
 cost: 5
 risk: 3
-parent: "0001"
+parent: "0053"
 children: []
 depends_on: []
 spikes: []
 spec: .github/.spec/README.md
 claims: [B-001, B-002, B-003, B-004]
 created: "2026-10-16"
-updated: "2026-10-16"
-closed: null
+updated: "2026-10-17"
+closed: "2026-10-17"
 summary: |
   Deliver the confirmed 0001-F6 agreement through one local/CI coverage gate,
   real F# and Python collection, fail-closed evidence validation and exact
@@ -35,6 +35,9 @@ decisions:
   - "2026-10-16, collection proof: isolated empty NuGet cache run b9a269b572274089a3ad5b6e2b6561b2 passes 217/242 before the final line-identity correction. Historical negative run 735ffab129854761aa932d4b8ff2eab7 fails 210/335 with 100 unimported zero-hit new executable lines. The temporary probe was removed."
   - "2026-10-16, independent review: /root/coverage_diff_review approves F6 B-001–B-004 and C-1–C-5; /root/coverage_surface_review clears shell-sensitive paths, CR filenames, Git pathspec magic and source line identity findings. Regression tests cover each fix. No existing production entrypoint changed."
   - "2026-10-16, local gates: strict specifications have zero errors/warnings; projection is current for all 78 outputs; actionlint 1.7.7 accepts the workflow. Final committed HEAD gate and remote PR checks remain delivery checks; status stays in-progress until merge."
+  - "2026-10-17, user-authorized tracker reconciliation: GitHub confirms https://github.com/RLittlesII/agents/pull/7 merged on 2026-10-17 (UTC), commit c6eb36c3acec81e8deb177283b874b544c8a335e; merge is an ancestor of this checkout and contains this delivered item. Close this item’s delivered scope; previously recorded verification gaps remain."
+
+  - "2026-10-17, user-authorized legacy coordination migration: parent changes from 0001 to 0053, the explicit 0001-F6 coordination source. Keep this delivered item’s identity, type, state, acceptance criteria, prior decisions and merge evidence; the coordinator lists 0044 reciprocally."
 out_of_scope:
   - "Section 5 rows 1-3 retain F4 lint, F1 projection and 0038-F1 installation behavior with their owners."
   - "Section 5 excludes branch coverage, a whole-repository coverage floor and automatic waivers."

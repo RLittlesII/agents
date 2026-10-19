@@ -408,3 +408,48 @@ Feature: Next work
     When the person asks what is next
     Then no start is offered for that Feature
     And the startable item is shown queued
+
+  @B-017
+  Scenario: An authorized reassignment retains the occupied lane
+    Given a taken item is reassigned from A to B with recorded authorization
+    When the person asks what is next
+    Then its lane remains occupied under B
+    And no new start is offered there
+    And recommendation changes no ownership record
+
+  @B-017
+  Scenario: An explicit release ends a reservation without delivering the item
+    Given A explicitly released a taken item and the tracker records the release
+    When the person asks what is next
+    Then the old reservation does not occupy the lane
+    And the unfinished item does not satisfy its dependents
+    And any new start still requires the applicable stage evidence
+
+  @B-011 @B-013 @B-014
+  Scenario: A substantive change needs applicable current approval
+    Given earlier approval covers revision R1
+    And revision R2 substantively changes the scope needed by the next stage
+    And that changed scope has no review against R2
+    When the person asks what is next
+    Then the affected stage is withheld pending review of the new subject
+    And independent unchanged scope retains its applicable approval evidence
+    And recommendation edits no sign-off record
+
+  @B-034 @B-046
+  Scenario: A capped candidate leaves its lane available to another Feature
+    Given the highest-ranked startable item in Feature A heads lane one
+    And another startable item in Feature A ranks first in lane two
+    And a startable item in Feature B ranks next in lane two
+    When the person asks what is next
+    Then the second item in Feature A is shown queued behind its Feature
+    And lane two offers the item in Feature B as its head
+    And at most one start is offered per Feature
+
+  @B-003 @B-046
+  Scenario: A prerequisite consumes its owning Feature's start
+    Given a selected Feature A requires a startable prerequisite owned by Feature B
+    And Feature B already has a head in another lane
+    And Feature A has independent startable work with no unmet prerequisites
+    When the person asks what is next
+    Then the prerequisite is shown queued behind Feature B
+    And Feature A's independent work may still be offered as its start

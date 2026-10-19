@@ -82,7 +82,7 @@ let readText (path: string) = File.ReadAllText(path, Encoding.UTF8) |> normalize
 let utf8 = UTF8Encoding(false)
 
 let relative (root: string) (path: string) =
-    Path.GetRelativePath(root, path).Replace('\\', '/')
+    Path.GetRelativePath(root, path).Replace(Path.DirectorySeparatorChar, '/')
 
 let rec private toJsonValue depth (value: obj) =
     if depth > 64 then fail "YAML nesting exceeds 64 levels"
@@ -175,9 +175,25 @@ let bytes (text: string) = utf8.GetBytes text
 let filesUnder (directory: string) =
     if Directory.Exists directory then
         Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories)
-        |> Seq.filter (fun f -> not (f.Contains("/.spec/") || f.Contains("\\.spec\\")))
         |> Seq.sort
         |> List.ofSeq
+    else []
+
+let private isSkillMetadata (path: string) =
+    let name = Path.GetFileName path
+    name = ".spec" || name = ".issue"
+
+/// 0001-F1 B-025, 0001-F4 B-004: prune source metadata before traversal.
+/// Output comparison uses filesUnder so old metadata outputs remain stale.
+let runtimeFilesUnder (directory: string) =
+    let rec visit folder =
+        seq {
+            for entry in Directory.EnumerateFileSystemEntries folder do
+                if not (isSkillMetadata entry) then
+                    if Directory.Exists entry then yield! visit entry
+                    else yield entry
+        }
+    if Directory.Exists directory then visit directory |> Seq.sort |> List.ofSeq
     else []
 
 /// Split a Markdown file into its frontmatter pairs and the body after the
@@ -213,12 +229,15 @@ let private semver = Regex(@"^\d+\.\d+\.\d+$")
 let loadRole (root: string) (path: string) : Role =
     let source = relative root path
     let pairs, body = splitFrontmatter source (readText path)
-    let name = getScalar "name" pairs
+    let scalar key =
+        try getScalar key pairs
+        with ProjectionError message -> fail (sprintf "%s: %s" source message)
+    let name = scalar "name"
     // B-009: the name matches the file name.
     let stem = Path.GetFileNameWithoutExtension path
     if name <> stem then fail (sprintf "%s: name '%s' does not match the file name '%s'" source name stem)
-    let description = getScalar "description" pairs
-    let version = getScalar "version" pairs
+    let description = scalar "description"
+    let version = scalar "version"
     if not (semver.IsMatch version) then fail (sprintf "%s: version '%s' is not semver" source version)
     let owned =
         match tryGet "owned_spec_sections" pairs with
@@ -469,12 +488,17 @@ let specificationFiles (root: string) =
 let validateStamps (root: string) (rows: (string * string) list) =
     let owner heading = rows |> List.tryFind (fun (h, _) -> h = heading) |> Option.map snd
     for rel in specificationFiles root do
-        let mutable fenced = false
+        let text = readText (Path.Combine(root, rel))
+        let fences =
+            Markdown.Parse(text).Descendants<FencedCodeBlock>()
+            |> Seq.map (fun block -> block.Span)
+            |> Seq.toArray
+        let mutable offset = 0
         let mutable section : string option = None
         let mutable parent : string option = None
-        for line in (readText (Path.Combine(root, rel))).Split('\n') do
-            if line.TrimStart().StartsWith "```" then fenced <- not fenced
-            elif not fenced then
+        for line in text.Split('\n') do
+            let fenced = fences |> Array.exists (fun span -> offset <= span.End && offset + line.Length >= span.Start)
+            if not fenced then
                 let h = sectionHeading.Match line
                 if h.Success && h.Groups.[1].Value = "##" then
                     section <- Some h.Groups.[2].Value
@@ -493,6 +517,7 @@ let validateStamps (root: string) (rows: (string * string) list) =
                         if actual <> expected then
                             fail (sprintf "%s: section '%s' is stamped by '%s', but '%s' owns it" rel section.Value actual expected)
                     | _ -> ()
+            offset <- offset + line.Length + 1
 
 /// B-013, B-014, B-015: one reviewer per unit, every unit reviewed, no role
 /// reviewing a unit the vocabulary lacks. Rows follow the vocabulary's order.
@@ -551,7 +576,7 @@ let lintSkills (root: string) (roles: Role list) =
             | Some name -> yield role.Name, Regex(@"\b" + Regex.Escape name + @"\b")
             | None -> () ]
     let findings =
-        [ for file in filesUnder (Path.Combine(root, "skills")) do
+        [ for file in runtimeFilesUnder (Path.Combine(root, "skills")) do
             let raw = File.ReadAllBytes file
             if not (Array.contains 0uy raw) then
                 // Blank each generated block but keep its newlines, so line numbers hold.
@@ -694,6 +719,14 @@ type Command =
 
 let private relativeLink = Regex(@"\]\(\.\./(agents|skills)/")
 
+let private linksIntoSources (body: string) =
+    relativeLink.IsMatch body ||
+    ((Markdown.Parse body).Descendants<LinkInline>()
+     |> Seq.exists (fun link ->
+         not (isNull link.Url) &&
+         (link.Url.StartsWith("../agents/", StringComparison.Ordinal) ||
+          link.Url.StartsWith("../skills/", StringComparison.Ordinal))))
+
 let loadCommand (root: string) (path: string) : Command =
     let source = relative root path
     let pairs, body = splitFrontmatter source (readText path)
@@ -712,7 +745,7 @@ let loadCommand (root: string) (path: string) : Command =
         | Some _ -> fail (sprintf "%s: %s must be a list" source key)
     let roles = list "roles"
     if roles.IsEmpty then fail (sprintf "%s: roles must name at least one role" source)
-    if relativeLink.IsMatch body then
+    if linksIntoSources body then
         fail (sprintf "%s: the body links into agents/ or skills/; name roles and skills in frontmatter, which projection turns into each host's paths" source)
     let hint =
         match tryGet "argument-hint" pairs with
@@ -744,22 +777,25 @@ let validateCommands (roles: Role list) (skills: string list) (commands: Command
         if List.contains command.Name skills then
             fail (sprintf "%s: command '%s' has the name of skill '%s'; a host that projects commands as skills would hold both in one place" command.Source command.Name command.Name)
 
-/// The generated paragraphs ahead of a command body: each role's contract and
-/// each skill at this host's paths.
+/// Native command files name host contracts; command skills follow artifact
+/// ownership without agent references (0001-F3 B-008). Both name skill dependencies.
 let commandPreamble (host: Host) (command: Command) =
     let contract role = host.Output.Replace("{name}", role)
     let keep = "keep the boundaries it declares: a role that refuses a kind of work still refuses it here."
     let roles =
-        match command.Roles with
-        | [ role ] ->
-            sprintf "Act as the `%s` role, whose contract is `%s`. Read it before acting, and %s" role (contract role) keep
-        | many ->
-            [ yield "Convene these roles as the body directs:"
-              yield ""
-              for role in many do yield sprintf "- `%s`, whose contract is `%s`" role (contract role)
-              yield ""
-              yield "Read each role's contract before acting as it, and " + keep ]
-            |> String.concat "\n"
+        if (defaultArg host.CommandsOutput "").EndsWith "/SKILL.md" then
+            "Follow the artifact ownership and review boundaries in the repository guidance."
+        else
+            match command.Roles with
+            | [ role ] ->
+                sprintf "Act as the `%s` role, whose contract is `%s`. Read it before acting, and %s" role (contract role) keep
+            | many ->
+                [ yield "Convene these roles as the body directs:"
+                  yield ""
+                  for role in many do yield sprintf "- `%s`, whose contract is `%s`" role (contract role)
+                  yield ""
+                  yield "Read each role's contract before acting as it, and " + keep ]
+                |> String.concat "\n"
     let skills =
         command.Skills
         |> List.map (fun s -> sprintf "`%s` (`%s/%s/SKILL.md`)" s host.SkillsOutput s)
@@ -770,7 +806,7 @@ let commandPreamble (host: Host) (command: Command) =
 let private quoted (s: string) = "\"" + s.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\""
 
 /// B-001: a command file — description and argument hint, the preamble, then
-/// the body verbatim. B-002: a skill file — name and description, the preamble,
+/// the body verbatim. B-008: a skill file — name and description, the preamble,
 /// then the body with `$ARGUMENTS` replaced by the host's text for it.
 let renderCommand (host: Host) (command: Command) =
     let asSkill = (defaultArg host.CommandsOutput "").EndsWith "/SKILL.md"
@@ -796,7 +832,7 @@ type Plan =
 
 let outputRoots (hosts: Host list) =
     [ for host in hosts do
-        yield Path.GetDirectoryName(host.Output).Replace('\\', '/')
+        yield Path.GetDirectoryName(host.Output).Replace(Path.DirectorySeparatorChar, '/')
         yield host.SkillsOutput
         // 0001-F3 B-006: the directory before `{name}`, so a stale command is found.
         match host.CommandsOutput with
@@ -836,7 +872,7 @@ let plan (root: string) : Plan =
     let skillsDirectory = Path.Combine(root, "skills")
     let skills =
         Directory.EnumerateDirectories skillsDirectory
-        |> Seq.filter (fun d -> Path.GetFileName d <> ".spec")
+        |> Seq.filter (isSkillMetadata >> not)
         |> Seq.sort
         |> List.ofSeq
     for skill in skills do
@@ -854,7 +890,7 @@ let plan (root: string) : Plan =
                   yield host.Output.Replace("{name}", role.Name), bytes (renderAgent host role)
               // B-004: every skill file, byte for byte, into the host's skills directory.
               for skill in skills do
-                  for file in filesUnder skill do
+                  for file in runtimeFilesUnder skill do
                       let rel = relative skillsDirectory file
                       let content =
                           if rel = "sdd-conventions/SKILL.md" then bytes companionText
@@ -873,9 +909,38 @@ type Difference =
     | Missing of string
     | Stale of string
 
+let private checkedOutputPath (root: string) (path: string) =
+    let checkout = Path.GetFullPath root
+    let full = Path.GetFullPath(Path.Combine(checkout, path))
+    let rel = Path.GetRelativePath(checkout, full)
+    if Path.IsPathRooted rel || rel = ".." || rel.StartsWith(".." + string Path.DirectorySeparatorChar, StringComparison.Ordinal) then
+        fail "output path is outside the checkout"
+    let mutable current = checkout
+    for part in rel.Split([| Path.DirectorySeparatorChar; Path.AltDirectorySeparatorChar |], StringSplitOptions.RemoveEmptyEntries) do
+        current <- Path.Combine(current, part)
+        let attributes =
+            try Some(File.GetAttributes current)
+            with
+            | :? FileNotFoundException | :? DirectoryNotFoundException -> None
+        match attributes with
+        | Some value when value.HasFlag FileAttributes.ReparsePoint ->
+            fail (sprintf "%s: linked output path" (relative checkout current))
+        | _ -> ()
+    full
+
+let rec private validateOutputTree root directory =
+    if Directory.Exists directory then
+        for entry in Directory.EnumerateFileSystemEntries directory do
+            checkedOutputPath root entry |> ignore
+            if Directory.Exists entry then validateOutputTree root entry
+
 /// B-008: every planned output compared byte for byte, plus files in the output
 /// roots the plan does not produce.
 let differences (root: string) (plan: Plan) : Difference list =
+    // Validate before reading output or publishing any change, including metadata.
+    for KeyValue(rel, _) in plan.Outputs do checkedOutputPath root rel |> ignore
+    for outputRoot in plan.OutputRoots do
+        checkedOutputPath root outputRoot |> validateOutputTree root
     let planned =
         [ for KeyValue(rel, content) in plan.Outputs do
             let path = Path.Combine(root, rel)
@@ -893,10 +958,10 @@ let apply (root: string) (plan: Plan) : Difference list =
     for diff in diffs do
         match diff with
         | Changed rel | Missing rel ->
-            let path = Path.Combine(root, rel)
+            let path = checkedOutputPath root rel
             Directory.CreateDirectory(Path.GetDirectoryName path) |> ignore
             File.WriteAllBytes(path, plan.Outputs.[rel])
-        | Stale rel -> File.Delete(Path.Combine(root, rel))
+        | Stale rel -> File.Delete(checkedOutputPath root rel)
     diffs
 
 let describe (diff: Difference) =

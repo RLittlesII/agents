@@ -1,7 +1,7 @@
 id: "0043"
 type: chore
 title: Review Skill boundary baseline and reconcile delivery evidence
-status: in-progress
+status: done
 value: 3
 cost: 2
 risk: 1
@@ -12,8 +12,8 @@ spikes: []
 spec: null
 claims: []
 created: "2026-10-16"
-updated: "2026-10-16"
-closed: null
+updated: "2026-10-17"
+closed: "2026-10-17"
 summary: |
   Review the existing 0001-F4 agreement and record independently verified
   approval and historical implementation evidence. This item starts from
@@ -42,6 +42,8 @@ decisions:
 
   - "2026-10-16, blocker resolved: README Testing now declares the 80% pooled changed executable production-line policy and shared gate under 0001-F6. Independent /root/coverage_diff_review approves F4 section 8 and OQ-1 resolution; all baseline sections are approved while earlier delta approvals remain."
   - "2026-10-16, scope retained: no F4 runtime or scenario change. Prerequisite F2 completion still blocks declaring the whole Feature delivered. Item 0044 and this evidence item remain in-progress until the delivering PR merges."
+  - "2026-10-17, user-authorized tracker reconciliation: GitHub confirms https://github.com/RLittlesII/agents/pull/7 merged on 2026-10-17 (UTC), commit c6eb36c3acec81e8deb177283b874b544c8a335e; merge is an ancestor of this checkout and contains this delivered item. Close this item’s delivered scope; previously recorded verification gaps remain."
+
 out_of_scope:
   - "New runtime lint behavior and unrelated Feature approval are outside this evidence slice."
   - "0001-F4 section 5 rows 1-2 route role-to-skill and command references to 0001-F2 and 0001-F3."

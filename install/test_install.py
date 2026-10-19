@@ -6,6 +6,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import stat
 import subprocess
@@ -95,11 +96,12 @@ class InstallerTests(unittest.TestCase):
         else:
             inputs = cwd / "package/skills"
             projected_skills = self.source / (".claude/skills" if self.host == "claude" else ".agents/skills")
-            paths = [f"./package/skills/{path.name}" for path in sorted(projected_skills.iterdir())]
+            paths = [f"./package/skills/{path.name}" for path in sorted(projected_skills.iterdir()) if path.name != ".issue"]
             self.assertEqual(args[1:], ["install", *paths, "--target", self.host, "--only", "apm"])
             fields = dict(line.split(":", 1) for line in (cwd / "apm.yml").read_text().splitlines() if line.strip())
             self.assertEqual(fields, {"name": " sdd-install", "version": " 1.0.0"})
             output = cwd / (".claude/skills" if self.host == "claude" else ".agents/skills")
+        self.assertFalse(any(".issue" in path.relative_to(inputs).parts for path in inputs.rglob("*")))
         shutil.copytree(inputs, output, dirs_exist_ok=True)
         write(cwd, "AGENTS.md", b"manager-generated instructions")
         if self.output_mode == "changed":
@@ -212,6 +214,131 @@ class InstallerTests(unittest.TestCase):
         write(self.source, "skills/another/SKILL.md", b"# Another method\n")
         self.assert_rejected()
         self.assertFalse(self.calls)
+
+    def test_B007_consumer_index_uses_selected_runtime_inventory_with_both_managers(self):
+        # Given producer-only docs; When installed; Then index links runtime artifacts only.
+        self.host = "codex"
+        write(self.source, "agents/README.md", b"# Maintainer index\n[Spec](.spec/README.md)\n")
+        write(self.source, "agents/producer-notes.md", b"# Producer-only notes\n")
+        before = snapshot(self.source)
+        for manager in ("skillfile", "apm"):
+            with self.subTest(manager=manager):
+                self.manager = manager
+                self.calls.clear()
+                self.assertEqual(self.run_install(), 0)
+                index = self.target / ".sdd/agents/README.md"
+                links = re.findall(r"\]\(([^)]+)\)", index.read_text())
+                self.assertEqual(set(links), {"alpha.md", "beta.md", "../skills/method/SKILL.md"})
+                for link in links:
+                    self.assertTrue((index.parent / link).is_file(), link)
+                self.assertNotIn("Maintainer index", index.read_text())
+                self.assertFalse((self.target / ".sdd/agents/producer-notes.md").exists())
+                self.assertEqual((self.target / ".sdd/agents/alpha.md").read_bytes(), ROLE)
+                self.assertEqual(snapshot(self.source), before)
+                for relative, content in self.original.items():
+                    self.assertEqual((self.target / relative).read_bytes(), content)
+
+    def test_B007_private_specs_are_excluded_at_every_depth_and_runtime_bytes_survive(self):
+        # Given mixed metadata/resources; When installed; Then only reserved metadata is omitted.
+        self.host = "codex"
+        for path in ("skills/.spec/README.md", "skills/method/.spec/README.md", "skills/method/references/.spec/README.md"):
+            write(self.source, path, b"# Producer specification\n")
+        guide = b"# Runtime guide\n[Method](../SKILL.md)\n"
+        write(self.source, "skills/method/references/guide.md", guide)
+        write(self.source, "skills/method/.runtime/payload.bin", BINARY)
+        before = snapshot(self.source)
+        self.assertEqual(self.run_install(), 0)
+        private = self.target / ".sdd"
+        self.assertFalse(any(".spec" in path.parts for path in private.rglob("*")))
+        self.assertEqual((private / "skills/method/references/guide.md").read_bytes(), guide)
+        self.assertEqual((private / "skills/method/.runtime/payload.bin").read_bytes(), BINARY)
+        self.assertEqual((private / "skills/method/data/nested.bin").read_bytes(), BINARY)
+        self.assertEqual(snapshot(self.source), before)
+
+    def test_B008_root_tracker_is_not_a_skill_for_either_host_or_manager(self):
+        # Given old projections with root metadata; When installed; Then only skills reach either manager.
+        for native in (".claude", ".agents"):
+            write(self.source, f"{native}/skills/.issue/item.yml", b"id: synthetic\n")
+            write(self.source, f"{native}/skills/method/.runtime/payload.bin", BINARY)
+            write(self.source, f"{native}/skills/method/.issue-notes.md", b"runtime notes\n")
+        before = snapshot(self.source)
+        for host in ("claude", "codex"):
+            for manager in ("skillfile", "apm"):
+                with self.subTest(host=host, manager=manager):
+                    self.host, self.manager = host, manager
+                    self.target = self.root / f"consumer-{host}-{manager}"
+                    self.target.mkdir()
+                    self.calls.clear()
+                    self.assertEqual(self.run_install(), 0)
+                    native = ".claude" if host == "claude" else ".agents"
+                    self.assertFalse((self.target / native / "skills/.issue").exists())
+                    self.assertEqual((self.target / native / "skills/method/.runtime/payload.bin").read_bytes(), BINARY)
+                    self.assertEqual((self.target / native / "skills/method/.issue-notes.md").read_bytes(), b"runtime notes\n")
+                    self.assertTrue(self.calls)
+        self.assertEqual(snapshot(self.source), before)
+
+    def test_B008_nested_native_and_private_tracker_records_are_omitted(self):
+        # Given nested native/private records; When installed; Then preserve runtime bytes without tracker paths.
+        for base in (".claude/skills/method", ".agents/skills/method", "skills/method"):
+            for relative in (".issue/item.yml", "references/.issue/item.yml"):
+                write(self.source, f"{base}/{relative}", b"id: synthetic\n")
+            write(self.source, f"{base}/.issue-data/payload.bin", BINARY)
+        before = snapshot(self.source)
+        for host in ("claude", "codex"):
+            for manager in ("skillfile", "apm"):
+                with self.subTest(host=host, manager=manager):
+                    self.host, self.manager = host, manager
+                    self.target = self.root / f"consumer-{host}-{manager}"
+                    self.target.mkdir()
+                    self.calls.clear()
+                    self.assertEqual(self.run_install(), 0)
+                    self.assertFalse(any(".issue" in path.relative_to(self.target).parts for path in self.target.rglob("*")))
+                    native = ".claude" if host == "claude" else ".agents"
+                    self.assertEqual((self.target / native / "skills/method/.issue-data/payload.bin").read_bytes(), BINARY)
+                    if host == "codex":
+                        self.assertEqual((self.target / ".sdd/skills/method/.issue-data/payload.bin").read_bytes(), BINARY)
+        self.assertEqual(snapshot(self.source), before)
+
+    def test_B008_linked_tracker_is_skipped_before_source_validation(self):
+        # Given a tracker link outside the checkout; When planned; Then do not open excluded metadata.
+        self.host = "codex"
+        outside = self.root / "external-metadata"
+        outside.mkdir()
+        write(outside, "item.yml", b"external tracker\n")
+        for relative in (".agents/skills/.issue", ".agents/skills/method/.issue", "skills/method/references/.issue"):
+            link = self.source / relative
+            link.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                link.symlink_to(outside, target_is_directory=True)
+            except OSError as error:
+                self.skipTest(f"Symlink creation unavailable: {error}")
+        before = snapshot(outside)
+        self.assertEqual(self.run_install(), 0)
+        self.assertFalse(any(".issue" in path.relative_to(self.target).parts for path in self.target.rglob("*")))
+        self.assertEqual(snapshot(outside), before)
+
+    def test_B007_native_role_cannot_overwrite_the_consumer_index(self):
+        # Given a native contract using the reserved index path; Then reject before effects.
+        self.host = "codex"
+        write(self.source, "agents/README.md", b"# Conflicting role\n")
+        instructions = INSTRUCTIONS.replace("agents/alpha.md.", "agents/README.md.")
+        write(self.source, ".codex/agents/README.toml", f'name = "README"\ndeveloper_instructions = {json.dumps(instructions)}\n'.encode())
+        self.assert_rejected()
+        self.assertFalse(self.calls)
+
+    def test_B007_checkout_runtime_bundle_is_closed_over_private_file_links(self):
+        # Given this pool; When installed offline; Then its private runtime links resolve.
+        self.host = "codex"
+        self.source = Path(__file__).resolve().parent.parent
+        self.assertEqual(self.run_install(), 0)
+        private = self.target / ".sdd"
+        self.assertFalse(any(".spec" in path.parts for path in private.rglob("*")))
+        for document in private.rglob("*.md"):
+            for link in re.findall(r"\]\(([^)\s#]+)(?:#[^)]*)?\)", document.read_text()):
+                if ":" not in link:
+                    destination = (document.parent / link).resolve()
+                    self.assertTrue(destination.is_relative_to(private.resolve()), f"{document}: {link}")
+                    self.assertTrue(destination.is_file(), f"{document}: {link}")
 
     def test_C5_missing_manager_leaves_consumer_unchanged(self):
         with patch("shutil.which", return_value=None), self.assertRaises((ValueError, OSError, RuntimeError)) as caught:
