@@ -254,7 +254,7 @@ None.
 
 | Section | Status | Reviewer      | Note                                                                    |
 | ------- | ------ | ------------- | ----------------------------------------------------------------------- |
-| Diff: 0056 command routing and delivery records | 🟢 | spec-reviewer | Independent `/root/pr_diff_review`, 2026-10-19: Approved baseline `d365172b3a8a9e1d5bc2680631a66d0bd7c89c9f` plus staged patch SHA-256 `2828201145ca9d0aed2554a16b5f3db05465506df983169bc3e06844dd7c1b18`; no findings. Unchanged agreement and design approvals retain applicability. |
+| Diff: PR #11 concise PR command | 🟢 | spec-reviewer | Independent `/root/pr_diff_review`, 2026-10-19: Approved baseline `ff488e86e217f03b5e2658e1ccba490136f1e333` plus staged patch SHA-256 `92d1cccff69eba0b13cf8e96fa770136a552af2a261e3fa3329f183fdf945c9e`; no findings. Unchanged scope retains prior approval. |
 | Diff: §§ 10, 12 and command corrections | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
 | Baseline: 1-12 and scenarios | 🟢 | spec-reviewer | Independent `/root/baseline_projection_commands`, 2026-10-17: retrospective baseline content Approved at `2997ac3c6dbdf3bef910ffb6fef86aecc19d0bed`. Content approval; B-005 reference-link validation remains an implementation finding. No historical pre-implementation approval is claimed. |
 | Correction: §7 B-005 reference links and scenarios | 🟢 | spec-reviewer | Independent `/root/baseline_projection_commands`, 2026-10-17: Approved at `a2c1215ccec340282a9e75c4ba2e014946624db8f49c59513c03562bc247e7e3`; unchanged baseline approval remains applicable. |
@@ -264,6 +264,8 @@ None.
 | Surface: PR #9 instruction/projection boundary | 🟢 | adversary | Independent `/root/pr9_surface`, 2026-10-17, Approved static boundary scope; projector SHA-256 `93aad58741378bda9f09b48c8d268d1608c6f2eda9ab0cbb30a750dfcc2e9cc9`, installer `8b7d93f191bf041d2df7140d849c6ef5f35dbb9177185ca6604ab3139d668473`. No actionable findings; documented concurrency/manager exclusions remain. |
 
 ### Superseded amendment review history
+
+- 0056 original PR command wording, 2026-10-19 — 🟢 — `/root/pr_diff_review` — baseline `d365172b3a8a9e1d5bc2680631a66d0bd7c89c9f` plus staged patch SHA-256 `2828201145ca9d0aed2554a16b5f3db05465506df983169bc3e06844dd7c1b18`; command wording superseded by the PR #11 correction. Unchanged review-command and delivery-record scope retains this approval.
 
 Prior baseline record, superseded by the returned baseline content verdict:
 
