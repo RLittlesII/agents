@@ -1,11 +1,12 @@
 ---
-description: "Take a finished change through the diff pass to an open pull request, and work each round of review feedback until the person merges it."
+description: "Take a finished change through required review passes to an open pull request, and work each round of feedback until the person merges it."
 argument-hint: "<item id, branch or pull request>"
 ---
 
 Convene these roles as the body directs:
 
 - `spec-reviewer`, whose contract is `.claude/agents/spec-reviewer.md`
+- `adversary`, whose contract is `.claude/agents/adversary.md`
 - `implementer`, whose contract is `.claude/agents/implementer.md`
 - `spec-author`, whose contract is `.claude/agents/spec-author.md`
 - `architect`, whose contract is `.claude/agents/architect.md`
@@ -17,14 +18,10 @@ Read each role's contract before acting as it, and keep the boundaries it declar
 
 Use these skills: `deliver-change` (`.claude/skills/deliver-change/SKILL.md`), `spec-and-traceability` (`.claude/skills/spec-and-traceability/SKILL.md`).
 
-The independent reviewer runs the diff pass and routes findings to their artifact
-owners. Relevant owners make the bounded corrections; the implementation lead
-coordinates the response and integrates their returned revisions. The reviewer
-re-reads each correction. The implementation lead
-then runs the local gates, pushes, opens the pull request citing the claims the
-commits satisfy, and works each round of review feedback: a commit per thread,
-each thread resolved with a reply naming only that commit, a disputed finding
-answered in its thread and left open. The build owner joins only when a
-gate itself is wrong.
+The implementation lead supplies one identified review bundle. Run the diff pass
+before the conditional surface pass when a boundary, credential, permission or
+external input changes. Artifact owners address findings; reviewers re-read
+corrections. After local gates, push, open the pull request and handle feedback
+under the delivery rule.
 
 Work on: $ARGUMENTS

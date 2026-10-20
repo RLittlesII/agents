@@ -7,9 +7,10 @@ Follow the artifact ownership and review boundaries in the repository guidance.
 
 Use these skills: `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`), `coding-conventions` (`.agents/skills/coding-conventions/SKILL.md`).
 
-The independent reviewer reads the diff against every claim it cites and every
-accepted decision it touches. The surface pass joins only when the diff changes a
-trust boundary, a credential, an input from outside, or a permission; say which
-of those it touches, or that it touches none.
+The independent reviewer reads the identified diff against every claim it cites
+and every accepted decision it touches. The surface pass follows when the diff
+changes a trust boundary, a credential, an input from outside, or a permission;
+say which of those it touches, or that it touches none. A diff finding never
+delays or suppresses the surface pass.
 
 Work on: the request that invoked this skill

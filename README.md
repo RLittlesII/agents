@@ -58,7 +58,7 @@ the work sequence. Type `/<name>` in Claude Code or `$<name>` in Codex.
 | [`test`](commands/test.md)            | test-writer, tester                       | failing tests from claims, then a run report         |
 | [`implement`](commands/implement.md)  | domain, implementer, ui, database         | behavior changes and refactors integrated against their entry evidence |
 | [`review`](commands/review.md)        | spec-reviewer, adversary                  | a diff judged against its claims                     |
-| [`pr`](commands/pr.md)                | spec-reviewer, implementer, relevant artifact owners, build | a pull request opened, then reviewed to merge        |
+| [`pr`](commands/pr.md)                | spec-reviewer, conditional adversary, implementer, relevant artifact owners, build | required reviews, then a pull request opened and followed to merge |
 | [`ship`](commands/ship.md)            | spec-reviewer, adversary, auditor, observability, database, benchmarker, release | the final gate, then a confirmed release |
 | [`bug`](commands/bug.md)              | bug-finder, test-writer, implementer, database | a failure reproduced, pinned, fixed and learned from |
 | [`groom`](commands/groom.md)          | organizer                                 | the queue ranked, an item filed, or its health       |
