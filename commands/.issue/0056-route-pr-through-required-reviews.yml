@@ -1,0 +1,31 @@
+id: "0056"
+type: chore
+title: Route the PR command through required review passes
+status: in-progress
+cost: 1
+risk: 2
+parent: "0050"
+children: []
+depends_on: []
+spikes: []
+spec: commands/.spec/README.md
+claims: []
+created: "2026-10-19"
+updated: "2026-10-19"
+closed: null
+summary: |
+  The PR command convenes the diff reviewer but omits the conditional surface
+  reviewer, allowing a credential or boundary change to reach a PR without
+  the ordered review path already required by the method.
+acceptance_criteria:
+  - "The PR command convenes the conditional surface reviewer and names the ordered review passes."
+  - "The command supplies complete identified review inputs and limits correction review to affected scope and dependencies."
+  - "Existing approval, delegation, and human-decision boundaries remain authoritative without a new approval step."
+  - "Projection, command tests, and the specification checker pass."
+decisions:
+  - "2026-10-19, observation: the supplied consuming-repository session ran a credential surface pass before its displayed final diff review; the PR command itself names only the diff pass. Clarify the command without changing the method's review rule."
+  - "2026-10-19, ID reservation: current main is d365172b3a8a9e1d5bc2680631a66d0bd7c89c9f; open PR #10 reserves 0055. Allocate 0056 and advance the sequence in this change."
+  - "2026-10-19, ownership claim: Codex session 01a15714-5f35-7d02-8c89-97b5106836b8, planned branch codex/pr-review-handoffs, checkout /Users/rlittlesii/source/rlittlesii/agents. Item is in progress before branch creation or source edits."
+  - "2026-10-19, verification: 90 projector tests and 30 installer tests passed; 80 projected outputs current; dotnet specht --strict reported zero errors and warnings; coverage gate reported N/A for zero changed executable production lines."
+  - "2026-10-19, independent diff review: /root/pr_diff_review Approved staged patch SHA-256 2828201145ca9d0aed2554a16b5f3db05465506df983169bc3e06844dd7c1b18 against main d365172b3a8a9e1d5bc2680631a66d0bd7c89c9f; no findings. Section 12 records the returned verdict."
+out_of_scope: []

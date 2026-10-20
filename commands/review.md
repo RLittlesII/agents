@@ -6,9 +6,10 @@ skills: [spec-and-traceability, coding-conventions]
 argument-hint: "<diff, branch or path>"
 ---
 
-The independent reviewer reads the diff against every claim it cites and every
-accepted decision it touches. The surface pass joins only when the diff changes a
-trust boundary, a credential, an input from outside, or a permission; say which
-of those it touches, or that it touches none.
+The independent reviewer reads the identified diff against every claim it cites
+and every accepted decision it touches. The surface pass follows when the diff
+changes a trust boundary, a credential, an input from outside, or a permission;
+say which of those it touches, or that it touches none. A diff finding never
+delays or suppresses the surface pass.
 
 Work on: $ARGUMENTS

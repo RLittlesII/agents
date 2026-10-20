@@ -6,13 +6,13 @@ value: 3
 cost: 1
 risk: 2
 parent: "0001"
-children: ["0025", "0026", "0027"]
+children: ["0025", "0026", "0027", "0056"]
 depends_on: ["0048", "0049"]
 spikes: []
 spec: commands/.spec/README.md
 claims: ["B-001", "B-008", "B-003", "B-004", "B-005", "B-006", "B-007"]
 created: "2026-10-17"
-updated: "2026-10-17"
+updated: "2026-10-19"
 closed: null
 summary: |
   Coordinate the existing 0001-F3 agreement and its delivery evidence.
@@ -36,6 +36,7 @@ decisions:
   - "2026-10-17, authority boundary: coordinate existing claim identities while preserving their current approval and coverage gaps. This legacy source-record migration authorizes no new child work against unapproved agreement scope. Reconcile and groom any missing delivery assignments before offering dependent implementation."
   - "2026-10-17, child reconciliation: existing specification-scoped delivery records 0025, 0026, 0027 retain IDs, types, statuses, criteria and prior decisions. Update their parent links reciprocally to this coordinator under the approved migration."
   - "2026-10-17: PR #9 review 5560928256 replaces withdrawn command-skill B-002 with B-008 in current coordination scope. Prior decisions remain historical; native-command claims and delivery state remain unchanged."
+  - "2026-10-19: add child 0056 for the PR command review-routing correction; preserve this coordination record's in-progress state."
 out_of_scope:
   - "0001-F3 section 5 retains its existing scope exclusions; this record adds no product behavior or new implementation assignment."
   - "Cross-cutting audit item 0046 and historical root chores keep their existing scope and ownership."
