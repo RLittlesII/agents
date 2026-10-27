@@ -112,6 +112,10 @@ existing F# dependency declarations and pinned SDK remain authoritative. Generat
 coverage-build references from those declarations rather than tracking duplicate
 versions or the probe's cache workaround.
 
+CI grants package-read permission only to the verification job and supplies its
+temporary workflow token only during tool restore. Installer jobs retain
+contents-read permission; no separately configured package secret is required.
+
 Inventory tracked and non-ignored untracked Python/F# production sources across
 the repository, including the gate itself. Exclude declared tests, exact test-only
 harnesses, generated host trees and artifacts. A directory containing tests is
@@ -362,6 +366,7 @@ ignored. Linux CI execution is pending; these are historical local results.
 | --- | --- | --- | --- |
 | 2026-10-16 | Coverage-policy request | Adopt pooled changed-line coverage and comparison policy; feasibility probes establish no delivery score. | B-001–B-004; decision 0001 |
 | 2026-10-27 | Confirmed concise-specification plan | Compress in place; qualify sibling references; separate strategy, locators and history. | §§ 1–12; IDs unchanged |
+| 2026-10-27 | PR #13 restore failed with unset credentials | Restore tools using the temporary workflow token with job-scoped package-read permission. | B-004 |
 
 ## 11. Open Questions
 
