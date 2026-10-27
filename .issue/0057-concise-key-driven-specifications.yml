@@ -37,6 +37,7 @@ decisions:
   - "2026-10-27, current delivery scope: retain only prose, specification evidence, tracker bookkeeping and regenerated host outputs. Main's published specht.tool 0.1.90 and entire .specht tree remain unchanged. This supersedes the earlier template-upgrade and local-package prerequisites for this branch; the original branch retains their history."
   - "2026-10-27, prose-only verification against main 07bf8dc: tool restore and strict checks pass on specht.tool 0.1.90; all 80 outputs current; 90 projector and 30 installer tests pass; coverage gate passes with zero changed executable lines. All 142 claims and their coverage states are preserved."
   - "2026-10-27, user authorized PR #13 CI authentication repair: failed run 40574444473 has an empty configured package username/token and HTTP 401. Use the temporary GITHUB_TOKEN only during tool restore, granting packages:read only to the check job; retain published Specht 0.1.90 and the existing verification policy under 0001-F6 B-004."
+  - "2026-10-27, PR #13 review 5673733300: remove the newly introduced foreign import-mapping file and active foreign provenance references; retain local claims, decisions and approval evidence. The original import bookkeeping remains recoverable in Git history."
 out_of_scope:
   - Checker behavior, prose linting and a new reference resolver.
   - Specht implementation, tool/schema/template upgrades and accepted ADR changes.
