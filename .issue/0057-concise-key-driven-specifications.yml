@@ -1,0 +1,41 @@
+id: "0057"
+type: chore
+title: Adopt concise key-driven specifications
+status: in-progress
+cost: 5
+risk: 3
+parent: null
+children: []
+depends_on: []
+spikes: []
+spec: null
+claims: []
+created: "2026-10-27"
+updated: "2026-10-27"
+closed: null
+summary: |
+  Apply the concise-specification guidance and seven-spec cleanup, with
+  regenerated host outputs. Retain main's published tool and template baseline.
+acceptance_criteria:
+  - Preserve permanent IDs, claim meaning, coverage status and recoverable approval evidence.
+  - Use qualified sibling keys; keep concrete test references in section 9.
+  - Preserve accepted ADRs and main's tool, schema and template files byte for byte.
+  - Run strict specifications, projection and installer checks on the published tool baseline.
+decisions:
+  - "2026-10-27, ownership claim: Codex session 01a17e32-9a9c-7212-a395-964f27544c04; branch codex/concise-key-driven-specs; checkout /Users/rlittlesii/source/rlittlesii/agents. User supplied the confirmed plan."
+  - "2026-10-27, baseline: clean checkout on codex/pr-review-handoffs; existing item 0056 and its ownership are unchanged. This cross-Feature chore takes a separate branch."
+  - "2026-10-27, migration: seven Feature specs shortened from 44297 to 27104 words; all 142 claim IDs, meanings and statuses, matrix coverage, tracker paths and accepted ADRs preserved."
+  - "2026-10-27, independent review: /root/review Approved source guidance/templates snapshot 56aa5cd84ebbda396a854aa15e5e507af6b142ce9abc1a00902abb63c61a6eee and seven-spec snapshot f27fd76c55d76a7023b3e96f55f010b453564c682325dd738b0b557381841b38; sections 12 record returned approval, not new executable coverage."
+  - "2026-10-27, verification: strict agents check has zero errors/warnings; 90 projector tests and 30 installer tests pass; all 80 projected outputs current. All 141 active matrix locator occurrences resolve; three withdrawn historical locators remain withdrawn."
+  - "2026-10-27, Specht delivery: schema 0.2.1 uses unchanged 0.2.0 vocabulary; published 0.1.0/0.2.0 bytes and locks unchanged. Supported schema pin and upgrade refreshed both checkouts. 168 shipping/init/upgrade/versioning tests and 12 integrity tests pass on net11.0. Consumer reports are identical except schemaVersion."
+  - "2026-10-27, release prerequisite: tool pin 0.2.43-g0cdbb8759c is a locally built package, not published. Fresh restores need that package supplied locally or a published tool containing schema 0.2.1. Local artifact: .artifacts/concise-specs/nupkg/specht.tool.0.2.43-g0cdbb8759c.nupkg."
+  - "2026-10-27, Specht full-tree strict baseline: zero errors and 116 warnings both before and after; reports identical except schemaVersion. Existing warning cleanup is outside this change."
+  - "2026-10-27, coverage gate: passed using the pinned coverage environment; N/A with zero changed executable production lines against 57cd1200b089d2872d4538c91b5d085cf069307d."
+  - "2026-10-27, continuation: ownership and unchanged review scope verified; user requested this cleanup committed separately from the Specht template delivery. The local tool package publication prerequisite remains recorded."
+  - "2026-10-27, final consumer sync: Specht commit 7dc9fca0 passed normal format hooks. Upgrade the tool pin to locally built 0.2.46-g7dc9fca090 and refresh the two formatting-only Feature-template lines through supported upgrade. This supersedes the earlier local-package pin; publication or local package supply remains required for fresh restores. Package SHA-256: 07ec934a30faa51c17f8cde11e09ec14cd08c74ca3df5e36ff969e7d82d17544."
+  - "2026-10-27, authorized reassignment: user requested a prose-only branch from main without the unpublished Specht dependency. Codex session 01a17e15-761c-7ab0-ba6f-2b8a780dbac9 owns this follow-up, transferred from session 01a17e32-9a9c-7212-a395-964f27544c04; checkout /Users/rlittlesii/source/rlittlesii/agents; branch codex/concise-spec-prose. Source cleanup: f9fc434; current main: 07bf8dc."
+  - "2026-10-27, current delivery scope: retain only prose, specification evidence, tracker bookkeeping and regenerated host outputs. Main's published specht.tool 0.1.90 and entire .specht tree remain unchanged. This supersedes the earlier template-upgrade and local-package prerequisites for this branch; the original branch retains their history."
+  - "2026-10-27, prose-only verification against main 07bf8dc: tool restore and strict checks pass on specht.tool 0.1.90; all 80 outputs current; 90 projector and 30 installer tests pass; coverage gate passes with zero changed executable lines. All 142 claims and their coverage states are preserved."
+out_of_scope:
+  - Checker behavior, prose linting and a new reference resolver.
+  - Specht implementation, tool/schema/template upgrades and accepted ADR changes.

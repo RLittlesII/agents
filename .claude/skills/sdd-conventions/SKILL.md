@@ -190,10 +190,13 @@ another; a pass that could would stop being worth running.
 | Constraint    | `C-12`            | its Feature                       | `0001-F1 C-12`        |
 | Open question | `OQ-3`            | its Feature                       | `0001-F1 OQ-3`        |
 | Task          | `0001-11`         | its **epic**, not its Feature     | `0001-11`             |
-| ADR           | `ADR-0002`        | repo or Feature, by blast radius  | `ADR-0002`            |
+| Decision      | `decision 0002`   | its Feature                       | `0001-F2 decision 0002` |
+| ADR           | `ADR-0002`        | repo or Feature, by blast radius  | `ADR-0002` (repo), `0001-F2 ADR-0002` (Feature) |
 | Checker rule  | `SPEC031`         | the checker's rule set            | `SPEC031`             |
 
 Always carry the prefix in prose — several sequences have a twelfth member.
+Cross-specification references use qualified keys, not sibling-spec hyperlinks;
+see `spec-and-traceability` § "One answer, one section".
 
 An ID becomes **permanent on merge or citation outside its authoring branch**,
 whichever happens first. Shared reviews and work-item citations count even before

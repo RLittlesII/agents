@@ -20,7 +20,7 @@ depends_on: []
 blocks: []
 spikes: []
 created: "2026-10-16"
-updated: "2026-10-17"
+updated: "2026-10-27"
 github_issue: null
 synced_at: null
 ---
@@ -29,7 +29,7 @@ synced_at: null
 
 ## 1. Business Goal
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 A consumer installs the complete method for its chosen AI host with one
 cross-platform script and its preferred package manager, without choosing
@@ -37,7 +37,7 @@ individual files or receiving another host's formats.
 
 ## 2. User Needs
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | # | Persona | Need | Pain Point Today |
 | --- | --- | --- | --- |
@@ -52,7 +52,7 @@ None. Stakeholder-approved defaults are recorded in § 11.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-17 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | ID | Claim | Source | Status |
 | --- | --- | --- | --- |
@@ -67,7 +67,7 @@ None. Stakeholder-approved defaults are recorded in § 11.
 
 ## 4. Constraints
 
-<!-- last written by: spec-author, 2026-10-17 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | ID | Constraint | Rules Out |
 | --- | --- | --- |
@@ -79,7 +79,7 @@ None. Stakeholder-approved defaults are recorded in § 11.
 
 ## 5. Out of Scope
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | # | Item | Exclusion Reason |
 | --- | --- | --- |
@@ -92,431 +92,228 @@ None. Stakeholder-approved defaults are recorded in § 11.
 
 ## 6. Concern Separation
 
-<!-- last written by: architect, 2026-10-16 -->
+<!-- last written by: architect, 2026-10-27 -->
 
-| Concern | Owner and boundary | Satisfies |
+| Concern | Boundary | Satisfies |
 | --- | --- | --- |
-| Artifact content and host paths | Existing projections owned by 0001-F1; command contracts owned by 0001-F3 | B-001, B-002, C-2 |
-| Installation plan | This Feature selects the host's projected files and preserves their relative layout | B-001, B-002 |
-| Skill acquisition | The selected manager installs local skill directories into an isolated temporary project | B-003, B-004, C-3 |
-| Contract dependencies | This Feature preserves native Claude references and supplies private authoritative sources for Codex | B-006 |
-| Consumer writes | This Feature validates and promotes only planned files; consumer instructions and configuration remain consumer-owned | C-1, C-3, C-4 |
-| Failure reporting | The CLI reports the failed phase and returns an unsuccessful exit; manager success alone is insufficient | C-5 |
-
-Written by Marcus.
+| Artifact content and host paths | 0001-F1 projections and 0001-F3 commands | B-001, B-002, C-2 |
+| Installation plan | Select projected bytes and preserve relative layout | B-001, B-002 |
+| Skill acquisition | Selected manager in isolated temporary project | B-003, B-004, C-3 |
+| Contract dependencies | Native Claude links; private authoritative Codex sources | B-006 |
+| Consumer writes | Validate/promote planned files; consumer instructions/configuration stay consumer-owned | C-1, C-3, C-4 |
+| Failure reporting | Failed phase and unsuccessful exit; manager success alone is insufficient | C-5 |
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-17 -->
+<!-- last written by: architect, 2026-10-27 -->
 
-### DR-1 — One Python entry point, with a plan before effects
+### DR-1 — Plan before effects
 
-`install/install.py` is both the executable script and an importable module,
-using Python 3.11+ and only its standard library, as approved in OQ-4. Its
-`main` parses required `--host claude|codex`, `--manager skillfile|apm` and
-`--target <project>` arguments plus optional `--force`. The checkout is the
-parent of the script's containing `install` directory; the importable `install`
-entry point accepts a source root so synthetic checkouts can exercise the same
-behavior. Importing the module
-has no effects. The declaring file becomes the authority for these interfaces
-once stubs exist.
+Use an importable, effect-free Python 3.11+ standard-library module (OQ-4) with a
+CLI requiring `--host claude|codex`, `--manager skillfile|apm`, `--target`, and
+optional `--force`. The checkout supplies committed package bytes. Keep artifact
+selection/rebasing/conflict comparison separate from manager execution and
+publication; the plan is ordered project-relative paths to immutable bytes.
+A source-root seam supports synthetic checkouts and subprocess/filesystem
+boundaries remain substitutable.
 
-The plan is an ordered mapping of project-relative paths to immutable bytes.
-Artifact selection, prefix rebasing and conflict comparison are separate from
-subprocess execution and filesystem publication. An injected or patched
-`subprocess.run` supplies the existing test substitution seam. No provider base
-class, registration system, asynchronous framework or second command launcher
-is needed for two manager branches.
+Adapt the two manager manifest/process contracts with direct branches. Both
+return staged skills; direct manager writes into the consumer cannot satisfy the
+common preservation/conflict policy. No provider hierarchy or second launcher is
+needed.
 
-An Adapter is appropriate only at the subprocess boundary: Skillfile and apm
-consume different local-package manifests, but both return a staged skill tree.
-Two direct branches implement that adaptation. The simpler alternative, having
-each manager write directly into the consumer, cannot provide C-3's common
-conflict policy and exposes manager-owned instruction/configuration writes.
+### DR-2 — Projection and dependency layout
 
-### DR-2 — Selected projections and dependency layout
+| Host | Project destination | Transformation |
+| --- | --- | --- |
+| Claude | `.claude/agents/<role>.md`, `.claude/commands/<name>.md` | Committed bytes |
+| Claude | `.claude/skills/<name>/**` | Verified manager output, byte-preserved |
+| Codex | `.codex/agents/<role>.toml` | Rebase authoritative-source prefix only |
+| Codex | `.agents/skills/<name>/**` | Verified manager output, byte-preserved |
+| Codex | `.sdd/agents/<role>.md` and optional persona roster | Selected native roles' source bytes |
+| Codex | `.sdd/agents/README.md` | Derived runtime index |
+| Codex | `.sdd/skills/<name>/**` | Method runtime bytes, excluding `.spec` and `.issue` |
 
-| Host | Checkout input | Project destination | Transform |
-| --- | --- | --- | --- |
-| Claude | `.claude/agents/*.md` | `.claude/agents/<role>.md` | None |
-| Claude | `.claude/commands/*.md` | `.claude/commands/<name>.md` | None |
-| Claude | `.claude/skills/<name>/**` | `.claude/skills/<name>/**` | Verified manager output, byte-preserved |
-| Codex | `.codex/agents/*.toml` | `.codex/agents/<role>.toml` | Rebase only the authoritative-source prefix |
-| Codex | `.agents/skills/<name>/**` | `.agents/skills/<name>/**` | Verified manager output, byte-preserved |
-| Codex | Selected native roles' source contracts and optional `agents/PERSONAS.md` | `.sdd/agents/<file>.md` | Byte-preserved |
-| Codex | Selected role and method inventory | `.sdd/agents/README.md` | Derived consumer index |
-| Codex | `skills/<name>/**` excluding `.spec` at every depth | `.sdd/skills/<name>/**` | Remaining runtime bytes preserved |
+ADR-0011 carries forward ADR-0005's command-skill discovery locations. Both
+managers install skills; the wrapper promotes agents and native Claude commands.
+Require nonempty artifact categories and a `SKILL.md` per selected skill, including
+nested support files.
 
-Codex's discovery tree already includes command skills, per
-[ADR-0011](../../.spec/adr/0011-command-skills-follow-artifact-ownership.md),
-which carries forward ADR-0005's discovery locations.
-Claude commands are promoted directly because Skillfile has no command entity.
-Skillfile's Markdown agent model does not represent Codex TOML agents; both
-managers therefore install skills while this wrapper promotes agents and Claude
-commands. Every selected skill directory must contain `SKILL.md`; nested support
-files remain part of the plan. Empty or missing required artifact categories
-are validation failures, rather than successful empty installations.
+For Codex, replace exactly the known source-prefix reference with the private
+project-relative source path. Parse before/after TOML and verify all other
+values and decoded instruction remainder are unchanged. Unexpected prefixes
+fail. Validate known sibling-role and relative method-skill links against the
+complete private byte plan before effects, ignoring anchors. This bounded grammar
+is not a general Markdown parser. Consumer instruction/companion references
+retain consumer meaning; private sources avoid overwriting ordinary consumer
+agent/skill directories. Rewriting every link or regenerating projections during
+installation would duplicate 0001-F1 and violate C-2/ADR-0002.
 
-The Codex source-prefix sentence names `.sdd/agents/<role>.md` instead of
-`agents/<role>.md`; the rest of `developer_instructions`, every other TOML
-value, and the role body are unchanged. Match exactly the known prefix once,
-fail on an unexpected prefix, and parse the before/after TOML with `tomllib` to
-verify only that source reference changed. The source is project-relative, so
-moving the consumer project preserves it. Source-role sibling links resolve
-under `.sdd/agents`; their `../skills/` links resolve under `.sdd/skills`.
-Before staging, validate the contracts' known Markdown sibling and
-`../skills/<name>/...` links against the private byte plan, ignoring anchor
-fragments; a missing repository-owned dependency fails validation. Source skill
-selection copies named skill directories containing `SKILL.md`, excluding
-top-level specification metadata such as `skills/.spec` and nested `.spec`
-directories. The optional tree-reading exclusion prunes that reserved metadata
-before traversal; other nested resources retain their paths and bytes. This bounded link
-grammar matches the existing contracts; it is not a general Markdown parser.
-Claude's sibling and skill links already resolve under `.claude/`; it needs no
-private copy. Consumer README, AGENTS.md and companion references retain their
-consumer meaning.
+Select private contracts from native-role inventory; require every source and
+reserve index/roster names against role collisions. The derived index links only
+shipped contracts, method entry points and optional roster; producer indexes and
+unshipped dependencies are excluded ([decision
+0002](decisions/0002-runtime-contracts-with-a-consumer-index.md)). Exclude exact
+`.spec` entries before private-source traversal; this exclusion does not alter
+committed native projections. B-008 excludes exact `.issue` entries before
+validation/read/descent in both native and private skill trees at every depth,
+including linked metadata. Other hidden and binary runtime resources retain
+paths/bytes ([decision 0003](decisions/0003-exclude-tracker-metadata.md)).
 
-Private Codex sources avoid overwriting ordinary consumer `agents/` and
-`skills/` directories. Rewriting every link was rejected because it changes
-role bodies and duplicates the projector's responsibility. Modifying committed
-projections or running the projector during installation was rejected by C-2
-and [ADR-0002](../../.spec/adr/0002-generated-host-outputs-are-committed.md).
+### DR-3 — Isolated manager staging
 
-#### Runtime bundle amendment, 2026-10-17
+Resolve the selected executable on PATH. Invoke argument lists with explicit cwd,
+no shell and checked exits; path characters remain within their arguments. Copy
+inputs to short staging-relative package paths and use actual manager manifest
+grammar, not shell quoting. Installation does not fetch this repository or install
+the manager itself.
 
-Under [decision 0002](decisions/0002-runtime-contracts-with-a-consumer-index.md),
-select private source contracts by the native Codex role inventory instead of
-copying every top-level source Markdown file. Require each selected source;
-retain the optional generated persona roster as a runtime reference. Derive a
-small index at `.sdd/agents/README.md` with links to those contracts, installed
-method entry points and the roster when present. It explains that project
-instructions and companion guidance belong to the consumer, without linking
-unshipped producer files. The producer index and source contracts are untouched.
-Reserve the index and roster names against native-role collisions.
+Skillfile declares local skills individually and the selected host's local
+installation target. Run validation before installation; neither failure permits
+promotion or fallback to personal configuration. Accept one complete matching
+skill tree from Claude's native staging path or Codex's explicit `.codex/skills`
+and `.agents/skills` alternatives; differing valid candidates are ambiguous.
+Promote to the projected destination regardless of staging layout.
 
-`build_plan` retains its existing ordered path-to-bytes result.
-The private-only `.spec` exclusion does not apply to committed host projections
-or ordinary runtime support files. B-008 separately excludes `.issue` entries
-from both native and private skill trees. Known
-role and index dependency links are checked against the completed private plan
-before managers or consumer writes. No general Markdown parser, exporter,
-recursive producer closure or new production interface is introduced. Synthetic
-public-entry tests pin selected-role inventory, index links, nested runtime
-bytes, excluded metadata and failure before effects for missing dependencies.
-Independent review of this amendment is recorded in § 12; prior DR-2 approval applies
-to its unchanged layout, rebasing and publication mechanisms, not this selection
-delta.
+apm receives independent local native skill-package directories, each rooted at
+`SKILL.md`, under a dependency-free temporary project and explicit host/only-apm
+selection. Do not use a single collection package: apm 0.33.0 rewrites sibling
+links within it. Independent packages preserve links escaping their package root;
+exact-byte verification still guards future changes.
 
-### DR-3 — Managers run in an isolated staging project
-
-Resolve the selected executable on PATH, then invoke it with an argument list,
-an explicit working directory, no shell and checked exit status. Paths containing
-spaces, quotes, dollar signs or non-ASCII characters remain single arguments.
-Write manifest paths using each manager's actual grammar; copy inputs to short
-relative staging paths so consumer/checkout path characters never enter manager
-manifests. Do not apply shell quoting to manifest values. The wrapper does not
-install manager executables or fetch this repository: its validated local
-checkout supplies package bytes.
-
-Create a temporary project and copy the selected skill directories into its
-local package tree. Host artifacts, project manifests and generated project
-configuration remain in staging and are discarded. Manager-internal user cache
-and configured lifecycle effects are outside that isolation boundary; apm 0.33.0
-initializes `~/.apm/cache` even for a dependency-free local invocation.
-
-Skillfile's staging `Skillfile` declares one `local skill <name>
-package/skills/<name>` line per skill, followed by `install claude-code local`
-or `install codex local`. Invoke `skillfile validate`, then `skillfile install`;
-either failure stops. Validation prevents malformed manifests from falling back
-to personal configuration. Claude output is `.claude/skills`; Codex output may
-be `.codex/skills` in verified version 1.7.1 or `.agents/skills` in the documented
-current layout. Accept one complete matching output tree from these explicit
-locations and reject ambiguous differing candidates. Promote its bytes to
-DR-2's projected path, regardless of the manager's staging path. The currently
-documented custom `install-path` syntax is rejected by the tested 1.7.1 CLI and
-is not used.
-
-apm receives each `package/skills/<name>` directory as an independent local native
-skill package, containing `SKILL.md` at its root. Its staging `apm.yml` contains
-`name: sdd-install` and `version: 1.0.0`, without dependencies. Invoke one
-`apm install ./package/skills/<name1> ./package/skills/<name2> ... --target
-<claude|codex> --only apm` argument list. The references use the already validated
-skill names; no shell interprets them. apm may update the temporary manifest and
-lock file. Its verified output is `.claude/skills` or `.agents/skills`, respectively.
-After manager success, require every expected skill
-file at its staged destination to equal the validated input bytes. Ignore
-unplanned manager-generated files; never promote them. Missing, changed or linked
-expected staged files fail before a consumer write.
-
-Do not stage all skills as one package's `.apm/skills` collection: apm 0.33.0
-rewrites sibling-skill Markdown links toward that collection, changing committed
-bytes and making the installed links depend on discarded staging files. With
-independent native packages, sibling-skill links lie outside each package root;
-apm preserves them. The installer still requires exact bytes for every file, so
-future rewriting changes fail safely. Accepting rewritten content or reversing
-rewrites was rejected because it would add a second link transformation contract.
-
-DR-3 / C-3 — existing artifacts and manager processes, with proposed staging and promotion:
+After manager success, every expected file must exist, match input bytes and be
+unlinked. Ignore unplanned manager files; never promote them. Staged host artifacts,
+manifests, locks and project configuration are discarded. Manager user-cache and
+configured lifecycle effects remain outside project isolation; apm 0.33.0 can
+initialize its user cache even for local dependency-free input.
 
 ```mermaid
 flowchart LR
-  subgraph Checkout["Checkout: existing authoritative inputs"]
-    Projection["Selected committed projections"]
-    Source["Codex source roles and method skills"]
-  end
-  subgraph Wrapper["Installer process: proposed"]
-    Plan["Validated byte plan"]
-    Verify["Verify staged skills"]
-    Publish["Preflight and publish"]
-  end
-  subgraph Temporary["Temporary project: proposed"]
-    Package["Local skill package"]
-    Manager["Existing selected manager process"]
-    Output["Staged skill files"]
-  end
-  subgraph Consumer["Consumer project: existing boundary"]
-    Files["Selected native files and private Codex sources"]
-  end
-  Projection --> Plan
-  Source --> Plan
-  Plan --> Package
-  Package --> Manager
-  Manager --> Output
-  Output --> Verify
-  Plan --> Verify
-  Verify --> Publish
-  Publish --> Files
+  projections[Committed projections] --> plan[Validated byte plan]
+  sources[Selected private Codex sources] --> plan
+  plan --> staging[Temporary local packages]
+  staging --> manager[Selected manager]
+  manager --> verify[Verify expected paths and bytes]
+  plan --> verify
+  verify --> publish[Repeat preflight and publish]
+  publish --> consumer[Selected consumer artifacts]
 ```
 
-### DR-4 — Preflight, publication and recovery
+DR-3/C-3: only verified planned bytes cross the consumer-write boundary.
 
-Canonicalize the declared checkout and project roots once. Enumerate selected
-trees without following links, and reject symlinks or Windows reparse points at
-every source, staged and destination component beneath their roots, including
-dangling links. Python 3.11's `lstat` and Windows file attributes supply the
-junction check; `Path.is_junction`, added in a later Python version, is not a
-prerequisite. Validate every resulting path is relative and contained. Existing
-directories where files are planned, or files where directories are needed,
-are structural errors even with `--force`.
+### DR-4 — Publication and recovery
 
-Preflight the complete plan before invoking the manager and again immediately
-before publication. A missing file is an addition; equal bytes are a no-op;
-different bytes are a conflict unless `--force` was supplied. Report all known
-conflicting relative paths and write none. `--force` permits only the planned
-file replacements; it never removes unrelated files or directories. A second
-installation uses the same conflict rules and does not prune files from an older
-release because this Feature has no ownership ledger or uninstall contract.
+Canonicalize declared checkout/project roots once. Enumerate without following
+links; reject symlinks/reparse points, including dangling links, at every source,
+staged and destination component beneath the roots. Require relative contained
+paths. Python 3.11 file attributes suffice for Windows junction checks. Structural
+file/directory collisions fail even with force.
 
-Prepare replacement files next to their destinations and use `os.replace` for
-each atomic replacement. Preserve originals for rollback before replacing them.
-On an ordinary caught publication failure, restore replaced originals, remove
-newly installed files and remove only empty directories created by this attempt;
-return failure. A rollback failure is reported with the affected path and still
-returns failure. Manager or validation failure occurs before publication and
-cannot leave a consumer installation. There is no whole-tree transaction,
-crash recovery, concurrent-installer serialization or defense against another
-process racing path validation. These limits follow the local single-run
-installation boundary rather than inventing a filesystem transaction.
+Preflight the whole plan before the manager and immediately before publication.
+Missing files are additions, equal bytes no-ops, and different bytes conflicts
+unless forced. Report all known conflicts and write none. Force permits only
+planned replacements; never prune unrelated or previously installed files. There
+is no ownership ledger or uninstall contract, including for previously installed
+metadata.
 
-DR-4 / C-3–C-5 — installation decisions and terminal results:
+Prepare replacements beside destinations, retain originals, then replace each
+file atomically. On caught publication failure restore replaced originals, remove
+new additions and only empty directories created by this attempt. Report rollback
+errors with paths and return failure. No tree transaction, crash recovery,
+concurrent-installer serialization or validation-race defense is claimed.
 
 ```mermaid
 flowchart TD
-  Start["Parse and build plan"] --> Valid{"Inputs and paths valid?"}
-  Valid -->|No| Fail["Exit failure"]
-  Valid -->|Yes| Conflicts{"Conflicts without force?"}
-  Conflicts -->|Yes| Fail
-  Conflicts -->|No| Run["Run manager in staging project"]
-  Run --> Verified{"Manager succeeded and expected bytes match?"}
-  Verified -->|No| Fail
-  Verified -->|Yes| Recheck{"Destination preflight still passes?"}
-  Recheck -->|No| Fail
-  Recheck -->|Yes| Write["Publish planned changes"]
-  Write --> Success{"Publication succeeded?"}
-  Success -->|Yes| Done["Exit success"]
-  Success -->|No| Restore["Rollback attempted changes"]
-  Restore --> Fail
+  Plan[Build plan] --> Valid{Inputs, paths and conflicts valid?}
+  Valid -->|No| Fail[Failure]
+  Valid -->|Yes| Stage[Run manager in staging]
+  Stage --> Bytes{Expected staged bytes valid?}
+  Bytes -->|No| Fail
+  Bytes -->|Yes| Preflight{Destination preflight passes?}
+  Preflight -->|No| Fail
+  Preflight -->|Yes| Publish[Preserve originals and replace files]
+  Publish --> Success{Publication complete?}
+  Success -->|Yes| Done[Success]
+  Success -->|No| Rollback[Restore originals and remove additions]
+  Rollback --> Fail
 ```
 
-DR-3 / DR-4 — subprocess success precedes consumer commit:
+DR-4/C-3–C-5: manager/validation failures precede writes; publication errors
+attempt rollback and never become success.
 
 ```mermaid
 sequenceDiagram
   actor User
   participant Installer
-  participant Staging as Temporary project
-  participant Manager as Selected manager
-  participant Project as Consumer project
-  User->>Installer: host, manager, target, force
-  Installer->>Project: Validate paths and compare full plan
-  Installer->>Staging: Write local package and manager manifest
-    Installer->>Manager: Run with staging cwd and explicit host
-  Manager->>Staging: Install selected skills
+  participant Manager
+  participant Staging
+  participant Consumer
+  User->>Installer: Host, manager, target, force
+  Installer->>Consumer: Preflight complete plan
+  Installer->>Staging: Write local packages/manifests
+  Installer->>Manager: Run in staging
+  Manager->>Staging: Produce skills
   Manager-->>Installer: Exit status
-  alt Manager failure or unexpected staged bytes
-    Installer-->>User: Failure, consumer unchanged
-  else Valid manager result
-    Installer->>Project: Repeat full destination preflight
-    Installer->>Project: Preserve originals and replace planned files
+  alt Invalid manager result or bytes
+    Installer-->>User: Failure without consumer writes
+  else Valid result
+    Installer->>Consumer: Recheck, retain originals, replace planned files
     alt Publication failure
-      Installer->>Project: Restore originals and remove additions
-      Installer-->>User: Failure, report rollback errors if any
-    else Publication complete
-      Installer-->>User: Success and selected host summary
+      Installer->>Consumer: Restore originals and remove additions
+      Installer-->>User: Failure including any rollback errors
+    else Complete
+      Installer-->>User: Success
     end
   end
 ```
 
-No database view applies: state is project files, without a schema or migration.
-No class diagram applies: the implementation uses functions and immutable byte
-plans without an object hierarchy. No persistent state diagram applies: one
-invocation has no durable workflow state; DR-4's algorithm and sequence show
-failure transitions and rollback.
+DR-3/DR-4: process success and verification precede consumer publication. No
+entity/class/persistent-state view applies: one invocation has file state and
+functional byte plans, without a database or object hierarchy.
 
 ### Feasibility, cost and readiness
 
-The bounded feasibility question was whether each manager preserves complete
-local skill directories while consumer host writes remain isolated. The parent
-investigation on 2026-10-16 tested a synthetic `alpha/SKILL.md` and nested binary
-file with real Skillfile 1.7.1 and apm 0.33.0. Both built-in Skillfile host
-manifests installed local skills successfully; Codex wrote `.codex/skills`.
-Both initial apm host invocations preserved the synthetic local collection at
-their expected output paths. A subsequent complete-repository invocation
-correctly failed byte verification before consumer writes: apm had rewritten
-sibling-skill links. The revised DR-3 mechanism was then executed with real apm
-0.33.0 using separate local `clarify-requirements` and `sdd-conventions` package
-arguments; both outputs matched their original bytes, including sibling links.
-The installed apm `LinkResolver._rewrite_relative_asset_link` corroborates the
-mechanism: links escaping its package root retain their original text. The
-mechanism is feasible; full byte verification remains mandatory for each
-installation. These smoke results are not executable claim coverage or
-Windows/Linux verification.
-[Skillfile's format](https://github.com/eljulians/skillfile/blob/master/SPEC.md)
-and [apm install](https://microsoft.github.io/apm/reference/cli/install/)
-are compatibility references. The failed `install-path` experiment demonstrates
-why the documented surface alone cannot choose a supported manifest.
+Historical 2026-10-16 probes with Skillfile 1.7.1 and apm 0.33.0 established local
+nested-byte staging. Complete-repository apm collection input failed byte
+verification before consumer writes; separate local packages preserved sibling
+links. These are feasibility observations, not claim coverage or cross-platform
+proof. Byte verification remains mandatory for every installation.
 
-For B-001–B-006's complete repository installation, planning, staging comparison
-and publication scan each selected file a fixed number of times: estimated
-O(total bytes + file count), with O(total bytes) plan memory and temporary disk
-for package, output and rollback copies. Manager process time is external and
-unmeasured. No latency or throughput target is stated. There is no service,
-broker or paid infrastructure; one local subprocess and temporary filesystem
-space are the added resources.
+Planning, staging comparison and publication are O(total selected bytes + file
+count), with O(total bytes) plan memory and temporary package/output/rollback disk.
+External manager duration is unmeasured; there is no service or latency target.
 
-Readiness: **Ready for tests and implementation**, subject to the independent
-design review before tests depend on it. B-001–B-006 and C-1–C-5 have a concrete
-mechanism and a controllable subprocess/filesystem seam; OQ-1–OQ-5 are resolved
-by the user's approved scope/defaults. No unresolved requirement blocks design.
-
-| Covered item | Risk | Reason |
-| --- | --- | --- |
-| Complete host installation, B-001/B-002 | Medium | Manager output paths differ; only a verified explicit mapping reaches the consumer |
-| Manager compatibility, B-003/B-004 | Medium | Upstream CLI/manifest changes can reject staging; mismatch must fail before publication |
-| Cross-platform invocation, B-005 | Medium | Windows reparse points and manifest escaping require platform-specific verification |
-| Dependency closure, B-006 | Medium | Codex prefix rebasing must preserve the decoded instruction remainder and private relative links |
-| Consumer preservation, C-3/C-4 | Medium | Publication spans files; ordinary failures roll back, while crash and concurrent-writer transactions are absent |
-
-Written by Marcus.
-
-### Tracker metadata boundary
-
-[Decision 0003](decisions/0003-exclude-tracker-metadata.md) adds B-008.
-`read_tree` skips exact `.issue` entries before path validation, descent or
-reads, for both committed native skill trees and private method sources.
-Its existing private-only `.spec` exclusion remains. Top-level private method
-selection already skips dot-prefixed entries. This provides defense at the
-installation boundary even when an older projection contains tracker records.
-
-All manager staging, destination validation, force semantics and non-pruning
-behavior remain. Previously installed metadata is not silently removed. Tests
-install native root and nested metadata through both hosts/managers,
-exercise private nested metadata and linked excluded entries, and assert
-ordinary hidden/binary runtime bytes and source trees remain unchanged.
-Readiness: Ready; independent agreement/design approval is recorded in § 12.
+Readiness: Ready for tests and implementation for B-001–B-006 and B-008, subject
+to applicable independent design approval in § 12. OQ-1–OQ-5 are resolved and
+subprocess/filesystem seams are controllable. Risk: medium for manager layout/
+version drift, cross-platform links, prefix dependency preservation and partial
+publication; verification and rollback address these within the stated limits.
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-17 -->
+<!-- last written by: test-writer, 2026-10-27 -->
 
-`python3 -m unittest discover -s install -p 'test_*.py' -v` discovers 27
-public-entry tests in `install/test_install.py`; discovery previously had zero
-installer tests. The `.feature` scenarios are documentary; named unittest cases
-execute their acceptance behaviors through `install` and `main`.
+Exercise public installation and CLI behavior for both hosts and both managers
+using synthetic checkouts. Substitute subprocess execution while parsing actual
+manager manifest grammar, validating arguments, checked execution and isolated
+working directories, and copying staged packages to declared destinations.
+Scenarios are documentary; executable acceptance checks use the public entry.
 
-Synthetic checkouts exercise all four host/manager combinations. A patched
-`subprocess.run` parses each actual manifest grammar, checks argument lists,
-checked execution and isolated working directories, and copies staged local
-packages to the manager's declared output location. No network, real manager,
-credential, ambient clock, delay or recorded traffic enters this suite.
+Cover dependency closure, prefix derivation, manager/output failures, complete-plan
+conflicts, idempotence, force replacement, path structure, linked sources and
+destinations, simulated reparse attributes and rollback. Verify runtime bytes,
+producer-record exclusion and private-link closure in synthetic and real trees.
 
-Focused boundary cases pin TOML prefix derivation, dependency closure, missing
-or failed managers, changed/missing/ambiguous output, all-plan conflicts,
-idempotence, forced replacements, structural path errors, source/destination/
-staged links, simulated Windows reparse attributes and publication rollback.
-The tests substitute existing subprocess and filesystem seams; no production
-member is exposed for testing. Module import has no effects; constructors and
-clock/provider seams are not applicable to this functional filesystem CLI.
-
-Initial red evidence: 21 tests discovered against the declared stubs; complete
-installation and CLI cases fail with `NotImplementedError`, without import,
-fixture or discovery errors. Rejection cases explicitly reject an unimplemented
-stub as evidence of correct validation. After implementation, all 23 discovered
-tests pass locally on macOS, Python 3.13.5. The revised apm package-list
-invocation first failed both apm acceptance cases against the prior command,
-then passed after implementation. Synthetic skills include relative sibling
-links so byte-preservation checks cover the compatibility issue.
-
-Cross-platform execution belongs to the Python CI matrix for Windows, macOS and
-Linux. Local macOS execution cannot substantiate Windows/Linux claims; those
-runs remain pending CI. Real-manager compatibility smoke is separate feasibility
-evidence in § 7, not an offline acceptance substitute.
-
-README § Maintaining › Testing now declares the 80% pooled changed executable
-production-line floor under ADR-0007. Run the shared gate against the comparison
-base for this amendment; generated reports remain ignored. Earlier no-threshold
-statements described the original implementation and are superseded by that
-repository policy.
-
-B-007 regression cases use synthetic maintainer indexes and nested `.spec`
-metadata alongside binary and Markdown runtime resources. They install through
-the public entry point with both managers, require a consumer index whose links
-resolve inside the private bundle, and verify preserved runtime bytes and source
-checkout bytes. Selected native roles determine the contract inventory; a
-producer-only Markdown file cannot become an installed contract. The real
-checkout's dry plan is also inspected for `.spec` metadata and unresolved private
-links.
-
-2026-10-17 amendment evidence: four new tests were discovered against the prior
-installer. All failed for the intended packaging assertions (five failure reports
-because the index case exercises both managers); the existing 23 cases passed.
-After the bounded fix, all 27 cases pass. The new real-checkout offline install
-contains no private `.spec` path and every observed private Markdown file link
-resolves inside `.sdd`. The dry plan has 39 Claude files and 68 Codex files;
-there are no private specification files or unresolved relative file links.
-These file counts describe this checkout, not a fixed compatibility promise.
-No new real-manager, Windows or Linux execution is claimed.
-The shared gate against `main` at `d4eac9c975718756f0d97d150ddced6f90044648`
-passes 37/37 changed executable production lines (100%; required 80%) across
-this change and the projector fence fix. The first concurrent attempt failed
-because the standalone F# suite removed the instrumented run's shared fixtures;
-a serial rerun passed. Per-run F# scratch isolation then allows both overlapping
-runs to pass, with a foreign fixture preserved. Reports remain ignored.
-
-Written by Kevin.
-
-Tracker-metadata amendment: 30 installer tests passed. All three added cases were observed red before implementation; both hosts and managers pass offline, including excluded source links on macOS. Other OS execution and live manager reruns remain unclaimed.
-Testability: Ready, using the existing synthetic fixtures without network or a
-new dependency. Independent agreement/design approval preceded test authoring;
-see § 12.
-Fresh source-bound coverage against main `d4eac9c` passes 49/50 changed
-executable production lines (98%; required 80%). The unused missing-directory
-return in the source traversal is the one uncovered line. This measured gate
-does not establish additional platform, real-manager or live-agent execution.
+Testability: existing subprocess/filesystem seams need no network, real manager,
+credential, ambient clock, sleep or captured traffic. Import is inert; constructor,
+clock and provider seams do not apply. Local macOS results do not establish
+Windows/Linux execution; real-manager feasibility is separate from offline
+acceptance coverage. Require 80% pooled changed executable production-line
+coverage under ADR-0007. — Kevin
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-17 -->
+<!-- last written by: test-writer, 2026-10-27 -->
 
 | Claim ID | Scenario | Test | Status |
 | --- | --- | --- | --- |
@@ -533,25 +330,34 @@ B-005 has executable acceptance and argument-mechanism coverage; actual
 Windows/Linux CI execution remains pending. Local macOS results do not assert
 execution on those platforms. Written by Kevin.
 
+Executable test names resolve in [`test_install.py`](../test_install.py).
+
+### Recorded verification
+
+| Historical run | Recorded evidence |
+| --- | --- |
+| Initial implementation | 21 discovered against stubs, intended behavior failures without discovery/import errors; 23 passing after implementation on macOS/Python 3.13.5. |
+| Manager invocation | Both apm acceptance cases failed against the former invocation, then passed. |
+| Runtime bundle | Four new tests failed intended packaging assertions while 23 baseline tests passed; 27 passing after correction. Real offline bundle had no private specifications or unresolved private links. |
+| Shared coverage | Serial run against `d4eac9c975718756f0d97d150ddced6f90044648`: 37/37 changed executable lines (floor 80%); fixture-isolation correction then allowed concurrent F# runs. |
+| Tracker metadata | Three new cases observed red before implementation; 30 tests passed across both hosts/managers, including source links on macOS. Source-bound coverage against `d4eac9c`: 49/50 (98%). |
+
+File counts were checkout observations, not compatibility promises. No additional
+Windows/Linux or real-manager execution is claimed. — Kevin
+
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-17 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
-2026-10-17: User selected runtime-only private Codex contracts/resources with a
-consumer index, excluding maintainer specifications. Add B-007 and decision
-0002; reproduce the prior plan's 23 private specification files and 12 unresolved
-relative links. Revise DR-2 without altering runtime contract bytes, native
-projections or publication safeguards. The incident and regression evidence are
-recorded in [lesson 0001](lessons/0001-runtime-bundles-exclude-producer-records.md).
-Independent amendment review is recorded in § 12.
-
-2026-10-17: User selected consistent tracker metadata exclusion. Add B-008;
-source traversal and installation omit reserved tracker entries, preserving
-runtime bytes and existing ownership. See Decision 0003.
+| Date | Trigger | Change | Affected IDs |
+| --- | --- | --- | --- |
+| 2026-10-17 | Runtime-only private bundle | Exclude producer records; retain consumer index and runtime bytes; [lesson 0001](lessons/0001-runtime-bundles-exclude-producer-records.md). | B-007; DR-2; decision 0002 |
+| 2026-10-17 | Tracker metadata exclusion | Exclude reserved tracker entries without changing runtime bytes. | B-008; decision 0003 |
+| 2026-10-27 | Confirmed concise-specification plan | Compress in place; qualify sibling references; separate strategy, locators and history. | §§ 1–12; IDs unchanged |
 
 ## 11. Open Questions
 
-<!-- last written by: spec-author, 2026-10-17 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | ID | Question | Blocks | Resolution |
 | --- | --- | --- | --- |
@@ -564,37 +370,33 @@ runtime bytes and existing ownership. See Decision 0003.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-17 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | Section | Status | Reviewer | Note |
 | --- | --- | --- | --- |
-| Design: § 7 runtime bundle amendment | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective content approval, not proof of pre-implementation review. |
-| Diff: §§ 3, 7–12; installer, tests, decision and lesson | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` after both retirement/history findings were resolved; no remaining findings. |
-| Surface: submitted amendment boundaries | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; no actionable findings, with R2/R3 applicability verified. |
-| 1-5 | 🟢 | spec-reviewer | Jessica approved, 2026-10-16; stakeholder approved scope and defaults the same day. |
-| 6-7 | 🟢 | spec-reviewer | Jessica approved the recorded design with no findings, 2026-10-16. |
-| 8-9 | 🟢 | spec-reviewer | Jessica approved, 2026-10-16; 23 tests pass on macOS with Python 3.11 and 3.13; Windows/Linux CI pending. |
-| 10-12 | 🟢 | spec-reviewer | Jessica approved the recorded clarifications and review evidence, 2026-10-16. |
-| Agreement: B-008 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; scenarios and decisions included. |
-| Design: § 7 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; planned strategy is testable. |
-| Diff: B-008 tracker metadata and executed tests | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; 71 projector and 30 installer tests pass, with test-first evidence. |
-| Surface: tracker metadata boundary | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; native/private traversal and existing publication safeguards verified. |
+| Concision migration: §§ 1–12 | 🟢 | spec-reviewer | Independent `/root/review`, 2026-10-27: Approved snapshot SHA-256 `f27fd76c55d76a7023b3e96f55f010b453564c682325dd738b0b557381841b38`; no findings. Unchanged baseline scope retains its prior evidence; no new behavior or coverage is approved. |
 
-Kyle approved the filesystem and subprocess surface pass without findings,
-2026-10-16. Full real-manager smoke verified identical consumer results for
-Skillfile 1.7.1 and Microsoft apm 0.33.0 on both hosts: 39 Claude files or 91
-Codex files, preserving consumer instructions. No Windows/Linux run is claimed.
+### Historical verdicts
 
-### Superseded amendment review history
+These verdicts concern earlier subjects; they do not approve this migration.
+Full notes, limitations and superseded pending rows are recoverable from § 12
+of this specification at Git revision `57cd1200b089d2872d4538c91b5d085cf069307d`.
 
-These pending records predate the current independent verdicts. They retain
-their original notes; current live-agent evidence limits remain in § 8.
+| Scope | Verdict | Reviewer | Subject / evidence |
+| --- | --- | --- | --- |
+| Design: § 7 runtime bundle amendment | 🟢 | spec-reviewer | 2026-10-17; `/root/contract_design_diff_review`; `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b`; retrospective; not proof of pre-implementation review |
+| Diff: §§ 3, 7–12; installer, tests, decision and lesson | 🟢 | spec-reviewer | 2026-10-17; `/root/contract_design_diff_review`; `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` |
+| Surface: submitted amendment boundaries | 🟢 | adversary | 2026-10-17; `/root/contract_surface_review`; `36ab103e778d070d3ca8291ab56c63a0b96991bf6c656fb5c176ffce63785d5b` |
+| 1-5 | 🟢 | spec-reviewer | 2026-10-16 |
+| 6-7 | 🟢 | spec-reviewer | 2026-10-16 |
+| 8-9 | 🟢 | spec-reviewer | 2026-10-16; Windows/Linux CI pending |
+| 10-12 | 🟢 | spec-reviewer | 2026-10-16 |
+| Agreement: B-008 tracker metadata | 🟢 | spec-reviewer | 2026-10-17; `/root/contract_design_diff_review`; `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` |
+| Design: § 7 tracker metadata | 🟢 | spec-reviewer | 2026-10-17; `/root/contract_design_diff_review`; `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` |
+| Diff: B-008 tracker metadata and executed tests | 🟢 | spec-reviewer | 2026-10-17; `/root/contract_design_diff_review`; `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d` |
+| Surface: tracker metadata boundary | 🟢 | adversary | 2026-10-17; `/root/contract_surface_review`; `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d` |
 
-- B-007; DR-2 runtime selection and index amendment — 🟡 — spec-reviewer — User packaging decision recorded 2026-10-17; independent design/diff and surface review pending. Earlier approval remains historical for the prior selection and applicable unchanged scope.
-
-Current amendment verdicts apply to the identified reviewed snapshot. Earlier
-pending rows are retained for their earlier subjects; current review approval
-does not establish live-agent behavior or unperformed platform/manager runs.
+Historical surface approval: Kyle, 2026-10-16; real-manager smoke covered both hosts with Skillfile 1.7.1 and Microsoft apm 0.33.0. Windows/Linux execution was unverified.
 
 ## Tasks
 
