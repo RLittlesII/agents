@@ -132,8 +132,8 @@ synced_at: null
 
 <!-- last written by: spec-author, {{date}} -->
 
-| Trigger | Change | Affected IDs |
-| ------- | ------ | ------------ |
+| Trigger     | Change     | Affected IDs     |
+| ----------- | ---------- | ---------------- |
 | {{trigger}} | {{change}} | {{affected_ids}} |
 
 <!-- Compact trigger/change/affected-ID rows; amend owning sections in place.

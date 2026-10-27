@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "specht.tool": {
-      "version": "0.2.43-g0cdbb8759c",
+      "version": "0.2.46-g7dc9fca090",
       "commands": [
         "specht"
       ],

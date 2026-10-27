@@ -32,6 +32,7 @@ decisions:
   - "2026-10-27, Specht full-tree strict baseline: zero errors and 116 warnings both before and after; reports identical except schemaVersion. Existing warning cleanup is outside this change."
   - "2026-10-27, coverage gate: passed using the pinned coverage environment; N/A with zero changed executable production lines against 57cd1200b089d2872d4538c91b5d085cf069307d."
   - "2026-10-27, continuation: ownership and unchanged review scope verified; user requested this cleanup committed separately from the Specht template delivery. The local tool package publication prerequisite remains recorded."
+  - "2026-10-27, final consumer sync: Specht commit 7dc9fca0 passed normal format hooks. Upgrade the tool pin to locally built 0.2.46-g7dc9fca090 and refresh the two formatting-only Feature-template lines through supported upgrade. This supersedes the earlier local-package pin; publication or local package supply remains required for fresh restores. Package SHA-256: 07ec934a30faa51c17f8cde11e09ec14cd08c74ca3df5e36ff969e7d82d17544."
 out_of_scope:
   - Checker behavior, prose linting and a new reference resolver.
   - Existing Specht specification cleanup and accepted ADR changes.
