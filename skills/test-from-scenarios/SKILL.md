@@ -48,7 +48,9 @@ harmless refactor and teaches the team to weaken tests.
 
 § 9 cites a test by name. Renaming it to suit an implementation breaks that
 citation silently: the row still reads as covered and points at nothing. Keep the
-name, or reword the claim and the row together.
+name, or reword the claim and the row together. Concrete test names and locators
+belong exclusively in § 9. Keep § 8 to strategy, testability and coverage
+requirements; verify every matrix locator against an existing test.
 
 ## Explicit state and execution
 

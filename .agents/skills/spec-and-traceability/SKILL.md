@@ -124,12 +124,24 @@ A derived answer is stored once. If § 9 can be read off § 3 and the test files
 then § 9 is where it lives and no other section re-summarises it. Two copies of a
 derived fact drift silently, and the reader cannot tell which is stale.
 
-## A declaration belongs to the file that compiles
+Amend current content in place. § 10 keeps compact rows naming the trigger,
+change and affected IDs, not a second account of the specification.
+
+Cite sibling specifications by qualified keys: `0001-F2`, `0001-F2 B-044`
+or `0001-F2 C-3`, never by hyperlink. Qualify Feature-local decisions and ADRs
+when cited externally. Links to this specification's scenarios and supporting
+records are allowed.
+
+§ 8 holds strategy, testability and coverage requirements. Concrete test names
+and locators live exclusively in § 9; verify that each locator identifies an
+existing test.
+
+## Keep architectural intent
 
 Before code exists, a specification may state a signature to agree on it. Once
-the code exists, **the compiler is the authority** — the specification references
-the declaring file instead of restating the signature. A restated signature is
-guaranteed to go stale and will be believed anyway.
+implemented, remove copied declarations and code pointers. Retain architectural
+intent and contract details needed to constrain behavior; the compiler owns
+implementation declarations.
 
 ## Claims and traceability
 
@@ -165,7 +177,8 @@ guaranteed to go stale and will be believed anyway.
 An approved specification is accountable, not frozen. A change follows a path
 rather than an edit:
 
-1. Record the reason in § 10: the date, the trigger and what changed.
+1. Amend the owning sections in place; add a compact § 10 row with the date,
+   trigger, change and affected IDs.
 2. A changed behaviour is a claim with a **new** id; the old one is withdrawn.
    A behaviour that is not a claim cannot be traced, tested or signed off.
 3. Add its § 9 row as `Missing`.
@@ -269,7 +282,9 @@ permanent IDs is not resolved by calling one branch newer.
 - A placeholder row in a coverage or traceability table.
 - A reused or renumbered permanent ID, or an unpublished ID changed without all local references.
 - A second copy of a derived answer, or a section mirroring another.
-- A signature restated in prose after the code exists.
+- A copied implementation declaration or post-implementation code pointer.
+- A sibling-spec hyperlink, an unqualified external local ID, or a concrete
+  test reference outside § 9.
 - A green coverage signal for a test that does not exist.
 - A hand-kept index of specifications, decisions or lessons.
 - An item that a specification names as its owner.

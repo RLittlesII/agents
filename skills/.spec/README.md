@@ -20,7 +20,7 @@ depends_on: ["F2"]
 blocks: []
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-17"
+updated: "2026-10-27"
 github_issue: null
 synced_at: null
 ---
@@ -29,142 +29,103 @@ synced_at: null
 
 ## 1. Business Goal
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
-Roles depend on skills and never the reverse: a role names the skills it works
-with, and a skill states a rule any role can follow. A skill that names a role
-binds the rule to one roster, so renaming, splitting or dropping a role leaves
-stale instructions in every skill that mentioned it, and a consuming repository
-with a different roster inherits instructions addressed to nobody. This Feature
-makes the rule a check instead of a convention.
+A consuming repository can adopt skills independently of its role roster.
+Projection rejects role references in runtime skills so roster changes leave
+no stale instructions.
 
 ## 2. User Needs
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
-| #   | Persona              | Need                                                             | Pain Point Today                                          |
+| # | Persona | Need | Pain Point Today |
 | --- | -------------------- | ---------------------------------------------------------------- | --------------------------------------------------------- |
-| 1   | Role maintainer      | Rename, split or drop a role without editing any skill           | Skills mention roles by name and go stale silently        |
-| 2   | Skill author         | Learn at projection time, with a line number, that a sentence names a role | The rule is found only at review, if at all       |
-| 3   | Consuming repository | Adopt the skills with a different roster                         | A skill addresses a role the consumer does not have       |
+| 1 | Role maintainer | Rename, split or drop a role without editing any skill | Skills mention roles by name and go stale silently |
+| 2 | Skill author | Learn at projection time, with a line number, that a sentence names a role | The rule is found only at review, if at all |
+| 3 | Consuming repository | Adopt the skills with a different roster | A skill addresses a role the consumer does not have |
 
 ### Assumptions
 
-| ID  | Assumption                                                                                   |
+| ID | Assumption |
 | --- | -------------------------------------------------------------------------------------------- |
-| A-1 | A generated block is written from role declarations and may name roles; nothing else may.    |
-| A-2 | A section owner or a review pass is a stable way to say who, where a role name is not.       |
+| A-1 | A generated block is written from role declarations and may name roles; nothing else may. |
+| A-2 | A section owner or a review pass is a stable way to say who, where a role name is not. |
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-17 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
-| ID    | Claim                                                                                                                                                                                                                       | Source                     | Status |
+| ID | Claim | Source | Status |
 | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ------ |
 | B-001 | Given a file within the lint scope (C-2) that, outside a generated block, names a role — its name in backticks, a hyphenated name as a whole word with its hyphens or with spaces, its persona name as a whole word, or a path into `agents/` — projection fails naming the file, the line and the role, and writes nothing. | 0001-F2 C-3 | Active |
-| B-002 | Given a role name between a `BEGIN GENERATED` marker and its matching `END GENERATED` marker, the file passes, and lines after the block are reported at their own line numbers.                                             | A-1                        | Active |
-| B-003 | Given this repository's files within the lint scope (C-2), the lint passes.                                                                                                                                                                         | Brief                      | Active |
+| B-002 | Given a role name between a `BEGIN GENERATED` marker and its matching `END GENERATED` marker, the file passes, and lines after the block are reported at their own line numbers. | A-1 | Active |
+| B-003 | Given this repository's files within the lint scope (C-2), the lint passes. | Brief | Active |
 | B-004 | Given `.issue` tracker entries anywhere under `skills/`, role-name lint ignores those entries while continuing to reject violations in ordinary runtime skill files. | Decision 0002, 2026-10-17 | Active |
 
 ## 4. Constraints
 
-<!-- last written by: spec-author, 2026-10-17 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
-| ID  | Constraint                                                                                   | Rules Out                                                                    |
+| ID | Constraint | Rules Out |
 | --- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| C-1 | A bare one-word role name is not linted.                                                      | Failing on "build", "release", "domain" or "design" used as ordinary words   |
-| C-2 | The lint reads text files under `skills/`, excluding `.spec/`, `.issue/` and files containing NUL bytes, and never host copies or `commands/`.                              | Linting specification records, binary assets, generated host output or commands |
+| C-1 | A bare one-word role name is not linted. | Failing on "build", "release", "domain" or "design" used as ordinary words |
+| C-2 | The lint reads text files under `skills/`, excluding `.spec/`, `.issue/` and files containing NUL bytes, and never host copies or `commands/`. | Linting specification records, binary assets, generated host output or commands |
 
 ## 5. Out of Scope
 
-<!-- last written by: spec-author, 2026-10-14 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
-| #   | Item                                         | Exclusion Reason                                                          |
+| # | Item | Exclusion Reason |
 | --- | -------------------------------------------- | ------------------------------------------------------------------------- |
-| 1   | A role naming a skill                        | Allowed and checked for existence by [0001-F2](../../agents/.spec/README.md) B-006 |
-| 2   | A command naming roles                       | A command sits above both; [0001-F3](../../commands/.spec/README.md)       |
-| 3   | Role descriptions in prose, such as "the reviewer" | A description is not a name; renaming a role does not make it stale |
+| 1 | A role naming a skill | Allowed and checked for existence by 0001-F2 B-006 |
+| 2 | A command naming roles | A command sits above both; 0001-F3 |
+| 3 | Role descriptions in prose, such as "the reviewer" | A description is not a name; renaming a role does not make it stale |
 
 ## 6. Concern Separation
 
-<!-- last written by: architect, 2026-10-14 -->
+<!-- last written by: architect, 2026-10-27 -->
 
-| #   | Concern                                         | Classification |
-| --- | ----------------------------------------------- | -------------- |
-| 1   | Which forms of text count as naming a role      | Business       |
-| 2   | Exempting generated blocks                      | Technical      |
-| 3   | Reporting file, line and role                   | Technical      |
+| # | Concern | Classification |
+| --- | --- | --- |
+| 1 | Which text names a role | Business |
+| 2 | Generated-block exemptions | Technical |
+| 3 | File, line and role diagnostics | Technical |
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-17 -->
+<!-- last written by: architect, 2026-10-27 -->
 
-`lintSkills` in [`Projection.fsx`](../../scripts/Projection.fsx) is the
-authority. `plan` calls it after the roles load and before any output is
-built, so a violation writes nothing. It builds one pattern per form from the
-loaded roles and supplied persona names; unnamed personas add no name pattern.
-It reads every text file the source traversal returns for `skills/` (excluding
-`.spec/` and `.issue/` metadata),
-blanks each generated block while keeping its newlines, and reports every
-finding in one failure.
+Lint runtime skill text after loading roles and before planning outputs. Build
+patterns from role and supplied persona names; unnamed personas add no pattern.
+Blank generated blocks without removing newlines, then report all violations
+with file, line and role. A failure publishes nothing.
 
-A one-word role name is ordinary English in a skill ("the build", "a release",
-"the domain"), so C-1 leaves it to review, as 0001-F2 leaves product technology
-to review. The way to say who without a role name is the section owner ("the
-owner of § 7") or the review pass ("the diff pass").
+Use the source traversal owned by 0001-F1 B-025: exclude exact `.spec` and
+`.issue` entries before opening or descending at every depth. Other hidden
+resources and similarly named files remain linted (B-004; [decision
+0002](decisions/0002-exclude-tracker-metadata.md)).
 
-Readiness: **Ready for tests and implementation.**
+C-1 leaves ordinary English uses of one-word role names to review. Refer to a
+section owner or review pass when assigning responsibility.
 
-### Tracker metadata boundary
-
-[Decision 0002](decisions/0002-exclude-tracker-metadata.md) extends C-2 and
-adds B-004. `lintSkills` uses projection's source-only `runtimeFilesUnder`
-traversal, specified by 0001-F1 B-025, rather than the output-file traversal.
-Exact `.issue` entries are excluded before opening or descending; role names
-in work-item records therefore do not become method instructions. Unrelated
-hidden runtime resources and similarly named files remain linted.
-
-Synthetic fixtures put role-bearing records at the skill root and nested
-resource depths, then introduce a runtime violation to prove the guard remains
-active. Readiness: Ready; independent agreement/design approval is recorded in § 12.
+Readiness: Ready for tests and implementation; approval evidence remains in § 12.
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-17 -->
+<!-- last written by: test-writer, 2026-10-27 -->
 
-The `F4_` group in `dotnet fsi scripts/project.tests.fsx`, on the synthetic
-checkout of 0001-F1 plus a role `log-reader` signing as Zed. The scenarios in
-[`skills.feature`](skills.feature) are executed by those tests.
+Use synthetic skill trees to reject prohibited role/persona forms with file and
+line diagnostics before writes. Accept ordinary words, longer hyphenated words,
+host directories and generated blocks; report violations after an exempt block
+at their actual lines. Check the real skill inventory and distinguish tracker
+metadata from runtime resources. Review ambiguous bare one-word role names under
+C-1 rather than inventing a technology-specific word list.
 
-- B-001: one case per form, each failing `plan` with the file, line and role
-  and writing nothing; a negative case of a bare name, a longer hyphenated word,
-  a host directory and a lower-case word passes. An unnamed persona adds no name
-  pattern, while its role name remains linted.
-- B-002: a generated block naming three roles passes; a violation after it is
-  reported at its own line.
-- B-003: `lintSkills` over the real checkout.
-- C-1 is a review question: at review, read new skill text for a bare one-word
-  role name used as a name rather than a word.
-
-The [repository Testing policy](../../README.md#testing) establishes the shared
-local/CI coverage gate and its 80% pooled changed executable production-line
-floor under ADR-0007. Fresh repository verification run
-`b9a269b572274089a3ad5b6e2b6561b2` passes 217/242 changed executable lines
-(89.67%); its source-bound manifest validates independently. The four named
-`F4_` tests all pass within the 62-test original-linked F# runner. This F4
-change edits specification evidence; its lint production source is unchanged.
-The synthetic filesystem and pure lint seam require no clock, network or live
-provider. Linux CI execution of the shared gate remains pending; local evidence
-does not substitute for that result.
-
-Tracker-metadata amendment: 71 projector tests passed. The new tracker/runtime lint control was observed red before implementation and passes with source metadata pruning.
-Testability: Ready, using the existing synthetic fixtures without network or a
-new dependency. Independent agreement/design approval preceded test authoring;
-see § 12.
-Fresh source-bound coverage against main `d4eac9c` passes 49/50 changed
-executable production lines (98%; required 80%). The unused missing-directory
-return in the source traversal is the one uncovered line. This measured gate
-does not establish additional platform, real-manager or live-agent execution.
+Testability: pure linting and synthetic filesystem roots need no clock, network,
+credential or live provider. Require the repository's 80% pooled changed
+executable production-line floor under ADR-0007; local evidence does not assert
+Linux CI execution.
 
 ### Performance
 
@@ -172,7 +133,7 @@ Not applicable.
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-17 -->
+<!-- last written by: test-writer, 2026-10-27 -->
 
 | Claim ID | Scenario                                      | Test                                                    | Status  |
 | -------- | --------------------------------------------- | ------------------------------------------------------- | ------- |
@@ -181,28 +142,33 @@ Not applicable.
 | B-003    | This repository's skills name no role         | `F4_B003_RepositorySkillsNameNoRole`                    | Covered |
 | B-004 | Tracker metadata scenarios in the companion `.feature` | `F4_B004_TrackerRecordsAreIgnoredButRuntimeStillFailsLint` | Covered |
 
+Executable test names resolve in [`project.tests.fsx`](../../scripts/project.tests.fsx).
+
+### Recorded verification
+
+Historical run `b9a269b572274089a3ad5b6e2b6561b2` measured 217/242 changed
+executable lines (89.67%; floor 80%); the four original lint checks passed in
+the 62-test linked runner. Tracker exclusion later passed 71 projector tests,
+with its new control observed red before implementation. Source-bound coverage
+against `d4eac9c` measured 49/50 (98%). These local runs establish no additional
+platform, real-manager or live-agent execution.
+
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-17 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
-| Date | Trigger | Delta / evidence |
-| --- | --- | --- |
-| 2026-10-14 | Original implementation and source cleanup | `ecb996c` explicitly delivered B-001–B-003; `48a71f0` removed source violations and regenerated outputs for B-003. |
-| 2026-10-15 | Spaced role titles name the same role | `7d5e84f` amended B-001; `8e1a60d` added its mechanism and regression case. |
-| 2026-10-16 | Optional persona names | PR #5, `f5366b9`, preserved B-001 and added unnamed-persona verification; earlier §12 delta approvals remain recorded. |
-| 2026-10-16 | Independent baseline review | Clarify C-2 and its claim references to match the original recorded scope; [decision 0001](decisions/0001-recorded-source-text-scope.md). |
-
-These commits are ancestors of `origin/main` at `c890c82`. They establish
-historical delivery; current tests corroborate it. No retrospective tracker
-claim assignment or new runtime behavior is asserted.
-
-2026-10-17: User selected consistent tracker metadata exclusion. Add B-004;
-source traversal and installation omit reserved tracker entries, preserving
-runtime bytes and existing ownership. See Decision 0002.
+| Date | Trigger | Change | Affected IDs |
+| --- | --- | --- | --- |
+| 2026-10-14 | Initial delivery | `ecb996c` implements lint; `48a71f0` removes source violations. | B-001–B-003 |
+| 2026-10-15 | Spaced role titles | `7d5e84f` amends scope; `8e1a60d` adds mechanism and regression. | B-001 |
+| 2026-10-16 | Optional persona names | PR #5 / `f5366b9` preserves lint semantics for unnamed personas. | B-001 |
+| 2026-10-16 | Baseline review | Clarify recorded text scope; decision 0001. | C-2 |
+| 2026-10-17 | Tracker metadata exclusion | Exclude reserved tracker entries without changing runtime bytes. | B-004; decision 0002 |
+| 2026-10-27 | Confirmed concise-specification plan | Compress in place; qualify sibling references; separate strategy, locators and history. | §§ 1–12; IDs unchanged |
 
 ## 11. Open Questions
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | ID | Question | Blocks | Resolution |
 | --- | --- | --- | --- |
@@ -210,18 +176,28 @@ runtime bytes and existing ownership. See Decision 0002.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-17 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
-| Section | Status | Reviewer      | Note                                                                                       |
-| ------- | ------ | ------------- | ------------------------------------------------------------------------------------------ |
-| 1-7, 9-12 | 🟢 | spec-reviewer | Independent `/root/f4_baseline_review`, 2026-10-16: bounded baseline approved after original scope clarification and historical-delta recording. Original five-violation cleanup evidence is `48a71f0`; earlier amendment approvals remain intact. |
-| 8 | 🟢 | spec-reviewer | Independent `/root/coverage_diff_review`, 2026-10-16: baseline approved against README Testing and the measured 0001-F6 gate; OQ-1 resolved. Earlier ADR-0007 blocker is cleared. Linux CI execution remains pending; prerequisite F2 still prevents declaring full F4 delivery. |
-| 7-9 | 🟢 | spec-reviewer | Approved 2026-10-16: optional-name lint design and coverage reviewed; 0001-F4 B-001 remains satisfied. Baseline evidence retained. |
-| 7-9, 12 | 🟢 | spec-reviewer | Rebase delta approved 2026-10-16 by independent `/root/persona_diff_review` against main `e60dea1`; no findings, earlier evidence retained. |
-| Agreement: B-004 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; scenarios and decisions included. |
-| Design: § 7 tracker metadata | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` before tests/implementation; planned strategy is testable. |
-| Diff: B-004 tracker metadata and executed tests | 🟢 | spec-reviewer | Independent `/root/contract_design_diff_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; 71 projector and 30 installer tests pass, with test-first evidence. |
-| Surface: tracker metadata boundary | 🟢 | adversary | Independent `/root/contract_surface_review`, 2026-10-17, approved subject `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d`; native/private traversal and existing publication safeguards verified. |
+| Section | Status | Reviewer | Note |
+| --- | --- | --- | --- |
+| Concision migration: §§ 1–12 | 🟢 | spec-reviewer | Independent `/root/review`, 2026-10-27: Approved snapshot SHA-256 `f27fd76c55d76a7023b3e96f55f010b453564c682325dd738b0b557381841b38`; no findings. Unchanged baseline scope retains its prior evidence; no new behavior or coverage is approved. |
+
+### Historical verdicts
+
+These verdicts concern earlier subjects; they do not approve this migration.
+Full notes, limitations and superseded pending rows are recoverable from § 12
+of this specification at Git revision `57cd1200b089d2872d4538c91b5d085cf069307d`.
+
+| Scope | Verdict | Reviewer | Subject / evidence |
+| --- | --- | --- | --- |
+| 1-7, 9-12 | 🟢 | spec-reviewer | 2026-10-16; `/root/f4_baseline_review`; `48a71f0` |
+| 8 | 🟢 | spec-reviewer | 2026-10-16; `/root/coverage_diff_review`; Linux CI execution remains pending |
+| 7-9 | 🟢 | spec-reviewer | 2026-10-16 |
+| 7-9, 12 | 🟢 | spec-reviewer | 2026-10-16; `/root/persona_diff_review`; `e60dea1` |
+| Agreement: B-004 tracker metadata | 🟢 | spec-reviewer | 2026-10-17; `/root/contract_design_diff_review`; `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` |
+| Design: § 7 tracker metadata | 🟢 | spec-reviewer | 2026-10-17; `/root/contract_design_diff_review`; `052e8bcc4eb813d0916cad49aa0ca791ca6be25aefff7861a97a4fd24054d363` |
+| Diff: B-004 tracker metadata and executed tests | 🟢 | spec-reviewer | 2026-10-17; `/root/contract_design_diff_review`; `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d` |
+| Surface: tracker metadata boundary | 🟢 | adversary | 2026-10-17; `/root/contract_surface_review`; `daf48f71a5b4f352a6e3df1a39bb0825f496322bc46f6ab2b558d67c3343965d` |
 
 ## Tasks
 

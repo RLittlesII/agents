@@ -1,0 +1,37 @@
+id: "0057"
+type: chore
+title: Adopt concise key-driven specifications
+status: in-progress
+cost: 5
+risk: 3
+parent: null
+children: []
+depends_on: []
+spikes: []
+spec: null
+claims: []
+created: "2026-10-27"
+updated: "2026-10-27"
+closed: null
+summary: |
+  Apply the confirmed concise-specification plan to method guidance, seven
+  Feature specifications, and templates delivered through a Specht schema patch.
+acceptance_criteria:
+  - Preserve permanent IDs, claim meaning, coverage status and recoverable approval evidence.
+  - Use qualified sibling keys; keep concrete test references in section 9.
+  - Preserve accepted ADRs and published schema bytes; upgrade tool-owned templates.
+  - Run strict checks, projection, installer and Specht delivery checks.
+decisions:
+  - "2026-10-27, ownership claim: Codex session 01a17e32-9a9c-7212-a395-964f27544c04; branch codex/concise-key-driven-specs; checkout /Users/rlittlesii/source/rlittlesii/agents. User supplied the confirmed plan."
+  - "2026-10-27, baseline: clean checkout on codex/pr-review-handoffs; existing item 0056 and its ownership are unchanged. This cross-Feature chore takes a separate branch."
+  - "2026-10-27, migration: seven Feature specs shortened from 44297 to 27104 words; all 142 claim IDs, meanings and statuses, matrix coverage, tracker paths and accepted ADRs preserved."
+  - "2026-10-27, independent review: /root/review Approved source guidance/templates snapshot 56aa5cd84ebbda396a854aa15e5e507af6b142ce9abc1a00902abb63c61a6eee and seven-spec snapshot f27fd76c55d76a7023b3e96f55f010b453564c682325dd738b0b557381841b38; sections 12 record returned approval, not new executable coverage."
+  - "2026-10-27, verification: strict agents check has zero errors/warnings; 90 projector tests and 30 installer tests pass; all 80 projected outputs current. All 141 active matrix locator occurrences resolve; three withdrawn historical locators remain withdrawn."
+  - "2026-10-27, Specht delivery: schema 0.2.1 uses unchanged 0.2.0 vocabulary; published 0.1.0/0.2.0 bytes and locks unchanged. Supported schema pin and upgrade refreshed both checkouts. 168 shipping/init/upgrade/versioning tests and 12 integrity tests pass on net11.0. Consumer reports are identical except schemaVersion."
+  - "2026-10-27, release prerequisite: tool pin 0.2.43-g0cdbb8759c is a locally built package, not published. Fresh restores need that package supplied locally or a published tool containing schema 0.2.1. Local artifact: .artifacts/concise-specs/nupkg/specht.tool.0.2.43-g0cdbb8759c.nupkg."
+  - "2026-10-27, Specht full-tree strict baseline: zero errors and 116 warnings both before and after; reports identical except schemaVersion. Existing warning cleanup is outside this change."
+  - "2026-10-27, coverage gate: passed using the pinned coverage environment; N/A with zero changed executable production lines against 57cd1200b089d2872d4538c91b5d085cf069307d."
+  - "2026-10-27, continuation: ownership and unchanged review scope verified; user requested this cleanup committed separately from the Specht template delivery. The local tool package publication prerequisite remains recorded."
+out_of_scope:
+  - Checker behavior, prose linting and a new reference resolver.
+  - Existing Specht specification cleanup and accepted ADR changes.

@@ -1,7 +1,7 @@
 ---
 name: spec-reviewer
 description: Judge a design before it is built, and a diff against the specification claims it cites and the accepted ADRs, and record the verdict. Use after a technical design is written and before tests start, and again before opening a pull request and for revisions; reports findings, never rewrites or redesigns.
-version: 0.11.0
+version: 0.11.1
 owned_spec_sections: []
 reviews: [design, diff]
 persona:
@@ -47,6 +47,12 @@ contract's write boundaries.
   citing nothing is the first finding — a squash or rebase merge can discard a
   pull-request body, so the citation lives where the companion says it survives.
 - § 9 Traceability Matrix — whether every § 3 id appears exactly once.
+- Specification economy under `spec-and-traceability` § "One answer, one
+  section": qualified sibling keys that resolve uniquely, concrete test
+  references only in § 9 and existing locator targets; no implementation
+  pointers, copied declarations, amendment narratives or duplicated rationale.
+  Retain permanent IDs, coverage status and recoverable approval evidence;
+  historical verdicts never stand as current approval.
 - § 5 Out of Scope — whether the diff delivered something the specification
   explicitly excluded.
 - The architect's recorded design, readiness verdict and diagrams, where the

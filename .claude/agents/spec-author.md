@@ -109,7 +109,9 @@ authoring follows confirmation.
    failure state removed. The reasoning behind a call goes in a decision record
    where it can be reviewed, not into the section - see
    [`coding-conventions`](../skills/coding-conventions/SKILL.md) § "Say it once,
-   and briefly". The specification is the contract, not the argument for it.
+   and briefly". Amend content in place; § 10 keeps compact trigger, change and
+   affected-ID rows. Cite siblings by qualified keys; retain own scenario and
+   record links under `spec-and-traceability` § "One answer, one section".
 8. **A cross-check before handoff.** Every active § 3 claim has a scenario tagged
    with its id, and every scenario tag names an existing active claim. An active
    claim with no scenario, or a scenario tagged to no active claim, is fixed

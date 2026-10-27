@@ -94,6 +94,9 @@ with a budget.
 
 - **One statement per fact.** No preamble, no restatement in the next paragraph,
   no summary of what was just said.
+- **Use the fewest words that preserve meaning.** Remove decorative comments,
+  amendment narratives, repeated explanations and duplicated rationale. Keep
+  required author stamps and generated markers.
 - **A table or a list where prose would ramble.** A claim is one sentence. A
   constraint is one sentence plus what it rules out.
 - **Name the thing, not the journey to it.** The reasoning belongs in an ADR or

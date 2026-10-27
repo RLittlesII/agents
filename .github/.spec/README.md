@@ -20,7 +20,7 @@ depends_on: []
 blocks: []
 spikes: []
 created: "2026-10-16"
-updated: "2026-10-17"
+updated: "2026-10-27"
 github_issue: null
 synced_at: null
 ---
@@ -29,7 +29,7 @@ synced_at: null
 
 ## 1. Business Goal
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 Reject changes whose executable production lines lack the repository's minimum
 coverage, using one reproducible local and CI gate rather than an unmeasured
@@ -37,7 +37,7 @@ coverage promise.
 
 ## 2. User Needs
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | Persona | Need | Failure today |
 | --- | --- | --- |
@@ -47,7 +47,7 @@ coverage promise.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | ID | Claim | Source | Status |
 | --- | --- | --- | --- |
@@ -58,7 +58,7 @@ coverage promise.
 
 ## 4. Constraints
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | ID | Constraint | Rules out |
 | --- | --- | --- |
@@ -71,7 +71,7 @@ coverage promise.
 
 ## 5. Out of Scope
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | Item | Owner / reason |
 | --- | --- |
@@ -83,253 +83,251 @@ coverage promise.
 
 ## 6. Concern Separation
 
-<!-- last written by: architect, 2026-10-16 -->
+<!-- last written by: architect, 2026-10-27 -->
 
-The person approved `0001-F6 Repository verification` under epic `0001`; approved B-001–B-004 and C-1–C-5 govern this design at `.github/.spec`.
-
-| Concern | Responsibility | Claim / existing owner |
+| Concern | Responsibility | Claims / owner |
 | --- | --- | --- |
-| Coverage policy | One versioned policy declares 80%, production/test selection and report schema; README links its command. | B-001, B-003, B-004; ADR-0007 |
-| Source identity | Inventory repository production sources, resolve the requested Git base, identify added/current lines and hash source contents. | B-001, B-002 |
-| Collection | Execute existing tests plus coverage-tool tests; compile original linked F# scripts for instrumentation; preserve test failures. | B-002, B-004 |
-| Evaluation | Validate reports and collection manifest, normalize paths, union executable line hits, compute exact changed-line coverage. | B-001–B-003 |
-| Projection behavior | Existing FSI entrypoints remain the production runtime; this Feature consumes their original sources. | Existing 0001-F1; ADR-0003 |
-| Installer behavior | Existing offline unittest suite remains authoritative for installation behavior. | Existing 0038-F1 |
-| CI | Invoke the same gate with a validated event-specific base and upload ignored diagnostic reports. | B-004 |
+| Policy | Versioned threshold, source selection and evidence contract | B-001, B-003, B-004; ADR-0007 |
+| Identity | Git comparison, production inventory and source hashes | B-001, B-002 |
+| Collection | Existing suites and instrumented original sources; preserve failures | B-002, B-004 |
+| Evaluation | Validate/normalize/union reports and compare exact counts | B-001–B-003 |
+| Production behavior | Preserve original FSI and offline installer execution | 0001-F1; 0038-F1; ADR-0003 |
+| CI | Same gate with immutable event base and retained diagnostics | B-004 |
 
-No persistence schema, service, broker or reusable interface hierarchy is required. Python orchestration is effects; evaluation is deterministic functions over immutable input values. Composition is sufficient; no Gang of Four pattern earns additional participants.
+Use effects at collection boundaries and deterministic evaluation over immutable
+inputs. No persistence schema, service, broker or extensible hierarchy is needed.
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-16 -->
+<!-- last written by: architect, 2026-10-27 -->
 
-### DR-1: Shared gate and policy
+### DR-1 — Shared gate and policy
 
-`.github/.spec` owns repository verification; `.github/coverage/` contains gate Python code, tests, and test-only compiled F# projects. Existing production files remain under their current owners. The command is `python3 .github/coverage/run.py --base <commit-or-ref>`; it collects fresh evidence before evaluating it. There is no supported CLI accepting arbitrary pre-existing reports.
+Local and CI execution use one gate with required `--base <commit-or-ref>`.
+Collect fresh evidence before evaluation; arbitrary pre-existing reports are not
+a supported CLI input. One policy owns the integer 80% threshold, inventory/
+exclusions, required evidence and schema version. Pin Python coverage 7.12.0 and
+Coverlet MSBuild 6.0.4 centrally. ADR-0010 requires original-source collection;
+existing F# dependency declarations and pinned SDK remain authoritative. Generate
+coverage-build references from those declarations rather than tracking duplicate
+versions or the probe's cache workaround.
 
-A single policy file defines integer `threshold_percent: 80`, inventory/exclusion patterns and schema version. Pin Python coverage 7.12.0 centrally in a requirements file. Pin Coverlet MSBuild 6.0.4 in a common props file imported by both coverage-only projects. [ADR-0010](../../.spec/adr/0010-collect-coverage-from-original-sources.md) records this repository-wide collector decision. Keep existing script `#r "nuget:"` declarations authoritative: derive generated PackageReference items from those declarations under `.artifacts/coverage/`, never duplicate their versions in tracked coverage projects. Compiler FSharp.Core selection follows the pinned SDK; the spike's local cache workaround is not production configuration.
-
-Select tracked and non-ignored untracked `**/*.py`, `**/*.fsx` and `**/*.fs` across the repository. Exclude test files by declared patterns (`**/test_*.py`, `**/*.tests.fsx`) and exact test-only F# shim/harness paths, including `.github/coverage/fsharp/FsiArguments.fs`; exclude generated host directories and `.artifacts/`. The gate's own Python code is production inventory. Tests do not exempt a directory containing production tools. Deleted sources have no current denominator. A new production file without a collector/report mapping fails closed; adding a language requires an explicit collector/policy change.
+Inventory tracked and non-ignored untracked Python/F# production sources across
+the repository, including the gate itself. Exclude declared tests, exact test-only
+harnesses, generated host trees and artifacts. A directory containing tests is
+not wholly exempt. Deleted sources have no current denominator; a new unmapped
+source fails closed, and another language requires a collector/policy change.
 
 ```mermaid
 flowchart LR
-    Local[Local command] --> Gate[Shared coverage gate]
-    CI[Existing CI job] --> Gate
-    Policy[Versioned policy] --> Gate
-    Git[Git base and current sources] --> Gate
-    Gate --> Python[coverage.py plus offline Python suites]
-    Gate --> FSharp[Coverlet plus linked original F# scripts]
-    Python --> Evidence[Ignored reports and manifest]
-    FSharp --> Evidence
-    Evidence --> Evaluate[Deterministic evaluator]
-    Evaluate --> Result[Pass, fail, or explicit N/A]
+  Local[Local invocation] --> Gate[Shared gate]
+  CI[CI event] --> Gate
+  Policy[Versioned policy] --> Gate
+  Git[Base and current sources] --> Gate
+  Gate --> Python[Python coverage and offline suites]
+  Gate --> FSharp[Coverlet and linked original F#]
+  Python --> Evidence[Isolated reports and manifest]
+  FSharp --> Evidence
+  Evidence --> Evaluate[Validate and evaluate]
+  Evaluate --> Result[Pass, fail or explicit N/A]
 ```
 
-DR-1 component view: existing execution contexts consume one shared gate; reports remain machine-local artifacts, not committed inputs.
+DR-1: both contexts consume fresh machine-local evidence through the same gate.
 
-### DR-2: Original F# sources, instrumentable test-only assemblies
+### DR-2 — Original-source F# collection
 
-Production commands remain `dotnet fsi scripts/project.fsx` and `dotnet fsi scripts/project.tests.fsx`. Accepted ADR-0003 is unchanged. Coverage-only SDK projects link the original `.fsx` files as Compile items; the compiler accepts their existing `#r` and `#load` directives without body rewriting. Explicit PackageReference items supply the same pinned dependencies.
+Production remains FSI under ADR-0003. Test-only SDK assemblies link original
+scripts without rewriting bodies; source-directory identity remains the real
+checkout. The CLI assembly adds only a preceding argument shim exposing process
+arguments to the unchanged entrypoint. Exclude that shim from production coverage;
+use portable PDBs and unoptimized debug builds.
 
-The unit-runner project links original `scripts/Projection.fsx` and `scripts/project.tests.fsx`; original `__SOURCE_DIRECTORY__` therefore resolves the real repository. The CLI project links original `scripts/Projection.fsx`, a test-only preceding `fsi` shim, and original `scripts/project.fsx`. The shim declares `module fsi` and `let CommandLineArgs = System.Environment.GetCommandLineArgs()` so the unchanged entrypoint receives identical user arguments. Exclude only this shim from production coverage. Debug builds use portable PDBs and disabled optimization.
+Instrumentation order is build, instrument, execute, generate report and restore
+binaries. Capture runner failure, still produce diagnostics/restore, then fail.
+Expected negative CLI outcomes must be asserted; ignored exit status cannot turn
+a failed suite into successful validation. Keep original FSI checks alongside
+compiled CLI collection; union their production line identities across separate
+reports. Validate checkout, output and interpreter paths before the shell-based
+build adapter runs; unsupported path characters fail explicitly.
 
-Each project exposes a coverage target using Coverlet's pinned MSBuild instrumentation and result targets: Build → InstrumentModules → execute runner → GenerateCoverageResult. Capture runner exit status, produce diagnostics and restore binaries, then fail when the runner failed. Never let IgnoreExitCode turn failure into successful validation. Run CLI behavior cases sequentially against the instrumented compiled CLI: valid `--root`, check-current, check-drift, write, unknown argument and ProjectionError. The driver asserts expected exit codes and outputs; a deliberately invalid CLI case is a successful test only when its expected failure is asserted.
+### DR-2a — Python collection and discovery
 
-The MSBuild Exec adapter validates checkout, artifact-directory and interpreter paths before launching collector subprocesses. Unsupported runtime path characters fail explicitly; [run.py](../coverage/run.py) declares the supported character set.
+Complete F# restore/instrumented collection before Python's offline synthetic
+collector probes so clean package caches are available. Use the same pinned
+Python environment for installer and gate suites. Collect in parallel data files,
+combine and emit XML inside the isolated run directory. Explicitly omit declared
+tests; inventory remains authoritative.
 
-The existing tests' real FSI subprocess checks remain. The compiled CLI coverage driver adds actual entrypoint execution; it does not replace the production FSI checks or turn spike evidence into claim coverage. Collect unit and CLI reports separately; evaluation unions production line identity across them. Compiling scripts for coverage introduces a test-only build step, not a packaged projector or second production implementation.
+Coverage source roots must discover unimported production Python as zero-hit.
+Compare reports against the complete inventory; any undiscoverable/missing source
+fails instead of disappearing from the denominator. Future inventory roots must
+be reflected in collection. Every collector and suite exit remains required even
+when changed executable lines are zero.
 
-### DR-2a: Python source coverage and suite discovery
+### DR-3 — Identity, provenance and freshness
 
-Normal F# dependency restore and instrumented unit/CLI collection precede the Python suites. This bootstraps clean package caches before the Python gate suite runs its synthetic collector smoke tests offline.
+Resolve the requested base to a full SHA; require exactly one merge base with
+HEAD. Unknown, disconnected or ambiguous history fails. Record requested base,
+comparison base, HEAD, policy digest, canonical production inventory/source
+SHA-256 values, exact tool versions, report digests/collector identities and
+process exit results in the versioned manifest. Reject unknown schema versions,
+missing fields, duplicate source/report/process identities, nonzero required
+results or omitted required collectors. Reports must remain inside the trusted
+isolated run directory.
 
-Run installer and gate suites with the same pinned interpreter environment:
+Recheck HEAD, inventory and source bytes after collection and before evaluation.
+Mutation, stale identity, malformed reports or digest mismatch fails. Hashes bind
+bytes; trusted fresh collection establishes provenance, not attacker-controlled
+report authenticity. Pre/post hashing neither locks the checkout nor detects an
+actor who restores bytes between observations. Local runs require a stable tree;
+CI uses an isolated checkout. Modification time is diagnostic only.
 
-```sh
-python -m coverage run --parallel-mode --source=install,.github/coverage -m unittest discover -s install -p 'test_*.py' -v
-python -m coverage run --parallel-mode --source=install,.github/coverage -m unittest discover -s .github/coverage -p 'test_*.py' -v
-python -m coverage combine
-python -m coverage xml -o <run-directory>/python.xml
-```
+Compare the merge base to staged/unstaged tracked changes and non-ignored
+untracked sources. Use zero-context diff without rename detection: new paths and
+untracked production sources contribute all current added lines; deleted hunk
+halves contribute none. Reject binary source/invalid hunk metadata. Require UTF-8
+with LF/CRLF and use LF identities; unsupported separators fail before diffing.
 
-Set the coverage data file inside the isolated run directory, not the repository root. Explicit omit entries exclude declared test files from production evidence; evaluator inventory remains authoritative regardless of report contents. Both installer and gate production modules are in `source`, so coverage.py can include discovered unimported Python files as zero-hit. Compare report source identity against the complete inventory; any unimported source the collector cannot discover still fails for missing evidence, never disappears from the denominator. Future Python production directories must be added to collection source roots derived from inventory, or the mismatch fails closed. All collector and test exit codes remain required regardless of an eventual zero changed-line intersection.
-
-### DR-3: Identity and freshness
-
-Resolve `--base` with Git to a full requested-base commit SHA, reject unknown revisions, and derive the comparison SHA using `git merge-base --all <requested-base> HEAD`. Require one unambiguous comparison commit; disconnected or multiple-base history fails with a diagnostic. This allows a branch behind its requested trunk reference. Record both requested-base and comparison SHAs, HEAD SHA, policy hash, canonical production inventory, source SHA-256 values, tool versions and report hashes in a versioned collection manifest. Compare source inventory and bytes again after collection and before evaluation. A source-content or inventory difference observed after collection, stale manifest, different requested base, changed HEAD, malformed report or mismatched digest fails. Pre/post hashing does not lock the local worktree or detect an external actor who mutates and restores bytes entirely between observations; CI uses one isolated checkout and local runs require a stable checkout. File modification times are diagnostic only.
-
-Local comparison is the resolved merge-base comparison SHA to current working tree, including staged/unstaged tracked changes and non-ignored untracked sources. Use zero-context Git diff without rename detection; added files and new paths of renames contribute all current added lines. Untracked production files contribute all current lines. The deleted half of a hunk contributes no current executable line. Reject unsupported binary source input and invalid hunk metadata rather than assuming it contains no executable lines.
-
-Production sources require UTF-8 text with LF or CRLF line endings. Before diffing, [run.py](../coverage/run.py) rejects unsupported source separators; LF-based line counting preserves Git line identity for newly added sources.
-
-CI uses full history and explicit immutable event input: pull request base SHA against checked-out head SHA; main push uses the event's previous SHA against pushed HEAD. A missing initial-push/manual base is a failure requiring an explicit base, not an implicit all-green result. This policy requires CI claim/constraint agreement; do not bury the base contract solely in workflow YAML.
-
-The manifest has this fixed schema; unknown schema versions, missing required fields and duplicate source/report identities fail:
-
-| Field | Type and meaning |
-| --- | --- |
-| `schema_version` | Integer 1 |
-| `requested_base_sha`, `comparison_base_sha`, `head_sha` | Full resolved Git commit identity strings |
-| `policy_sha256` | Lowercase SHA-256 of the policy bytes actually used |
-| `sources` | Object mapping unique POSIX repository-relative production paths to lowercase source SHA-256 strings |
-| `tools` | Object recording exact Python coverage, Coverlet and .NET SDK versions |
-| `reports` | Array of objects with unique artifact-relative `path`, `sha256` and `collector` (`python`, `fsharp-unit`, `fsharp-cli`) |
-| `process_results` | Array of objects with unique string `name` and integer `exit_code`, required to be 0 |
-
-Required process names are `python-installer-tests`, `python-gate-tests`, `python-combine`, `python-report`, `fsharp-unit` and `fsharp-cli`; each F# process is the coverage target that combines its runner and report result. Required report collector identities are `python`, `fsharp-unit` and `fsharp-cli`. These lists are fixed by the policy. The completed manifest cannot omit a required process or collector to pass. Resolve report paths inside the isolated run directory; arbitrary external reports are not accepted. `changed_lines` receives the resolved comparison SHA even though its parameter is named `base_sha`.
-
-Hashes bind evidence to declared bytes and identity; they do not authenticate an attacker-controlled report. Fresh collection and the trusted CI job define the provenance boundary.
+CI uses full history and immutable event SHAs: pull requests compare event base
+against checked-out head; main pushes compare previous SHA against pushed HEAD.
+An initial/manual run without a valid base fails and requests an explicit base.
 
 ```mermaid
 sequenceDiagram
-    participant Gate as Shared gate
-    participant Git as Existing Git checkout
-    participant Collectors as Instrumented test processes
-    participant Files as Ignored run artifact directory
-    participant Evaluator as Evaluator
-    Gate->>Git: Resolve base and HEAD, inventory and hash current sources
-    Gate->>Collectors: Run required suites and emit coverage
-    Collectors->>Files: Write isolated reports
-    Collectors-->>Gate: Return test and collection exit results
-    Gate->>Git: Recheck HEAD, inventory and source hashes
-    alt Any process failure or source mutation
-        Gate-->>Gate: Fail and retain diagnostic files
-    else Complete stable evidence
-        Gate->>Files: Hash reports and atomically publish complete manifest
-        Gate->>Evaluator: Validate identity and reports, then evaluate changed lines
-        Evaluator-->>Gate: Return exact counts and verdict
-    end
+  participant Gate
+  participant Git as Checkout
+  participant Collectors
+  participant Artifacts as Isolated artifacts
+  participant Evaluator
+  Gate->>Git: Resolve identity, inventory and source hashes
+  Gate->>Collectors: Run required suites and coverage
+  Collectors->>Artifacts: Write reports
+  Collectors-->>Gate: Exit results
+  Gate->>Git: Recheck HEAD, inventory and bytes
+  alt Failure or mutation
+    Gate-->>Gate: Fail and retain diagnostics
+  else Stable complete evidence
+    Gate->>Artifacts: Hash reports; publish complete manifest
+    Gate->>Evaluator: Validate identity and evaluate current added lines
+    Evaluator-->>Gate: Exact counts and verdict
+  end
 ```
 
-DR-3 sequence view: partial reports are diagnostic only; a manifest becomes evaluable after all required processes and source identity checks succeed.
+DR-3: partial reports are diagnostic; only complete stable evidence is evaluable.
 
-### DR-4: Paths, executable lines and exact arithmetic
+### DR-4 — Mapping and exact arithmetic
 
-Parse Cobertura with the standard XML parser. Require integer positive line numbers within current source bounds and nonnegative integer hits. Read class-level line elements, avoiding double counting their method copies. Duplicate entries for the same `(repository-relative source path, line)` union with hit logical OR across classes and reports.
+Parse Cobertura class-level lines, excluding duplicate method copies. Require
+positive integer line numbers within source bounds and nonnegative integer hits.
+Union duplicate `(repository-relative source, line)` entries with logical OR
+across reports/classes.
 
-Resolve a relative filename against each XML `<sources>` root and the repository root; resolve absolute paths directly. Keep only canonical candidates that match inventoried source files and remain within the checkout; require one unique mapping. Coverlet on the proven macOS probe emits filename `Users/.../scripts/project.fsx` with `<source>/</source>`: joining `/` restores the absolute path. Do not strip arbitrary prefixes or accept a basename match. Explicitly ignore declared test/harness sources, while unexplained source mappings, traversal and ambiguous collisions fail. Collector-specific source-root metadata may identify the checkout but cannot expand production inventory.
+Resolve relative filenames against declared XML source roots and checkout; resolve
+absolute filenames directly. Require one canonical inventoried match inside the
+checkout. A source root of `/` may reconstruct an absolute path from Coverlet's
+root-relative spelling. Never strip arbitrary prefixes or match only basenames.
+Ignore explicitly declared test/harness sources; unexplained, escaping or
+ambiguous mappings fail. Collector roots cannot expand production inventory.
 
-Require coverage evidence for every inventoried production source before intersecting the diff. A report omitting a newly added production file fails even if other files have excellent coverage. Collector-declared executable lines, including zero-hit lines, define executable-line identity; comments, directives and other lines without sequence points do not enter the denominator. A source with genuinely no executable lines requires the collector's validated empty-source evidence, not an absent entry.
+Require evidence for every inventoried source before diff intersection. Missing
+new files fail despite otherwise high coverage. Collector sequence points,
+including zero-hit points, define executable lines; comments/directives without
+points do not count. A genuinely non-executable source needs validated empty-
+source evidence, never an absent entry.
 
-Let `D` be distinct added/current lines intersected with executable production lines, and `H` the subset hit in any validated report. Pool sources across runtimes, counting every `(path,line)` once. If `|D| > 0`, pass iff `100 * |H| >= 80 * |D|`; display a rounded percentage only after the exact integer decision. If `|D| == 0` after evidence validation, report `N/A: 0 changed executable production lines`; do not display 100%. Report counts, unresolved evidence and missed changed lines; avoid absolute paths in portable prose.
+Let D be distinct added/current executable production lines and H their hit
+subset. Pool runtimes with each `(path,line)` counted once. For nonempty D, pass
+iff `100 * |H| >= 80 * |D|`; round only for display. Empty D reports
+`N/A: 0 changed executable production lines` after full evidence validation,
+never 100%. Return verdict, integer counts and sorted missed `(path,line)` pairs;
+report unresolved evidence explicitly and keep portable output paths relative.
 
 ```mermaid
 flowchart TD
-    Start[Resolve base and snapshot source identity] --> Collect[Run all required collectors and tests]
-    Collect --> Failure{Any test or collector failure?}
-    Failure -->|Yes| Fail[Fail with diagnostics]
-    Failure -->|No| Valid{Manifest, inventory, paths and reports valid?}
-    Valid -->|No| Fail
-    Valid -->|Yes| Intersect[Union executable hits and intersect added lines]
-    Intersect --> Empty{Changed executable count is zero?}
-    Empty -->|Yes| NA[Explicit N/A with zero denominator]
-    Empty -->|No| Floor{100 times hit count at least 80 times changed count?}
-    Floor -->|Yes| Pass[Pass with exact counts]
-    Floor -->|No| Fail
+  Identity[Resolve base and source identity] --> Collect[Run all required collection]
+  Collect --> Failed{Any process failure?}
+  Failed -->|Yes| Fail[Fail with diagnostics]
+  Failed -->|No| Valid{Complete valid fresh evidence?}
+  Valid -->|No| Fail
+  Valid -->|Yes| Lines[Union hits and intersect current added lines]
+  Lines --> Empty{Zero changed executable lines?}
+  Empty -->|Yes| NA[Explicit N/A]
+  Empty -->|No| Floor{Exact 80 percent comparison passes?}
+  Floor -->|Yes| Pass[Pass with counts]
+  Floor -->|No| Fail
 ```
 
-DR-4 algorithm view: N/A is reachable only after successful collection and complete evidence validation.
+DR-4: N/A is reachable only after successful complete validation.
 
-### Minimal implementation seams
+### Effects and publication boundaries
 
-Keep plain functions; do not add provider classes or an extensible framework. The declared `inventory`, `changed_lines`, `collect`, `read_reports`, `evaluate` and `main` interfaces live in [run.py](../coverage/run.py); that file owns their signatures.
+Use plain functions with patchable standard-library subprocess/filesystem readers;
+imports have no effects. Keep a process-local snapshot separate from the portable
+manifest: it also holds parsed policy, observed tool versions and trusted absolute
+run directory. Collection/report resolution must use that same directory;
+re-inventory uses current bytes and snapshot policy. Evidence errors report a
+nonzero exit. Direct arithmetic inputs support deterministic evaluation without
+pretending fabricated reports establish collector feasibility.
 
-Inventory maps repository-relative paths to SHA-256 strings. Snapshot is a process-local dictionary with exact keys: `requested_base_sha`, `comparison_base_sha`, `head_sha`, `policy_sha256`, `sources` (same meanings as the manifest), plus `policy` (the parsed policy dictionary), `tools` (expected observed tool-version strings) and `run_dir` (trusted absolute `Path` created by `main`). `collect` requires its `output_dir` to equal snapshot `run_dir`; `read_reports` resolves manifest artifact paths against snapshot `run_dir`. Snapshot is not serialized as the portable manifest. Re-inventory uses snapshot `policy` and current repository bytes. Collection returns the completed manifest. Evidence errors raise `ValueError`; `main` reports them and exits nonzero. Evaluation returns `verdict` (`pass`, `fail`, `not-applicable`), integer `covered` and `changed`, and sorted `missed` `(path,line)` pairs. Imports have no effects; execution uses an `__main__` guard. Subprocess execution and filesystem/report readers belong at collection boundaries and remain patchable through standard-library seams; arithmetic tests supply values directly. Unit tests cannot use a fabricated XML report as collector feasibility proof.
+Use a unique ignored run directory, no cross-run collection cache or shared
+report writer. Publish a complete manifest only after required reports exist.
+Retain failed diagnostics locally and upload them in CI without changing the
+failure exit result.
 
-Before test implementation, the architecture handoff exposed the approved declarations as importable, behavior-free stubs in `.github/coverage/run.py`. Those initial stubs returned explicit unimplemented/empty placeholders and exited 2; their presence proved importability only. That file now owns the implemented interfaces.
+### Feasibility, risks and readiness
 
-Use an isolated per-run `.artifacts/coverage/<run-id>/` directory. Partial artifacts never constitute a valid manifest; publish the completed manifest only after required reports exist. No cross-run cache skips collection. Retain failed-run diagnostics locally; CI uploads them without changing the gate exit result. No concurrent report merge or shared writer is required.
+Historical linked-original probes established static Coverlet collection without
+source-body rewriting or migrating the custom runner: 62 checks passed; the unit
+report had 582 executable production lines/545 hit, and the CLI report had
+582/497 plus 25/13 entrypoint lines. Python coverage 7.12.0 collected existing
+installer execution and unimported synthetic zero-hit sources. The macOS arm64
+dotnet-coverage probe produced no feasibility evidence. SDK-cache overrides were
+local experiment workarounds, not accepted configuration. These observations
+prove feasibility, not changed-line scores or delivery coverage.
 
-### Performance and risks
+Inventory/hashing is linear in source bytes; parsing/intersection is linear in
+report records plus changed lines, with linear executable-line storage. Added
+compilation/instrumentation and process startup are unmeasured costs; no latency
+budget, service or paid provider is introduced.
 
-Inventory/hash cost is linear in inventoried source bytes; report parsing and diff intersection are linear in report line records plus changed lines. Set/map storage is linear in executable source lines. Existing workload is three production files plus gate Python files; report evidence currently contains 582 Projection lines and 25 entrypoint lines. These counts are measurements of this probe, not performance targets or changed-line scores.
+Risk: medium for silent inventory/path errors and compiled-CLI parity; fail-closed
+evidence validation and retained original execution checks address them. CI risk
+is low after local proof, with Linux execution still requiring CI evidence.
+Database/class/distributed-state views do not apply: there is no application data
+schema, object hierarchy, durable business workflow or event delivery.
 
-Coverage adds test-only compilation and instrumentation plus Python coverage execution. Reuse the existing offline suites; do not invent latency or throughput budgets. Wall time is unmeasured; repeated FSI subprocess startup remains an explicit cost assumption rather than a measured bottleneck. No infrastructure service or paid coverage provider is introduced. A measured duration requirement, if requested, belongs to a separate benchmark assignment.
-
-Risk: medium for gate implementation because incomplete inventories or path normalization can silently fabricate success; fail-closed source and report tests address it. Risk: medium for compiled coverage parity because CLI semantics depend on the shim; retain original FSI checks and compare explicit CLI cases. Risk: low for CI integration after local proof because the same runner and policy execute, although Linux execution still needs CI evidence.
-
-Database, class and distributed-state diagrams do not apply: no database, object hierarchy, durable business state or event delivery is introduced. Process calls and manifest publication order are shown in the DR-3 sequence view.
-
-### Bounded feasibility evidence
-
-Question: can the existing F# scripts yield real executable-line coverage without rewriting production source bodies or migrating the custom test runner? Scope: linked-source compilation and local static collection only, approximately 30 minutes maximum; disposable projects/reports remain in temporary directories. The gate, policy evaluator and CI workflow were not implemented.
-
-1. `dotnet build Spike.fsproj --nologo --ignore-failed-sources` successfully compiled linked original `scripts/Projection.fsx` and `scripts/project.fsx` with the preceding argument shim; zero warnings/errors.
-2. `dotnet msbuild Spike.fsproj -t:RunCovered -p:IncludeTestAssembly=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=coverage.xml '-p:ExcludeByFile=**/project.tests.fsx' -nologo` executed the existing 62-test custom runner under Coverlet 6.0.4: 62 passed, zero failed. Report union: Projection 582 executable lines, 545 hit. The final probe links original unmodified `scripts/Projection.fsx` and `scripts/project.tests.fsx`; its report names the original production path. An earlier transformed temporary-copy probe was superseded by this original-linked run.
-3. The same custom target over linked original CLI sources ran `--check`, printed `up to date: 78 outputs`, and emitted real Cobertura on original source paths: Projection 582 executable/497 hit; project.fsx 25 executable/13 hit. This CLI case alone leaves expected CLI branches uncovered.
-4. `dotnet-coverage` 18.5.1 static collection on macOS arm64 did not begin target execution or emit a report within the probe; no feasibility claim is made for it. Coverlet requires no profiler process and produced evidence locally.
-5. A pinned SDK 10.0.401 probe required a cached FSharp.Core override because writing its SDK-selected package cache was sandbox-denied. This is local environment evidence; real implementation must restore the SDK-selected version normally rather than copy that override.
-
-6. Parent-supplied Python probe: `COVERAGE_FILE=/private/tmp/agents-python-coverage.data /private/tmp/agents-coverage-python-spike/bin/python -m coverage run --include='*/install/install.py' -m unittest discover -s install -p 'test_*.py'`, followed by `coverage xml` and `coverage report`, passed 23 tests under coverage.py 7.12.0. It measured 247 installer executable statements with 20 misses (92% rounded display). This verifies collection of existing imported installer source; full-inventory discovery was separately probed as recorded next; committed regression coverage remains required.
-
-7. Synthetic Python inventory probe under coverage.py 7.12.0: `coverage run --source=. -m unittest discover -s . -p 'test_*.py'`, then `coverage xml`. One real test passed; executed.py reported lines 1–3 hit and deliberately skipped line 4 zero-hit. Entirely unimported never.py reported executable lines 1 and 2 zero-hit. Thus `--source` positively discovers an unimported new Python file instead of report-only intersection; generated test sources remain disposable scratch, not executable claim coverage.
-
-Portable primary documentation: [Microsoft dotnet-coverage platform and static instrumentation](https://learn.microsoft.com/en-us/dotnet/core/additional-tools/dotnet-coverage); [Coverlet MSBuild integration](https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/MSBuildIntegration.md). [coverage.py source discovery](https://coverage.readthedocs.io/en/7.12.0/source.html). Pinning Coverlet bounds reliance on its instrumentation/result target names; add a real synthetic compiled-source smoke test to detect collector regressions.
-
-### Readiness
-
-Ready for tests and implementation of 0001-F6 B-001–B-004 under C-1–C-5. Section 12 records approved agreement/design and independent testability Ready. At the architecture handoff, item 0044 was taken and the declared API stubs compiled/imported. This verdict authorizes the test-first handoff, not delivery or executable claim coverage. Feasibility of linked-original F# static coverage is established. A truly non-executable source without explicit collector evidence remains fail-closed, so an absent source entry cannot be used to infer an empty executable set. The handoff required real synthetic collector fixtures to prove missed lines/new-file behavior before implementation delivery; verification results belong to sections 8–9. No F4 claims, existing production behavior, tests or accepted ADRs were edited by this design assignment.
+Readiness: Ready for tests and implementation of B-001–B-004 under C-1–C-5.
+Linked-original collection is feasible; empty-source evidence remains fail-closed.
+Applicable agreement/design and testability verdicts stay in § 12. This author
+assessment grants neither delivery nor executable coverage; verification belongs
+to § 8–9.
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-27 -->
 
-Unit tests exercise exact pooled arithmetic, executable-line intersection,
-duplicate-hit union, source/path normalization, diff parsing and manifest
-validation. Synthetic reports prove evaluator behavior only; they do not prove
-collector measurement. Cases include exactly 80%, 79.9%, missing reports,
-malformed lines, source mutation preserving mtime, changed inventory, omitted
-new production files, ambiguous mappings and failed collection/test processes.
+Unit checks cover exact pooled arithmetic, executable-line intersection,
+duplicate-hit union, source/path normalization, diff parsing and evidence
+validation. Cover the exact floor, below-floor values, missing/malformed/stale
+reports, same-mtime mutation, inventory gaps, ambiguous mappings and failed
+processes. Validate evidence before reporting a zero denominator as N/A.
 
-Acceptance tests invoke the shared gate entry point with synthetic checkout
-state and patched subprocess effects, asserting exit code, comparison identity,
-covered/changed counts and explicit N/A without a percentage. Both local and CI
-contexts use this entry point and policy. The gate's own production source is
-included in inventory; test/harness sources are excluded.
+Acceptance checks invoke the shared local/CI entry with synthetic checkout state
+and patched process effects; assert exits, comparison identity, counts and N/A
+without a percentage. Include gate production in inventory; exclude tests and
+harnesses. Real pinned Python and compiled F# collectors must report missed
+branches and unexecuted new sources or fail closed; synthetic reports alone
+cannot establish collector measurement.
 
-Integration tests run real coverage.py and compiled F# collectors over committed
-synthetic sources. Deliberately unexecuted branches must produce zero-hit
-executable lines; an entirely unexecuted new source must be represented or cause
-the gate to fail. These tests use installed pinned tools without network access.
-Existing FSI and installer tests remain authoritative for their own contracts.
-
-The design is testable through pure evaluation and ordinary stdlib patchpoints.
-No clock, credential, live provider or constructor side effect is required.
-Filesystem/process boundaries are explicit; no new public member exists solely
-for tests. Database, UI and distributed-state tiers do not apply to this local
-verification command. Evidence validation precedes zero-denominator N/A.
-
-Discovery uses unittest `test_*.py` files and test-prefixed methods. The initial
-red run discovered 24 tests, up from zero: 23 assertion failures, zero errors,
-one deletion-only diff case passing against empty behavior stubs. Tests carry
-Given/When/Then blocks and B-00n names. Final discovery runs 36 gate tests,
-including two real collector regressions; all pass.
-
-The [repository Testing policy](../../README.md#testing) names the 80% pooled
-changed executable production-line floor and shared local/CI command. Fresh run
-`4b09202932144842998f626f876e5615`, compared with
-`c890c826dc439cd617349a417ef396748eab2439` at HEAD
-`36e2efec7a41012c60a13b5c3fef9f3ba64e550e`, passes **220/245 (89.80%)**.
-Independent manifest/report/source validation and reevaluation reproduce those
-exact counts. All six required process records exit zero: 62 original-linked
-F# tests, six instrumented compiled CLI cases, 23 installer tests, 36 gate tests,
-and Python combine/report steps. This final collection uses a populated cache.
-Historical run `b9a269b572274089a3ad5b6e2b6561b2` passed 217/242 (89.67%)
-from an isolated initially empty NuGet cache; real F# collection bootstrapped
-the later offline smoke tests. The new line-identity regression recorded nine
-assertion failures before the fix; rejection and CRLF acceptance pass afterward.
-
-Historical negative run `735ffab129854761aa932d4b8ff2eab7` fails **210/335**:
-its real report includes 100 deliberately unimported executable lines with zero
-hits. Report hashes and counts were independently inspected; the temporary
-probe was removed. This historical negative evidence is distinct from final
-fresh-source validation. Tool versions are coverage.py 7.12.0, Coverlet 6.0.4
-and SDK 10.0.401. Reports remain ignored artifacts. Linux CI execution is
-pending; local verification does not claim its outcome.
+Testability: pure evaluation and standard filesystem/process seams need no clock,
+credential, live provider or constructor effects. No test-only public members;
+database, UI and distributed-state tiers do not apply. Require the repository's
+80% pooled changed executable production-line floor under ADR-0007. Reports stay
+ignored; local verification does not assert Linux CI execution.
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-16 -->
+<!-- last written by: test-writer, 2026-10-27 -->
 
 | Claim ID | Scenario | Test | Status |
 | --- | --- | --- | --- |
@@ -338,18 +336,36 @@ pending; local verification does not claim its outcome.
 | B-003 | [@B-003](repository-verification.feature#B-003) | `EvaluationTests.test_B003_no_changed_executable_lines_is_not_applicable`; `GateAcceptanceTests.test_B003_gate_reports_zero_denominator_without_percentage` | Covered |
 | B-004 | [@B-004](repository-verification.feature#B-004) | `SourceTests.test_B004_inventory_includes_gate_and_excludes_test_generated_sources`, `test_B004_inventory_preserves_carriage_return_in_literal_git_filename`; `GateAcceptanceTests.test_B004_local_and_ci_share_policy_evaluator_and_output` | Covered — local invocation parity; Linux CI execution pending |
 
+Test methods resolve in [`test_gate.py`](../coverage/test_gate.py),
+[`test_collectors.py`](../coverage/test_collectors.py) and
+[`test_cli_driver.py`](../coverage/test_cli_driver.py); class-qualified names
+identify their containing test classes.
+
+### Recorded verification
+
+| Historical run | Recorded evidence |
+| --- | --- |
+| Initial discovery | 24 tests: 23 intended assertion failures, zero errors; deletion-only case passed against stubs. |
+| Final suite | 36 gate tests, including real collector regressions, passed; line-identity regression had nine assertion failures before correction. |
+| Source-bound coverage `4b09202932144842998f626f876e5615` | 220/245 (89.80%); comparison `c890c826dc439cd617349a417ef396748eab2439`, HEAD `36e2efec7a41012c60a13b5c3fef9f3ba64e550e`; independent validation reproduced counts. Six processes exited zero: 62 linked F# tests, six CLI cases, 23 installer tests, 36 gate tests and Python combine/report. |
+| Initially empty-cache run `b9a269b572274089a3ad5b6e2b6561b2` | 217/242 (89.67%); real F# collection bootstrapped later offline checks. |
+| Negative run `735ffab129854761aa932d4b8ff2eab7` | Failed 210/335; 100 deliberately unimported executable lines reported zero hits. Hashes/counts independently inspected; temporary probe removed. |
+
+Recorded tools: coverage.py 7.12.0, Coverlet 6.0.4, SDK 10.0.401. Reports remain
+ignored. Linux CI execution is pending; these are historical local results.
+
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
-2026-10-16: user requested repository-wide coverage policy and enforcement,
-then confirmed 0001-F6 under epic 0001. [Decision 0001](decisions/0001-changed-line-coverage-policy.md)
-records the threshold, aggregation and comparison choices. Collector probes
-establish feasibility; they do not establish delivery or a final coverage score.
+| Date | Trigger | Change | Affected IDs |
+| --- | --- | --- | --- |
+| 2026-10-16 | Coverage-policy request | Adopt pooled changed-line coverage and comparison policy; feasibility probes establish no delivery score. | B-001–B-004; decision 0001 |
+| 2026-10-27 | Confirmed concise-specification plan | Compress in place; qualify sibling references; separate strategy, locators and history. | §§ 1–12; IDs unchanged |
 
 ## 11. Open Questions
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | ID | Question | Blocks | Resolution |
 | --- | --- | --- | --- |
@@ -357,12 +373,22 @@ establish feasibility; they do not establish delivery or a final coverage score.
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-16 -->
+<!-- last written by: spec-author, 2026-10-27 -->
 
 | Section | Status | Reviewer | Note |
 | --- | --- | --- | --- |
-| 1-12 | 🟢 | spec-reviewer | Independent /root/f4_baseline_review, 2026-10-16: agreement, registered placement, design and strategy approved. Design technically Ready for declared stubs/tests; at that design review all four new coverage rows were Missing and blocked delivery. Testability Ready from /root/coverage_testability. |
-| 1-12 and implementation | 🟢 | spec-reviewer | Independent `/root/coverage_diff_review`, 2026-10-16: final agreement, design, named coverage evidence and implementation approved against B-001–B-004 and C-1–C-5; bounded line-identity correction also approved. Independent `/root/coverage_surface_review` clears all four boundary findings. Linux CI execution remains pending; final HEAD must be revalidated before PR. |
+| Concision migration: §§ 1–12 | 🟢 | spec-reviewer | Independent `/root/review`, 2026-10-27: Approved snapshot SHA-256 `f27fd76c55d76a7023b3e96f55f010b453564c682325dd738b0b557381841b38`; no findings. Unchanged baseline scope retains its prior evidence; no new behavior or coverage is approved. |
+
+### Historical verdicts
+
+These verdicts concern earlier subjects; they do not approve this migration.
+Full notes, limitations and superseded pending rows are recoverable from § 12
+of this specification at Git revision `57cd1200b089d2872d4538c91b5d085cf069307d`.
+
+| Scope | Verdict | Reviewer | Subject / evidence |
+| --- | --- | --- | --- |
+| 1-12 | 🟢 | spec-reviewer | 2026-10-16; `/root/f4_baseline_review`; `/root/coverage_testability`; Missing |
+| 1-12 and implementation | 🟢 | spec-reviewer | 2026-10-16; `/root/coverage_diff_review`; `/root/coverage_surface_review`; Linux CI execution remains pending |
 
 ## Tasks
 

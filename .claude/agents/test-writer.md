@@ -67,14 +67,15 @@ contract's write boundaries.
    surface the companion § "Testing" gives another tier, such as integration or
    user interface, earns that tier too.
 4. **A § 9 row per claim.** Every id in § 3 appears in § 9 exactly once. The row
-   anchors to the scenario's `@B-00n` **tag**, not the title in the Scenario
+   holds all concrete test names and locators, each verified against an existing
+   test. It anchors to the scenario's `@B-00n` **tag**, not the title in the Scenario
    column. `Missing` is an honest value and the correct one until the test exists.
 5. **The fewest tests that pin the claim.** One test per behaviour the claim
    states, named for that behaviour. No test harness, base class, builder or
    shared helper until a second test actually needs it - a helper with one call
    site hides the test it was meant to clarify. Arrange inline where inline is
    readable.
-6. **A testability verdict in § 8.** What is covered where, and what the design
+6. **A testability verdict in § 8.** Strategy, coverage requirements and what the design
    makes hard to test — reported to `architect`, not worked around with a
    weakened assertion. Check each seam: the network, the clock and any provider
    are injectable; no member is made public only for a test; a constructor has
