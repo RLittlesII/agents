@@ -155,8 +155,10 @@ advice does not move design ownership.
   reason briefly. A view that leaves `implementer` a choice — a column type, an
   index, a delete action — is incomplete. A seam spanning two Features names the
   Feature that owns it. A Mermaid view does not replace schema constraints or a
-  written guarantee. Once code exists, reference the declaring files instead of copying
-  signatures into the specification; keep diagrams aligned with those declarations.
+  written guarantee. Once implemented, remove code pointers and copied declarations;
+  retain architectural intent and necessary contract details. Keep diagrams aligned
+  with the contract. Cite sibling specifications by qualified keys under
+  `spec-and-traceability` § "One answer, one section".
 - **ADRs for durable choices**, recording alternatives, costs and rejected
   options. Accepted ADRs are immutable; a changed rule needs a superseding ADR.
   A process rule is a convention in a skill and an interface detail is a claim;

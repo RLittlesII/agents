@@ -108,8 +108,9 @@ The role files name no path or command of yours; the companion does.
 ## Maintaining
 
 Projection and specification checks require the pinned .NET SDK in `global.json`;
-installer tests also require Python 3.11+. The `specht`
-feed needs a GitHub Packages credential, exported as the environment variable
+installer tests also require Python 3.11+. CI restores Specht with its temporary
+`GITHUB_TOKEN` and read-only package permission. Local restores need a GitHub
+Packages credential, exported as the environment variable
 the [specht setup guide](https://github.com/RLittlesII/specht/blob/main/docs/setup.md)
 names.
 
