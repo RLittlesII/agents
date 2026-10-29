@@ -198,6 +198,13 @@ Always carry the prefix in prose — several sequences have a twelfth member.
 Cross-specification references use qualified keys, not sibling-spec hyperlinks;
 see `spec-and-traceability` § "One answer, one section".
 
+In human-facing prose, lead with the meaning: pair a key with the Feature name
+and relevant behavior, or a work-item number with its title and intended outcome.
+Explain a referenced question, claim or constraint in plain language; the key
+alone is not context. Include a direct source link when available, while keeping
+the explanation self-contained. Never invent a title or meaning for an unread
+record; retrieve it or state the evidence gap.
+
 An ID becomes **permanent on merge or citation outside its authoring branch**,
 whichever happens first. Shared reviews and work-item citations count even before
 merge. Permanent IDs are never reused or renumbered, including during migrations;

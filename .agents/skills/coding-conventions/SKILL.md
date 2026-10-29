@@ -103,8 +103,11 @@ with a budget.
   a decision record, where it can be reviewed; the artifact carries the outcome.
 - **Cut the hedge.** "Probably", "it may be worth", "we might want to" in a
   specification means the question is open - record it as one.
-- **One line per finding, report row or answer:** where, what, and the fix or
-  the question, in at most 25 words. No preamble, no restatement, no praise.
+- **One line per finding or report row:** where, what, and the fix, in at most
+  25 words. Human decision prompts follow
+  [`clarify-requirements`](../clarify-requirements/SKILL.md)
+  § "Present one decision at a time"; retain the context needed to decide.
+  No preamble, no restatement, no praise.
   Quote the decisive line, never the log. Nothing at all when there is nothing.
   This holds wherever the output lands: a file, a tracker item, the terminal.
 - **State a scope by what it covers**, never by position. "The bullets below"

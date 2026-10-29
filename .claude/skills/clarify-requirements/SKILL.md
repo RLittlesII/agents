@@ -51,15 +51,36 @@ ambiguity never does: asking there is indecision, and it teaches the person to
 stop trusting the judgement. A standing instruction or an earlier authorization
 already answers what it covers; within its scope, do not ask again.
 
-When several questions are open, ask them together: at most three per pass, one
-theme each, as concrete options grounded in what you found. When an answer
-comes back, say whether it fully resolves the question before acting on it.
+## Present one decision at a time
+
+Whoever is blocked records the open question; the current lead surfaces the
+human decision using this format, including questions returned by contributors.
+Keep the remaining questions in the working record or § 11, not in a bulleted
+or numbered questionnaire to the human.
+
+Ask one actionable question, then wait for its answer before presenting the
+next. Resolve prerequisites first; use each answer to revise or remove the
+remaining questions. Independent authorized work may continue while waiting.
+
+Give enough context to decide without opening another artifact: name the
+Feature or work item in plain language, explain the relevant current behavior
+and evidence, why the choice matters now, and what work the answer unblocks.
+Apply `sdd-conventions` § "ID schemes" when citing records.
+
+Offer concrete options with their consequences and a recommendation with its
+reason. Options may be a list within that single question; do not hide several
+decisions inside one prompt. Ask for the smallest choice and its governing rule.
+Use a structured question control when available, with one question per call.
+
+When an answer comes back, say whether it resolves the decision, write it back,
+and then present the next question. An incomplete answer gets one focused
+follow-up; silence is not a choice.
 
 ## When nobody can answer
 
-A halt is a return, not a wait. Hand back each open question word for word,
-with the work finished so far. Never pick a default, and never produce output
-that assumes the answer.
+A halt is a return, not a wait. Hand back the current contextualized question
+with the work finished so far and where the remaining questions are recorded.
+Never pick a default, and never produce output that assumes the answer.
 
 ## An exploratory comment is not a decision
 
