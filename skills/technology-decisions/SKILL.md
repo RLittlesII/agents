@@ -73,7 +73,7 @@ does not become production scaffolding.
 ## Decide together before dependent work
 
 Present the unresolved choices, recommendation, evidence, tradeoffs and material
-assumptions to the human. Ask focused questions in small groups using
+assumptions to the human using
 [`clarify-requirements`](../clarify-requirements/SKILL.md); it owns question
 format and writing requirement answers back. Make the requested decision clear
 instead of burying a package rejection in design prose.

@@ -1,0 +1,32 @@
+id: "0058"
+type: chore
+title: Present contextual human decisions one at a time
+status: in-progress
+cost: 1
+risk: 1
+parent: null
+children: []
+depends_on: []
+spikes: []
+spec: null
+claims: []
+created: "2026-10-28"
+updated: "2026-10-28"
+closed: null
+summary: |
+  Correct method guidance that batches questions and strips the context needed
+  to act on internal keys and work-item numbers. The user requested sequential,
+  actionable questions with enough background to make meaningful decisions.
+acceptance_criteria:
+  - Ask one decision at a time and wait for its answer before presenting the next.
+  - Explain context, consequences, recommendation and the meaning of referenced records.
+  - Remove conflicting batching and compression guidance and regenerate host outputs.
+  - Pass independent diff review, strict specifications and projection checks.
+decisions:
+  - "2026-10-28, ownership claim: Codex session 01a18474-4d59-7253-aaaa-99f509f9b94f; checkout /Users/rlittlesii/source/rlittlesii/agents; planned branch codex/contextual-human-decisions. User authorized the correction and requested a PR. Source edits preceded delivery bookkeeping; this records the actual sequence."
+  - "2026-10-28, baseline: main and origin/main both 9f90bae; no open PR reservations. Existing items and ownership remain unchanged."
+  - "2026-10-28, verification: strict specifications pass with zero errors/warnings; all 80 projected outputs current; 90 projector tests pass."
+  - "2026-10-28, independent diff review: /root/review Approved tracked diff SHA-256 5b72da822a41cc22a958ba18e6810c7df14ae30c29d670b045968fa042d01c52 and new item SHA-256 01fa09bcc3e188eb87434b3c9078ce67b93bc8a408d4bdba1f331ac65d8baa31 against origin/main 9f90bae; no findings or surface-pass trigger. All eight generated copies match their sources; 30 installer tests pass."
+  - "2026-10-28, final gate: pinned coverage environment passed against origin/main 9f90bae; N/A with zero changed executable production lines. Strict specification and projection checks pass after delivery bookkeeping."
+out_of_scope:
+  - Projector implementation, specification claims, accepted ADRs and tracker semantics.
