@@ -62,10 +62,10 @@ Ask one actionable question, then wait for its answer before presenting the
 next. Resolve prerequisites first; use each answer to revise or remove the
 remaining questions. Independent authorized work may continue while waiting.
 
-Give enough context to decide without opening another artifact: name the
-Feature or work item in plain language, explain the relevant current behavior
-and evidence, why the choice matters now, and what work the answer unblocks.
-Apply `sdd-conventions` § "ID schemes" when citing records.
+Cite records by qualified key under `sdd-conventions` § "ID schemes". In the
+decision prompt, explain the relevant behavior and evidence, why the choice
+matters now, and what the answer unblocks. Context belongs in the question;
+record references remain key-based.
 
 Offer concrete options with their consequences and a recommendation with its
 reason. Options may be a list within that single question; do not hide several
