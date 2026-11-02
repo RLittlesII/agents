@@ -1,0 +1,39 @@
+id: "0059"
+type: chore
+title: Carry authorized delivery across specification and implementation phases
+status: in-progress
+cost: 1
+risk: 1
+parent: null
+children: []
+depends_on: []
+spikes: []
+spec: null
+claims: []
+created: "2026-11-02"
+updated: "2026-11-02"
+closed: null
+summary: |
+  Correct workflow guidance that turns agreement and design handoffs into
+  separate pull requests instead of continuing the authorized delivery.
+acceptance_criteria:
+  - Default to one pull request containing the agreement delta, design, tests and implementation for a bounded delivery.
+  - Preserve explicit phase-only requests, genuine approval holds and independently deliverable splits.
+  - Clarify that a phase handoff does not finish a parent delivery request or require a merge to continue.
+  - Start at the requested phase, reuse valid earlier artifacts and approvals, and continue to a reviewed PR by default.
+  - Keep standalone reviews, diagnostic test runs and queue recommendations bounded.
+  - Regenerate host outputs and run specification, projection and repository checks.
+decisions:
+  - "2026-11-02, ownership claim: Codex session 01a19df5-0073-73b1-9d19-932186311e24; checkout /Users/rlittlesii/source/rlittlesii/agents; current branch codex/contextual-human-decisions. Local reviewable edits only; no commit, push or PR requested. Existing item 0058 remains with its recorded owner."
+  - "2026-11-02, scope: portable delivery guidance and phase-handoff routing; projector and contract schemas retain their existing behavior."
+  - "2026-11-02, verification: strict specifications pass with zero errors/warnings; all 80 projected outputs current; 90 projector tests and 30 installer tests pass; diff whitespace check passes. No new executable behavior or tests."
+  - "2026-11-02, independent diff review: /root/delivery_review Approved against HEAD 6359622, reviewed snapshot SHA-256 e4661c4a001982aa7cc5a59d72e6eebeb09f5abd6a3765160d7a370cd51806a7. Command-body dependency repetition corrected under 0001-F3 C-2; no remaining findings or surface-pass trigger."
+  - "2026-11-02, shared coverage gate: passed against HEAD 6359622; N/A with zero changed executable production lines. Work remains in-progress pending any requested commit/PR and merge."
+  - "2026-11-02, continuation: same session, checkout and branch; user approved the resume-at-any-phase plan. Extend the existing uncommitted change so phase commands continue delivery by default; earlier reviews cover only their recorded snapshots and require re-review for this revision."
+  - "2026-11-02, independent continuation re-review: /root/delivery_review Approved against HEAD 6359622, snapshot SHA-256 537b3af769f9af3c5db3c5749b582e84d826642c43d3aba9e0e8e1ce38c2a2cc. No actionable findings or surface-pass trigger; command C-1/C-2, artifact boundaries and approval gates preserved."
+  - "2026-11-02, static instruction-conformance: all six planned paths checked against the guidance: approved spec starts at design; approved design starts at tests; valid failing-test entry resumes implementation; architecture-only stops after reviewed design; missing approval holds dependent work without restarting; standalone review/recommendation stays bounded. These walkthroughs establish text consistency, not live-agent behavior."
+  - "2026-11-02, final continuation validation: strict specifications zero errors/warnings; projection 80 outputs current; 90 projector tests and 30 installer tests pass; whitespace check passes. Shared coverage gate passes against HEAD 6359622 with zero changed executable production lines (N/A)."
+  - "2026-11-02, PR delivery authorized: user requested a pull request. Continue in the same session and checkout on planned branch codex/resume-delivery from origin/main 7b518b3. Prior HEAD 6359622 and current trunk have identical trees; earlier item 0058 is already merged by PR #14. Preserve prior review and test evidence for unchanged content; verify final delivery bookkeeping and current-base coverage."
+  - "2026-11-02, pre-PR review: /root/delivery_review Approved against origin/main 7b518b3, snapshot SHA-256 b538f984f822598fe3c909e0a19f88f83b42fd9da662f4c497a770ac43381739; no findings or surface-pass trigger. Unchanged substantive approval and six static walkthroughs remain applicable. Strict specifications and all 80 projections pass; shared coverage gate against current main passes, N/A with zero changed executable production lines."
+out_of_scope:
+  - Changing approval requirements, role write boundaries, projector behavior or accepted ADRs.

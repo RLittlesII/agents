@@ -5,11 +5,12 @@ description: "Turn agreed claims into failing scenarios and tests, then run and 
 
 Follow the artifact ownership and review boundaries in the repository guidance.
 
-Use these skills: `test-from-scenarios` (`.agents/skills/test-from-scenarios/SKILL.md`), `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`).
+Use these skills: `test-from-scenarios` (`.agents/skills/test-from-scenarios/SKILL.md`), `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`), `deliver-change` (`.agents/skills/deliver-change/SKILL.md`).
 
 The test owner writes failing step definitions and failing tests for each
 claim's scenario in scope and records them in the traceability matrix. The
 verification pass then runs the suites and explores beyond them, and reports the exact
 failing line of anything that fails.
+Enter through this phase and continue under the delivery rule.
 
 Work on: the request that invoked this skill

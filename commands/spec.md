@@ -2,7 +2,7 @@
 name: spec
 description: Take a raw ask to a decided need, then to the agreement sections and the scenario file of a Feature specification.
 roles: [spec-author, spec-reviewer]
-skills: [clarify-requirements, spec-and-traceability]
+skills: [clarify-requirements, spec-and-traceability, deliver-change]
 argument-hint: "<the raw ask, or a path to notes>"
 ---
 
@@ -12,5 +12,6 @@ asker confirms the recorded need, the author writes the agreement and scenarios.
 The reviewer returns independent findings and an agreement verdict. The author
 addresses agreement findings and records the returned verdict in sign-off.
 The output is the specification, scenarios and recorded review evidence.
+Enter through this phase and continue under the delivery rule.
 
 Work on: $ARGUMENTS

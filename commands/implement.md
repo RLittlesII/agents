@@ -16,5 +16,6 @@ The presentation owner builds the decided interaction when presentation is
 affected. Each contribution stays bounded by its item and design, with suites
 and regression checks run before handoff. Each contributor commits citing the
 claim it satisfies or the constraints its refactor preserves.
+Enter through this phase and continue under the delivery rule.
 
 Work on: $ARGUMENTS

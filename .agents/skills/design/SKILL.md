@@ -5,7 +5,7 @@ description: "Design the technical solution for an agreed Feature, then have the
 
 Follow the artifact ownership and review boundaries in the repository guidance.
 
-Use these skills: `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`), `coding-conventions` (`.agents/skills/coding-conventions/SKILL.md`), `test-from-scenarios` (`.agents/skills/test-from-scenarios/SKILL.md`), `technology-decisions` (`.agents/skills/technology-decisions/SKILL.md`).
+Use these skills: `spec-and-traceability` (`.agents/skills/spec-and-traceability/SKILL.md`), `coding-conventions` (`.agents/skills/coding-conventions/SKILL.md`), `test-from-scenarios` (`.agents/skills/test-from-scenarios/SKILL.md`), `technology-decisions` (`.agents/skills/technology-decisions/SKILL.md`), `deliver-change` (`.agents/skills/deliver-change/SKILL.md`).
 
 The design owner records the concern separation and the technical design, with
 diagrams and a readiness verdict. When the claims carry business rules, the
@@ -21,5 +21,6 @@ reads the design and returns findings; the design owner answers each in the desi
 or records why not, and the reviewer re-reads what changed. The agreement
 owner records the returned verdict in sign-off; interface scaffolding stays
 with the design owner.
+Enter through this phase and continue under the delivery rule.
 
 Work on: the request that invoked this skill
