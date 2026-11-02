@@ -78,6 +78,9 @@ An assignment names its affected claims or concern, allowed files or artifacts,
 and completion evidence. The specialist returns its contribution or a recorded
 gap to the lead. The lead integrates contributions and obtains any missing
 claim or design decision from its existing owner before dependent work resumes.
+Whoever is blocked records an open question in § 11; the current lead presents
+human decisions through
+[`clarify-requirements`](../skills/clarify-requirements/SKILL.md#present-one-decision-at-a-time).
 The parent assignment remains with its lead during bounded obstruction removal;
 proof that the original work can resume completes that subtask. Adjacent work is
 recorded separately.
