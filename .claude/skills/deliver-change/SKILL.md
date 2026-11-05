@@ -13,44 +13,21 @@ lands there. Read all three.
 
 ## Deliver the requested outcome
 
-A request to specify, design, write tests for or implement a bounded change
-selects the entry phase. Unless explicitly limited to that phase, the completion
-target is the remaining delivery through verification and a reviewed pull
-request. Standalone reviews, diagnostic test runs and queue recommendations
-retain their requested scope.
-
-On entry, inspect the existing agreement, scenarios, design, tests, delivery
-record and applicable approvals for the affected claims. Reuse valid completed
-work, including previously merged artifacts; do not restart specification or
-design merely because the session starts later. Resolve only missing or stale
-prerequisites for the requested phase before dependent work. Existing failing
-tests permit implementation only when its other entry evidence is satisfied.
-
-Keep the remaining specification delta, design, tests, implementation and review
-evidence in one pull request by default. Previously merged artifacts remain
-baseline inputs; they need not be recreated in that pull request. Phase
-completion is a handoff within the delivery, not a reason to open a preliminary
-pull request or end the parent assignment.
-
-Continue through the workflow as its gates are met, exercising each artifact's
-owning responsibility or obtaining its bounded contribution. Transfer the
-current responsibility at each handoff while retaining the parent delivery's
-completion target. Apply § "Resume, release and reassignment" when item ownership
-changes; a phase handoff alone does not release or reassign the item. Ownership limits
-what each responsibility writes; they do not require separate branches, pull
-requests or user prompts. Separate commits may preserve those boundaries inside
-the same pull request. An applicable local review can satisfy a stage gate;
-merging a specification-only pull request is not an additional gate.
-
-Honor an explicit phase-only request, including discovery or design only. Split a
-delivery when scope, independent prerequisites or review size require a change
-that can finish on its own; record the reason and remaining outcome. Do not cut
-children merely by workflow phase. A genuine unanswered decision, missing
-approval or external dependency holds dependent work: report the exact gap and
-preserve the continuation. Use existing authorization where it applies; never
-invent consent to satisfy a gate. A partial artifact does not complete the
-delivery request. Opening or reviewing its pull request does not authorize
-merging or releasing it.
+- Start at the requested phase; continue to a reviewed PR unless explicitly phase-only.
+- Reuse valid artifacts, approvals and delivery records, including merged work;
+  repair only missing or stale prerequisites.
+- Follow workflow gates, artifact ownership and independent reviews. Applicable
+  local review evidence needs no preliminary merge; never infer missing consent.
+- Keep remaining specification, design, tests, implementation and review evidence
+  in one PR by default; do not recreate merged artifacts.
+- Split only for independently deliverable scope, prerequisites or review size;
+  record the reason and remaining outcome, never cut children merely by phase.
+- Name unanswered decisions, missing approvals or external dependencies; hold
+  dependent work and preserve continuation and existing authorization.
+- Phase handoffs retain the parent target and item ownership; transfers follow
+  § "Resume, release and reassignment".
+- Standalone reviews, diagnostic test runs and queue recommendations stay bounded.
+- A partial artifact does not complete delivery; a PR grants no merge or release authority.
 
 ## The shape of it
 
