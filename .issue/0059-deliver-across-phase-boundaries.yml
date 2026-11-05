@@ -11,7 +11,7 @@ spikes: []
 spec: null
 claims: []
 created: "2026-11-02"
-updated: "2026-11-02"
+updated: "2026-11-04"
 closed: null
 summary: |
   Correct workflow guidance that turns agreement and design handoffs into
@@ -35,5 +35,7 @@ decisions:
   - "2026-11-02, final continuation validation: strict specifications zero errors/warnings; projection 80 outputs current; 90 projector tests and 30 installer tests pass; whitespace check passes. Shared coverage gate passes against HEAD 6359622 with zero changed executable production lines (N/A)."
   - "2026-11-02, PR delivery authorized: user requested a pull request. Continue in the same session and checkout on planned branch codex/resume-delivery from origin/main 7b518b3. Prior HEAD 6359622 and current trunk have identical trees; earlier item 0058 is already merged by PR #14. Preserve prior review and test evidence for unchanged content; verify final delivery bookkeeping and current-base coverage."
   - "2026-11-02, pre-PR review: /root/delivery_review Approved against origin/main 7b518b3, snapshot SHA-256 b538f984f822598fe3c909e0a19f88f83b42fd9da662f4c497a770ac43381739; no findings or surface-pass trigger. Unchanged substantive approval and six static walkthroughs remain applicable. Strict specifications and all 80 projections pass; shared coverage gate against current main passes, N/A with zero changed executable production lines."
+  - "2026-11-04, same-owner continuation: user requested conflict resolution and another push to PR #15. Same session, checkout and branch codex/resume-delivery. Merge origin/main 1f8cc7d without rewriting history; only conflict is .issue/.sequence. Preserve its high-water mark 0060 and both existing items 0059/0060; no guidance changes required."
+  - "2026-11-04, conflict-resolution validation: strict specifications pass with zero errors/warnings; all 80 projected outputs current; whitespace checks pass. Independent /root/delivery_review Approved staged manifest SHA-256 d3f6f1889a733b417d4253f660993d684ecf7305445a79e13d3efa2b9444c920; both branches preserved byte-for-byte except the counter resolution and item continuation evidence; no findings or surface-pass trigger. Earlier substantive review remains applicable."
 out_of_scope:
   - Changing approval requirements, role write boundaries, projector behavior or accepted ADRs.

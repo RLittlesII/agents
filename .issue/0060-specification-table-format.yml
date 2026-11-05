@@ -1,0 +1,36 @@
+id: "0060"
+type: chore
+title: Require clean tables when authoring specifications
+status: in-progress
+cost: 1
+risk: 1
+parent: null
+children: []
+depends_on: []
+spikes: []
+spec: null
+claims: []
+created: "2026-11-04"
+updated: "2026-11-04"
+closed: null
+summary: |
+  Apply the user's pasted table presentation to specification authoring while
+  preserving the method's existing terms, identifiers and table semantics.
+acceptance_criteria:
+  - Require Markdown tables for repeated specification records, with clean headers, rows and compact cells.
+  - Route specification-author output through the shared formatting guidance and regenerate host outputs.
+  - Preserve existing terminology, identifiers, traceability grain, statuses and section ownership.
+  - Leave Specht templates, schemas, manifest and implementation unchanged.
+  - Pass independent diff review, strict specifications and projection checks.
+decisions:
+  - "2026-11-04, ownership claim: current Codex chat rooted at visualization session 01a1a90c-0fb2-7d80-802d-6126d4d3cb3a; checkout /Users/rlittlesii/source/rlittlesii/agents; planned branch codex/spec-table-format. User authorized formatting guidance only."
+  - "2026-11-04, scope: SRC, AC and SCENARIO in the example correspond to Feature, claim and test scenario; adopt its presentation without importing its vocabulary or changing traceability semantics."
+  - "2026-11-04, verification: strict specifications report zero errors/warnings; all 80 projected outputs are current; 90 projector tests and 30 installer tests pass; whitespace check passes. Specht files are unchanged."
+  - "2026-11-04, independent diff review: /root/table_format_review Approved against HEAD bea2937e01a261345a41b1b6d2ebc7933907cd83, eight-file snapshot SHA-256 78a69680ed75e45ec196a9d0bafbb187cd501f4ca07ddf3771924ef06ec781d1; no findings or surface-pass trigger."
+  - "2026-11-04, supplementary validation: skill-creator quick_validate.py could not start because PyYAML is absent from both available Python environments. Repository projection validates the edited skill successfully."
+  - "2026-11-04, final gate: coverage gate passes against HEAD bea2937e01a261345a41b1b6d2ebc7933907cd83; N/A with zero changed executable production lines. Initial sandboxed NuGet restore failed; retry with network access passed. Local change remains uncommitted and in-progress pending delivery."
+  - "2026-11-04, PR delivery authorized: user requested a pull request. Same chat, checkout and item owner continue on codex/spec-table-format. Separate this formatting chore from open PR #15 by moving its commits onto current origin/main 7b518b3; preserve the shared 0060 allocation after reserved 0059. Earlier content review remains applicable; recheck the final main-based diff and host projections."
+  - "2026-11-04, final main-based review: /root/table_format_review Approved origin/main 7b518b3...31c557e, eight-file snapshot SHA-256 241bb4033c63bc235e3655e4a6e2059a662ddb98514298cd40376dc5d2574286; no findings or surface-pass trigger. Source/host content hashes are unchanged from prior tested scope; strict specifications and all 80 projections pass. PR #15 changes are excluded."
+out_of_scope:
+  - Tool-owned Specht files, checker changes and new specification schemas.
+  - Renaming identifiers, changing coverage rules or rewriting existing specifications.
