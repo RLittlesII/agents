@@ -103,7 +103,10 @@ authoring follows confirmation.
 6. **Open questions.** A genuine ambiguity is recorded as `OQ-n` and resolved in
    place with the date and the decision. It is never deleted, and never resolved by
    assumption.
-7. **Prose kept to the fact.** A claim is one sentence. A constraint is one
+7. **Tables and concise prose.** Apply
+   [`spec-and-traceability` § "Specification tables"](../skills/spec-and-traceability/SKILL.md#specification-tables)
+   to the sections this role writes; check the table formatting before handoff.
+   A claim is one sentence. A constraint is one
    sentence plus what it rules out. A § 1 goal is one paragraph naming the
    failure state removed. The reasoning behind a call goes in a decision record
    where it can be reviewed, not into the section - see
