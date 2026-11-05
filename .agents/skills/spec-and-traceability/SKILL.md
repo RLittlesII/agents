@@ -118,6 +118,29 @@ instruction comments, and never leave a `{{placeholder}}` or an empty table row
 behind. A placeholder row in a coverage table is worse than an absent one — it
 reads as a fact.
 
+## Specification tables
+
+Write repeated specification records as Markdown pipe tables: user needs,
+assumptions, claims, constraints, exclusions, concern separation, traceability,
+spec deltas, open questions and sign-off. Keep goals and explanatory design
+content as prose or diagrams where those communicate the content better.
+
+Keep the specification's existing headings, column meanings, terminology, IDs,
+status vocabulary and row granularity. A formatting example supplies presentation,
+not a new schema or permission to change coverage or section ownership.
+
+- Put a blank line before each table, then a header and separator row. Use
+  leading and trailing pipes and at least three dashes per separator cell.
+- Write each row on one source line, with the same number of cells as the
+  header. Escape literal pipes inside cells and align source columns with spaces.
+  Write tables directly in Markdown, outside code fences.
+- Keep cells factual and compact. Preserve complete claims and necessary
+  evidence; put extended rationale in the owning decision or supporting record
+  and cite it from the cell. Do not repeat the table in prose.
+- Before handoff, check headers, cell boundaries and alignment, and remove
+  placeholder rows. Use `None.` where an empty section permits it rather than
+  inventing a record to fill a table.
+
 ## One answer, one section
 
 A derived answer is stored once. If § 9 can be read off § 3 and the test files,
