@@ -52,7 +52,10 @@ flowchart LR
 
 An edge label names the command that runs the step; Claude Code invokes it as
 `/<name>`, Codex as `$<name>`. A step with no label is a continuation of the one
-before it. Each step lands as a change, and the diff pass runs on every one: on
+before it. Steps are ordered artifact handoffs within the requested outcome;
+entry, continuation and pull-request scope follow
+[`deliver-change`](../deliver-change/SKILL.md) § "Deliver the requested outcome".
+The diff pass reviews each proposed change: on
 a specification change it returns a verdict per authored section, the owner of
 § 12 records it, and [`next`](../next/SKILL.md) § "Stage gates" reads it. Work
 items are cut from claims whose § 12 rows are approved, during grooming.

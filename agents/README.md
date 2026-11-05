@@ -65,6 +65,8 @@ Start at the earliest responsibility whose required artifacts or approvals are
 missing. Reuse the agreement and design that remain valid for the affected
 claims. The authoritative ordering and gates are in
 [sdd-conventions § Workflow](../skills/sdd-conventions/SKILL.md#workflow).
+Entry and continuation across responsibility handoffs follow
+[deliver-change § Deliver the requested outcome](../skills/deliver-change/SKILL.md#deliver-the-requested-outcome).
 
 ```mermaid
 flowchart TB

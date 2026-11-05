@@ -2,7 +2,7 @@
 name: design
 description: Design the technical solution for an agreed Feature, then have the design critiqued before any test or code is written against it.
 roles: [architect, domain, database, observability, test-writer, benchmarker, spec-reviewer, spec-author]
-skills: [spec-and-traceability, coding-conventions, test-from-scenarios, technology-decisions]
+skills: [spec-and-traceability, coding-conventions, test-from-scenarios, technology-decisions, deliver-change]
 argument-hint: "<Feature specification path>"
 ---
 
@@ -20,5 +20,6 @@ reads the design and returns findings; the design owner answers each in the desi
 or records why not, and the reviewer re-reads what changed. The agreement
 owner records the returned verdict in sign-off; interface scaffolding stays
 with the design owner.
+Enter through this phase and continue under the delivery rule.
 
 Work on: $ARGUMENTS

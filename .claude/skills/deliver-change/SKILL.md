@@ -11,6 +11,24 @@ schemes, section ownership, spec layout — are in
 companion skill, `<project>-conventions` § "Delivery", names where this rule
 lands there. Read all three.
 
+## Deliver the requested outcome
+
+- Start at the requested phase; continue to a reviewed PR unless explicitly phase-only.
+- Reuse valid artifacts, approvals and delivery records, including merged work;
+  repair only missing or stale prerequisites.
+- Follow workflow gates, artifact ownership and independent reviews. Applicable
+  local review evidence needs no preliminary merge; never infer missing consent.
+- Keep remaining specification, design, tests, implementation and review evidence
+  in one PR by default; do not recreate merged artifacts.
+- Split only for independently deliverable scope, prerequisites or review size;
+  record the reason and remaining outcome, never cut children merely by phase.
+- Name unanswered decisions, missing approvals or external dependencies; hold
+  dependent work and preserve continuation and existing authorization.
+- Phase handoffs retain the parent target and item ownership; transfers follow
+  § "Resume, release and reassignment".
+- Standalone reviews, diagnostic test runs and queue recommendations stay bounded.
+- A partial artifact does not complete delivery; a PR grants no merge or release authority.
+
 ## The shape of it
 
 1. **A Feature starts at its specification.** Items are cut from its claims after

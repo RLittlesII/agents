@@ -16,7 +16,7 @@ Convene these roles as the body directs:
 
 Read each role's contract before acting as it, and keep the boundaries it declares: a role that refuses a kind of work still refuses it here.
 
-Use these skills: `spec-and-traceability` (`.claude/skills/spec-and-traceability/SKILL.md`), `coding-conventions` (`.claude/skills/coding-conventions/SKILL.md`), `test-from-scenarios` (`.claude/skills/test-from-scenarios/SKILL.md`), `technology-decisions` (`.claude/skills/technology-decisions/SKILL.md`).
+Use these skills: `spec-and-traceability` (`.claude/skills/spec-and-traceability/SKILL.md`), `coding-conventions` (`.claude/skills/coding-conventions/SKILL.md`), `test-from-scenarios` (`.claude/skills/test-from-scenarios/SKILL.md`), `technology-decisions` (`.claude/skills/technology-decisions/SKILL.md`), `deliver-change` (`.claude/skills/deliver-change/SKILL.md`).
 
 The design owner records the concern separation and the technical design, with
 diagrams and a readiness verdict. When the claims carry business rules, the
@@ -32,5 +32,6 @@ reads the design and returns findings; the design owner answers each in the desi
 or records why not, and the reviewer re-reads what changed. The agreement
 owner records the returned verdict in sign-off; interface scaffolding stays
 with the design owner.
+Enter through this phase and continue under the delivery rule.
 
 Work on: $ARGUMENTS
