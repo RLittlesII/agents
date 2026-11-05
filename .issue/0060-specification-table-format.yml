@@ -30,6 +30,7 @@ decisions:
   - "2026-11-04, supplementary validation: skill-creator quick_validate.py could not start because PyYAML is absent from both available Python environments. Repository projection validates the edited skill successfully."
   - "2026-11-04, final gate: coverage gate passes against HEAD bea2937e01a261345a41b1b6d2ebc7933907cd83; N/A with zero changed executable production lines. Initial sandboxed NuGet restore failed; retry with network access passed. Local change remains uncommitted and in-progress pending delivery."
   - "2026-11-04, PR delivery authorized: user requested a pull request. Same chat, checkout and item owner continue on codex/spec-table-format. Separate this formatting chore from open PR #15 by moving its commits onto current origin/main 7b518b3; preserve the shared 0060 allocation after reserved 0059. Earlier content review remains applicable; recheck the final main-based diff and host projections."
+  - "2026-11-04, final main-based review: /root/table_format_review Approved origin/main 7b518b3...31c557e, eight-file snapshot SHA-256 241bb4033c63bc235e3655e4a6e2059a662ddb98514298cd40376dc5d2574286; no findings or surface-pass trigger. Source/host content hashes are unchanged from prior tested scope; strict specifications and all 80 projections pass. PR #15 changes are excluded."
 out_of_scope:
   - Tool-owned Specht files, checker changes and new specification schemas.
   - Renaming identifiers, changing coverage rules or rewriting existing specifications.
