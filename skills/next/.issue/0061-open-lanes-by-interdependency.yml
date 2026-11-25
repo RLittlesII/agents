@@ -30,6 +30,7 @@ decisions:
   - "2026-11-24, maintainer ruling relayed by the coordinating session: \"The point of next is to OPEN lanes. Not restrict to a single path!\"; \"Update the rule to check for interdependency.\"; on unknown overlap, \"Offer both\". Primary source: the ruling recorded on Hooked issue #887, comments 7137957300 and 7140080845. Recorded here as decision 0022."
   - "2026-11-24, ownership claim: Claude Code side session started by coordinating session local_6f6490a5-25e5-4c40-b952-986188792fc1, working on branch rlittlesii/next-parallel-lanes-c9ee4e in checkout .claude/worktrees/specht-47f8d1 of this repository. Baseline origin/main 56421a4; no open PR reservations; .issue/.sequence was 0060, so this item takes 0061."
   - "2026-11-25, maintainer ruling on agents#17 relayed by the coordinating session: \"Add no-overlap check\"; \"Maybe now we get why the 1 item per feature restraint was put in and what I meant by NO OVERLAP.\" Decision 0022 is revised: shared files overlap, undetermined files count as overlap, and a later rebase never justifies a start. Claims B-047 to B-051 are rewritten before merge and B-052 added."
+  - "2026-11-25, the 2026-11-24 \"Offer both\" ruling on unknown overlap is superseded by the 2026-11-25 ruling on agents#17: a candidate whose overlap cannot be determined is treated as overlapping (B-051). Decision 0022 § Rejected records it."
 out_of_scope:
   - Tests for 0001-F5 claims other than B-047 to B-052.
   - Any consuming repository's companion, registry or pinned copy.

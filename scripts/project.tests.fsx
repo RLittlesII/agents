@@ -1624,7 +1624,7 @@ let tests : (string * (unit -> unit)) list =
       nameof F5_B051_UndeterminedFilesCountAsOverlap, F5_B051_UndeterminedFilesCountAsOverlap
       nameof F5_B052_ReportNamesOverlapAndNeverRebasesLater, F5_B052_ReportNamesOverlapAndNeverRebasesLater
       nameof F5_ProjectedCopiesCarryTheLaneRule, F5_ProjectedCopiesCarryTheLaneRule ]
-    @ (capFiles |> List.map (fun rel -> "F5_B050_NoFeatureCapIn " + rel, noCap rel))
+    @ (capFiles |> List.map (fun rel -> "F5_B050_B052_NoCapOrRebaseRiskIn " + rel, noCap rel))
 
 let mutable failures = 0
 for name, test in tests do

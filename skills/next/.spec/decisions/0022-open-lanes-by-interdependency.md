@@ -71,7 +71,11 @@ Adds B-047 to B-052. Withdraws B-046. Carves B-034 by B-050, which overrides
 its "subject to one start per Feature (B-046)", with B-034's text unchanged.
 B-035's evidenced shared edit still joins two lanes; B-049 and B-051 extend it
 to any shared file and to overlap that cannot be determined. Resolves OQ-6
-anew; changes `deliver-change` rule 3 and the companion's `next` evidence.
+anew; changes `deliver-change` rule 3 and the companion's `next` evidence. As a
+consequence of rule 3, the `deliver-change` Never-add line "A second item in
+progress alongside the first." becomes "A second item in progress for the same
+owner.": parallel items are now allowed across owners when they do not overlap,
+and one owner still holds one item at a time.
 
 ## Reversal
 

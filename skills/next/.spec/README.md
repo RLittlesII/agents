@@ -172,8 +172,8 @@ B-039–B-040).
 The tracker alone supplies delivery state (decision 0016). A disagreeing mirror
 is a maintenance diagnostic, never a fallback; unreadable state withholds the
 affected start while independent work remains rankable. Coordination identity
-follows 0001-F2 decision 0003 and the companion; a Feature coordinator occupies
-no child lane. Completion evidence cannot silently change tracker state.
+follows 0001-F2 decision 0003 and the companion; a Feature coordinator reserves
+nothing by itself. Completion evidence cannot silently change tracker state.
 
 0001-F2 decision 0005 governs reservations. Taken work, including review,
 occupies its lane until explicit recorded release; release does not deliver it,
@@ -314,7 +314,10 @@ and example lines, whole, of the scenario that documents it, and fails when
 that text changes. One case per source and projected copy of `next` and
 `deliver-change` fails if a phrase of the per-Feature cap or of rebase-risk
 wording returns, and a supporting test checks that the projected copies carry
-the source rule unchanged. They pin the instruction an agent reads, not a live agent run.
+the source rule unchanged. They pin the instruction an agent reads, not a live agent run. For a prose
+deliverable that instruction text is the mechanism, so a test that fails when
+the text changes pins both the claim and its mechanism, and § 9 marks these
+rows Covered; live-agent behavior stays unverified, as each row says.
 
 Use synthetic ownership, tracker and revision states to assess coordination
 source/mirror drift without writes, same-owner continuation, release/reassignment
@@ -381,9 +384,9 @@ Not applicable.
 | B-047    | Offer non-overlapping children of one Feature together      | `F5_B047_NonOverlappingSiblingsAreBothOffered`, instruction text only; live-agent behavior unverified | Covered |
 | B-048    | A candidate that overlaps taken work queues until it merges | `F5_B048_OverlapWithTakenWorkQueuesUntilMerged`, instruction text only; live-agent behavior unverified | Covered |
 | B-049    | Candidates that share any file overlap                      | `F5_B049_AnySharedFileIsOverlap`, instruction text only; live-agent behavior unverified | Covered |
-| B-050    | Several lanes of one Feature each offer a head              | `F5_B050_NoFeatureCapLimitsHeads`; `F5_B050_NoFeatureCapIn` (one case per copy), instruction text only; live-agent behavior unverified | Covered |
+| B-050    | Several lanes of one Feature each offer a head              | `F5_B050_NoFeatureCapLimitsHeads`; `F5_B050_B052_NoCapOrRebaseRiskIn` (one case per copy), instruction text only; live-agent behavior unverified | Covered |
 | B-051    | A candidate whose overlap cannot be determined overlaps     | `F5_B051_UndeterminedFilesCountAsOverlap`, instruction text only; live-agent behavior unverified | Covered |
-| B-052    | The report names each overlap and its holder                | `F5_B052_ReportNamesOverlapAndNeverRebasesLater`; `F5_B050_NoFeatureCapIn` (rebase-risk phrases), instruction text only; live-agent behavior unverified | Covered |
+| B-052    | The report names each overlap and its holder                | `F5_B052_ReportNamesOverlapAndNeverRebasesLater`; `F5_B050_B052_NoCapOrRebaseRiskIn` (rebase-risk phrases), instruction text only; live-agent behavior unverified | Covered |
 
 ### Manual evidence
 
