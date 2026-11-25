@@ -9,26 +9,27 @@ children: []
 depends_on: []
 spikes: []
 spec: skills/next/.spec/README.md
-claims: ["B-047", "B-048", "B-049", "B-050", "B-051"]
+claims: ["B-047", "B-048", "B-049", "B-050", "B-051", "B-052"]
 created: "2026-11-24"
-updated: "2026-11-24"
+updated: "2026-11-25"
 closed: null
 summary: |
-  Replace the portable one-delivery-child-per-Feature cap with an
-  interdependency check. Siblings are offered and run in parallel unless one
-  waits on the other or their edits collide; a shared file collides only when
-  both rewrite the same part, and unknown overlap offers both with the rebase
-  risk named. Decision 0022 supersedes decision 0021, withdraws B-046 and carves
-  B-034 and B-035 with new claims.
+  Replace the portable one-delivery-child-per-Feature cap with a no-overlap
+  check. Candidates start in parallel only when they overlap neither each other
+  nor taken work; overlap is a dependency on the other's result or any shared
+  file, read from branch diffs and record evidence; undeterminable overlap counts
+  as overlap, and unscored and standalone work takes the same test. Decision 0022 supersedes decision 0021, withdraws B-046 and carves
+  B-034.
 acceptance_criteria:
-  - "B-047, B-048, B-049, B-050 and B-051 hold as section 3 states them; B-050 and B-051 carve B-034 and B-035."
-  - "next § Use lanes to support the choice and deliver-change rule 3 state the interdependency check; no restatement of the old cap remains outside history."
-  - "Decision 0022 is recorded; decisions 0011 and 0021 carry appended reversals; B-046 is withdrawn, not deleted; B-034 and B-035 stay Active and are carved."
-  - "B-047 to B-051 each have a content-contract test named in section 9, set to Covered, per the maintainer ruling on agents#17 (comment 7152225405) that they are tested, not waived."
+  - "B-047, B-048, B-049, B-050, B-051 and B-052 hold as section 3 states them; B-050 carves B-034."
+  - "next § Use lanes to support the choice and deliver-change rule 3 state the no-overlap check; no restatement of the old cap or of rebase-risk wording remains outside history."
+  - "Decision 0022 is recorded; decisions 0011 and 0021 carry appended reversals; B-046 is withdrawn, not deleted; B-034 and B-035 stay Active."
+  - "B-047 to B-052 each have a content-contract test named in section 9, set to Covered, per the maintainer ruling on agents#17 (comment 7152225405) that they are tested, not waived."
   - "Pass an independent diff review, strict specifications and the projection check."
 decisions:
   - "2026-11-24, maintainer ruling relayed by the coordinating session: \"The point of next is to OPEN lanes. Not restrict to a single path!\"; \"Update the rule to check for interdependency.\"; on unknown overlap, \"Offer both\". Primary source: the ruling recorded on Hooked issue #887, comments 7137957300 and 7140080845. Recorded here as decision 0022."
   - "2026-11-24, ownership claim: Claude Code side session started by coordinating session local_6f6490a5-25e5-4c40-b952-986188792fc1, working on branch rlittlesii/next-parallel-lanes-c9ee4e in checkout .claude/worktrees/specht-47f8d1 of this repository. Baseline origin/main 56421a4; no open PR reservations; .issue/.sequence was 0060, so this item takes 0061."
+  - "2026-11-25, maintainer ruling on agents#17 relayed by the coordinating session: \"Add no-overlap check\"; \"Maybe now we get why the 1 item per feature restraint was put in and what I meant by NO OVERLAP.\" Decision 0022 is revised: shared files overlap, undetermined files count as overlap, and a later rebase never justifies a start. Claims B-047 to B-051 are rewritten before merge and B-052 added."
 out_of_scope:
-  - Tests for 0001-F5 claims other than B-047 to B-051.
+  - Tests for 0001-F5 claims other than B-047 to B-052.
   - Any consuming repository's companion, registry or pinned copy.

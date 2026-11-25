@@ -20,7 +20,7 @@ depends_on: []
 blocks: []
 spikes: []
 created: "2026-10-14"
-updated: "2026-11-24"
+updated: "2026-11-25"
 github_issue: null
 synced_at: null
 ---
@@ -38,7 +38,7 @@ permission to start.
 
 ## 2. User Needs
 
-<!-- last written by: spec-author, 2026-10-27 -->
+<!-- last written by: spec-author, 2026-11-25 -->
 
 | # | Persona | Need | Pain Point Today |
 | --- | --------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -51,12 +51,12 @@ permission to start.
 
 | ID | Assumption |
 | --- | ----------------------------------------------------------------------------------------------------------------------- |
-| A-1 | The companion `<project>-conventions` § "Next work" names tracker access, the identity contract, planning metadata, ranking inputs, shared-edit evidence, reservations and where standalone work appears. |
+| A-1 | The companion `<project>-conventions` § "Next work" names tracker access, the identity contract, planning metadata, ranking inputs, overlap evidence (open branch and pull-request diffs, the files claims and records name), reservations and where standalone work appears. |
 | A-2 | Every specification read follows the method's layout: § 11 names the claims each question blocks and § 12 records approval by section. |
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-11-24 -->
+<!-- last written by: spec-author, 2026-11-25 -->
 
 Each source is a section of [`SKILL.md`](../SKILL.md).
 
@@ -108,11 +108,12 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 | B-044 | Given an open question whose row names no blocked claim (a row reading `None` names that it blocks nothing), this Feature treats its Feature's design and implementation readiness as unverified, offers neither, and names the gap. | § Stage gates | Active |
 | B-045 | Given a Feature whose unfinished closure is empty and whose every active claim is delivered, this Feature reports it finished and leaves it out of ranking. | § Report without taking work; § The ranking model | Active |
 | B-046 | Given startable items in one Feature in separate lanes, this Feature offers at most one start for that Feature, shows the others queued behind it, and offers none while the Feature has taken work. | § Use lanes to support the choice | Withdrawn |
-| B-047 | Given two startable children of one Feature where neither waits on the other, directly or through an open item, and their edits do not collide, this Feature offers both. | § Use lanes to support the choice | Active |
-| B-048 | Given a taken child, this Feature withholds only the children whose offered stage waits on it or whose edits collide with it; an active Feature or epic container reserves nothing. | § Use lanes to support the choice | Active |
-| B-049 | Given a shared file two items edit, this Feature reports a collision only when both rewrite the same part, and a rebase risk otherwise. | § Use lanes to support the choice | Active |
+| B-047 | Given two startable candidates, in one Feature or not, where neither depends on the other's result, their evidenced edits share no file, and neither overlaps taken work, this Feature offers both. | § Use lanes to support the choice | Active |
+| B-048 | Given a candidate, ranked, unscored or standalone, that overlaps taken work, in review too, this Feature queues it behind the lane holding that work and offers it no start until that work has merged; an active Feature or epic container reserves nothing by itself. | § Use lanes to support the choice | Active |
+| B-049 | Given two candidates that will edit any of the same files, including one specification file, one work record or shared generated or configuration output, this Feature reports them overlapping, offers the higher-ranked one as head and queues the other until the head's work has merged. | § Use lanes to support the choice | Active |
 | B-050 | Given independent available lanes that include several lanes of one Feature, this Feature offers a ranked startable head for each of them, overriding B-034's "subject to one start per Feature (B-046)". | § Use lanes to support the choice | Active |
-| B-051 | Given two items whose shared edits the evidence does not show rewriting the same part of one file, whether they touch separate parts or the evidence cannot tell, this Feature keeps them in separate lanes and names the rebase risk, narrowing B-035's "evidenced shared edit" to evidence that both rewrite the same part (B-049). | § Use lanes to support the choice; § Never add | Active |
+| B-051 | Given a candidate whose overlap cannot be determined, from the files its claims and records name or from the diff against its merge-base of an open branch, pull request or taken item, this Feature treats it as overlapping, queues it and names the missing evidence. | § Use lanes to support the choice | Active |
+| B-052 | Given an overlap, this Feature's report names it, its evidence and the lane holding it, and offers no start on the ground that a conflict can be rebased later. | § Use lanes to support the choice; § Never add | Active |
 
 ## 4. Constraints
 
@@ -126,20 +127,20 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 
 ## 5. Out of Scope
 
-<!-- last written by: spec-author, 2026-10-27 -->
+<!-- last written by: spec-author, 2026-11-25 -->
 
 | # | Item | Exclusion Reason |
 | --- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | 1 | Claiming, starting or dispatching the recommended work | Taking work is delivery, owned by [`deliver-change`](../../deliver-change/SKILL.md); B-040 |
 | 2 | Authoring value, cost, claim assignments or dependencies | Authored at grooming; this Feature reads them and invents none (B-028, B-031) |
-| 3 | Tracker access, metadata field names, estimate scale, priority vocabulary and the shared-edit registry | The companion's § "Next work" (C-2) |
+| 3 | Tracker access, metadata field names, estimate scale, priority vocabulary and the overlap evidence | The companion's § "Next work" (C-2) |
 | 4 | Saved release or goal targets as a scope | `SKILL.md` scopes by the requested Feature or Feature set; a saved target is a membership model of its own |
-| 5 | A per-item declaration of the files it will edit | Lanes are inferred from evidenced shared edits, with the uncertainty stated (B-035, B-036) |
+| 5 | A per-item declaration of the files it will edit | Lanes are inferred from evidenced shared edits, with the uncertainty stated; branch diffs and the files existing claims and records name are evidence, not a new declaration (B-035, B-036, B-049, B-051) |
 | 6 | An executable, tool or command that computes the answer | The deliverable is a skill an agent follows; § 7 |
 
 ## 6. Concern Separation
 
-<!-- last written by: architect, 2026-11-24 -->
+<!-- last written by: architect, 2026-11-25 -->
 
 | Concern | Classification | Claims |
 | --- | --- | --- |
@@ -148,13 +149,13 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 | Ranking policy and selected-Feature standing | Business | B-022, B-025–B-026 |
 | Exact closure arithmetic and tie order | Technical | B-023–B-024, B-027 |
 | Authored inputs, gaps, duplicate identities and cycles | Both | B-021, B-028–B-032, B-041, B-043 |
-| Lanes, conflicts and parallel starts | Both | B-034–B-036, B-047–B-051 |
+| Lanes, conflicts and parallel starts | Both | B-034–B-036, B-047–B-052 |
 | One read-only snapshot and stable detail | Technical | B-007–B-008, B-039–B-040 |
 | Companion input mapping | Technical | C-2–C-3 |
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-11-24 -->
+<!-- last written by: architect, 2026-11-25 -->
 
 The deliverable is portable guidance, not an executable (decision 0015).
 0001-F1 B-004 projects it byte-for-byte; ADR-0002 requires committed,
@@ -219,31 +220,37 @@ grooming for merge, extraction or narrower dependency edges, never drop an edge
 
 ### Lanes and starts
 
-An item joins the lane of a head or a taken item only when its offered stage
-waits on that item, directly or transitively through `depends_on` or spikes, or
-both rewrite the same part of a file. A collision joins only the two items that
-collide, never a chain, and a shared Feature alone joins no lane. A shared file
-edited in separate parts is a rebase risk, not a join; when the evidence cannot
-show which, the join is not made and the possible conflict is named. State the
-evidence and uncertainty of each. Lanes predict parallelism, not conflict-free
-merging (decisions 0011, 0022).
+An item joins the lane of a head or a taken item when it overlaps it: its
+offered stage depends on that item's result, directly or transitively through
+`depends_on` or spikes, or both will edit any of the same files, including one
+specification file, one work record, or shared generated or configuration
+output. A shared Feature alone joins no lane. Overlap is read from the files
+each open branch or pull request touches against its merge-base and the files a
+candidate's claims and records name; a candidate whose overlap cannot be
+determined, from its own files or from an open branch, pull request or taken
+item, is treated as overlapping, with the missing evidence named. Lanes
+predict parallelism, not conflict-free merging (decisions 0011, 0022).
 
-Scan startable items once in ranking order. Reject an item that waits on or
-collides with taken work, including work in review, or that collides with an
-earlier head; show it blocked with its blocker. Otherwise offer it as a head. No
-Feature cap applies: a taken child blocks only its dependents and colliders, and
-a coordination record reserves nothing. A cross-Feature prerequisite passes the
-same test. Actionable unscored work remains separate, outside head selection
-(B-034, B-037, B-047–B-051; decision 0022).
+Scan startable items once in ranking order. Queue an item that overlaps taken
+work, including work in review, or an earlier head; show it behind the lane
+that holds the overlap, startable once that work has merged. Otherwise offer it
+as a head. No Feature cap applies, and a coordination record reserves nothing.
+A cross-Feature prerequisite passes the same test. A later rebase never makes
+overlapping work startable. Actionable unscored and standalone work skips
+ranking but not the overlap test; it is checked after the ranked heads in
+stable-id order (B-034, B-037, B-047–B-052; decision 0022).
 
 ```mermaid
 flowchart TD
-  Next{Next startable item?} -->|No| Done[Report heads, blocked items and risks]
-  Next -->|Yes| Taken{Waits on or collides with taken work?}
-  Taken -->|Yes| Block[Show blocked by taken work]
-  Taken -->|No| Head{Collides with an earlier head?}
-  Head -->|Yes| Behind[Show blocked by that head]
-  Head -->|No| Offer[Offer as head; name any rebase risk]
+  Next{Next startable item?} -->|No| Done[Report heads, queued items and each overlap]
+  Next -->|Yes| Known{Overlap determined?}
+  Known -->|No| Unknown[Queue as overlapping; name the missing evidence]
+  Known -->|Yes| Taken{Overlaps taken work?}
+  Taken -->|Yes| Block[Queue behind the taken lane until it merges]
+  Taken -->|No| Head{Overlaps an earlier head?}
+  Head -->|Yes| Behind[Queue behind that head until it merges]
+  Head -->|No| Offer[Offer as head]
+  Unknown --> Next
   Block --> Next
   Behind --> Next
   Offer --> Next
@@ -256,7 +263,7 @@ Decision 0022: taken work is checked before heads; B-027 makes the scan total.
 The method owns gates, arithmetic, tie order, lane tests and report placement.
 The companion supplies authored-field locations, tier vocabulary/order, estimate
 scale, tracker access/state field, reservation records, claim assignments,
-identity/dependency contracts, shared-edit evidence and standalone-work location
+identity/dependency contracts, overlap evidence and standalone-work location
 (C-2–C-3, A-1). Cost is authored separately from risk. No per-repository ranking
 variant is permitted.
 
@@ -289,25 +296,25 @@ Historical finding 5 was resolved in reviewed subject
 `/root/baseline_roles_next` on 2026-10-17. This is evidence for that subject,
 not approval of this edit.
 
-Readiness: Ready for tests and implementation for B-001–B-045 and B-047–B-051.
+Readiness: Ready for tests and implementation for B-001–B-045 and B-047–B-052.
 Risk is low for the decision-driven prose changes; claim delivery still
 requires § 9 evidence.
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-11-24 -->
+<!-- last written by: test-writer, 2026-11-25 -->
 
 Review scenarios against the cited skill text. The deliverable is prose; no
 behavior runner executes an agent against it. Manual instruction checks do not
 fill Missing traceability rows.
 
-B-047–B-051 are pinned by content-contract tests. Each asserts the sentences
+B-047–B-052 are pinned by content-contract tests. Each asserts the sentences
 of the skill source that state its claim, and the distinguishing Given, Then
 and example lines, whole, of the scenario that documents it, and fails when
 that text changes. One case per source and projected copy of `next` and
-`deliver-change` fails if a phrase of the per-Feature cap returns, and a
-supporting test checks that the projected copies carry the source rule
-unchanged. They pin the instruction an agent reads, not a live agent run.
+`deliver-change` fails if a phrase of the per-Feature cap or of rebase-risk
+wording returns, and a supporting test checks that the projected copies carry
+the source rule unchanged. They pin the instruction an agent reads, not a live agent run.
 
 Use synthetic ownership, tracker and revision states to assess coordination
 source/mirror drift without writes, same-owner continuation, release/reassignment
@@ -321,7 +328,7 @@ Not applicable.
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-11-24 -->
+<!-- last written by: test-writer, 2026-11-25 -->
 
 | Claim ID | Scenario                                                    | Test    | Status  |
 | -------- | ----------------------------------------------------------- | ------- | ------- |
@@ -371,11 +378,12 @@ Not applicable.
 | B-044    | A question naming no claim leaves readiness unverified      | Missing | Missing |
 | B-045    | A finished Feature is not ranked                            | Missing | Missing |
 | B-046    | None (withdrawn)                                            | None (withdrawn) | Withdrawn |
-| B-047    | Offer independent children of one Feature together          | `F5_B047_IndependentSiblingsAreBothOffered`, instruction text only; live-agent behavior unverified | Covered |
-| B-048    | A taken child blocks only its dependents and colliders      | `F5_B048_TakenChildBlocksOnlyDependentsAndColliders`, instruction text only; live-agent behavior unverified | Covered |
-| B-049    | Report a non-colliding shared file as a rebase risk         | `F5_B049_SharedFileCollidesOnlyOnSamePartEdit`, instruction text only; live-agent behavior unverified | Covered |
+| B-047    | Offer non-overlapping children of one Feature together      | `F5_B047_NonOverlappingSiblingsAreBothOffered`, instruction text only; live-agent behavior unverified | Covered |
+| B-048    | A candidate that overlaps taken work queues until it merges | `F5_B048_OverlapWithTakenWorkQueuesUntilMerged`, instruction text only; live-agent behavior unverified | Covered |
+| B-049    | Candidates that share any file overlap                      | `F5_B049_AnySharedFileIsOverlap`, instruction text only; live-agent behavior unverified | Covered |
 | B-050    | Several lanes of one Feature each offer a head              | `F5_B050_NoFeatureCapLimitsHeads`; `F5_B050_NoFeatureCapIn` (one case per copy), instruction text only; live-agent behavior unverified | Covered |
-| B-051    | A shared file not shown to collide keeps separate lanes     | `F5_B051_SharedFileNotShownToCollideKeepsSeparateLanes`, instruction text only; live-agent behavior unverified | Covered |
+| B-051    | A candidate whose overlap cannot be determined overlaps     | `F5_B051_UndeterminedFilesCountAsOverlap`, instruction text only; live-agent behavior unverified | Covered |
+| B-052    | The report names each overlap and its holder                | `F5_B052_ReportNamesOverlapAndNeverRebasesLater`; `F5_B050_NoFeatureCapIn` (rebase-risk phrases), instruction text only; live-agent behavior unverified | Covered |
 
 ### Manual evidence
 
@@ -387,7 +395,7 @@ routing probes are recorded in 0001-F2 § 9; they do not fill these rows.
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-11-24 -->
+<!-- last written by: spec-author, 2026-11-25 -->
 
 | Date | Trigger | Change | Affected IDs |
 | --- | --- | --- | --- |
@@ -398,11 +406,11 @@ routing probes are recorded in 0001-F2 § 9; they do not fill these rows.
 | 2026-10-17 | Ownership continuation | Apply 0001-F2 decision 0005 to current reservations. | B-017 |
 | 2026-10-17 | Single coordination source | Apply 0001-F2 decision 0003; distinguish coordination records and delivery children. | B-017, B-040, B-042, B-046 |
 | 2026-10-27 | Confirmed concise-specification plan | Compress in place; qualify sibling references; separate strategy, locators and history. | §§ 1–12; IDs unchanged |
-| 2026-11-24 | Maintainer ruling: open lanes by interdependency | Withdraw the one-start-per-Feature cap; offer every start no taken item blocks and no higher-ranked start collides with; a shared file collides only on a same-part edit. | B-046 withdrawn; B-047–B-051 added; B-050 and B-051 carve B-034 and B-035; decisions 0011, 0021, 0022; OQ-6 |
+| 2026-11-25 | Maintainer rulings: open lanes, with no overlap | Withdraw the one-start-per-Feature cap; start in parallel only candidates that overlap neither each other nor taken work; overlap is a dependency on the other's result or any shared file, read from branch and record evidence; undeterminable overlap counts as overlap; unscored and standalone work takes the same test; `deliver-change` rule 3 holds any item that overlaps open work; a later rebase never justifies a start. | B-046 withdrawn; B-047–B-052 added; B-050 carves B-034; decisions 0011, 0021, 0022; OQ-6 |
 
 ## 11. Open Questions
 
-<!-- last written by: spec-author, 2026-11-24 -->
+<!-- last written by: spec-author, 2026-11-25 -->
 
 | ID | Question | Blocks | Resolution |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- | ---------- |
@@ -411,17 +419,17 @@ routing probes are recorded in 0001-F2 § 9; they do not fill these rows.
 | OQ-3 | Given two records claiming one stable id, does this Feature diagnose the duplicate rather than choose one, or is that wholly the companion's identity contract? | B-043 | Resolved 2026-10-15: diagnose. The duplicate is named, neither record chosen, dependent starts withheld; [decision 0018](decisions/0018-a-duplicate-id-is-diagnosed.md), B-043. |
 | OQ-4 | Given an open question whose § 11 row names no blocked claim, does it block every claim of the Feature, none, or leave the work's readiness unverified? | B-011, B-013, B-015 | Resolved 2026-10-15: unverified. Design and implementation starts are withheld and the gap named; [decision 0019](decisions/0019-an-unscoped-question-leaves-readiness-unverified.md), B-044. |
 | OQ-5 | Given a Feature whose closure is empty and whose claims are all delivered, is it reported as finished, and is it left out of ranking? `SKILL.md` says only when a score is never infinite. | B-033 | Resolved 2026-10-15: yes to both. Finished and left out of ranking; [decision 0020](decisions/0020-a-finished-feature-is-not-ranked.md), B-045. |
-| OQ-6 | Given two startable items in one Feature with no shared edit, are they two lanes, or is a Feature itself one lane with one active item? | B-034, B-035 | Resolved 2026-10-15: two lanes, one start. Lanes come from edits, but the Feature gets at most one start; [decision 0021](decisions/0021-one-start-per-feature.md), B-046. Superseded 2026-11-24 by [decision 0022](decisions/0022-open-lanes-by-interdependency.md): siblings run in parallel unless one waits on the other or their edits collide; B-046 withdrawn; B-047–B-051. |
+| OQ-6 | Given two startable items in one Feature with no shared edit, are they two lanes, or is a Feature itself one lane with one active item? | B-034, B-035 | Resolved 2026-10-15: two lanes, one start. Lanes come from edits, but the Feature gets at most one start; [decision 0021](decisions/0021-one-start-per-feature.md), B-046. Superseded 2026-11-25 by [decision 0022](decisions/0022-open-lanes-by-interdependency.md): two lanes, and both start unless they overlap, by a dependency or any shared file; B-046 withdrawn; B-047–B-052. |
 | OQ-7 | Should the adopted planning decisions be recorded as decision records in this Feature's `decisions/`, so the alternatives they rejected can be reviewed beside the claims? | None | Resolved 2026-10-14: yes. Decisions 0001–0015 record the adopted choices and rejected alternatives in [`decisions/`](decisions/). |
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-11-24 -->
+<!-- last written by: spec-author, 2026-11-25 -->
 
 | Section | Status | Reviewer | Note |
 | --- | --- | --- | --- |
 | Concision migration: §§ 1–12 | 🟢 | spec-reviewer | Independent `/root/review`, 2026-10-27: Approved snapshot SHA-256 `f27fd76c55d76a7023b3e96f55f010b453564c682325dd738b0b557381841b38`; no findings. Unchanged baseline scope retains its prior evidence; no new behavior or coverage is approved. |
-| Interdependency lanes: §§ 3, 6–11, Tasks, decisions 0011, 0021, 0022 and scenarios | 🟢 | spec-reviewer | Independent review, 2026-11-24: Approved the revised change over origin/main 56421a4, including the B-047–B-051 content-contract tests after a mutation re-check; its § 8 wording suggestion is applied. Unchanged scope retains the concision-migration evidence above. |
+| No-overlap lanes: §§ 2–3, 5–11, Tasks, decisions 0011, 0021, 0022 and scenarios | 🟢 | spec-reviewer | Independent review, 2026-11-25: Approved after two rounds the no-overlap revision over aec2f5f, committed as its child; its Decision 0022 Affects suggestion is applied; the 2026-11-24 approval, recoverable from § 12 at commit aec2f5f, covered the superseded same-part rule and does not carry forward. Unchanged scope retains the concision-migration evidence above. |
 
 ### Historical verdicts
 
@@ -439,10 +447,10 @@ of this specification at Git revision `57cd1200b089d2872d4538c91b5d085cf069307d`
 
 ## Tasks
 
-<!-- last written by: organizer, 2026-11-24 -->
+<!-- last written by: organizer, 2026-11-25 -->
 
 - [0052 — Coordinate Next work delivery](../.issue/0052-coordinate-next-work.yml) — authoritative delivery-status source.
-- [0061 — Open lanes by interdependency instead of one start per Feature](../.issue/0061-open-lanes-by-interdependency.yml) — delivers B-047–B-051.
+- [0061 — Open lanes by interdependency instead of one start per Feature](../.issue/0061-open-lanes-by-interdependency.yml) — delivers B-047–B-052.
 
 Supporting root history, retaining its existing parents: [0004 — Original agreement](../../../.issue/0004-next-skill-agreement.yml), [0030 — Specification authoring](../../../.issue/0030-next-skill-specification.yml), [0037 — Design alignment](../../../.issue/0037-align-f5-design-with-rulings.yml), and [0047 — Open-question rulings](../../../.issue/0047-resolve-f5-open-questions.yml).
 

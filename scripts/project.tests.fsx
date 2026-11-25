@@ -3,7 +3,7 @@
 //   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B040_
 //   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B008_
 //   skills/.spec/README.md   (0001-F4 Skill boundary) F4_B001_..F4_B003_
-//   skills/next/.spec/README.md (0001-F5 Next work) F5_B047_..F5_B051_
+//   skills/next/.spec/README.md (0001-F5 Next work) F5_B047_..F5_B052_
 //
 //   dotnet fsi scripts/project.tests.fsx        exit code = number of failures
 
@@ -1417,48 +1417,60 @@ let scenario (tag: string) (title: string) (lines: string list) =
     let missing = lines |> List.map (fun l -> (collapse l).Trim()) |> List.filter (fun l -> not (actual.Contains l))
     equal [] missing
 
-let F5_B047_IndependentSiblingsAreBothOffered () =
+let F5_B047_NonOverlappingSiblingsAreBothOffered () =
     let lanes = nextLanes ()
-    contains "Feature ownership does not make a lane." lanes
-    contains "Two startable items, in one Feature or not, are both offered and can both run unless one waits on the other, directly or transitively through `depends_on` or spikes, or their edits collide." lanes
-    contains "Sharing a prerequisite does not make two items wait on each other." lanes
-    let rule3 = skillSection "skills/deliver-change/SKILL.md" "The shape of it"
-    contains "Take a delivery child while a sibling is in progress when [`next`](../next/SKILL.md) § \"Use lanes to support the choice\" offers it and does not show it blocked by that sibling." rule3
-    scenario "@B-047" "Offer independent children of one Feature together"
+    contains "Feature ownership does not make a lane; overlap does." lanes
+    contains "Two candidates overlap when either depends on the other's result, directly or transitively through `depends_on` or spikes, for the stage it is offered for (§ \"Stage gates\"), or when both will edit any of the same files" lanes
+    contains "Sharing a prerequisite is not overlap by itself." lanes
+    contains "Only candidates that overlap neither each other nor any taken work, in review too, start in parallel." lanes
+    scenario "@B-047" "Offer non-overlapping children of one Feature together"
         [ "Given two startable children of one Feature"
-          "And neither waits on the other, directly or through an open item"
-          "And their edits do not collide"
+          "And neither depends on the other's result, directly or through an open item"
+          "And their evidenced edits share no file"
+          "And neither overlaps taken work"
           "Then both children are offered as starts" ]
 
-let F5_B048_TakenChildBlocksOnlyDependentsAndColliders () =
+let F5_B048_OverlapWithTakenWorkQueuesUntilMerged () =
     let lanes = nextLanes ()
-    contains "An item waits on another only when the stage it is offered for needs that item" lanes
-    contains "A taken item, in review too, blocks only the items that wait on it or collide with its edits; the rest of its Feature stays startable." lanes
-    contains "A Feature or epic coordination record is not a delivery candidate and reserves nothing." lanes
-    scenario "@B-048" "A taken child blocks only its dependents and colliders"
+    contains "A candidate that overlaps taken work or a higher-ranked head queues behind that lane and starts only once the work it overlaps has merged." lanes
+    contains "A Feature or epic coordination record is not a delivery candidate and reserves nothing by itself." lanes
+    let rule3 = skillSection "skills/deliver-change/SKILL.md" "The shape of it"
+    contains "Take an item while other work is in progress or in review only when [`next`](../next/SKILL.md) § \"Use lanes to support the choice\" offers it as a start." rule3
+    contains "An item that depends on that work's result or will edit any of the same files waits until that work has merged; a later rebase is no reason to start it." rule3
+    scenario "@B-048" "A candidate that overlaps taken work queues until it merges"
         [ "And the Feature's coordination record is in progress"
-          "And a sibling waits on it"
-          "And another sibling collides with its edits"
-          "And a third sibling is independent of it"
-          "Then the waiting and colliding siblings are shown as blocked by the taken child"
-          "And the independent sibling is offered as a start"
+          "And a sibling depends on the taken child's result"
+          "And another sibling will edit a file the taken child's branch touches"
+          "And a third sibling overlaps nothing"
+          "Then the overlapping siblings are queued behind the taken child's lane until its work has merged"
+          "And the third sibling is offered as a start"
           "And the coordination record is not shown as reserving the Feature"
           "| in progress |"
           "| in review |" ]
+    contains "Actionable unscored and standalone work skips the ranking, not the overlap test: it queues the same way, checked after the ranked heads in stable-id order." lanes
+    scenario "@B-048" "Unscored or standalone work that overlaps taken work queues"
+        [ "Given actionable work that lacks ranking inputs or is standalone"
+          "And it will edit a file that work in review touches"
+          "Then it is queued behind the lane holding that work until it has merged"
+          "And it is not offered as actionable" ]
 
-let F5_B049_SharedFileCollidesOnlyOnSamePartEdit () =
+let F5_B049_AnySharedFileIsOverlap () =
     let lanes = nextLanes ()
-    contains "Edits collide when both items rewrite the same part of a file: the same rows or the same code." lanes
-    contains "Separate subsections or rows added to one specification section do not collide, but they can still conflict on rebase: name them a rebase risk, not a block." lanes
-    contains "When the evidence cannot show whether two edits touch the same part, offer both and name the possible rebase conflict and its uncertainty; do not hold the lower-ranked one." lanes
-    scenario "@B-049" "Report a non-colliding shared file as a rebase risk"
-        [ "Given two startable items edit one shared file"
-          "| each add a new subsection to one section | both are offered and the shared file is named a rebase risk |"
-          "| rewrite the same rows of one table | only the higher-ranked item is offered and the collision is named |"
-          "| might touch the same part; the evidence cannot tell | both are offered and the possible rebase conflict is named |" ]
+    contains "or when both will edit any of the same files: the same specification file, the same work record, or shared generated or configuration output." lanes
+    scenario "@B-049" "Candidates that share any file overlap"
+        [ "Given two startable candidates that otherwise overlap nothing"
+          "Then only the higher-ranked candidate is offered as head"
+          "And the other is queued behind it until the head's work has merged"
+          "| one specification file, in separate subsections |"
+          "| one work record |"
+          "| shared generated output |"
+          "| shared configuration output |" ]
 
-// One case per file an agent reads; each fails if any phrase of the cap returns.
-let capPhrases = [ "per Feature"; "one start"; "one delivery child"; "One delivery child"; "queued behind" ]
+// One case per file an agent reads; each fails if any phrase of the per-Feature
+// cap, or of wording that treats a shared edit as a rebase risk, returns.
+let capPhrases =
+    [ "per Feature"; "one start"; "one delivery child"; "One delivery child"
+      "rebase risk"; "conflict on rebase"; "same part" ]
 
 let capFiles =
     [ "skills/next/SKILL.md"; ".claude/skills/next/SKILL.md"; ".agents/skills/next/SKILL.md"
@@ -1471,25 +1483,36 @@ let noCap (rel: string) () =
 
 let F5_B050_NoFeatureCapLimitsHeads () =
     let lanes = nextLanes ()
-    contains "Offer every other item as a head unless it collides with a higher-ranked head; show a blocked item with what blocks it." lanes
+    contains "Choose heads in one pass over ranked startable items." lanes
     contains "- A start withheld only because its Feature has other offered or taken work." (skillSection "skills/next/SKILL.md" "Never add")
     scenario "@B-050" "Several lanes of one Feature each offer a head"
         [ "Given two independent available lanes in one Feature with a startable item each"
           "Then a ranked startable head is offered for each lane"
           "And neither is held behind the other because they share a Feature" ]
 
-let F5_B051_SharedFileNotShownToCollideKeepsSeparateLanes () =
+let F5_B051_UndeterminedFilesCountAsOverlap () =
     let lanes = nextLanes ()
-    contains "A collision joins only the two items that collide, never a chain." lanes
-    contains "do not collide, but they can still conflict on rebase" lanes
-    contains "When the evidence cannot show whether two edits touch the same part, offer both" lanes
-    contains "- A lane split that ignores evidenced colliding edits." (skillSection "skills/next/SKILL.md" "Never add")
-    scenario "@B-051" "A shared file not shown to collide keeps separate lanes"
-        [ "Given two items with independent dependencies"
-          "Then the items are in separate lanes"
-          "And the shared file is named a rebase risk"
-          "| each adds a separate row to one specification table |"
-          "| both edit one file, without showing whether in the same part |" ]
+    contains "Read overlap from evidence: the files each open branch or pull request touches, diffed against its merge-base, and the files each candidate's claims and records name." lanes
+    contains "When overlap cannot be determined, whether from a candidate's files or from an open branch, pull request or taken item, treat the candidate as overlapping and say which evidence is missing." lanes
+    scenario "@B-051" "A candidate whose overlap cannot be determined overlaps"
+        [ "Given a startable candidate that depends on nothing open"
+          "Then the candidate is treated as overlapping and queued"
+          "And the report names the missing evidence"
+          "| an open pull request whose diff against its merge-base is unreadable |"
+          "| a candidate whose claims and records name no files |"
+          "| a taken item with no branch yet |" ]
+
+let F5_B052_ReportNamesOverlapAndNeverRebasesLater () =
+    let lanes = nextLanes ()
+    contains "Name each overlap, its evidence and the lane that holds it." lanes
+    contains "A later rebase is never a reason to start overlapping work." lanes
+    contains "- A parallel start on work that overlaps taken work or a higher-ranked head, or one justified by rebasing later." (skillSection "skills/next/SKILL.md" "Never add")
+    contains "- A start on work that overlaps open work, justified by rebasing later." (skillSection "skills/deliver-change/SKILL.md" "Never add")
+    scenario "@B-052" "The report names each overlap and its holder"
+        [ "Given a candidate that overlaps a taken lane on one shared file"
+          "And the conflict could be rebased later"
+          "Then the overlap, the shared file and the lane holding it are named"
+          "And the candidate is not offered as a start" ]
 
 // Supporting evidence only: agents read the projected copies, which carry the
 // source rule unchanged (0001-F1 B-004).
@@ -1594,11 +1617,12 @@ let tests : (string * (unit -> unit)) list =
       nameof F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners, F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners
       nameof F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory, F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory
       nameof F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs, F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs
-      nameof F5_B047_IndependentSiblingsAreBothOffered, F5_B047_IndependentSiblingsAreBothOffered
-      nameof F5_B048_TakenChildBlocksOnlyDependentsAndColliders, F5_B048_TakenChildBlocksOnlyDependentsAndColliders
-      nameof F5_B049_SharedFileCollidesOnlyOnSamePartEdit, F5_B049_SharedFileCollidesOnlyOnSamePartEdit
+      nameof F5_B047_NonOverlappingSiblingsAreBothOffered, F5_B047_NonOverlappingSiblingsAreBothOffered
+      nameof F5_B048_OverlapWithTakenWorkQueuesUntilMerged, F5_B048_OverlapWithTakenWorkQueuesUntilMerged
+      nameof F5_B049_AnySharedFileIsOverlap, F5_B049_AnySharedFileIsOverlap
       nameof F5_B050_NoFeatureCapLimitsHeads, F5_B050_NoFeatureCapLimitsHeads
-      nameof F5_B051_SharedFileNotShownToCollideKeepsSeparateLanes, F5_B051_SharedFileNotShownToCollideKeepsSeparateLanes
+      nameof F5_B051_UndeterminedFilesCountAsOverlap, F5_B051_UndeterminedFilesCountAsOverlap
+      nameof F5_B052_ReportNamesOverlapAndNeverRebasesLater, F5_B052_ReportNamesOverlapAndNeverRebasesLater
       nameof F5_ProjectedCopiesCarryTheLaneRule, F5_ProjectedCopiesCarryTheLaneRule ]
     @ (capFiles |> List.map (fun rel -> "F5_B050_NoFeatureCapIn " + rel, noCap rel))
 

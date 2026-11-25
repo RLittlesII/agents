@@ -39,10 +39,11 @@ lands there. Read all three.
    before its items exist. Signal that you have an item in the tracker *before* the
    branch, before the worktree, and before the first edit. A taken item is not
    new work; continuation follows § "Resume, release and reassignment" below.
-3. **Siblings run in parallel unless one waits on the other or their edits
-   collide.** Take a delivery child while a sibling is in progress when
-   [`next`](../next/SKILL.md) § "Use lanes to support the choice" offers it and
-   does not show it blocked by that sibling.
+3. **Work runs in parallel only when it does not overlap.** Take an item while
+   other work is in progress or in review only when [`next`](../next/SKILL.md)
+   § "Use lanes to support the choice" offers it as a start. An item that depends
+   on that work's result or will edit any of the same files waits until that
+   work has merged; a later rebase is no reason to start it.
    Sequential prerequisites follow [`next`](../next/SKILL.md) § "Stage gates".
    A task that requires a sibling to be started alongside it, or an unmerged
    sibling branch to be stacked, returns to grooming for a cut that can finish
@@ -168,6 +169,7 @@ superseded by a lesson about a real one.
 ## Never add
 
 - A second item in progress for the same owner.
+- A start on work that overlaps open work, justified by rebasing later.
 - A takeover inferred from elapsed time, silence or missing ownership evidence.
 - A branch or an edit for tracked delivery before the item is signalled as taken.
 - A claim, a status, or a rule duplicated into the item from the specification.

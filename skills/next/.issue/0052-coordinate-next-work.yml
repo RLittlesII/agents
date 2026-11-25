@@ -10,9 +10,9 @@ children: ["0061"]
 depends_on: []
 spikes: []
 spec: skills/next/.spec/README.md
-claims: ["B-001", "B-002", "B-003", "B-004", "B-005", "B-006", "B-007", "B-008", "B-009", "B-010", "B-011", "B-012", "B-013", "B-014", "B-015", "B-016", "B-017", "B-018", "B-019", "B-020", "B-021", "B-022", "B-023", "B-024", "B-025", "B-026", "B-027", "B-028", "B-029", "B-030", "B-031", "B-032", "B-033", "B-034", "B-035", "B-036", "B-037", "B-038", "B-039", "B-040", "B-041", "B-042", "B-043", "B-044", "B-045", "B-047", "B-048", "B-049", "B-050", "B-051"]
+claims: ["B-001", "B-002", "B-003", "B-004", "B-005", "B-006", "B-007", "B-008", "B-009", "B-010", "B-011", "B-012", "B-013", "B-014", "B-015", "B-016", "B-017", "B-018", "B-019", "B-020", "B-021", "B-022", "B-023", "B-024", "B-025", "B-026", "B-027", "B-028", "B-029", "B-030", "B-031", "B-032", "B-033", "B-034", "B-035", "B-036", "B-037", "B-038", "B-039", "B-040", "B-041", "B-042", "B-043", "B-044", "B-045", "B-047", "B-048", "B-049", "B-050", "B-051", "B-052"]
 created: "2026-10-17"
-updated: "2026-11-24"
+updated: "2026-11-25"
 closed: null
 summary: |
   Coordinate the existing 0001-F5 agreement and its delivery evidence.
@@ -28,7 +28,7 @@ acceptance_criteria:
   - "B-025, B-026, B-027, B-028, B-029, B-030 — coordinated current claim scope."
   - "B-031, B-032, B-033, B-034, B-035, B-036 — coordinated current claim scope."
   - "B-037, B-038, B-039, B-040, B-041, B-042 — coordinated current claim scope."
-  - "B-043, B-044, B-045, B-047, B-048, B-049, B-050, B-051 — coordinated current claim scope; B-046 is withdrawn."
+  - "B-043, B-044, B-045, B-047, B-048, B-049, B-050, B-051, B-052 — coordinated current claim scope; B-046 is withdrawn."
   - "Every coordinated active claim has applicable approval and verified completion evidence in the specification before this source is closed."
   - "Required delivery children are verified delivered; unresolved scope and recorded evidence gaps remain explicit."
   - "Section 9 names a test for every coordinated active claim; Missing and Partial evidence is reconciled before completion."
@@ -41,7 +41,7 @@ decisions:
   - "2026-10-17, remaining completion evidence: Baseline agreement remains draft and all 46 active claims retain Missing traceability rows. Root chore 0030 keeps its existing parent 0004; other root records remain supporting history, not newly adopted delivery children."
   - "2026-10-17, authority boundary: coordinate existing claim identities while preserving their current approval and coverage gaps. This legacy source-record migration authorizes no new child work against unapproved agreement scope. Reconcile and groom any missing delivery assignments before offering dependent implementation."
   - "2026-10-17, child reconciliation: no existing typed delivery record explicitly names this specification. An empty children list is unknown remaining scope, not proof that the Feature is delivered. Preserve root chores and other root history without retyping or adopting them."
-  - "2026-11-24, decision 0022: B-046 withdrawn; B-047 to B-051 added, carving B-034 and B-035; child 0061 carries the change."
+  - "2026-11-25, decision 0022: B-046 withdrawn; B-047 to B-052 added, carving B-034; child 0061 carries the change."
 out_of_scope:
   - "0001-F5 section 5 retains its existing scope exclusions; this record adds no product behavior or new implementation assignment."
   - "Cross-cutting audit item 0046 and historical root chores keep their existing scope and ownership."

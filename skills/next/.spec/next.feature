@@ -311,13 +311,13 @@ Feature: Next work
   @B-035
   Scenario: A shared edit joins two lanes
     Given two items with independent dependencies
-    But evidence that both rewrite the same part of one generated output
+    But evidence that both edit the same generated output
     When lanes are inferred
     Then both items are in one lane
 
   @B-036
   Scenario: An inferred conflict carries its evidence and uncertainty
-    Given two items placed in one lane by an inferred same-part edit
+    Given two items placed in one lane by an inferred shared edit
     When the report is produced
     Then the evidence for the conflict is stated
     And so is how certain it is
@@ -420,23 +420,24 @@ Feature: Next work
     And recommendation edits no sign-off record
 
   @B-047
-  Scenario: Offer independent children of one Feature together
+  Scenario: Offer non-overlapping children of one Feature together
     Given two startable children of one Feature
-    And neither waits on the other, directly or through an open item
-    And their edits do not collide
+    And neither depends on the other's result, directly or through an open item
+    And their evidenced edits share no file
+    And neither overlaps taken work
     When the person asks what is next
     Then both children are offered as starts
 
   @B-048
-  Scenario Outline: A taken child blocks only its dependents and colliders
+  Scenario Outline: A candidate that overlaps taken work queues until it merges
     Given a child of a Feature is "<state>"
     And the Feature's coordination record is in progress
-    And a sibling waits on it
-    And another sibling collides with its edits
-    And a third sibling is independent of it
+    And a sibling depends on the taken child's result
+    And another sibling will edit a file the taken child's branch touches
+    And a third sibling overlaps nothing
     When the person asks for the next work on that Feature
-    Then the waiting and colliding siblings are shown as blocked by the taken child
-    And the independent sibling is offered as a start
+    Then the overlapping siblings are queued behind the taken child's lane until its work has merged
+    And the third sibling is offered as a start
     And the coordination record is not shown as reserving the Feature
 
     Examples:
@@ -444,18 +445,28 @@ Feature: Next work
       | in progress |
       | in review   |
 
-  @B-049
-  Scenario Outline: Report a non-colliding shared file as a rebase risk
-    Given two startable items edit one shared file
-    And their edits <edits>
+  @B-048
+  Scenario: Unscored or standalone work that overlaps taken work queues
+    Given actionable work that lacks ranking inputs or is standalone
+    And it will edit a file that work in review touches
     When the person asks what is next
-    Then <outcome>
+    Then it is queued behind the lane holding that work until it has merged
+    And it is not offered as actionable
+
+  @B-049
+  Scenario Outline: Candidates that share any file overlap
+    Given two startable candidates that otherwise overlap nothing
+    And both will edit <file>
+    When the person asks what is next
+    Then only the higher-ranked candidate is offered as head
+    And the other is queued behind it until the head's work has merged
 
     Examples:
-      | edits                                               | outcome                                                           |
-      | each add a new subsection to one section            | both are offered and the shared file is named a rebase risk       |
-      | rewrite the same rows of one table                  | only the higher-ranked item is offered and the collision is named |
-      | might touch the same part; the evidence cannot tell | both are offered and the possible rebase conflict is named        |
+      | file                                            |
+      | one specification file, in separate subsections |
+      | one work record                                 |
+      | shared generated output                         |
+      | shared configuration output                     |
 
   @B-050
   Scenario: Several lanes of one Feature each offer a head
@@ -465,14 +476,23 @@ Feature: Next work
     And neither is held behind the other because they share a Feature
 
   @B-051
-  Scenario Outline: A shared file not shown to collide keeps separate lanes
-    Given two items with independent dependencies
-    And evidence that <evidence>
-    When lanes are inferred
-    Then the items are in separate lanes
-    And the shared file is named a rebase risk
+  Scenario Outline: A candidate whose overlap cannot be determined overlaps
+    Given a startable candidate that depends on nothing open
+    And <missing>
+    When the person asks what is next
+    Then the candidate is treated as overlapping and queued
+    And the report names the missing evidence
 
     Examples:
-      | evidence                                                       |
-      | each adds a separate row to one specification table            |
-      | both edit one file, without showing whether in the same part   |
+      | missing                                                              |
+      | an open pull request whose diff against its merge-base is unreadable |
+      | a candidate whose claims and records name no files                   |
+      | a taken item with no branch yet                                      |
+
+  @B-052
+  Scenario: The report names each overlap and its holder
+    Given a candidate that overlaps a taken lane on one shared file
+    And the conflict could be rebased later
+    When the report is produced
+    Then the overlap, the shared file and the lane holding it are named
+    And the candidate is not offered as a start

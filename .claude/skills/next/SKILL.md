@@ -114,33 +114,33 @@ unscored. No derived tier, score or gate is written back to a record.
 
 ## Use lanes to support the choice
 
-Feature ownership does not make a lane. Two startable items, in one Feature or
-not, are both offered and can both run unless one waits on the other, directly
-or transitively through `depends_on` or spikes, or their edits collide. Sharing
-a prerequisite does not make two items wait on each other. An item waits on
-another only when the stage it is offered for needs that item (§ "Stage
-gates"). A lane is one offered or taken item, its head, with the items it
-blocks. A Feature or epic coordination record is not a delivery candidate and
-reserves nothing.
+Feature ownership does not make a lane; overlap does. Two candidates overlap
+when either depends on the other's result, directly or transitively through
+`depends_on` or spikes, for the stage it is offered for (§ "Stage gates"), or
+when both will edit any of the same files: the same specification file, the
+same work record, or shared generated or configuration output. Sharing a
+prerequisite is not overlap by itself. A lane is one offered or taken item, its
+head, with the candidates that overlap it. A Feature or epic coordination
+record is not a delivery candidate and reserves nothing by itself.
 
-Edits collide when both items rewrite the same part of a file: the same rows
-or the same code. Separate subsections or rows added to one specification
-section do not collide, but they can still conflict on rebase: name them a
-rebase risk, not a block. When the evidence cannot show whether two edits touch
-the same part, offer both and name the possible rebase conflict and its
-uncertainty; do not hold the lower-ranked one. A collision joins only the two
-items that collide, never a chain.
+Read overlap from evidence: the files each open branch or pull request touches,
+diffed against its merge-base, and the files each candidate's claims and
+records name. When overlap cannot be determined, whether from a candidate's
+files or from an open branch, pull request or taken item, treat the candidate
+as overlapping and say which evidence is missing.
 
-Choose heads in one pass over ranked startable items. A taken item, in review
-too, blocks only the items that wait on it or collide with its edits; the rest
-of its Feature stays startable. Offer every other item as a head unless it
-collides with a higher-ranked head; show a blocked item with what blocks it. A
+Choose heads in one pass over ranked startable items. Only candidates that
+overlap neither each other nor any taken work, in review too, start in
+parallel. A candidate that overlaps taken work or a higher-ranked head queues
+behind that lane and starts only once the work it overlaps has merged. A
 prerequisite owned by another Feature passes the same test. Actionable unscored
-work stays outside this ranked pass. Apply existing reservations before
-narrowing the displayed scope.
+and standalone work skips the ranking, not the overlap test: it queues the same
+way, checked after the ranked heads in stable-id order. Apply existing
+reservations before narrowing the displayed scope.
 
-Explain each inferred conflict and its uncertainty. Separate actionable unscored
-work from ranked lane heads; lack of ranking inputs is not evidence of blockage.
+Name each overlap, its evidence and the lane that holds it. A later rebase is
+never a reason to start overlapping work. Separate actionable unscored work
+from ranked lane heads; lack of ranking inputs is not evidence of blockage.
 Keep standalone work visible as the companion directs.
 
 ## Report without taking work
@@ -165,7 +165,8 @@ tracker prerequisite as delivered.
 - A taken item offered as a new start.
 - An item-first answer when the request is to choose or finish Features.
 - A fabricated score, estimate, approval, claim link, or delivery state.
-- A lane split that ignores evidenced colliding edits.
+- A parallel start on work that overlaps taken work or a higher-ranked head,
+  or one justified by rebasing later.
 - A start withheld only because its Feature has other offered or taken work.
 - A silent scope expansion or a claim that unread work does not exist.
 - An issue edit, status synchronization, branch, worktree, or dispatch during
