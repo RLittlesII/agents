@@ -39,4 +39,9 @@ B-017, B-034, B-035, B-036, B-046, § 5 row 5, OQ-2, OQ-6.
 
 ## Reversal
 
-None.
+2026-11-24: [decision 0022](0022-open-lanes-by-interdependency.md) supersedes
+the "offered at most one start" sentence above and narrows shared-edit joins. A
+Feature is offered every start that no taken item blocks and that collides with
+no higher-ranked start. Lanes still come from dependencies and evidenced shared
+edits, but a shared file joins two items only when both rewrite the same part
+of it. Rejected alternatives: decision 0022 § Rejected.

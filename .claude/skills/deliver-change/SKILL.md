@@ -39,11 +39,14 @@ lands there. Read all three.
    before its items exist. Signal that you have an item in the tracker *before* the
    branch, before the worktree, and before the first edit. A taken item is not
    new work; continuation follows § "Resume, release and reassignment" below.
-3. **One delivery child in progress at a time, per Feature.** A Feature's
-   coordination record does not consume that delivery slot. Sequential prerequisites
-   follow [`next`](../next/SKILL.md) § "Stage gates". A task that requires a
-   sibling to be started alongside it, or an unmerged sibling branch to be
-   stacked, returns to grooming for a cut that can finish on its own.
+3. **Siblings run in parallel unless one waits on the other or their edits
+   collide.** Take a delivery child while a sibling is in progress when
+   [`next`](../next/SKILL.md) § "Use lanes to support the choice" offers it and
+   does not show it blocked by that sibling.
+   Sequential prerequisites follow [`next`](../next/SKILL.md) § "Stage gates".
+   A task that requires a sibling to be started alongside it, or an unmerged
+   sibling branch to be stacked, returns to grooming for a cut that can finish
+   on its own.
 4. **Resolve questions blocking the assigned claims before dependent work.**
    Follow [`clarify-requirements`](../clarify-requirements/SKILL.md) for the answer
    and its record; a decision record cannot turn an unanswered material question
@@ -75,8 +78,8 @@ lands there. Read all three.
 A taken item retains its recorded owner across interruptions. Before resuming,
 verify the latest ownership record, scope, checkout and branch, completed work,
 remaining work and applicable stage evidence. The same owner may continue within
-that assignment without requesting permission again. Continuation occupies the
-existing delivery slot, not a second one.
+that assignment without requesting permission again. Continuation keeps the item
+already taken; it is not a second start.
 
 Another owner may take it only after the recorded owner's explicit release or
 an authorized reassignment. Record who released or authorized the change, the
@@ -164,7 +167,7 @@ superseded by a lesson about a real one.
 
 ## Never add
 
-- A second item in progress alongside the first.
+- A second item in progress for the same owner.
 - A takeover inferred from elapsed time, silence or missing ownership evidence.
 - A branch or an edit for tracked delivery before the item is signalled as taken.
 - A claim, a status, or a rule duplicated into the item from the specification.

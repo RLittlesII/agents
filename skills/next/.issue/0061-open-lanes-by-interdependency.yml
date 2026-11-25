@@ -1,0 +1,34 @@
+id: "0061"
+type: task
+title: Open lanes by interdependency instead of one start per Feature
+status: in-progress
+cost: 2
+risk: 2
+parent: "0052"
+children: []
+depends_on: []
+spikes: []
+spec: skills/next/.spec/README.md
+claims: ["B-047", "B-048", "B-049", "B-050", "B-051"]
+created: "2026-11-24"
+updated: "2026-11-24"
+closed: null
+summary: |
+  Replace the portable one-delivery-child-per-Feature cap with an
+  interdependency check. Siblings are offered and run in parallel unless one
+  waits on the other or their edits collide; a shared file collides only when
+  both rewrite the same part, and unknown overlap offers both with the rebase
+  risk named. Decision 0022 supersedes decision 0021, withdraws B-046 and carves
+  B-034 and B-035 with new claims.
+acceptance_criteria:
+  - "B-047, B-048, B-049, B-050 and B-051 hold as section 3 states them; B-050 and B-051 carve B-034 and B-035."
+  - "next § Use lanes to support the choice and deliver-change rule 3 state the interdependency check; no restatement of the old cap remains outside history."
+  - "Decision 0022 is recorded; decisions 0011 and 0021 carry appended reversals; B-046 is withdrawn, not deleted; B-034 and B-035 stay Active and are carved."
+  - "B-047 to B-051 each have a content-contract test named in section 9, set to Covered, per the maintainer ruling on agents#17 (comment 7152225405) that they are tested, not waived."
+  - "Pass an independent diff review, strict specifications and the projection check."
+decisions:
+  - "2026-11-24, maintainer ruling relayed by the coordinating session: \"The point of next is to OPEN lanes. Not restrict to a single path!\"; \"Update the rule to check for interdependency.\"; on unknown overlap, \"Offer both\". Primary source: the ruling recorded on Hooked issue #887, comments 7137957300 and 7140080845. Recorded here as decision 0022."
+  - "2026-11-24, ownership claim: Claude Code side session started by coordinating session local_6f6490a5-25e5-4c40-b952-986188792fc1, working on branch rlittlesii/next-parallel-lanes-c9ee4e in checkout .claude/worktrees/specht-47f8d1 of this repository. Baseline origin/main 56421a4; no open PR reservations; .issue/.sequence was 0060, so this item takes 0061."
+out_of_scope:
+  - Tests for 0001-F5 claims other than B-047 to B-051.
+  - Any consuming repository's companion, registry or pinned copy.

@@ -3,6 +3,7 @@
 //   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B040_
 //   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B008_
 //   skills/.spec/README.md   (0001-F4 Skill boundary) F4_B001_..F4_B003_
+//   skills/next/.spec/README.md (0001-F5 Next work) F5_B047_..F5_B051_
 //
 //   dotnet fsi scripts/project.tests.fsx        exit code = number of failures
 
@@ -1383,6 +1384,120 @@ let B008_UnixBackslashRoleRootPreservesSlashDirectory () =
     equal "outside declared root\n" (read root ".claude/native/roles/keep.md")
     contains "name: alpha" (read root @".claude/native\roles/alpha.md")
 
+// ---------------------------------------------------------------- 0001-F5 Next work
+// The deliverable is guidance an agent follows. These tests pin the rule each
+// claim states in skills/next/SKILL.md and the scenario that documents it;
+// they do not run an agent.
+
+let collapse (text: string) =
+    Text.RegularExpressions.Regex.Replace(text, @"\s+", " ")
+
+let skillSection (rel: string) (heading: string) =
+    let text = (read repoRoot rel).Replace("\r\n", "\n")
+    let start = text.IndexOf("\n## " + heading + "\n")
+    if start < 0 then failwithf "%s has no § %s" rel heading
+    let body = text.Substring(start + heading.Length + 5)
+    let next = body.IndexOf("\n## ")
+    collapse (if next < 0 then body else body.Substring(0, next))
+
+let nextLanes () = skillSection "skills/next/SKILL.md" "Use lanes to support the choice"
+
+// The scenario under the tag and title. Each expected line must equal a whole
+// line of it, whitespace collapsed, so a Given or example row rewritten against
+// the claim fails too.
+let scenario (tag: string) (title: string) (lines: string list) =
+    let feature = (read repoRoot "skills/next/.spec/next.feature").Replace("\r\n", "\n")
+    let heads = [ "  " + tag + "\n  Scenario: " + title + "\n"; "  " + tag + "\n  Scenario Outline: " + title + "\n" ]
+    let start = heads |> List.map (fun h -> feature.IndexOf h) |> List.filter (fun i -> i >= 0)
+    if start.IsEmpty then failwithf "no scenario %A tagged %s" title tag
+    let rest = feature.Substring(start.Head)
+    let stop = rest.IndexOf("\n\n  @")
+    let body = if stop < 0 then rest else rest.Substring(0, stop)
+    let actual = body.Split('\n') |> Array.map (fun l -> (collapse l).Trim()) |> Set.ofArray
+    let missing = lines |> List.map (fun l -> (collapse l).Trim()) |> List.filter (fun l -> not (actual.Contains l))
+    equal [] missing
+
+let F5_B047_IndependentSiblingsAreBothOffered () =
+    let lanes = nextLanes ()
+    contains "Feature ownership does not make a lane." lanes
+    contains "Two startable items, in one Feature or not, are both offered and can both run unless one waits on the other, directly or transitively through `depends_on` or spikes, or their edits collide." lanes
+    contains "Sharing a prerequisite does not make two items wait on each other." lanes
+    let rule3 = skillSection "skills/deliver-change/SKILL.md" "The shape of it"
+    contains "Take a delivery child while a sibling is in progress when [`next`](../next/SKILL.md) § \"Use lanes to support the choice\" offers it and does not show it blocked by that sibling." rule3
+    scenario "@B-047" "Offer independent children of one Feature together"
+        [ "Given two startable children of one Feature"
+          "And neither waits on the other, directly or through an open item"
+          "And their edits do not collide"
+          "Then both children are offered as starts" ]
+
+let F5_B048_TakenChildBlocksOnlyDependentsAndColliders () =
+    let lanes = nextLanes ()
+    contains "An item waits on another only when the stage it is offered for needs that item" lanes
+    contains "A taken item, in review too, blocks only the items that wait on it or collide with its edits; the rest of its Feature stays startable." lanes
+    contains "A Feature or epic coordination record is not a delivery candidate and reserves nothing." lanes
+    scenario "@B-048" "A taken child blocks only its dependents and colliders"
+        [ "And the Feature's coordination record is in progress"
+          "And a sibling waits on it"
+          "And another sibling collides with its edits"
+          "And a third sibling is independent of it"
+          "Then the waiting and colliding siblings are shown as blocked by the taken child"
+          "And the independent sibling is offered as a start"
+          "And the coordination record is not shown as reserving the Feature"
+          "| in progress |"
+          "| in review |" ]
+
+let F5_B049_SharedFileCollidesOnlyOnSamePartEdit () =
+    let lanes = nextLanes ()
+    contains "Edits collide when both items rewrite the same part of a file: the same rows or the same code." lanes
+    contains "Separate subsections or rows added to one specification section do not collide, but they can still conflict on rebase: name them a rebase risk, not a block." lanes
+    contains "When the evidence cannot show whether two edits touch the same part, offer both and name the possible rebase conflict and its uncertainty; do not hold the lower-ranked one." lanes
+    scenario "@B-049" "Report a non-colliding shared file as a rebase risk"
+        [ "Given two startable items edit one shared file"
+          "| each add a new subsection to one section | both are offered and the shared file is named a rebase risk |"
+          "| rewrite the same rows of one table | only the higher-ranked item is offered and the collision is named |"
+          "| might touch the same part; the evidence cannot tell | both are offered and the possible rebase conflict is named |" ]
+
+// One case per file an agent reads; each fails if any phrase of the cap returns.
+let capPhrases = [ "per Feature"; "one start"; "one delivery child"; "One delivery child"; "queued behind" ]
+
+let capFiles =
+    [ "skills/next/SKILL.md"; ".claude/skills/next/SKILL.md"; ".agents/skills/next/SKILL.md"
+      "skills/deliver-change/SKILL.md"; ".claude/skills/deliver-change/SKILL.md"; ".agents/skills/deliver-change/SKILL.md" ]
+
+let noCap (rel: string) () =
+    let text = collapse (read repoRoot rel)
+    let found = capPhrases |> List.filter (fun phrase -> text.Contains phrase)
+    equal [] found
+
+let F5_B050_NoFeatureCapLimitsHeads () =
+    let lanes = nextLanes ()
+    contains "Offer every other item as a head unless it collides with a higher-ranked head; show a blocked item with what blocks it." lanes
+    contains "- A start withheld only because its Feature has other offered or taken work." (skillSection "skills/next/SKILL.md" "Never add")
+    scenario "@B-050" "Several lanes of one Feature each offer a head"
+        [ "Given two independent available lanes in one Feature with a startable item each"
+          "Then a ranked startable head is offered for each lane"
+          "And neither is held behind the other because they share a Feature" ]
+
+let F5_B051_SharedFileNotShownToCollideKeepsSeparateLanes () =
+    let lanes = nextLanes ()
+    contains "A collision joins only the two items that collide, never a chain." lanes
+    contains "do not collide, but they can still conflict on rebase" lanes
+    contains "When the evidence cannot show whether two edits touch the same part, offer both" lanes
+    contains "- A lane split that ignores evidenced colliding edits." (skillSection "skills/next/SKILL.md" "Never add")
+    scenario "@B-051" "A shared file not shown to collide keeps separate lanes"
+        [ "Given two items with independent dependencies"
+          "Then the items are in separate lanes"
+          "And the shared file is named a rebase risk"
+          "| each adds a separate row to one specification table |"
+          "| both edit one file, without showing whether in the same part |" ]
+
+// Supporting evidence only: agents read the projected copies, which carry the
+// source rule unchanged (0001-F1 B-004).
+let F5_ProjectedCopiesCarryTheLaneRule () =
+    let source = nextLanes ()
+    for rel in [ ".claude/skills/next/SKILL.md"; ".agents/skills/next/SKILL.md" ] do
+        equal source (skillSection rel "Use lanes to support the choice")
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
@@ -1478,7 +1593,14 @@ let tests : (string * (unit -> unit)) list =
       nameof F2_B037_ArchitectCannotStampObservabilityBeforeWrites, F2_B037_ArchitectCannotStampObservabilityBeforeWrites
       nameof F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners, F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners
       nameof F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory, F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory
-      nameof F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs, F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs ]
+      nameof F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs, F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs
+      nameof F5_B047_IndependentSiblingsAreBothOffered, F5_B047_IndependentSiblingsAreBothOffered
+      nameof F5_B048_TakenChildBlocksOnlyDependentsAndColliders, F5_B048_TakenChildBlocksOnlyDependentsAndColliders
+      nameof F5_B049_SharedFileCollidesOnlyOnSamePartEdit, F5_B049_SharedFileCollidesOnlyOnSamePartEdit
+      nameof F5_B050_NoFeatureCapLimitsHeads, F5_B050_NoFeatureCapLimitsHeads
+      nameof F5_B051_SharedFileNotShownToCollideKeepsSeparateLanes, F5_B051_SharedFileNotShownToCollideKeepsSeparateLanes
+      nameof F5_ProjectedCopiesCarryTheLaneRule, F5_ProjectedCopiesCarryTheLaneRule ]
+    @ (capFiles |> List.map (fun rel -> "F5_B050_NoFeatureCapIn " + rel, noCap rel))
 
 let mutable failures = 0
 for name, test in tests do

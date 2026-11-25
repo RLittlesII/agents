@@ -20,7 +20,7 @@ depends_on: []
 blocks: []
 spikes: []
 created: "2026-10-14"
-updated: "2026-10-27"
+updated: "2026-11-24"
 github_issue: null
 synced_at: null
 ---
@@ -56,7 +56,7 @@ permission to start.
 
 ## 3. Acceptance Criteria
 
-<!-- last written by: spec-author, 2026-10-27 -->
+<!-- last written by: spec-author, 2026-11-24 -->
 
 Each source is a section of [`SKILL.md`](../SKILL.md).
 
@@ -107,7 +107,12 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 | B-043 | Given two records claiming one stable id, this Feature names the duplicate, chooses neither, and offers no start for the work that depends on either. | § Derive an evidenced next step | Active |
 | B-044 | Given an open question whose row names no blocked claim (a row reading `None` names that it blocks nothing), this Feature treats its Feature's design and implementation readiness as unverified, offers neither, and names the gap. | § Stage gates | Active |
 | B-045 | Given a Feature whose unfinished closure is empty and whose every active claim is delivered, this Feature reports it finished and leaves it out of ranking. | § Report without taking work; § The ranking model | Active |
-| B-046 | Given startable items in one Feature in separate lanes, this Feature offers at most one start for that Feature, shows the others queued behind it, and offers none while the Feature has taken work. | § Use lanes to support the choice | Active |
+| B-046 | Given startable items in one Feature in separate lanes, this Feature offers at most one start for that Feature, shows the others queued behind it, and offers none while the Feature has taken work. | § Use lanes to support the choice | Withdrawn |
+| B-047 | Given two startable children of one Feature where neither waits on the other, directly or through an open item, and their edits do not collide, this Feature offers both. | § Use lanes to support the choice | Active |
+| B-048 | Given a taken child, this Feature withholds only the children whose offered stage waits on it or whose edits collide with it; an active Feature or epic container reserves nothing. | § Use lanes to support the choice | Active |
+| B-049 | Given a shared file two items edit, this Feature reports a collision only when both rewrite the same part, and a rebase risk otherwise. | § Use lanes to support the choice | Active |
+| B-050 | Given independent available lanes that include several lanes of one Feature, this Feature offers a ranked startable head for each of them, overriding B-034's "subject to one start per Feature (B-046)". | § Use lanes to support the choice | Active |
+| B-051 | Given two items whose shared edits the evidence does not show rewriting the same part of one file, whether they touch separate parts or the evidence cannot tell, this Feature keeps them in separate lanes and names the rebase risk, narrowing B-035's "evidenced shared edit" to evidence that both rewrite the same part (B-049). | § Use lanes to support the choice; § Never add | Active |
 
 ## 4. Constraints
 
@@ -134,7 +139,7 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 
 ## 6. Concern Separation
 
-<!-- last written by: architect, 2026-10-27 -->
+<!-- last written by: architect, 2026-11-24 -->
 
 | Concern | Classification | Claims |
 | --- | --- | --- |
@@ -143,13 +148,13 @@ Each source is a section of [`SKILL.md`](../SKILL.md).
 | Ranking policy and selected-Feature standing | Business | B-022, B-025–B-026 |
 | Exact closure arithmetic and tie order | Technical | B-023–B-024, B-027 |
 | Authored inputs, gaps, duplicate identities and cycles | Both | B-021, B-028–B-032, B-041, B-043 |
-| Lanes, conflicts and one start per Feature | Both | B-034–B-036, B-046 |
+| Lanes, conflicts and parallel starts | Both | B-034–B-036, B-047–B-051 |
 | One read-only snapshot and stable detail | Technical | B-007–B-008, B-039–B-040 |
 | Companion input mapping | Technical | C-2–C-3 |
 
 ## 7. Technical Design
 
-<!-- last written by: architect, 2026-10-27 -->
+<!-- last written by: architect, 2026-11-24 -->
 
 The deliverable is portable guidance, not an executable (decision 0015).
 0001-F1 B-004 projects it byte-for-byte; ADR-0002 requires committed,
@@ -214,37 +219,42 @@ grooming for merge, extraction or narrower dependency edges, never drop an edge
 
 ### Lanes and starts
 
-Dependency paths and evidenced shared edits join lanes transitively. State the
-evidence and uncertainty of inferred joins; a shared Feature alone joins no lane.
-Lanes predict parallelism, not conflict-free merging (decision 0011).
+An item joins the lane of a head or a taken item only when its offered stage
+waits on that item, directly or transitively through `depends_on` or spikes, or
+both rewrite the same part of a file. A collision joins only the two items that
+collide, never a chain, and a shared Feature alone joins no lane. A shared file
+edited in separate parts is a rebase risk, not a join; when the evidence cannot
+show which, the join is not made and the possible conflict is named. State the
+evidence and uncertainty of each. Lanes predict parallelism, not conflict-free
+merging (decisions 0011, 0022).
 
-Scan startable items once in ranking order. First enforce one start per owning
-Feature, including taken work; a capped item stays queued behind its Feature,
-and its lane may offer the next item. Then reject an occupied lane or one with
-an existing head; otherwise offer its head. A cross-Feature prerequisite consumes
-its owner's start, not the selected Feature's. Actionable unscored work remains
-separate, outside head selection; mark it queued if its Feature is occupied
-(B-034, B-037, B-046; decision 0021).
+Scan startable items once in ranking order. Reject an item that waits on or
+collides with taken work, including work in review, or that collides with an
+earlier head; show it blocked with its blocker. Otherwise offer it as a head. No
+Feature cap applies: a taken child blocks only its dependents and colliders, and
+a coordination record reserves nothing. A cross-Feature prerequisite passes the
+same test. Actionable unscored work remains separate, outside head selection
+(B-034, B-037, B-047–B-051; decision 0022).
 
 ```mermaid
 flowchart TD
-  Next{Next startable item?} -->|No| Done[Report heads and queues]
-  Next -->|Yes| Feature{Owning Feature taken or selected?}
-  Feature -->|Yes| Queue[Queue behind Feature]
-  Feature -->|No| Lane{Lane occupied or selected?}
-  Lane -->|Yes| Wait[Withhold lane start]
-  Lane -->|No| Head[Offer lane head]
-  Queue --> Next
-  Wait --> Next
-  Head --> Next
+  Next{Next startable item?} -->|No| Done[Report heads, blocked items and risks]
+  Next -->|Yes| Taken{Waits on or collides with taken work?}
+  Taken -->|Yes| Block[Show blocked by taken work]
+  Taken -->|No| Head{Collides with an earlier head?}
+  Head -->|Yes| Behind[Show blocked by that head]
+  Head -->|No| Offer[Offer as head; name any rebase risk]
+  Block --> Next
+  Behind --> Next
+  Offer --> Next
 ```
 
-Decision 0021: Feature caps precede lane selection; B-027 makes the scan total.
+Decision 0022: taken work is checked before heads; B-027 makes the scan total.
 
 ### Companion boundary
 
-The method owns gates, arithmetic, tie order, caps and report placement. The
-companion supplies authored-field locations, tier vocabulary/order, estimate
+The method owns gates, arithmetic, tie order, lane tests and report placement.
+The companion supplies authored-field locations, tier vocabulary/order, estimate
 scale, tracker access/state field, reservation records, claim assignments,
 identity/dependency contracts, shared-edit evidence and standalone-work location
 (C-2–C-3, A-1). Cost is authored separately from risk. No per-repository ranking
@@ -279,16 +289,25 @@ Historical finding 5 was resolved in reviewed subject
 `/root/baseline_roles_next` on 2026-10-17. This is evidence for that subject,
 not approval of this edit.
 
-Readiness: Ready for tests and implementation for B-001–B-046. Risk is low for
-the decision-driven prose changes; claim delivery still requires § 9 evidence.
+Readiness: Ready for tests and implementation for B-001–B-045 and B-047–B-051.
+Risk is low for the decision-driven prose changes; claim delivery still
+requires § 9 evidence.
 
 ## 8. Testing Strategy
 
-<!-- last written by: test-writer, 2026-10-27 -->
+<!-- last written by: test-writer, 2026-11-24 -->
 
 Review scenarios against the cited skill text. The deliverable is prose; no
-executable tier or behavior runner is established. Manual instruction checks do
-not fill Missing traceability rows.
+behavior runner executes an agent against it. Manual instruction checks do not
+fill Missing traceability rows.
+
+B-047–B-051 are pinned by content-contract tests. Each asserts the sentences
+of the skill source that state its claim, and the distinguishing Given, Then
+and example lines, whole, of the scenario that documents it, and fails when
+that text changes. One case per source and projected copy of `next` and
+`deliver-change` fails if a phrase of the per-Feature cap returns, and a
+supporting test checks that the projected copies carry the source rule
+unchanged. They pin the instruction an agent reads, not a live agent run.
 
 Use synthetic ownership, tracker and revision states to assess coordination
 source/mirror drift without writes, same-owner continuation, release/reassignment
@@ -302,7 +321,7 @@ Not applicable.
 
 ## 9. Traceability Matrix
 
-<!-- last written by: test-writer, 2026-10-27 -->
+<!-- last written by: test-writer, 2026-11-24 -->
 
 | Claim ID | Scenario                                                    | Test    | Status  |
 | -------- | ----------------------------------------------------------- | ------- | ------- |
@@ -351,7 +370,12 @@ Not applicable.
 | B-043    | A duplicate id is named, not resolved                       | Missing | Missing |
 | B-044    | A question naming no claim leaves readiness unverified      | Missing | Missing |
 | B-045    | A finished Feature is not ranked                            | Missing | Missing |
-| B-046    | One start per Feature                                       | Missing | Missing |
+| B-046    | None (withdrawn)                                            | None (withdrawn) | Withdrawn |
+| B-047    | Offer independent children of one Feature together          | `F5_B047_IndependentSiblingsAreBothOffered`, instruction text only; live-agent behavior unverified | Covered |
+| B-048    | A taken child blocks only its dependents and colliders      | `F5_B048_TakenChildBlocksOnlyDependentsAndColliders`, instruction text only; live-agent behavior unverified | Covered |
+| B-049    | Report a non-colliding shared file as a rebase risk         | `F5_B049_SharedFileCollidesOnlyOnSamePartEdit`, instruction text only; live-agent behavior unverified | Covered |
+| B-050    | Several lanes of one Feature each offer a head              | `F5_B050_NoFeatureCapLimitsHeads`; `F5_B050_NoFeatureCapIn` (one case per copy), instruction text only; live-agent behavior unverified | Covered |
+| B-051    | A shared file not shown to collide keeps separate lanes     | `F5_B051_SharedFileNotShownToCollideKeepsSeparateLanes`, instruction text only; live-agent behavior unverified | Covered |
 
 ### Manual evidence
 
@@ -363,7 +387,7 @@ routing probes are recorded in 0001-F2 § 9; they do not fill these rows.
 
 ## 10. Lessons / Spec Deltas
 
-<!-- last written by: spec-author, 2026-10-27 -->
+<!-- last written by: spec-author, 2026-11-24 -->
 
 | Date | Trigger | Change | Affected IDs |
 | --- | --- | --- | --- |
@@ -374,10 +398,11 @@ routing probes are recorded in 0001-F2 § 9; they do not fill these rows.
 | 2026-10-17 | Ownership continuation | Apply 0001-F2 decision 0005 to current reservations. | B-017 |
 | 2026-10-17 | Single coordination source | Apply 0001-F2 decision 0003; distinguish coordination records and delivery children. | B-017, B-040, B-042, B-046 |
 | 2026-10-27 | Confirmed concise-specification plan | Compress in place; qualify sibling references; separate strategy, locators and history. | §§ 1–12; IDs unchanged |
+| 2026-11-24 | Maintainer ruling: open lanes by interdependency | Withdraw the one-start-per-Feature cap; offer every start no taken item blocks and no higher-ranked start collides with; a shared file collides only on a same-part edit. | B-046 withdrawn; B-047–B-051 added; B-050 and B-051 carve B-034 and B-035; decisions 0011, 0021, 0022; OQ-6 |
 
 ## 11. Open Questions
 
-<!-- last written by: spec-author, 2026-10-27 -->
+<!-- last written by: spec-author, 2026-11-24 -->
 
 | ID | Question | Blocks | Resolution |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- | ---------- |
@@ -386,16 +411,17 @@ routing probes are recorded in 0001-F2 § 9; they do not fill these rows.
 | OQ-3 | Given two records claiming one stable id, does this Feature diagnose the duplicate rather than choose one, or is that wholly the companion's identity contract? | B-043 | Resolved 2026-10-15: diagnose. The duplicate is named, neither record chosen, dependent starts withheld; [decision 0018](decisions/0018-a-duplicate-id-is-diagnosed.md), B-043. |
 | OQ-4 | Given an open question whose § 11 row names no blocked claim, does it block every claim of the Feature, none, or leave the work's readiness unverified? | B-011, B-013, B-015 | Resolved 2026-10-15: unverified. Design and implementation starts are withheld and the gap named; [decision 0019](decisions/0019-an-unscoped-question-leaves-readiness-unverified.md), B-044. |
 | OQ-5 | Given a Feature whose closure is empty and whose claims are all delivered, is it reported as finished, and is it left out of ranking? `SKILL.md` says only when a score is never infinite. | B-033 | Resolved 2026-10-15: yes to both. Finished and left out of ranking; [decision 0020](decisions/0020-a-finished-feature-is-not-ranked.md), B-045. |
-| OQ-6 | Given two startable items in one Feature with no shared edit, are they two lanes, or is a Feature itself one lane with one active item? | B-034, B-035 | Resolved 2026-10-15: two lanes, one start. Lanes come from edits, but the Feature gets at most one start; [decision 0021](decisions/0021-one-start-per-feature.md), B-046. |
+| OQ-6 | Given two startable items in one Feature with no shared edit, are they two lanes, or is a Feature itself one lane with one active item? | B-034, B-035 | Resolved 2026-10-15: two lanes, one start. Lanes come from edits, but the Feature gets at most one start; [decision 0021](decisions/0021-one-start-per-feature.md), B-046. Superseded 2026-11-24 by [decision 0022](decisions/0022-open-lanes-by-interdependency.md): siblings run in parallel unless one waits on the other or their edits collide; B-046 withdrawn; B-047–B-051. |
 | OQ-7 | Should the adopted planning decisions be recorded as decision records in this Feature's `decisions/`, so the alternatives they rejected can be reviewed beside the claims? | None | Resolved 2026-10-14: yes. Decisions 0001–0015 record the adopted choices and rejected alternatives in [`decisions/`](decisions/). |
 
 ## 12. Sign-off
 
-<!-- last written by: spec-author, 2026-10-27 -->
+<!-- last written by: spec-author, 2026-11-24 -->
 
 | Section | Status | Reviewer | Note |
 | --- | --- | --- | --- |
 | Concision migration: §§ 1–12 | 🟢 | spec-reviewer | Independent `/root/review`, 2026-10-27: Approved snapshot SHA-256 `f27fd76c55d76a7023b3e96f55f010b453564c682325dd738b0b557381841b38`; no findings. Unchanged baseline scope retains its prior evidence; no new behavior or coverage is approved. |
+| Interdependency lanes: §§ 3, 6–11, Tasks, decisions 0011, 0021, 0022 and scenarios | 🟢 | spec-reviewer | Independent review, 2026-11-24: Approved the revised change over origin/main 56421a4, including the B-047–B-051 content-contract tests after a mutation re-check; its § 8 wording suggestion is applied. Unchanged scope retains the concision-migration evidence above. |
 
 ### Historical verdicts
 
@@ -413,9 +439,10 @@ of this specification at Git revision `57cd1200b089d2872d4538c91b5d085cf069307d`
 
 ## Tasks
 
-<!-- last written by: organizer, 2026-10-17 -->
+<!-- last written by: organizer, 2026-11-24 -->
 
 - [0052 — Coordinate Next work delivery](../.issue/0052-coordinate-next-work.yml) — authoritative delivery-status source.
+- [0061 — Open lanes by interdependency instead of one start per Feature](../.issue/0061-open-lanes-by-interdependency.yml) — delivers B-047–B-051.
 
 Supporting root history, retaining its existing parents: [0004 — Original agreement](../../../.issue/0004-next-skill-agreement.yml), [0030 — Specification authoring](../../../.issue/0030-next-skill-specification.yml), [0037 — Design alignment](../../../.issue/0037-align-f5-design-with-rulings.yml), and [0047 — Open-question rulings](../../../.issue/0047-resolve-f5-open-questions.yml).
 

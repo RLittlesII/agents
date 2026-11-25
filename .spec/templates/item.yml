@@ -45,7 +45,7 @@ title: Coordinate command delivery
 # the worktree, the branch, or the first edit. Record ownership events in
 # decisions as README § Delivery status maps deliver-change's continuation rule.
 # A missing owner is an evidence gap, not an implicit release. blocked carries its reason in
-# `decisions`. A Feature coordination record does not consume a child lane;
+# `decisions`. A Feature coordination record reserves nothing;
 # it closes after its children's delivery and active-claim completion are
 # verified, without requiring an implementation PR of its own. A delivery
 # child's done lands when its pull request merges. Whether an item is ready to

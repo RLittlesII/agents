@@ -114,22 +114,30 @@ unscored. No derived tier, score or gate is written back to a record.
 
 ## Use lanes to support the choice
 
-Offer one ranked startable head per available lane. Offer at most one start per
-Feature, since one delivery child is in progress per Feature: its other
-startable children wait behind the head, and a Feature with a taken delivery
-child offers none. A Feature coordination record is not another delivery
-candidate or an occupied child lane.
+Feature ownership does not make a lane. Two startable items, in one Feature or
+not, are both offered and can both run unless one waits on the other, directly
+or transitively through `depends_on` or spikes, or their edits collide. Sharing
+a prerequisite does not make two items wait on each other. An item waits on
+another only when the stage it is offered for needs that item (§ "Stage
+gates"). A lane is one offered or taken item, its head, with the items it
+blocks. A Feature or epic coordination record is not a delivery candidate and
+reserves nothing.
 
-Choose heads in one pass over ranked startable items. Apply the cap to the
-Feature that owns each item, including a prerequisite owned by another Feature.
-If its Feature already has a head or taken delivery work, show the item queued
-behind that Feature and consider the next startable item in its lane. Otherwise,
-a lane occupied by taken work offers no start, a lane with a head queues the
-item, and a free lane selects it as its head. Actionable unscored work stays
-outside this ranked pass.
+Edits collide when both items rewrite the same part of a file: the same rows
+or the same code. Separate subsections or rows added to one specification
+section do not collide, but they can still conflict on rebase: name them a
+rebase risk, not a block. When the evidence cannot show whether two edits touch
+the same part, offer both and name the possible rebase conflict and its
+uncertainty; do not hold the lower-ranked one. A collision joins only the two
+items that collide, never a chain.
 
-Check both dependencies and shared edits: independent tasks can still collide in a specification or generated
-output. Apply existing reservations before narrowing the displayed scope.
+Choose heads in one pass over ranked startable items. A taken item, in review
+too, blocks only the items that wait on it or collide with its edits; the rest
+of its Feature stays startable. Offer every other item as a head unless it
+collides with a higher-ranked head; show a blocked item with what blocks it. A
+prerequisite owned by another Feature passes the same test. Actionable unscored
+work stays outside this ranked pass. Apply existing reservations before
+narrowing the displayed scope.
 
 Explain each inferred conflict and its uncertainty. Separate actionable unscored
 work from ranked lane heads; lack of ranking inputs is not evidence of blockage.
@@ -157,7 +165,8 @@ tracker prerequisite as delivered.
 - A taken item offered as a new start.
 - An item-first answer when the request is to choose or finish Features.
 - A fabricated score, estimate, approval, claim link, or delivery state.
-- A lane split that ignores evidenced shared edits.
+- A lane split that ignores evidenced colliding edits.
+- A start withheld only because its Feature has other offered or taken work.
 - A silent scope expansion or a claim that unread work does not exist.
 - An issue edit, status synchronization, branch, worktree, or dispatch during
   recommendation.

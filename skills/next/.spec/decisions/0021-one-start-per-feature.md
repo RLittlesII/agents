@@ -43,4 +43,8 @@ B-034, B-035, B-046, OQ-6.
 
 ## Reversal
 
-None.
+2026-11-24: [decision 0022](0022-open-lanes-by-interdependency.md) supersedes this
+decision. A Feature is offered every start that no taken item blocks and that
+collides with no higher-ranked start; B-046 is withdrawn and `deliver-change`
+rule 3 now lets siblings run together. The reasoning above stays as
+recorded. Rejected alternatives: decision 0022 § Rejected.

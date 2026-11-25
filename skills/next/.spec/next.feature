@@ -311,13 +311,13 @@ Feature: Next work
   @B-035
   Scenario: A shared edit joins two lanes
     Given two items with independent dependencies
-    But evidence that both edit the same generated output
+    But evidence that both rewrite the same part of one generated output
     When lanes are inferred
     Then both items are in one lane
 
   @B-036
   Scenario: An inferred conflict carries its evidence and uncertainty
-    Given two items placed in one lane by an inferred shared edit
+    Given two items placed in one lane by an inferred same-part edit
     When the report is produced
     Then the evidence for the conflict is stated
     And so is how certain it is
@@ -393,22 +393,6 @@ Feature: Next work
     Then the Feature is reported as finished
     And it is left out of the ranking
 
-  @B-046
-  Scenario: One start per Feature
-    Given two startable items in one Feature with no shared edit
-    When the person asks what is next
-    Then the items are placed in separate lanes
-    And only the higher-ranked item is offered as a start
-    And the other is shown queued behind it
-
-  @B-046
-  Scenario: A Feature with taken work offers no further start
-    Given a Feature with taken work
-    And another startable item in that Feature with no shared edit
-    When the person asks what is next
-    Then no start is offered for that Feature
-    And the startable item is shown queued
-
   @B-017
   Scenario: An authorized reassignment retains the occupied lane
     Given a taken item is reassigned from A to B with recorded authorization
@@ -435,21 +419,60 @@ Feature: Next work
     And independent unchanged scope retains its applicable approval evidence
     And recommendation edits no sign-off record
 
-  @B-034 @B-046
-  Scenario: A capped candidate leaves its lane available to another Feature
-    Given the highest-ranked startable item in Feature A heads lane one
-    And another startable item in Feature A ranks first in lane two
-    And a startable item in Feature B ranks next in lane two
+  @B-047
+  Scenario: Offer independent children of one Feature together
+    Given two startable children of one Feature
+    And neither waits on the other, directly or through an open item
+    And their edits do not collide
     When the person asks what is next
-    Then the second item in Feature A is shown queued behind its Feature
-    And lane two offers the item in Feature B as its head
-    And at most one start is offered per Feature
+    Then both children are offered as starts
 
-  @B-003 @B-046
-  Scenario: A prerequisite consumes its owning Feature's start
-    Given a selected Feature A requires a startable prerequisite owned by Feature B
-    And Feature B already has a head in another lane
-    And Feature A has independent startable work with no unmet prerequisites
+  @B-048
+  Scenario Outline: A taken child blocks only its dependents and colliders
+    Given a child of a Feature is "<state>"
+    And the Feature's coordination record is in progress
+    And a sibling waits on it
+    And another sibling collides with its edits
+    And a third sibling is independent of it
+    When the person asks for the next work on that Feature
+    Then the waiting and colliding siblings are shown as blocked by the taken child
+    And the independent sibling is offered as a start
+    And the coordination record is not shown as reserving the Feature
+
+    Examples:
+      | state       |
+      | in progress |
+      | in review   |
+
+  @B-049
+  Scenario Outline: Report a non-colliding shared file as a rebase risk
+    Given two startable items edit one shared file
+    And their edits <edits>
     When the person asks what is next
-    Then the prerequisite is shown queued behind Feature B
-    And Feature A's independent work may still be offered as its start
+    Then <outcome>
+
+    Examples:
+      | edits                                               | outcome                                                           |
+      | each add a new subsection to one section            | both are offered and the shared file is named a rebase risk       |
+      | rewrite the same rows of one table                  | only the higher-ranked item is offered and the collision is named |
+      | might touch the same part; the evidence cannot tell | both are offered and the possible rebase conflict is named        |
+
+  @B-050
+  Scenario: Several lanes of one Feature each offer a head
+    Given two independent available lanes in one Feature with a startable item each
+    When the person asks what is next
+    Then a ranked startable head is offered for each lane
+    And neither is held behind the other because they share a Feature
+
+  @B-051
+  Scenario Outline: A shared file not shown to collide keeps separate lanes
+    Given two items with independent dependencies
+    And evidence that <evidence>
+    When lanes are inferred
+    Then the items are in separate lanes
+    And the shared file is named a rebase risk
+
+    Examples:
+      | evidence                                                       |
+      | each adds a separate row to one specification table            |
+      | both edit one file, without showing whether in the same part   |
