@@ -393,22 +393,6 @@ Feature: Next work
     Then the Feature is reported as finished
     And it is left out of the ranking
 
-  @B-046
-  Scenario: One start per Feature
-    Given two startable items in one Feature with no shared edit
-    When the person asks what is next
-    Then the items are placed in separate lanes
-    And only the higher-ranked item is offered as a start
-    And the other is shown queued behind it
-
-  @B-046
-  Scenario: A Feature with taken work offers no further start
-    Given a Feature with taken work
-    And another startable item in that Feature with no shared edit
-    When the person asks what is next
-    Then no start is offered for that Feature
-    And the startable item is shown queued
-
   @B-017
   Scenario: An authorized reassignment retains the occupied lane
     Given a taken item is reassigned from A to B with recorded authorization
@@ -435,21 +419,80 @@ Feature: Next work
     And independent unchanged scope retains its applicable approval evidence
     And recommendation edits no sign-off record
 
-  @B-034 @B-046
-  Scenario: A capped candidate leaves its lane available to another Feature
-    Given the highest-ranked startable item in Feature A heads lane one
-    And another startable item in Feature A ranks first in lane two
-    And a startable item in Feature B ranks next in lane two
+  @B-047
+  Scenario: Offer non-overlapping children of one Feature together
+    Given two startable children of one Feature
+    And neither depends on the other's result, directly or through an open item
+    And their evidenced edits share no file
+    And neither overlaps taken work
     When the person asks what is next
-    Then the second item in Feature A is shown queued behind its Feature
-    And lane two offers the item in Feature B as its head
-    And at most one start is offered per Feature
+    Then both children are offered as starts
 
-  @B-003 @B-046
-  Scenario: A prerequisite consumes its owning Feature's start
-    Given a selected Feature A requires a startable prerequisite owned by Feature B
-    And Feature B already has a head in another lane
-    And Feature A has independent startable work with no unmet prerequisites
+  @B-048
+  Scenario Outline: A candidate that overlaps taken work queues until it merges
+    Given a child of a Feature is "<state>"
+    And the Feature's coordination record is in progress
+    And a sibling depends on the taken child's result
+    And another sibling will edit a file the taken child's branch touches
+    And a third sibling overlaps nothing
+    When the person asks for the next work on that Feature
+    Then the overlapping siblings are queued behind the taken child's lane until its work has merged
+    And the third sibling is offered as a start
+    And the coordination record is not shown as reserving the Feature
+
+    Examples:
+      | state       |
+      | in progress |
+      | in review   |
+
+  @B-048
+  Scenario: Unscored or standalone work that overlaps taken work queues
+    Given actionable work that lacks ranking inputs or is standalone
+    And it will edit a file that work in review touches
     When the person asks what is next
-    Then the prerequisite is shown queued behind Feature B
-    And Feature A's independent work may still be offered as its start
+    Then it is queued behind the lane holding that work until it has merged
+    And it is not offered as actionable
+
+  @B-049
+  Scenario Outline: Candidates that share any file overlap
+    Given two startable candidates that otherwise overlap nothing
+    And both will edit <file>
+    When the person asks what is next
+    Then only the higher-ranked candidate is offered as head
+    And the other is queued behind it until the head's work has merged
+
+    Examples:
+      | file                                            |
+      | one specification file, in separate subsections |
+      | one work record                                 |
+      | shared generated output                         |
+      | shared configuration output                     |
+
+  @B-050
+  Scenario: Several lanes of one Feature each offer a head
+    Given two independent available lanes in one Feature with a startable item each
+    When the person asks what is next
+    Then a ranked startable head is offered for each lane
+    And neither is held behind the other because they share a Feature
+
+  @B-051
+  Scenario Outline: A candidate whose overlap cannot be determined overlaps
+    Given a startable candidate that depends on nothing open
+    And <missing>
+    When the person asks what is next
+    Then the candidate is treated as overlapping and queued
+    And the report names the missing evidence
+
+    Examples:
+      | missing                                                              |
+      | an open pull request whose diff against its merge-base is unreadable |
+      | a candidate whose claims and records name no files                   |
+      | a taken item with no branch yet                                      |
+
+  @B-052
+  Scenario: The report names each overlap and its holder
+    Given a candidate that overlaps a taken lane on one shared file
+    And the conflict could be rebased later
+    When the report is produced
+    Then the overlap, the shared file and the lane holding it are named
+    And the candidate is not offered as a start

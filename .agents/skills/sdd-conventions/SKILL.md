@@ -277,7 +277,7 @@ must answer for each of these:
 | Scratch      | where bounded experiments and generated logs live, their exclusion from delivery and cleanup convention |
 | Release      | version and changelog authority, targets, publishing and recovery procedures, or an explicit statement of what is not established |
 | Specs        | where specifications live when the layout differs from § "Spec layout", the glossary and the epic blank |
-| Next work    | tracker access, the identity contract, planning metadata, ranking inputs, shared-edit evidence, reservations and where standalone work appears |
+| Next work    | tracker access, the identity contract, planning metadata, ranking inputs, overlap evidence (open branch and pull-request diffs, the files claims and records name), reservations and where standalone work appears |
 | Benchmarking | the harness, where benchmarks live and the measurement traps           |
 
 A companion restates no method rule. It says where the rule lands.

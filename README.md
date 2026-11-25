@@ -189,7 +189,7 @@ the same commit. The fields, the status vocabulary and the rank definition are i
 before the branch for delivery work; its `done` and `closed:` land when the
 pull request that delivers the item merges. A Feature coordination record
 closes after its required child delivery and active-claim completion are
-verified; it is not an additional implementation item or occupied child lane.
+verified; it is not an additional implementation item and reserves nothing.
 
 Ownership is recorded as dated, append-only events in each item's `decisions`
 log. A claim names the human or agent session (with a durable session reference),

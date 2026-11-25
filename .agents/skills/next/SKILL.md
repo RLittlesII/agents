@@ -114,25 +114,33 @@ unscored. No derived tier, score or gate is written back to a record.
 
 ## Use lanes to support the choice
 
-Offer one ranked startable head per available lane. Offer at most one start per
-Feature, since one delivery child is in progress per Feature: its other
-startable children wait behind the head, and a Feature with a taken delivery
-child offers none. A Feature coordination record is not another delivery
-candidate or an occupied child lane.
+Feature ownership does not make a lane; overlap does. Two candidates overlap
+when either depends on the other's result, directly or transitively through
+`depends_on` or spikes, for the stage it is offered for (§ "Stage gates"), or
+when both will edit any of the same files: the same specification file, the
+same work record, or shared generated or configuration output. Sharing a
+prerequisite is not overlap by itself. A lane is one offered or taken item, its
+head, with the candidates that overlap it. A Feature or epic coordination
+record is not a delivery candidate and reserves nothing by itself.
 
-Choose heads in one pass over ranked startable items. Apply the cap to the
-Feature that owns each item, including a prerequisite owned by another Feature.
-If its Feature already has a head or taken delivery work, show the item queued
-behind that Feature and consider the next startable item in its lane. Otherwise,
-a lane occupied by taken work offers no start, a lane with a head queues the
-item, and a free lane selects it as its head. Actionable unscored work stays
-outside this ranked pass.
+Read overlap from evidence: the files each open branch or pull request touches,
+diffed against its merge-base, and the files each candidate's claims and
+records name. When overlap cannot be determined, whether from a candidate's
+files or from an open branch, pull request or taken item, treat the candidate
+as overlapping and say which evidence is missing.
 
-Check both dependencies and shared edits: independent tasks can still collide in a specification or generated
-output. Apply existing reservations before narrowing the displayed scope.
+Choose heads in one pass over ranked startable items. Only candidates that
+overlap neither each other nor any taken work, in review too, start in
+parallel. A candidate that overlaps taken work or a higher-ranked head queues
+behind that lane and starts only once the work it overlaps has merged. A
+prerequisite owned by another Feature passes the same test. Actionable unscored
+and standalone work skips the ranking, not the overlap test: it queues the same
+way, checked after the ranked heads in stable-id order. Apply existing
+reservations before narrowing the displayed scope.
 
-Explain each inferred conflict and its uncertainty. Separate actionable unscored
-work from ranked lane heads; lack of ranking inputs is not evidence of blockage.
+Name each overlap, its evidence and the lane that holds it. A later rebase is
+never a reason to start overlapping work. Separate actionable unscored work
+from ranked lane heads; lack of ranking inputs is not evidence of blockage.
 Keep standalone work visible as the companion directs.
 
 ## Report without taking work
@@ -157,7 +165,9 @@ tracker prerequisite as delivered.
 - A taken item offered as a new start.
 - An item-first answer when the request is to choose or finish Features.
 - A fabricated score, estimate, approval, claim link, or delivery state.
-- A lane split that ignores evidenced shared edits.
+- A parallel start on work that overlaps taken work or a higher-ranked head,
+  or one justified by rebasing later.
+- A start withheld only because its Feature has other offered or taken work.
 - A silent scope expansion or a claim that unread work does not exist.
 - An issue edit, status synchronization, branch, worktree, or dispatch during
   recommendation.

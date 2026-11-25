@@ -39,4 +39,9 @@ B-017, B-034, B-035, B-036, B-046, § 5 row 5, OQ-2, OQ-6.
 
 ## Reversal
 
-None.
+2026-11-25: [decision 0022](0022-open-lanes-by-interdependency.md) supersedes
+the "offered at most one start" sentence above. A Feature is offered every
+start that overlaps neither taken work nor a higher-ranked start. Lanes still
+come from dependencies and shared edits, now any shared file, and a candidate
+whose files cannot be determined is treated as overlapping. Rejected
+alternatives: decision 0022 § Rejected.

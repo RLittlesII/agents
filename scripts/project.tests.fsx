@@ -3,6 +3,7 @@
 //   agents/.spec/README.md   (0001-F2 Role contract) F2_B001_..F2_B040_
 //   commands/.spec/README.md (0001-F3 Commands)      F3_B001_..F3_B008_
 //   skills/.spec/README.md   (0001-F4 Skill boundary) F4_B001_..F4_B003_
+//   skills/next/.spec/README.md (0001-F5 Next work) F5_B047_..F5_B052_
 //
 //   dotnet fsi scripts/project.tests.fsx        exit code = number of failures
 
@@ -1383,6 +1384,143 @@ let B008_UnixBackslashRoleRootPreservesSlashDirectory () =
     equal "outside declared root\n" (read root ".claude/native/roles/keep.md")
     contains "name: alpha" (read root @".claude/native\roles/alpha.md")
 
+// ---------------------------------------------------------------- 0001-F5 Next work
+// The deliverable is guidance an agent follows. These tests pin the rule each
+// claim states in skills/next/SKILL.md and the scenario that documents it;
+// they do not run an agent.
+
+let collapse (text: string) =
+    Text.RegularExpressions.Regex.Replace(text, @"\s+", " ")
+
+let skillSection (rel: string) (heading: string) =
+    let text = (read repoRoot rel).Replace("\r\n", "\n")
+    let start = text.IndexOf("\n## " + heading + "\n")
+    if start < 0 then failwithf "%s has no § %s" rel heading
+    let body = text.Substring(start + heading.Length + 5)
+    let next = body.IndexOf("\n## ")
+    collapse (if next < 0 then body else body.Substring(0, next))
+
+let nextLanes () = skillSection "skills/next/SKILL.md" "Use lanes to support the choice"
+
+// The scenario under the tag and title. Each expected line must equal a whole
+// line of it, whitespace collapsed, so a Given or example row rewritten against
+// the claim fails too.
+let scenario (tag: string) (title: string) (lines: string list) =
+    let feature = (read repoRoot "skills/next/.spec/next.feature").Replace("\r\n", "\n")
+    let heads = [ "  " + tag + "\n  Scenario: " + title + "\n"; "  " + tag + "\n  Scenario Outline: " + title + "\n" ]
+    let start = heads |> List.map (fun h -> feature.IndexOf h) |> List.filter (fun i -> i >= 0)
+    if start.IsEmpty then failwithf "no scenario %A tagged %s" title tag
+    let rest = feature.Substring(start.Head)
+    let stop = rest.IndexOf("\n\n  @")
+    let body = if stop < 0 then rest else rest.Substring(0, stop)
+    let actual = body.Split('\n') |> Array.map (fun l -> (collapse l).Trim()) |> Set.ofArray
+    let missing = lines |> List.map (fun l -> (collapse l).Trim()) |> List.filter (fun l -> not (actual.Contains l))
+    equal [] missing
+
+let F5_B047_NonOverlappingSiblingsAreBothOffered () =
+    let lanes = nextLanes ()
+    contains "Feature ownership does not make a lane; overlap does." lanes
+    contains "Two candidates overlap when either depends on the other's result, directly or transitively through `depends_on` or spikes, for the stage it is offered for (§ \"Stage gates\"), or when both will edit any of the same files" lanes
+    contains "Sharing a prerequisite is not overlap by itself." lanes
+    contains "Only candidates that overlap neither each other nor any taken work, in review too, start in parallel." lanes
+    scenario "@B-047" "Offer non-overlapping children of one Feature together"
+        [ "Given two startable children of one Feature"
+          "And neither depends on the other's result, directly or through an open item"
+          "And their evidenced edits share no file"
+          "And neither overlaps taken work"
+          "Then both children are offered as starts" ]
+
+let F5_B048_OverlapWithTakenWorkQueuesUntilMerged () =
+    let lanes = nextLanes ()
+    contains "A candidate that overlaps taken work or a higher-ranked head queues behind that lane and starts only once the work it overlaps has merged." lanes
+    contains "A Feature or epic coordination record is not a delivery candidate and reserves nothing by itself." lanes
+    let rule3 = skillSection "skills/deliver-change/SKILL.md" "The shape of it"
+    contains "Take an item while other work is in progress or in review only when [`next`](../next/SKILL.md) § \"Use lanes to support the choice\" offers it as a start." rule3
+    contains "An item that depends on that work's result or will edit any of the same files waits until that work has merged; a later rebase is no reason to start it." rule3
+    scenario "@B-048" "A candidate that overlaps taken work queues until it merges"
+        [ "And the Feature's coordination record is in progress"
+          "And a sibling depends on the taken child's result"
+          "And another sibling will edit a file the taken child's branch touches"
+          "And a third sibling overlaps nothing"
+          "Then the overlapping siblings are queued behind the taken child's lane until its work has merged"
+          "And the third sibling is offered as a start"
+          "And the coordination record is not shown as reserving the Feature"
+          "| in progress |"
+          "| in review |" ]
+    contains "Actionable unscored and standalone work skips the ranking, not the overlap test: it queues the same way, checked after the ranked heads in stable-id order." lanes
+    scenario "@B-048" "Unscored or standalone work that overlaps taken work queues"
+        [ "Given actionable work that lacks ranking inputs or is standalone"
+          "And it will edit a file that work in review touches"
+          "Then it is queued behind the lane holding that work until it has merged"
+          "And it is not offered as actionable" ]
+
+let F5_B049_AnySharedFileIsOverlap () =
+    let lanes = nextLanes ()
+    contains "or when both will edit any of the same files: the same specification file, the same work record, or shared generated or configuration output." lanes
+    scenario "@B-049" "Candidates that share any file overlap"
+        [ "Given two startable candidates that otherwise overlap nothing"
+          "Then only the higher-ranked candidate is offered as head"
+          "And the other is queued behind it until the head's work has merged"
+          "| one specification file, in separate subsections |"
+          "| one work record |"
+          "| shared generated output |"
+          "| shared configuration output |" ]
+
+// One case per file an agent reads; each fails if any phrase of the per-Feature
+// cap, or of wording that treats a shared edit as a rebase risk, returns.
+let capPhrases =
+    [ "per Feature"; "one start"; "one delivery child"; "One delivery child"
+      "rebase risk"; "conflict on rebase"; "same part" ]
+
+let capFiles =
+    [ "skills/next/SKILL.md"; ".claude/skills/next/SKILL.md"; ".agents/skills/next/SKILL.md"
+      "skills/deliver-change/SKILL.md"; ".claude/skills/deliver-change/SKILL.md"; ".agents/skills/deliver-change/SKILL.md" ]
+
+let noCap (rel: string) () =
+    let text = collapse (read repoRoot rel)
+    let found = capPhrases |> List.filter (fun phrase -> text.Contains phrase)
+    equal [] found
+
+let F5_B050_NoFeatureCapLimitsHeads () =
+    let lanes = nextLanes ()
+    contains "Choose heads in one pass over ranked startable items." lanes
+    contains "- A start withheld only because its Feature has other offered or taken work." (skillSection "skills/next/SKILL.md" "Never add")
+    scenario "@B-050" "Several lanes of one Feature each offer a head"
+        [ "Given two independent available lanes in one Feature with a startable item each"
+          "Then a ranked startable head is offered for each lane"
+          "And neither is held behind the other because they share a Feature" ]
+
+let F5_B051_UndeterminedFilesCountAsOverlap () =
+    let lanes = nextLanes ()
+    contains "Read overlap from evidence: the files each open branch or pull request touches, diffed against its merge-base, and the files each candidate's claims and records name." lanes
+    contains "When overlap cannot be determined, whether from a candidate's files or from an open branch, pull request or taken item, treat the candidate as overlapping and say which evidence is missing." lanes
+    scenario "@B-051" "A candidate whose overlap cannot be determined overlaps"
+        [ "Given a startable candidate that depends on nothing open"
+          "Then the candidate is treated as overlapping and queued"
+          "And the report names the missing evidence"
+          "| an open pull request whose diff against its merge-base is unreadable |"
+          "| a candidate whose claims and records name no files |"
+          "| a taken item with no branch yet |" ]
+
+let F5_B052_ReportNamesOverlapAndNeverRebasesLater () =
+    let lanes = nextLanes ()
+    contains "Name each overlap, its evidence and the lane that holds it." lanes
+    contains "A later rebase is never a reason to start overlapping work." lanes
+    contains "- A parallel start on work that overlaps taken work or a higher-ranked head, or one justified by rebasing later." (skillSection "skills/next/SKILL.md" "Never add")
+    contains "- A start on work that overlaps open work, justified by rebasing later." (skillSection "skills/deliver-change/SKILL.md" "Never add")
+    scenario "@B-052" "The report names each overlap and its holder"
+        [ "Given a candidate that overlaps a taken lane on one shared file"
+          "And the conflict could be rebased later"
+          "Then the overlap, the shared file and the lane holding it are named"
+          "And the candidate is not offered as a start" ]
+
+// Supporting evidence only: agents read the projected copies, which carry the
+// source rule unchanged (0001-F1 B-004).
+let F5_ProjectedCopiesCarryTheLaneRule () =
+    let source = nextLanes ()
+    for rel in [ ".claude/skills/next/SKILL.md"; ".agents/skills/next/SKILL.md" ] do
+        equal source (skillSection rel "Use lanes to support the choice")
+
 // ---------------------------------------------------------------- Runner
 
 let tests : (string * (unit -> unit)) list =
@@ -1478,7 +1616,15 @@ let tests : (string * (unit -> unit)) list =
       nameof F2_B037_ArchitectCannotStampObservabilityBeforeWrites, F2_B037_ArchitectCannotStampObservabilityBeforeWrites
       nameof F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners, F2_B037_SiblingDesignAndPerformanceKeepTheirExistingOwners
       nameof F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory, F2_B039_RenameKeepsNineteenRolesMigratesBindingsAndPreservesHistory
-      nameof F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs, F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs ]
+      nameof F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs, F2_B039_FormerOperationalBindingsFailWithoutChangingExistingOutputs
+      nameof F5_B047_NonOverlappingSiblingsAreBothOffered, F5_B047_NonOverlappingSiblingsAreBothOffered
+      nameof F5_B048_OverlapWithTakenWorkQueuesUntilMerged, F5_B048_OverlapWithTakenWorkQueuesUntilMerged
+      nameof F5_B049_AnySharedFileIsOverlap, F5_B049_AnySharedFileIsOverlap
+      nameof F5_B050_NoFeatureCapLimitsHeads, F5_B050_NoFeatureCapLimitsHeads
+      nameof F5_B051_UndeterminedFilesCountAsOverlap, F5_B051_UndeterminedFilesCountAsOverlap
+      nameof F5_B052_ReportNamesOverlapAndNeverRebasesLater, F5_B052_ReportNamesOverlapAndNeverRebasesLater
+      nameof F5_ProjectedCopiesCarryTheLaneRule, F5_ProjectedCopiesCarryTheLaneRule ]
+    @ (capFiles |> List.map (fun rel -> "F5_B050_B052_NoCapOrRebaseRiskIn " + rel, noCap rel))
 
 let mutable failures = 0
 for name, test in tests do
